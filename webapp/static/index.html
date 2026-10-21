@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SmartTimetable - Web App Configurazione & Solver FET 7.12.0</title>
+  <link rel="stylesheet" href="styles.css?v=1.3.6">
+  <!-- Google Identity Services OAuth -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+  <div class="app-container">
+    <!-- Backdrop per Menu Drawer Mobile -->
+    <div id="sidebarBackdrop" class="sidebar-backdrop" onclick="closeMobileSidebar()"></div>
+
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" id="appSidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-brand">
+          <span class="sidebar-logo">🏫</span>
+          <div class="sidebar-titles">
+            <div class="sidebar-title">SmartTimetable</div>
+            <div class="sidebar-subtitle">FET 7.12.0 Suite</div>
+          </div>
+        </div>
+        <button id="sidebarToggleBtn" class="sidebar-toggle-btn" title="Comprimi o espandi menu laterale" onclick="toggleSidebar()">
+          <span class="toggle-icon">◀</span>
+        </button>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section-title">Generale</div>
+        <a class="nav-item active" onclick="navigate('dashboard')" data-tooltip="Dashboard" title="Dashboard riassuntiva">
+          <span class="nav-icon">📊</span>
+          <span class="nav-label">Dashboard</span>
+        </a>
+        <a class="nav-item" onclick="navigate('timetable')" data-tooltip="Orario Risolto" title="Orario settimanale risolto">
+          <span class="nav-icon">🗓️</span>
+          <span class="nav-label">Orario Risolto</span>
+        </a>
+        <a class="nav-item" onclick="navigate('solver')" data-tooltip="Compilatore FET" title="Compilatore FET 7.12.0 in tempo reale">
+          <span class="nav-icon">⚡</span>
+          <span class="nav-label">Compilatore FET</span>
+        </a>
+        <a class="nav-item" onclick="navigate('diagnostics')" data-tooltip="Diagnostica & Advisor" title="Pre-Validatore e Advisor Intelligente dei Vincoli">
+          <span class="nav-icon">🔍</span>
+          <span class="nav-label">Diagnostica & Advisor</span>
+          <span id="navHealthBadge" class="badge badge-sm badge-ok" style="margin-left:auto;font-size:10px;padding:1px 6px;">100%</span>
+        </a>
+
+        <div class="nav-section-title">Report & Stampe Ufficiali</div>
+        <a class="nav-item" onclick="openPrintClassesModal()" data-tooltip="Orario per Classe (PDF)" title="Procedura 9: Orario per classe con articolazioni e intervalli (A4 Orizzontale / PDF)">
+          <span class="nav-icon">🖨️</span>
+          <span class="nav-label">Orario per Classe (PDF)</span>
+        </a>
+        <a class="nav-item" onclick="openPrintTeachersModal()" data-tooltip="Tabellone Docenti (A3)" title="Procedura 12: Tabellone completo docenti con bande verticali (A3 Orizzontale / PDF)">
+          <span class="nav-icon">📄</span>
+          <span class="nav-label">Tabellone Docenti (A3)</span>
+        </a>
+
+        <div class="nav-section-title">Anagrafiche & Cattedre</div>
+        <a class="nav-item" onclick="navigate('teachers')" data-tooltip="Docenti" title="Organico Docenti">
+          <span class="nav-icon">👨‍🏫</span>
+          <span class="nav-label">Docenti</span>
+        </a>
+        <a class="nav-item" onclick="navigate('classes')" data-tooltip="Classi & Gruppi" title="Classi e Gruppi">
+          <span class="nav-icon">🎓</span>
+          <span class="nav-label">Classi & Gruppi</span>
+        </a>
+        <a class="nav-item" onclick="navigate('subjects')" data-tooltip="Materie" title="Discipline e Materie">
+          <span class="nav-icon">📚</span>
+          <span class="nav-label">Materie</span>
+        </a>
+        <a class="nav-item" onclick="navigate('rooms')" data-tooltip="Plessi & Aule" title="Plessi scolastici e Aule">
+          <span class="nav-icon">🏫</span>
+          <span class="nav-label">Plessi & Aule</span>
+        </a>
+        <a class="nav-item" onclick="navigate('activities')" data-tooltip="Attività / Cattedre" title="Attività di insegnamento e Cattedre">
+          <span class="nav-icon">📝</span>
+          <span class="nav-label">Attività / Cattedre</span>
+        </a>
+        <a class="nav-item" onclick="navigate('accorpamenti')" data-tooltip="Accorpamenti" title="Gestione Accorpamenti Macro-Materie (es. Italiano Latino Storia e Geo)">
+          <span class="nav-icon">🔗</span>
+          <span class="nav-label">Accorpamenti</span>
+        </a>
+
+        <div class="nav-section-title">Vincoli & Regole</div>
+        <a class="nav-item" onclick="navigate('block_rules')" data-tooltip="Regole Blocchi & Sezioni" title="Regole di Suddivisione Blocchi Orari e Indirizzi Sezioni (Liceo / Tecnico / Professionale)">
+          <span class="nav-icon">📐</span>
+          <span class="nav-label">Regole Blocchi & Sezioni</span>
+        </a>
+        <a class="nav-item" onclick="navigate('availability')" data-tooltip="Indisponibilità Griglia" title="Griglia disponibilità docenti e classi">
+          <span class="nav-icon">🚫</span>
+          <span class="nav-label">Indisponibilità Griglia</span>
+        </a>
+        <a class="nav-item" onclick="navigate('constraints')" data-tooltip="Vincoli Orario" title="Regole e vincoli di calcolo orario FET">
+          <span class="nav-icon">⚖️</span>
+          <span class="nav-label">Vincoli Orario</span>
+        </a>
+      </nav>
+
+      <!-- Sezione Configurazione Fissata in Basso a SX -->
+      <div class="sidebar-bottom">
+        <div class="nav-section-title">Sistema & Configurazione</div>
+        <a class="nav-item" onclick="navigate('parameters')" data-tooltip="Parametri Istituto" title="Parametri istituto, calendario settimanale, gestione Sabato e pause">
+          <span class="nav-icon">⚙️</span>
+          <span class="nav-label">Parametri Istituto</span>
+        </a>
+        <a class="nav-item" onclick="navigate('snapshots')" data-tooltip="Backup & Snapshot" title="Archivio storico, punti di ripristino, import ed export file FET e JSON">
+          <span class="nav-icon">📦</span>
+          <span class="nav-label">Backup & Snapshot</span>
+        </a>
+        <a id="sidebarAccessMgmtItem" class="nav-item" style="display:none;" onclick="openAccessManagementModal()" data-tooltip="Gestione Accessi" title="Gestione accessi, ruoli e approvazione utenti Google OAuth">
+          <span class="nav-icon">👥</span>
+          <span class="nav-label">Gestione Accessi</span>
+          <span id="sidebarPendingBadge" class="badge-pending-count" style="display:none;margin-left:auto;">0</span>
+        </a>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="footer-badge-wrap">
+          <span id="sidebarStatusBadge" class="badge badge-ok">● FET 7.12.0 Nativo</span>
+          <span class="footer-ver">v1.3.6</span>
+        </div>
+        <div class="footer-meta">
+          <div class="footer-author">Autore: <b>Carlo Rigoni</b></div>
+          <div class="footer-links">
+            <a href="https://lalescu.ro/liviu/fet/" target="_blank" rel="noopener" title="Sito ufficiale FET Free Software">FET Free Software</a> • AI Assisted
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <div class="main-wrapper">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="topbar-mobile-btn" onclick="toggleSidebar()" title="Toggle Sidebar">☰</button>
+          <button id="navBackBtn" class="nav-back-btn" onclick="navigateBack()" title="Torna alla schermata precedente" style="display:none;">
+            <span>◀</span> <span id="navBackText">Indietro</span>
+          </button>
+          <span id="pageTitle" class="topbar-title">Dashboard</span>
+          <span id="instBadge" class="badge badge-info">SmartTimetable</span>
+        </div>
+        <div class="topbar-right">
+          <div id="topbarUserPill" class="user-pill" style="display:none;">
+            <img id="topbarUserAvatar" class="user-avatar" src="" alt="Avatar" style="display:none;" />
+            <span id="topbarUserName" class="user-name"></span>
+            <span id="topbarUserRole" class="badge badge-role"></span>
+            <button class="btn-logout" onclick="logout()" title="Disconnetti">🚪</button>
+          </div>
+        </div>
+      </header>
+
+      <main class="content-body" id="mainContent">
+        <!-- I contenuti delle singole viste vengono renderizzati dinamicamente da app.js -->
+      </main>
+
+      <footer class="app-page-footer">
+        <div>
+          <b>SmartTimetable FET Suite</b> &mdash; Versione <span class="badge-ver">v1.3.6</span> &bull; Autore: <b>Carlo Rigoni</b>
+        </div>
+        <div style="font-size:11.5px;color:var(--text-muted);">
+          Algoritmo euristico: <a href="https://lalescu.ro/liviu/fet/" target="_blank" rel="noopener" style="color:var(--primary);text-decoration:none;font-weight:600;">FET Free Timetabling Software</a> &bull; AI Pair Programming: Google DeepMind Antigravity
+        </div>
+      </footer>
+    </div>
+  </div>
+
+  <!-- Fullscreen Auth / Login Screen -->
+  <div id="authScreen" class="auth-screen-overlay" style="display:none;">
+    <div class="auth-card">
+      <div class="auth-card-header">
+        <span class="auth-card-logo">🏫</span>
+        <h2>SmartTimetable</h2>
+        <p class="auth-card-subtitle">Gestione Orario Scolastico &bull; Suite FET 7.12.0</p>
+      </div>
+
+      <!-- Auth State 1: Form Login / Richiesta Accesso -->
+      <div id="authStateLogin" class="auth-state">
+        <div class="auth-banner-info">
+          🔐 <b>Accesso Riservato con Account Google</b><br>
+          Accedi con il tuo account Gmail / Google Workspace. Se è il tuo primo accesso, verrà inviata automaticamente una richiesta di sblocco a <b>Carlo Rigoni</b>.
+        </div>
+
+        <div id="googleBtnWrapper" class="google-btn-wrapper">
+          <div id="g_id_signin_placeholder"></div>
+        </div>
+
+        <div id="googleConfigNotice" class="google-config-notice" style="display:none;">
+          <small>⚠️ <b>Google Client ID non ancora configurato.</b><br>
+          L'amministratore può accedere con il passcode di emergenza qui sotto per impostare il Google Client ID nelle impostazioni.</small>
+        </div>
+
+        <div class="auth-divider">
+          <span>oppure</span>
+        </div>
+
+        <!-- Emergency Admin Login -->
+        <div class="emergency-login-box">
+          <details id="emergencyDetails">
+            <summary class="emergency-toggle">🔑 Accesso Amministratore (Passcode)</summary>
+            <div class="emergency-form">
+              <input type="password" id="emergencyPasscode" placeholder="Passcode di emergenza..." class="form-input" onkeydown="if(event.key==='Enter') submitEmergencyLogin()" />
+              <button class="btn btn-primary btn-block" onclick="submitEmergencyLogin()">Accedi come Admin</button>
+            </div>
+          </details>
+        </div>
+
+        <div id="authErrorMsg" class="auth-error-msg" style="display:none;"></div>
+      </div>
+
+      <!-- Auth State 2: Richiesta In Attesa (Pending) -->
+      <div id="authStatePending" class="auth-state" style="display:none;">
+        <div class="pending-icon-wrap">
+          <div class="pending-pulse">⏳</div>
+        </div>
+        <h3 class="pending-title">Richiesta di Accesso Inviata!</h3>
+        <div class="pending-user-card">
+          <img id="pendingAvatar" src="" class="pending-avatar" style="display:none;" />
+          <div>
+            <div id="pendingName" class="pending-name"></div>
+            <div id="pendingEmail" class="pending-email"></div>
+          </div>
+        </div>
+        <p class="pending-text">
+          La tua richiesta di accesso è stata registrata ed è attualmente <b>in attesa di sblocco</b> da parte dell'amministratore (<b>Carlo Rigoni</b>).
+        </p>
+        <div class="pending-status-box">
+          <span class="status-indicator-dot"></span> In attesa di approvazione... (verifica automatica in corso)
+        </div>
+        <div class="auth-actions-row">
+          <button class="btn btn-primary" onclick="checkAuthMe()">🔄 Verifica Ora</button>
+          <button class="btn btn-sec" onclick="logout()">Disconnetti</button>
+        </div>
+      </div>
+
+      <!-- Auth State 3: Richiesta Respinta (Rejected) -->
+      <div id="authStateRejected" class="auth-state" style="display:none;">
+        <div class="rejected-icon">🚫</div>
+        <h3 style="color:var(--danger, #dc2626);margin-bottom:8px;">Accesso Non Autorizzato</h3>
+        <p class="rejected-text">
+          La richiesta di accesso per l'account <b id="rejectedEmail"></b> è stata respinta o revocata dall'amministratore.
+        </p>
+        <button class="btn btn-primary" style="margin-top:16px;" onclick="logout()">Accedi con un altro account</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Gestione Accessi per l'Amministratore -->
+  <div id="accessModal" class="modal-backdrop" style="display:none;">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-header">
+        <h3 class="modal-title">👥 Gestione Accessi & Autorizzazioni Google OAuth</h3>
+        <button class="modal-close-btn" onclick="closeAccessManagementModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="access-tabs-nav">
+          <button class="access-tab-btn active" id="tabBtnPending" onclick="switchAccessTab('pending')">
+            Richieste in Attesa <span id="modalPendingCountBadge" class="badge-count">0</span>
+          </button>
+          <button class="access-tab-btn" id="tabBtnApproved" onclick="switchAccessTab('approved')">
+            Utenti Autorizzati (<span id="modalApprovedCount">0</span>)
+          </button>
+          <button class="access-tab-btn" id="tabBtnConfig" onclick="switchAccessTab('config')">
+            ⚙️ Impostazioni OAuth & Notifiche
+          </button>
+        </div>
+
+        <!-- Tab 1: In Attesa -->
+        <div id="tabPendingUsers" class="access-tab-content">
+          <div id="pendingUsersList" class="users-list-wrap">
+            <!-- Popolato via JS -->
+          </div>
+        </div>
+
+        <!-- Tab 2: Autorizzati -->
+        <div id="tabApprovedUsers" class="access-tab-content" style="display:none;">
+          <div id="approvedUsersList" class="users-list-wrap">
+            <!-- Popolato via JS -->
+          </div>
+        </div>
+
+        <!-- Tab 3: Configurazione -->
+        <div id="tabConfig" class="access-tab-content" style="display:none;">
+          <div class="config-section">
+            <h4>🔑 Google OAuth 2.0 Client ID</h4>
+            <p class="section-desc">
+              Inserisci il <b>Client ID Web</b> generato nella <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener">Google Cloud Console</a> per consentire l'accesso ufficiale tramite Google.
+            </p>
+            <input type="text" id="cfgGoogleClientId" class="form-input" placeholder="es. 123456789-abcdef.apps.googleusercontent.com" />
+          </div>
+
+          <div class="config-section" style="margin-top:20px;">
+            <h4>🛡️ Passcode di Emergenza Admin</h4>
+            <p class="section-desc">Passcode master per accedere come amministratore in caso di emergenza o per il primo setup.</p>
+            <input type="text" id="cfgEmergencyPasscode" class="form-input" placeholder="Passcode amministratore..." />
+          </div>
+
+          <div class="config-section" style="margin-top:20px;">
+            <h4>📧 Notifiche Email su Nuova Richiesta (SMTP)</h4>
+            <p class="section-desc">Ricevi automaticamente un'email di avviso su <b>carlo.rigoni@gmail.com</b> ogni volta che un utente richiede l'accesso.</p>
+            <label class="checkbox-label" style="margin-bottom:12px;display:flex;align-items:center;gap:8px;cursor:pointer;">
+              <input type="checkbox" id="cfgSmtpEnabled" /> <b>Abilita notifica email immediata</b>
+            </label>
+            <div id="smtpFields" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+              <div>
+                <label class="form-label">Server SMTP</label>
+                <input type="text" id="cfgSmtpHost" class="form-input" placeholder="smtp.gmail.com" />
+              </div>
+              <div>
+                <label class="form-label">Porta SMTP</label>
+                <input type="number" id="cfgSmtpPort" class="form-input" placeholder="587" />
+              </div>
+              <div>
+                <label class="form-label">Utente / Email Mittente</label>
+                <input type="text" id="cfgSmtpUser" class="form-input" placeholder="es. tuamail@gmail.com" />
+              </div>
+              <div>
+                <label class="form-label">Password Applicazione Google</label>
+                <input type="password" id="cfgSmtpPass" class="form-input" placeholder="Password app (16 caratteri)" />
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-top:24px;display:flex;justify-content:flex-end;gap:10px;">
+            <button class="btn btn-sec" onclick="testSmtpEmail()">📧 Invia Email di Test</button>
+            <button class="btn btn-primary" onclick="saveAccessConfig()">💾 Salva Impostazioni</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Stampa Orario per Classe (Procedura 9) -->
+  <div id="printClassesModal" class="modal-backdrop" style="display:none;">
+    <div class="modal-dialog" style="max-width:680px;">
+      <div class="modal-header">
+        <div class="modal-title">
+          <span>🖨️</span> <span>Stampa Orario per Classe (Procedura 9)</span>
+        </div>
+        <button class="modal-close" onclick="closePrintClassesModal()">✕</button>
+      </div>
+      <div class="modal-body" style="gap:14px;">
+        <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:var(--radius-sm);padding:10px 14px;font-size:12.5px;color:#334155;line-height:1.4;">
+          Genera il fascicolo completo o l'orario di singole classi in formato <b>A4 Orizzontale</b> (1 classe per pagina).
+          Supporta nativamente la fusione delle classi articolate (es. 3A con 3AM/3AR) e gli intervalli scolastici.
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+          <div class="form-group">
+            <label class="form-label" style="font-weight:600;">📅 Valido a partire da:</label>
+            <input type="text" id="printClassesDate" class="form-input" placeholder="GG/MM/AAAA" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" style="font-weight:600;">🎨 Modalità Colore:</label>
+            <select id="printClassesColor" class="select-input">
+              <option value="color" selected>🌈 A Colori (Sfondi pastello per materia)</option>
+              <option value="bw">⚫ Bianco e Nero (Toner save / fotocopie)</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+          <div class="form-group">
+            <label class="form-label" style="font-weight:600;">📝 Contenuto delle celle:</label>
+            <select id="printClassesContent" class="select-input">
+              <option value="materia_docente" selected>Materia e Docente (Consigliato)</option>
+              <option value="materia">Solo Materia</option>
+              <option value="docente">Solo Docente</option>
+            </select>
+          </div>
+          <div class="form-group" style="justify-content:center;padding-top:16px;">
+            <label style="display:flex;align-items:center;gap:8px;font-size:12.5px;cursor:pointer;">
+              <input type="checkbox" id="printClassesIncludeSubgroups" checked /> <b>Includi rami articolati (3AM, 3AR...)</b>
+            </label>
+          </div>
+        </div>
+
+        <!-- Selettore Classi -->
+        <div class="form-group" style="margin-top:4px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+            <label class="form-label" style="font-weight:600;margin:0;">🎓 Selezione Classi da Stampare:</label>
+            <span id="printClassesSelectedCount" class="badge badge-info" style="font-size:11px;">Tutte le classi</span>
+          </div>
+
+          <div class="quick-filter-bar">
+            <button class="btn btn-xs btn-sec" onclick="setPrintClassesFilter('all')">Tutte</button>
+            <button class="btn btn-xs btn-sec" onclick="setPrintClassesFilter('1')">Prime</button>
+            <button class="btn btn-xs btn-sec" onclick="setPrintClassesFilter('2')">Seconde</button>
+            <button class="btn btn-xs btn-sec" onclick="setPrintClassesFilter('3')">Terze</button>
+            <button class="btn btn-xs btn-sec" onclick="setPrintClassesFilter('4')">Quarte</button>
+            <button class="btn btn-xs btn-sec" onclick="setPrintClassesFilter('5')">Quinte</button>
+            <button class="btn btn-xs btn-sec" onclick="setPrintClassesFilter('none')">Nessuna</button>
+            <input type="text" id="printClassesSearch" class="form-input" placeholder="🔍 Cerca..." style="max-width:110px;padding:2px 6px;font-size:11px;margin-left:auto;" oninput="filterPrintClassesSearch(this.value)" />
+          </div>
+
+          <div id="printClassesCheckboxesWrap" class="class-chips-container">
+            <!-- Popolato via JS con i metadati delle classi -->
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-sec" onclick="closePrintClassesModal()">Annulla</button>
+        <button class="btn btn-primary" onclick="submitPrintClasses()">🖨️ Apri Anteprima & Stampa PDF</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Tabellone Docenti A3 (Procedura 12) -->
+  <div id="printTeachersModal" class="modal-backdrop" style="display:none;">
+    <div class="modal-dialog" style="max-width:540px;">
+      <div class="modal-header">
+        <div class="modal-title">
+          <span>📄</span> <span>Tabellone Docenti A3 (Procedura 12)</span>
+        </div>
+        <button class="modal-close" onclick="closePrintTeachersModal()">✕</button>
+      </div>
+      <div class="modal-body" style="gap:14px;">
+        <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:var(--radius-sm);padding:10px 14px;font-size:12.5px;color:#334155;line-height:1.4;">
+          Genera il <b>Tabellone Generale Completo</b> di tutti i docenti dell'istituto in formato <b>A3 Orizzontale</b> (o A4 compatto).
+          Include bande verticali alternate per giorno ed eliminazione automatica delle ore vuote in coda.
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" style="font-weight:600;">📅 Valido a partire dal:</label>
+          <input type="text" id="printTeachersDate" class="form-input" placeholder="GG/MM/AAAA" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" style="font-weight:600;">📐 Formato Carta:</label>
+          <select id="printTeachersPaperSize" class="select-input">
+            <option value="A3" selected>📄 A3 Orizzontale (Consigliato per collegio / bacheca)</option>
+            <option value="A4">📑 A4 Orizzontale (Compatto ad alta densità)</option>
+          </select>
+        </div>
+
+        <div class="form-group" style="padding-top:4px;">
+          <label style="display:flex;align-items:center;gap:8px;font-size:12.5px;cursor:pointer;">
+            <input type="checkbox" id="printTeachersShowRooms" /> <b>Mostra Aula nelle celle di lezione</b> <span style="font-size:11px;color:#64748b;">(lasciare disattivato per far stare perfettamente i dati nelle caselle)</span>
+          </label>
+          <label style="display:flex;align-items:center;gap:8px;font-size:12.5px;cursor:pointer;margin-top:6px;">
+            <input type="checkbox" id="printTeachersHighlightDisp" checked /> <b>Evidenzia Ore a Disposizione ("D" in giallo)</b>
+          </label>
+        </div>
+
+        <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:var(--radius-sm);padding:8px 12px;font-size:11.5px;color:#1e40af;line-height:1.4;">
+          ⚡ <b>Ottimizzazione ore in coda attiva:</b> le colonne orarie non utilizzate dall'intero istituto (es. Lun/Mer/Gio a 6 ore) vengono escluse per massimizzare la larghezza delle lezioni senza sprecare spazio.
+        </div>
+      </div>
+      <div class="modal-footer" style="display:flex;justify-content:space-between;align-items:center;">
+        <button class="btn btn-sec" onclick="closePrintTeachersModal()">Annulla</button>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-sec" onclick="submitDownloadTeachersDocx()" style="border:1.5px solid #2563eb;color:#1d4ed8;font-weight:600;">
+            📥 Scarica Documento (.docx Google Docs)
+          </button>
+          <button class="btn btn-primary" onclick="submitPrintTeachers()">
+            🖨️ Stampa / Anteprima A3
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js?v=1.3.6"></script>
+</body>
+</html>

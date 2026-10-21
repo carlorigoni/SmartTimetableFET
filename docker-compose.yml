@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  smarttimetable:
+    container_name: smarttimetable
+    image: carlorigoni/smarttimetablefet:latest
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - HOST=0.0.0.0
+      - PORT=8000
+      - PYTHONUNBUFFERED=1
+      - ADMIN_EMAIL=carlo.rigoni@gmail.com
+      # - GOOGLE_CLIENT_ID=tuo-client-id.apps.googleusercontent.com
+    volumes:
+      # Persistenza dati: database scolastico, orari risolti e snapshot
+      - ./data:/app/webapp/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/summary"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s

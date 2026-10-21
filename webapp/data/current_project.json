@@ -1,0 +1,2674 @@
+{
+  "institution": "Liceo & Tecnico \"Pico De Paperis\" - Paperopoli",
+  "comments": "Anno Scolastico 2026/2027 - Database Dimostrativo Completo",
+  "days": [
+    "Lun",
+    "Mar",
+    "Mer",
+    "Gio",
+    "Ven"
+  ],
+  "hours": [
+    "1",
+    "2",
+    "INT1",
+    "3",
+    "4",
+    "INT2",
+    "5",
+    "6",
+    "7",
+    "8"
+  ],
+  "day_hours_limit": {
+    "Lun": 6,
+    "Mar": 6,
+    "Mer": 6,
+    "Gio": 6,
+    "Ven": 6
+  },
+  "break_times": [
+    "Lun|INT1",
+    "Lun|INT2",
+    "Mar|INT1",
+    "Mar|INT2",
+    "Mer|INT1",
+    "Mer|INT2",
+    "Gio|INT1",
+    "Gio|INT2",
+    "Ven|INT1",
+    "Ven|INT2"
+  ],
+  "classes": [
+    {
+      "name": "1A",
+      "students": 24,
+      "comments": "Liceo Scientifico - Primo Anno"
+    },
+    {
+      "name": "2A",
+      "students": 22,
+      "comments": "Liceo Scientifico - Secondo Anno"
+    },
+    {
+      "name": "3A",
+      "students": 20,
+      "comments": "Liceo Scientifico - Terzo Anno"
+    },
+    {
+      "name": "4A",
+      "students": 21,
+      "comments": "Liceo Scientifico - Quarto Anno"
+    },
+    {
+      "name": "5A",
+      "students": 19,
+      "comments": "Liceo Scientifico - Quinto Anno"
+    }
+  ],
+  "teachers": [
+    {
+      "name": "Archimede Pitagorico",
+      "short_name": "ARCH",
+      "cdc": "A020",
+      "target_hours": 18,
+      "contract_type": "intera",
+      "is_coe": false,
+      "pref_shift": "prime",
+      "pref_shift_weight": 85,
+      "free_day_1": "Ven",
+      "free_day_strict": false,
+      "comments": "Fisica e Laboratorio Invenzioni"
+    },
+    {
+      "name": "Paperon de' Paperoni",
+      "short_name": "PAPE",
+      "cdc": "A046",
+      "target_hours": 18,
+      "contract_type": "intera",
+      "is_coe": false,
+      "pref_shift": "prime",
+      "pref_shift_weight": 90,
+      "free_day_1": "Lun",
+      "free_day_strict": true,
+      "comments": "Economia Aziendale e Gestione Finanziaria (Lunedì conteggio caveau)"
+    },
+    {
+      "name": "Pico De Paperis",
+      "short_name": "PICO",
+      "cdc": "A019",
+      "target_hours": 18,
+      "contract_type": "intera",
+      "is_coe": false,
+      "pref_shift": "bilanciato",
+      "pref_shift_weight": 85,
+      "free_day_1": "",
+      "free_day_strict": false,
+      "comments": "Storia e Filosofia Universale"
+    },
+    {
+      "name": "Paperino Paolino",
+      "short_name": "PAPI",
+      "cdc": "A048",
+      "target_hours": 18,
+      "contract_type": "intera",
+      "is_coe": false,
+      "pref_shift": "ultime",
+      "pref_shift_weight": 85,
+      "free_day_1": "Mer",
+      "free_day_strict": false,
+      "comments": "Scienze Motorie (ama dormire la 1ª ora)"
+    },
+    {
+      "name": "Nonna Papera",
+      "short_name": "NONN",
+      "cdc": "A050",
+      "target_hours": 18,
+      "contract_type": "intera",
+      "is_coe": false,
+      "pref_shift": "bilanciato",
+      "pref_shift_weight": 85,
+      "free_day_1": "Gio",
+      "free_day_strict": false,
+      "comments": "Scienze Naturali, Chimica e Agraria"
+    },
+    {
+      "name": "Gastone Paperone",
+      "short_name": "GAST",
+      "cdc": "A012",
+      "target_hours": 18,
+      "contract_type": "intera",
+      "is_coe": false,
+      "pref_shift": "bilanciato",
+      "pref_shift_weight": 85,
+      "free_day_1": "Mar",
+      "free_day_strict": false,
+      "comments": "Italiano e Letteratura Classica"
+    },
+    {
+      "name": "Dinamite Bla",
+      "short_name": "DINA",
+      "cdc": "A026",
+      "target_hours": 18,
+      "contract_type": "intera",
+      "is_coe": false,
+      "pref_shift": "prime",
+      "pref_shift_weight": 85,
+      "free_day_1": "",
+      "free_day_strict": false,
+      "comments": "Matematica"
+    },
+    {
+      "name": "Battista",
+      "short_name": "BATT",
+      "cdc": "A024",
+      "target_hours": 15,
+      "contract_type": "intera",
+      "is_coe": false,
+      "pref_shift": "none",
+      "pref_shift_weight": 85,
+      "free_day_1": "",
+      "free_day_strict": false,
+      "comments": "Lingua Inglese (più ore a disposizione)"
+    }
+  ],
+  "subjects": [
+    {
+      "name": "Italiano e Letteratura",
+      "comments": "Discipline Letterarie"
+    },
+    {
+      "name": "Matematica",
+      "comments": "Scienze Matematiche"
+    },
+    {
+      "name": "Fisica e Invenzioni",
+      "comments": "Fisica Sperimentale"
+    },
+    {
+      "name": "Scienze Naturali e Botanica",
+      "comments": "Scienze della Terra e Biologia"
+    },
+    {
+      "name": "Storia e Filosofia",
+      "comments": "Storia e Filosofia"
+    },
+    {
+      "name": "Economia e Diritto",
+      "comments": "Economia Politica e Finanza"
+    },
+    {
+      "name": "Scienze Motorie",
+      "comments": "Educazione Fisica"
+    },
+    {
+      "name": "Inglese",
+      "comments": "Lingua Straniera"
+    },
+    {
+      "name": "Arte e Disegno",
+      "comments": "Disegno Tecnico e Storia dell'Arte"
+    }
+  ],
+  "rooms": [
+    {
+      "name": "Aula 1A",
+      "capacity": 28,
+      "room_type": "standard",
+      "building": "Centrale"
+    },
+    {
+      "name": "Aula 2A",
+      "capacity": 28,
+      "room_type": "standard",
+      "building": "Centrale"
+    },
+    {
+      "name": "Aula 3A",
+      "capacity": 28,
+      "room_type": "standard",
+      "building": "Centrale"
+    },
+    {
+      "name": "Aula 4A",
+      "capacity": 28,
+      "room_type": "standard",
+      "building": "Centrale"
+    },
+    {
+      "name": "Aula 5A",
+      "capacity": 28,
+      "room_type": "standard",
+      "building": "Centrale"
+    },
+    {
+      "name": "Laboratorio di Invenzioni",
+      "capacity": 30,
+      "room_type": "lab",
+      "building": "Centrale"
+    },
+    {
+      "name": "Palestra Paperopoli",
+      "capacity": 57,
+      "room_type": "gym",
+      "building": "Centrale",
+      "max_concurrent": 2
+    },
+    {
+      "name": "Aula Magna del Deposito",
+      "capacity": 100,
+      "room_type": "special",
+      "building": "Centrale"
+    }
+  ],
+  "activities": [
+    {
+      "id": "1",
+      "teachers": [
+        "Gastone Paperone"
+      ],
+      "students": [
+        "1A"
+      ],
+      "subject": "Italiano e Letteratura",
+      "duration": 2,
+      "total_hours": 4,
+      "room": "",
+      "active": true,
+      "comments": "Italiano e Letteratura per 1A"
+    },
+    {
+      "id": "2",
+      "teachers": [
+        "Gastone Paperone"
+      ],
+      "students": [
+        "1A"
+      ],
+      "subject": "Italiano e Letteratura",
+      "duration": 1,
+      "total_hours": 4,
+      "room": "",
+      "active": true,
+      "comments": "Italiano e Letteratura per 1A"
+    },
+    {
+      "id": "3",
+      "teachers": [
+        "Gastone Paperone"
+      ],
+      "students": [
+        "1A"
+      ],
+      "subject": "Italiano e Letteratura",
+      "duration": 1,
+      "total_hours": 4,
+      "room": "",
+      "active": true,
+      "comments": "Italiano e Letteratura per 1A"
+    },
+    {
+      "id": "4",
+      "teachers": [
+        "Gastone Paperone"
+      ],
+      "students": [
+        "2A"
+      ],
+      "subject": "Italiano e Letteratura",
+      "duration": 2,
+      "total_hours": 4,
+      "room": "",
+      "active": true,
+      "comments": "Italiano e Letteratura per 2A"
+    },
+    {
+      "id": "5",
+      "teachers": [
+        "Gastone Paperone"
+      ],
+      "students": [
+        "2A"
+      ],
+      "subject": "Italiano e Letteratura",
+      "duration": 1,
+      "total_hours": 4,
+      "room": "",
+      "active": true,
+      "comments": "Italiano e Letteratura per 2A"
+    },
+    {
+      "id": "6",
+      "teachers": [
+        "Gastone Paperone"
+      ],
+      "students": [
+        "2A"
+      ],
+      "subject": "Italiano e Letteratura",
+      "duration": 1,
+      "total_hours": 4,
+      "room": "",
+      "active": true,
+      "comments": "Italiano e Letteratura per 2A"
+    },
+    {
+      "id": "7",
+      "teachers": [
+        "Gastone Paperone"
+      ],
+      "students": [
+        "3A"
+      ],
+      "subject": "Italiano e Letteratura",
+      "duration": 2,
+      "total_hours": 4,
+      "room": "",
+      "active": true,
+      "comments": "Italiano e Letteratura per 3A"
+    },
+    {
+      "id": "8",
+      "teachers": [
+        "Gastone Paperone"
+      ],
+      "students": [
+        "3A"
+      ],
+      "subject": "Italiano e Letteratura",
+      "duration": 1,
+      "total_hours": 4,
+      "room": "",
+      "active": true,
+      "comments": "Italiano e Letteratura per 3A"
+    },
+    {
+      "id": "9",
+      "teachers": [
+        "Gastone Paperone"
+      ],
+      "students": [
+        "3A"
+      ],
+      "subject": "Italiano e Letteratura",
+      "duration": 1,
+      "total_hours": 4,
+      "room": "",
+      "active": true,
+      "comments": "Italiano e Letteratura per 3A"
+    },
+    {
+      "id": "10",
+      "teachers": [
+        "Gastone Paperone"
+      ],
+      "students": [
+        "4A"
+      ],
+      "subject": "Italiano e Letteratura",
+      "duration": 2,
+      "total_hours": 3,
+      "room": "",
+      "active": true,
+      "comments": "Italiano e Letteratura per 4A"
+    },
+    {
+      "id": "11",
+      "teachers": [
+        "Gastone Paperone"
+      ],
+      "students": [
+        "4A"
+      ],
+      "subject": "Italiano e Letteratura",
+      "duration": 1,
+      "total_hours": 3,
+      "room": "",
+      "active": true,
+      "comments": "Italiano e Letteratura per 4A"
+    },
+    {
+      "id": "12",
+      "teachers": [
+        "Gastone Paperone"
+      ],
+      "students": [
+        "5A"
+      ],
+      "subject": "Italiano e Letteratura",
+      "duration": 2,
+      "total_hours": 3,
+      "room": "",
+      "active": true,
+      "comments": "Italiano e Letteratura per 5A"
+    },
+    {
+      "id": "13",
+      "teachers": [
+        "Gastone Paperone"
+      ],
+      "students": [
+        "5A"
+      ],
+      "subject": "Italiano e Letteratura",
+      "duration": 1,
+      "total_hours": 3,
+      "room": "",
+      "active": true,
+      "comments": "Italiano e Letteratura per 5A"
+    },
+    {
+      "id": "14",
+      "teachers": [
+        "Dinamite Bla"
+      ],
+      "students": [
+        "1A"
+      ],
+      "subject": "Matematica",
+      "duration": 2,
+      "total_hours": 4,
+      "room": "",
+      "active": true,
+      "comments": "Matematica per 1A"
+    },
+    {
+      "id": "15",
+      "teachers": [
+        "Dinamite Bla"
+      ],
+      "students": [
+        "1A"
+      ],
+      "subject": "Matematica",
+      "duration": 1,
+      "total_hours": 4,
+      "room": "",
+      "active": true,
+      "comments": "Matematica per 1A"
+    },
+    {
+      "id": "16",
+      "teachers": [
+        "Dinamite Bla"
+      ],
+      "students": [
+        "1A"
+      ],
+      "subject": "Matematica",
+      "duration": 1,
+      "total_hours": 4,
+      "room": "",
+      "active": true,
+      "comments": "Matematica per 1A"
+    },
+    {
+      "id": "17",
+      "teachers": [
+        "Dinamite Bla"
+      ],
+      "students": [
+        "2A"
+      ],
+      "subject": "Matematica",
+      "duration": 2,
+      "total_hours": 4,
+      "room": "",
+      "active": true,
+      "comments": "Matematica per 2A"
+    },
+    {
+      "id": "18",
+      "teachers": [
+        "Dinamite Bla"
+      ],
+      "students": [
+        "2A"
+      ],
+      "subject": "Matematica",
+      "duration": 1,
+      "total_hours": 4,
+      "room": "",
+      "active": true,
+      "comments": "Matematica per 2A"
+    },
+    {
+      "id": "19",
+      "teachers": [
+        "Dinamite Bla"
+      ],
+      "students": [
+        "2A"
+      ],
+      "subject": "Matematica",
+      "duration": 1,
+      "total_hours": 4,
+      "room": "",
+      "active": true,
+      "comments": "Matematica per 2A"
+    },
+    {
+      "id": "20",
+      "teachers": [
+        "Dinamite Bla"
+      ],
+      "students": [
+        "3A"
+      ],
+      "subject": "Matematica",
+      "duration": 2,
+      "total_hours": 4,
+      "room": "",
+      "active": true,
+      "comments": "Matematica per 3A"
+    },
+    {
+      "id": "21",
+      "teachers": [
+        "Dinamite Bla"
+      ],
+      "students": [
+        "3A"
+      ],
+      "subject": "Matematica",
+      "duration": 1,
+      "total_hours": 4,
+      "room": "",
+      "active": true,
+      "comments": "Matematica per 3A"
+    },
+    {
+      "id": "22",
+      "teachers": [
+        "Dinamite Bla"
+      ],
+      "students": [
+        "3A"
+      ],
+      "subject": "Matematica",
+      "duration": 1,
+      "total_hours": 4,
+      "room": "",
+      "active": true,
+      "comments": "Matematica per 3A"
+    },
+    {
+      "id": "23",
+      "teachers": [
+        "Dinamite Bla"
+      ],
+      "students": [
+        "4A"
+      ],
+      "subject": "Matematica",
+      "duration": 2,
+      "total_hours": 3,
+      "room": "",
+      "active": true,
+      "comments": "Matematica per 4A"
+    },
+    {
+      "id": "24",
+      "teachers": [
+        "Dinamite Bla"
+      ],
+      "students": [
+        "4A"
+      ],
+      "subject": "Matematica",
+      "duration": 1,
+      "total_hours": 3,
+      "room": "",
+      "active": true,
+      "comments": "Matematica per 4A"
+    },
+    {
+      "id": "25",
+      "teachers": [
+        "Dinamite Bla"
+      ],
+      "students": [
+        "5A"
+      ],
+      "subject": "Matematica",
+      "duration": 2,
+      "total_hours": 3,
+      "room": "",
+      "active": true,
+      "comments": "Matematica per 5A"
+    },
+    {
+      "id": "26",
+      "teachers": [
+        "Dinamite Bla"
+      ],
+      "students": [
+        "5A"
+      ],
+      "subject": "Matematica",
+      "duration": 1,
+      "total_hours": 3,
+      "room": "",
+      "active": true,
+      "comments": "Matematica per 5A"
+    },
+    {
+      "id": "27",
+      "teachers": [
+        "Archimede Pitagorico"
+      ],
+      "students": [
+        "1A"
+      ],
+      "subject": "Fisica e Invenzioni",
+      "duration": 2,
+      "total_hours": 3,
+      "room": "Laboratorio di Invenzioni",
+      "active": true,
+      "comments": "Fisica e Invenzioni per 1A"
+    },
+    {
+      "id": "28",
+      "teachers": [
+        "Archimede Pitagorico"
+      ],
+      "students": [
+        "1A"
+      ],
+      "subject": "Fisica e Invenzioni",
+      "duration": 1,
+      "total_hours": 3,
+      "room": "Laboratorio di Invenzioni",
+      "active": true,
+      "comments": "Fisica e Invenzioni per 1A"
+    },
+    {
+      "id": "29",
+      "teachers": [
+        "Archimede Pitagorico"
+      ],
+      "students": [
+        "2A"
+      ],
+      "subject": "Fisica e Invenzioni",
+      "duration": 2,
+      "total_hours": 3,
+      "room": "Laboratorio di Invenzioni",
+      "active": true,
+      "comments": "Fisica e Invenzioni per 2A"
+    },
+    {
+      "id": "30",
+      "teachers": [
+        "Archimede Pitagorico"
+      ],
+      "students": [
+        "2A"
+      ],
+      "subject": "Fisica e Invenzioni",
+      "duration": 1,
+      "total_hours": 3,
+      "room": "Laboratorio di Invenzioni",
+      "active": true,
+      "comments": "Fisica e Invenzioni per 2A"
+    },
+    {
+      "id": "31",
+      "teachers": [
+        "Archimede Pitagorico"
+      ],
+      "students": [
+        "3A"
+      ],
+      "subject": "Fisica e Invenzioni",
+      "duration": 2,
+      "total_hours": 4,
+      "room": "Laboratorio di Invenzioni",
+      "active": true,
+      "comments": "Fisica e Invenzioni per 3A"
+    },
+    {
+      "id": "32",
+      "teachers": [
+        "Archimede Pitagorico"
+      ],
+      "students": [
+        "3A"
+      ],
+      "subject": "Fisica e Invenzioni",
+      "duration": 2,
+      "total_hours": 4,
+      "room": "Laboratorio di Invenzioni",
+      "active": true,
+      "comments": "Fisica e Invenzioni per 3A"
+    },
+    {
+      "id": "33",
+      "teachers": [
+        "Archimede Pitagorico"
+      ],
+      "students": [
+        "4A"
+      ],
+      "subject": "Fisica e Invenzioni",
+      "duration": 2,
+      "total_hours": 4,
+      "room": "Laboratorio di Invenzioni",
+      "active": true,
+      "comments": "Fisica e Invenzioni per 4A"
+    },
+    {
+      "id": "34",
+      "teachers": [
+        "Archimede Pitagorico"
+      ],
+      "students": [
+        "4A"
+      ],
+      "subject": "Fisica e Invenzioni",
+      "duration": 2,
+      "total_hours": 4,
+      "room": "Laboratorio di Invenzioni",
+      "active": true,
+      "comments": "Fisica e Invenzioni per 4A"
+    },
+    {
+      "id": "35",
+      "teachers": [
+        "Archimede Pitagorico"
+      ],
+      "students": [
+        "5A"
+      ],
+      "subject": "Fisica e Invenzioni",
+      "duration": 2,
+      "total_hours": 4,
+      "room": "Laboratorio di Invenzioni",
+      "active": true,
+      "comments": "Fisica e Invenzioni per 5A"
+    },
+    {
+      "id": "36",
+      "teachers": [
+        "Archimede Pitagorico"
+      ],
+      "students": [
+        "5A"
+      ],
+      "subject": "Fisica e Invenzioni",
+      "duration": 2,
+      "total_hours": 4,
+      "room": "Laboratorio di Invenzioni",
+      "active": true,
+      "comments": "Fisica e Invenzioni per 5A"
+    },
+    {
+      "id": "37",
+      "teachers": [
+        "Nonna Papera"
+      ],
+      "students": [
+        "1A"
+      ],
+      "subject": "Scienze Naturali e Botanica",
+      "duration": 2,
+      "total_hours": 4,
+      "room": "",
+      "active": true,
+      "comments": "Scienze Naturali e Botanica per 1A"
+    },
+    {
+      "id": "38",
+      "teachers": [
+        "Nonna Papera"
+      ],
+      "students": [
+        "1A"
+      ],
+      "subject": "Scienze Naturali e Botanica",
+      "duration": 1,
+      "total_hours": 4,
+      "room": "",
+      "active": true,
+      "comments": "Scienze Naturali e Botanica per 1A"
+    },
+    {
+      "id": "39",
+      "teachers": [
+        "Nonna Papera"
+      ],
+      "students": [
+        "1A"
+      ],
+      "subject": "Scienze Naturali e Botanica",
+      "duration": 1,
+      "total_hours": 4,
+      "room": "",
+      "active": true,
+      "comments": "Scienze Naturali e Botanica per 1A"
+    },
+    {
+      "id": "40",
+      "teachers": [
+        "Nonna Papera"
+      ],
+      "students": [
+        "2A"
+      ],
+      "subject": "Scienze Naturali e Botanica",
+      "duration": 2,
+      "total_hours": 4,
+      "room": "",
+      "active": true,
+      "comments": "Scienze Naturali e Botanica per 2A"
+    },
+    {
+      "id": "41",
+      "teachers": [
+        "Nonna Papera"
+      ],
+      "students": [
+        "2A"
+      ],
+      "subject": "Scienze Naturali e Botanica",
+      "duration": 1,
+      "total_hours": 4,
+      "room": "",
+      "active": true,
+      "comments": "Scienze Naturali e Botanica per 2A"
+    },
+    {
+      "id": "42",
+      "teachers": [
+        "Nonna Papera"
+      ],
+      "students": [
+        "2A"
+      ],
+      "subject": "Scienze Naturali e Botanica",
+      "duration": 1,
+      "total_hours": 4,
+      "room": "",
+      "active": true,
+      "comments": "Scienze Naturali e Botanica per 2A"
+    },
+    {
+      "id": "43",
+      "teachers": [
+        "Nonna Papera"
+      ],
+      "students": [
+        "3A"
+      ],
+      "subject": "Scienze Naturali e Botanica",
+      "duration": 2,
+      "total_hours": 4,
+      "room": "",
+      "active": true,
+      "comments": "Scienze Naturali e Botanica per 3A"
+    },
+    {
+      "id": "44",
+      "teachers": [
+        "Nonna Papera"
+      ],
+      "students": [
+        "3A"
+      ],
+      "subject": "Scienze Naturali e Botanica",
+      "duration": 1,
+      "total_hours": 4,
+      "room": "",
+      "active": true,
+      "comments": "Scienze Naturali e Botanica per 3A"
+    },
+    {
+      "id": "45",
+      "teachers": [
+        "Nonna Papera"
+      ],
+      "students": [
+        "3A"
+      ],
+      "subject": "Scienze Naturali e Botanica",
+      "duration": 1,
+      "total_hours": 4,
+      "room": "",
+      "active": true,
+      "comments": "Scienze Naturali e Botanica per 3A"
+    },
+    {
+      "id": "46",
+      "teachers": [
+        "Nonna Papera"
+      ],
+      "students": [
+        "4A"
+      ],
+      "subject": "Scienze Naturali e Botanica",
+      "duration": 2,
+      "total_hours": 3,
+      "room": "",
+      "active": true,
+      "comments": "Scienze Naturali e Botanica per 4A"
+    },
+    {
+      "id": "47",
+      "teachers": [
+        "Nonna Papera"
+      ],
+      "students": [
+        "4A"
+      ],
+      "subject": "Scienze Naturali e Botanica",
+      "duration": 1,
+      "total_hours": 3,
+      "room": "",
+      "active": true,
+      "comments": "Scienze Naturali e Botanica per 4A"
+    },
+    {
+      "id": "48",
+      "teachers": [
+        "Nonna Papera"
+      ],
+      "students": [
+        "5A"
+      ],
+      "subject": "Scienze Naturali e Botanica",
+      "duration": 2,
+      "total_hours": 3,
+      "room": "",
+      "active": true,
+      "comments": "Scienze Naturali e Botanica per 5A"
+    },
+    {
+      "id": "49",
+      "teachers": [
+        "Nonna Papera"
+      ],
+      "students": [
+        "5A"
+      ],
+      "subject": "Scienze Naturali e Botanica",
+      "duration": 1,
+      "total_hours": 3,
+      "room": "",
+      "active": true,
+      "comments": "Scienze Naturali e Botanica per 5A"
+    },
+    {
+      "id": "50",
+      "teachers": [
+        "Pico De Paperis"
+      ],
+      "students": [
+        "1A"
+      ],
+      "subject": "Storia e Filosofia",
+      "duration": 2,
+      "total_hours": 2,
+      "room": "",
+      "active": true,
+      "comments": "Storia e Filosofia per 1A"
+    },
+    {
+      "id": "51",
+      "teachers": [
+        "Pico De Paperis"
+      ],
+      "students": [
+        "2A"
+      ],
+      "subject": "Storia e Filosofia",
+      "duration": 2,
+      "total_hours": 2,
+      "room": "",
+      "active": true,
+      "comments": "Storia e Filosofia per 2A"
+    },
+    {
+      "id": "52",
+      "teachers": [
+        "Pico De Paperis"
+      ],
+      "students": [
+        "3A"
+      ],
+      "subject": "Storia e Filosofia",
+      "duration": 2,
+      "total_hours": 4,
+      "room": "",
+      "active": true,
+      "comments": "Storia e Filosofia per 3A"
+    },
+    {
+      "id": "53",
+      "teachers": [
+        "Pico De Paperis"
+      ],
+      "students": [
+        "3A"
+      ],
+      "subject": "Storia e Filosofia",
+      "duration": 2,
+      "total_hours": 4,
+      "room": "",
+      "active": true,
+      "comments": "Storia e Filosofia per 3A"
+    },
+    {
+      "id": "54",
+      "teachers": [
+        "Pico De Paperis"
+      ],
+      "students": [
+        "4A"
+      ],
+      "subject": "Storia e Filosofia",
+      "duration": 2,
+      "total_hours": 5,
+      "room": "",
+      "active": true,
+      "comments": "Storia e Filosofia per 4A"
+    },
+    {
+      "id": "55",
+      "teachers": [
+        "Pico De Paperis"
+      ],
+      "students": [
+        "4A"
+      ],
+      "subject": "Storia e Filosofia",
+      "duration": 2,
+      "total_hours": 5,
+      "room": "",
+      "active": true,
+      "comments": "Storia e Filosofia per 4A"
+    },
+    {
+      "id": "56",
+      "teachers": [
+        "Pico De Paperis"
+      ],
+      "students": [
+        "4A"
+      ],
+      "subject": "Storia e Filosofia",
+      "duration": 1,
+      "total_hours": 5,
+      "room": "",
+      "active": true,
+      "comments": "Storia e Filosofia per 4A"
+    },
+    {
+      "id": "57",
+      "teachers": [
+        "Pico De Paperis"
+      ],
+      "students": [
+        "5A"
+      ],
+      "subject": "Storia e Filosofia",
+      "duration": 2,
+      "total_hours": 5,
+      "room": "",
+      "active": true,
+      "comments": "Storia e Filosofia per 5A"
+    },
+    {
+      "id": "58",
+      "teachers": [
+        "Pico De Paperis"
+      ],
+      "students": [
+        "5A"
+      ],
+      "subject": "Storia e Filosofia",
+      "duration": 2,
+      "total_hours": 5,
+      "room": "",
+      "active": true,
+      "comments": "Storia e Filosofia per 5A"
+    },
+    {
+      "id": "59",
+      "teachers": [
+        "Pico De Paperis"
+      ],
+      "students": [
+        "5A"
+      ],
+      "subject": "Storia e Filosofia",
+      "duration": 1,
+      "total_hours": 5,
+      "room": "",
+      "active": true,
+      "comments": "Storia e Filosofia per 5A"
+    },
+    {
+      "id": "60",
+      "teachers": [
+        "Paperon de' Paperoni"
+      ],
+      "students": [
+        "1A"
+      ],
+      "subject": "Economia e Diritto",
+      "duration": 2,
+      "total_hours": 3,
+      "room": "",
+      "active": true,
+      "comments": "Economia e Diritto per 1A"
+    },
+    {
+      "id": "61",
+      "teachers": [
+        "Paperon de' Paperoni"
+      ],
+      "students": [
+        "1A"
+      ],
+      "subject": "Economia e Diritto",
+      "duration": 1,
+      "total_hours": 3,
+      "room": "",
+      "active": true,
+      "comments": "Economia e Diritto per 1A"
+    },
+    {
+      "id": "62",
+      "teachers": [
+        "Paperon de' Paperoni"
+      ],
+      "students": [
+        "2A"
+      ],
+      "subject": "Economia e Diritto",
+      "duration": 2,
+      "total_hours": 3,
+      "room": "",
+      "active": true,
+      "comments": "Economia e Diritto per 2A"
+    },
+    {
+      "id": "63",
+      "teachers": [
+        "Paperon de' Paperoni"
+      ],
+      "students": [
+        "2A"
+      ],
+      "subject": "Economia e Diritto",
+      "duration": 1,
+      "total_hours": 3,
+      "room": "",
+      "active": true,
+      "comments": "Economia e Diritto per 2A"
+    },
+    {
+      "id": "64",
+      "teachers": [
+        "Paperon de' Paperoni"
+      ],
+      "students": [
+        "3A"
+      ],
+      "subject": "Economia e Diritto",
+      "duration": 2,
+      "total_hours": 4,
+      "room": "",
+      "active": true,
+      "comments": "Economia e Diritto per 3A"
+    },
+    {
+      "id": "65",
+      "teachers": [
+        "Paperon de' Paperoni"
+      ],
+      "students": [
+        "3A"
+      ],
+      "subject": "Economia e Diritto",
+      "duration": 2,
+      "total_hours": 4,
+      "room": "",
+      "active": true,
+      "comments": "Economia e Diritto per 3A"
+    },
+    {
+      "id": "66",
+      "teachers": [
+        "Paperon de' Paperoni"
+      ],
+      "students": [
+        "4A"
+      ],
+      "subject": "Economia e Diritto",
+      "duration": 2,
+      "total_hours": 4,
+      "room": "",
+      "active": true,
+      "comments": "Economia e Diritto per 4A"
+    },
+    {
+      "id": "67",
+      "teachers": [
+        "Paperon de' Paperoni"
+      ],
+      "students": [
+        "4A"
+      ],
+      "subject": "Economia e Diritto",
+      "duration": 2,
+      "total_hours": 4,
+      "room": "",
+      "active": true,
+      "comments": "Economia e Diritto per 4A"
+    },
+    {
+      "id": "68",
+      "teachers": [
+        "Paperon de' Paperoni"
+      ],
+      "students": [
+        "5A"
+      ],
+      "subject": "Economia e Diritto",
+      "duration": 2,
+      "total_hours": 4,
+      "room": "",
+      "active": true,
+      "comments": "Economia e Diritto per 5A"
+    },
+    {
+      "id": "69",
+      "teachers": [
+        "Paperon de' Paperoni"
+      ],
+      "students": [
+        "5A"
+      ],
+      "subject": "Economia e Diritto",
+      "duration": 2,
+      "total_hours": 4,
+      "room": "",
+      "active": true,
+      "comments": "Economia e Diritto per 5A"
+    },
+    {
+      "id": "70",
+      "teachers": [
+        "Paperino Paolino"
+      ],
+      "students": [
+        "1A"
+      ],
+      "subject": "Scienze Motorie",
+      "duration": 2,
+      "total_hours": 2,
+      "room": "",
+      "active": true,
+      "comments": "Scienze Motorie per 1A"
+    },
+    {
+      "id": "71",
+      "teachers": [
+        "Paperino Paolino"
+      ],
+      "students": [
+        "2A"
+      ],
+      "subject": "Scienze Motorie",
+      "duration": 2,
+      "total_hours": 2,
+      "room": "",
+      "active": true,
+      "comments": "Scienze Motorie per 2A"
+    },
+    {
+      "id": "72",
+      "teachers": [
+        "Paperino Paolino"
+      ],
+      "students": [
+        "3A"
+      ],
+      "subject": "Scienze Motorie",
+      "duration": 2,
+      "total_hours": 2,
+      "room": "",
+      "active": true,
+      "comments": "Scienze Motorie per 3A"
+    },
+    {
+      "id": "73",
+      "teachers": [
+        "Paperino Paolino"
+      ],
+      "students": [
+        "4A"
+      ],
+      "subject": "Scienze Motorie",
+      "duration": 2,
+      "total_hours": 2,
+      "room": "",
+      "active": true,
+      "comments": "Scienze Motorie per 4A"
+    },
+    {
+      "id": "74",
+      "teachers": [
+        "Paperino Paolino"
+      ],
+      "students": [
+        "5A"
+      ],
+      "subject": "Scienze Motorie",
+      "duration": 2,
+      "total_hours": 2,
+      "room": "",
+      "active": true,
+      "comments": "Scienze Motorie per 5A"
+    },
+    {
+      "id": "75",
+      "teachers": [
+        "Battista"
+      ],
+      "students": [
+        "1A"
+      ],
+      "subject": "Inglese",
+      "duration": 2,
+      "total_hours": 3,
+      "room": "",
+      "active": true,
+      "comments": "Inglese per 1A"
+    },
+    {
+      "id": "76",
+      "teachers": [
+        "Battista"
+      ],
+      "students": [
+        "1A"
+      ],
+      "subject": "Inglese",
+      "duration": 1,
+      "total_hours": 3,
+      "room": "",
+      "active": true,
+      "comments": "Inglese per 1A"
+    },
+    {
+      "id": "77",
+      "teachers": [
+        "Battista"
+      ],
+      "students": [
+        "2A"
+      ],
+      "subject": "Inglese",
+      "duration": 2,
+      "total_hours": 3,
+      "room": "",
+      "active": true,
+      "comments": "Inglese per 2A"
+    },
+    {
+      "id": "78",
+      "teachers": [
+        "Battista"
+      ],
+      "students": [
+        "2A"
+      ],
+      "subject": "Inglese",
+      "duration": 1,
+      "total_hours": 3,
+      "room": "",
+      "active": true,
+      "comments": "Inglese per 2A"
+    },
+    {
+      "id": "79",
+      "teachers": [
+        "Battista"
+      ],
+      "students": [
+        "3A"
+      ],
+      "subject": "Inglese",
+      "duration": 2,
+      "total_hours": 3,
+      "room": "",
+      "active": true,
+      "comments": "Inglese per 3A"
+    },
+    {
+      "id": "80",
+      "teachers": [
+        "Battista"
+      ],
+      "students": [
+        "3A"
+      ],
+      "subject": "Inglese",
+      "duration": 1,
+      "total_hours": 3,
+      "room": "",
+      "active": true,
+      "comments": "Inglese per 3A"
+    },
+    {
+      "id": "81",
+      "teachers": [
+        "Battista"
+      ],
+      "students": [
+        "4A"
+      ],
+      "subject": "Inglese",
+      "duration": 2,
+      "total_hours": 3,
+      "room": "",
+      "active": true,
+      "comments": "Inglese per 4A"
+    },
+    {
+      "id": "82",
+      "teachers": [
+        "Battista"
+      ],
+      "students": [
+        "4A"
+      ],
+      "subject": "Inglese",
+      "duration": 1,
+      "total_hours": 3,
+      "room": "",
+      "active": true,
+      "comments": "Inglese per 4A"
+    },
+    {
+      "id": "83",
+      "teachers": [
+        "Battista"
+      ],
+      "students": [
+        "5A"
+      ],
+      "subject": "Inglese",
+      "duration": 2,
+      "total_hours": 3,
+      "room": "",
+      "active": true,
+      "comments": "Inglese per 5A"
+    },
+    {
+      "id": "84",
+      "teachers": [
+        "Battista"
+      ],
+      "students": [
+        "5A"
+      ],
+      "subject": "Inglese",
+      "duration": 1,
+      "total_hours": 3,
+      "room": "",
+      "active": true,
+      "comments": "Inglese per 5A"
+    },
+    {
+      "id": "85",
+      "teachers": [
+        "Paperino Paolino"
+      ],
+      "students": [],
+      "subject": "Disposizione",
+      "duration": 1,
+      "total_hours": 1,
+      "room": "",
+      "active": true,
+      "comments": "Ore a disposizione Paperino (sportello sportivo)",
+      "custom_desc": "Sportello"
+    },
+    {
+      "id": "86",
+      "teachers": [
+        "Battista"
+      ],
+      "students": [],
+      "subject": "Disposizione",
+      "duration": 1,
+      "total_hours": 1,
+      "room": "",
+      "active": true,
+      "comments": "Ore a disposizione Battista (accoglienza)",
+      "custom_desc": "Accoglienza"
+    }
+  ],
+  "teacher_availability": {
+    "Archimede Pitagorico": [],
+    "Paperon de' Paperoni": [
+      "Lun|1",
+      "Lun|2",
+      "Lun|3",
+      "Lun|4",
+      "Lun|5",
+      "Lun|6"
+    ],
+    "Pico De Paperis": [],
+    "Paperino Paolino": [],
+    "Nonna Papera": [],
+    "Gastone Paperone": [],
+    "Dinamite Bla": [],
+    "Battista": []
+  },
+  "class_availability": {
+    "1A": [
+      "Lun|7",
+      "Lun|8",
+      "Mar|7",
+      "Mar|8",
+      "Mer|7",
+      "Mer|8",
+      "Gio|7",
+      "Gio|8",
+      "Ven|7",
+      "Ven|8"
+    ],
+    "2A": [
+      "Lun|7",
+      "Lun|8",
+      "Mar|7",
+      "Mar|8",
+      "Mer|7",
+      "Mer|8",
+      "Gio|7",
+      "Gio|8",
+      "Ven|7",
+      "Ven|8"
+    ],
+    "3A": [
+      "Lun|7",
+      "Lun|8",
+      "Mar|7",
+      "Mar|8",
+      "Mer|7",
+      "Mer|8",
+      "Gio|7",
+      "Gio|8",
+      "Ven|7",
+      "Ven|8"
+    ],
+    "4A": [
+      "Lun|7",
+      "Lun|8",
+      "Mar|7",
+      "Mar|8",
+      "Mer|7",
+      "Mer|8",
+      "Gio|7",
+      "Gio|8",
+      "Ven|7",
+      "Ven|8"
+    ],
+    "5A": [
+      "Lun|7",
+      "Lun|8",
+      "Mar|7",
+      "Mar|8",
+      "Mer|7",
+      "Mer|8",
+      "Gio|7",
+      "Gio|8",
+      "Ven|7",
+      "Ven|8"
+    ]
+  },
+  "constraints": {
+    "TEACHERS_MAX_GAPS_DAY": {
+      "active": true,
+      "val": 1,
+      "weight": 100,
+      "name": "Docenti: Max ore buche al giorno",
+      "category": "Docenti",
+      "desc": "Numero massimo di ore libere tra le lezioni nella stessa giornata per i docenti."
+    },
+    "TEACHERS_MAX_GAPS_WEEK": {
+      "active": true,
+      "val": 1,
+      "weight": 100,
+      "name": "Docenti: Max ore buche a settimana",
+      "category": "Docenti",
+      "desc": "Numero massimo totale di ore buche settimanali per ciascun docente."
+    },
+    "TEACHERS_MAX_GAPS_DAY_DISP": {
+      "active": false,
+      "val": 1,
+      "weight": 100,
+      "name": "Docenti con D: Max ore buche al giorno",
+      "category": "Docenti",
+      "desc": "Limite ore buche giornaliere per docenti con ore a disposizione teoriche."
+    },
+    "TEACHERS_MAX_GAPS_WEEK_DISP": {
+      "active": false,
+      "val": 4,
+      "weight": 100,
+      "name": "Docenti con D: Max ore buche a settimana",
+      "category": "Docenti",
+      "desc": "Limite ore buche settimanali per docenti con ore a disposizione teoriche."
+    },
+    "TEACHERS_MAX_GAPS_WEEK_ITIN": {
+      "active": false,
+      "val": 3,
+      "weight": 100,
+      "name": "Docenti Itineranti: Max ore buche a settimana",
+      "category": "Docenti",
+      "desc": "Limite ore buche settimanali per docenti con cattedre su più plessi."
+    },
+    "TEACHERS_MAX_RIENTRI": {
+      "active": true,
+      "val": 1,
+      "weight": 100,
+      "name": "Docenti: Max rientri pomeridiani",
+      "category": "Docenti",
+      "desc": "Massimo numero di pomeriggi (ore 7 e 8) a settimana per docente."
+    },
+    "TEACHERS_MAX_HOURS_DAY": {
+      "active": false,
+      "val": 6,
+      "weight": 100,
+      "name": "Docenti: Max ore di lezione al giorno",
+      "category": "Docenti",
+      "desc": "Carico massimo giornaliero di ore di insegnamento per ciascun docente."
+    },
+    "TEACHERS_MIN_HOURS_DAY": {
+      "active": false,
+      "val": 2,
+      "weight": 100,
+      "name": "Docenti: Minimo ore al giorno",
+      "category": "Docenti",
+      "desc": "Minimo ore di servizio nei giorni di presenza a scuola (i giorni liberi restano a 0)."
+    },
+    "CLASSE_DOCENTE_PRIME_ULTIME": {
+      "active": false,
+      "val": 50,
+      "weight": 100,
+      "name": "Stessa classe e docente: Max % prime/ultime ore",
+      "category": "Docenti",
+      "desc": "Al massimo questa % delle ore settimanali alle prime o ultime ore della classe (es. 50 = metà)."
+    },
+    "DISPOSIZIONE_MIN_PER_ORA": {
+      "active": false,
+      "val": 1,
+      "weight": 100,
+      "name": "Disposizioni: Almeno N docenti per ora",
+      "category": "Docenti",
+      "desc": "Garantisce una riserva costante di docenti a disposizione per supplenze in ogni slot."
+    },
+    "STUDENTS_MAX_GAPS_DAY": {
+      "active": true,
+      "val": 0,
+      "weight": 100,
+      "name": "Classi: Max ore buche al giorno",
+      "category": "Classi",
+      "desc": "Le classi non devono avere ore buche tra le lezioni: orario compatto continuo."
+    },
+    "STUDENTS_MAX_GAPS_WEEK": {
+      "active": true,
+      "val": 0,
+      "weight": 100,
+      "name": "Classi: Max ore buche a settimana",
+      "category": "Classi",
+      "desc": "Nessuna ora buca nell'intera settimana scolastica per gli studenti."
+    },
+    "STUDENTS_MAX_RIENTRI": {
+      "active": true,
+      "val": 1,
+      "weight": 100,
+      "name": "Classi: Max rientri pomeridiani",
+      "category": "Classi",
+      "desc": "Massimo numero di pomeriggi (ore 7 e 8) a settimana per classe."
+    },
+    "STUDENTS_EARLY_BEGIN": {
+      "active": true,
+      "val": 0,
+      "weight": 100,
+      "name": "Classi: Ingressi alla 2ª ora",
+      "category": "Classi",
+      "desc": "0 = Tutte le classi entrano sempre alla 1ª ora della mattina (nessun ingresso tardivo)."
+    },
+    "STUDENTS_MAX_HOURS_DAY": {
+      "active": false,
+      "val": 7,
+      "weight": 100,
+      "name": "Classi: Max ore al giorno",
+      "category": "Classi",
+      "desc": "Limite assoluto al monte ore giornaliero per le classi."
+    },
+    "STUDENTS_MIN_HOURS_DAY": {
+      "active": false,
+      "val": 6,
+      "weight": 100,
+      "name": "Classi: Minimo ore al giorno",
+      "category": "Classi",
+      "desc": "Es. 6 = nessuna classe esce prima della 6ª ora (si adatta per classi con meno ore)."
+    },
+    "TEACHERS_MAX_BUILDING_CHANGES_DAY": {
+      "active": false,
+      "val": 1,
+      "weight": 100,
+      "name": "Docenti: Max cambi plesso al giorno",
+      "category": "Spostamenti",
+      "desc": "Massimo numero di spostamenti tra Centrale e Succursale nello stesso giorno."
+    },
+    "TEACHERS_MIN_GAPS_BUILDING_CHANGES": {
+      "active": true,
+      "val": 1,
+      "weight": 100,
+      "name": "Docenti: Ore libere per cambio plesso",
+      "category": "Spostamenti",
+      "desc": "Almeno 1 ora libera tra due lezioni in plessi diversi per consentire lo spostamento."
+    },
+    "TEACHERS_MAX_BUILDING_CHANGES_WEEK": {
+      "active": false,
+      "val": 3,
+      "weight": 100,
+      "name": "Docenti: Max cambi plesso a settimana",
+      "category": "Spostamenti",
+      "desc": "Massimo numero complessivo di spostamenti tra plessi nell'arco della settimana."
+    }
+  },
+  "extra_time_constraints": [],
+  "extra_space_constraints": [],
+  "locked_activities": [],
+  "timetable": {
+    "1": {
+      "day": "Ven",
+      "hour": "5"
+    },
+    "2": {
+      "day": "Mer",
+      "hour": "4"
+    },
+    "3": {
+      "day": "Lun",
+      "hour": "5"
+    },
+    "4": {
+      "day": "Ven",
+      "hour": "3"
+    },
+    "5": {
+      "day": "Mer",
+      "hour": "1"
+    },
+    "6": {
+      "day": "Lun",
+      "hour": "2"
+    },
+    "7": {
+      "day": "Ven",
+      "hour": "1"
+    },
+    "8": {
+      "day": "Mar",
+      "hour": "1"
+    },
+    "9": {
+      "day": "Mer",
+      "hour": "2"
+    },
+    "10": {
+      "day": "Gio",
+      "hour": "3"
+    },
+    "11": {
+      "day": "Lun",
+      "hour": "6"
+    },
+    "12": {
+      "day": "Lun",
+      "hour": "3"
+    },
+    "13": {
+      "day": "Mer",
+      "hour": "5"
+    },
+    "14": {
+      "day": "Lun",
+      "hour": "1"
+    },
+    "15": {
+      "day": "Ven",
+      "hour": "4"
+    },
+    "16": {
+      "day": "Mer",
+      "hour": "3"
+    },
+    "17": {
+      "day": "Mar",
+      "hour": "5"
+    },
+    "18": {
+      "day": "Ven",
+      "hour": "2"
+    },
+    "19": {
+      "day": "Mer",
+      "hour": "2"
+    },
+    "20": {
+      "day": "Lun",
+      "hour": "3"
+    },
+    "21": {
+      "day": "Gio",
+      "hour": "2"
+    },
+    "22": {
+      "day": "Mer",
+      "hour": "1"
+    },
+    "23": {
+      "day": "Mar",
+      "hour": "1"
+    },
+    "24": {
+      "day": "Gio",
+      "hour": "1"
+    },
+    "25": {
+      "day": "Mar",
+      "hour": "3"
+    },
+    "26": {
+      "day": "Ven",
+      "hour": "1"
+    },
+    "27": {
+      "day": "Lun",
+      "hour": "3",
+      "room": "Laboratorio di Invenzioni"
+    },
+    "28": {
+      "day": "Gio",
+      "hour": "2",
+      "room": "Laboratorio di Invenzioni"
+    },
+    "29": {
+      "day": "Mar",
+      "hour": "3",
+      "room": "Laboratorio di Invenzioni"
+    },
+    "30": {
+      "day": "Gio",
+      "hour": "1",
+      "room": "Laboratorio di Invenzioni"
+    },
+    "31": {
+      "day": "Gio",
+      "hour": "3",
+      "room": "Laboratorio di Invenzioni"
+    },
+    "32": {
+      "day": "Mar",
+      "hour": "5",
+      "room": "Laboratorio di Invenzioni"
+    },
+    "33": {
+      "day": "Lun",
+      "hour": "1",
+      "room": "Laboratorio di Invenzioni"
+    },
+    "34": {
+      "day": "Mer",
+      "hour": "3",
+      "room": "Laboratorio di Invenzioni"
+    },
+    "35": {
+      "day": "Ven",
+      "hour": "5",
+      "room": "Laboratorio di Invenzioni"
+    },
+    "36": {
+      "day": "Mar",
+      "hour": "1",
+      "room": "Laboratorio di Invenzioni"
+    },
+    "37": {
+      "day": "Gio",
+      "hour": "3"
+    },
+    "38": {
+      "day": "Ven",
+      "hour": "3"
+    },
+    "39": {
+      "day": "Lun",
+      "hour": "6"
+    },
+    "40": {
+      "day": "Mer",
+      "hour": "3"
+    },
+    "41": {
+      "day": "Lun",
+      "hour": "1"
+    },
+    "42": {
+      "day": "Ven",
+      "hour": "1"
+    },
+    "43": {
+      "day": "Mer",
+      "hour": "5"
+    },
+    "44": {
+      "day": "Mar",
+      "hour": "2"
+    },
+    "45": {
+      "day": "Lun",
+      "hour": "5"
+    },
+    "46": {
+      "day": "Lun",
+      "hour": "3"
+    },
+    "47": {
+      "day": "Gio",
+      "hour": "2"
+    },
+    "48": {
+      "day": "Gio",
+      "hour": "5"
+    },
+    "49": {
+      "day": "Ven",
+      "hour": "2"
+    },
+    "50": {
+      "day": "Gio",
+      "hour": "5"
+    },
+    "51": {
+      "day": "Gio",
+      "hour": "3"
+    },
+    "52": {
+      "day": "Ven",
+      "hour": "5"
+    },
+    "53": {
+      "day": "Mer",
+      "hour": "3"
+    },
+    "54": {
+      "day": "Mar",
+      "hour": "3"
+    },
+    "55": {
+      "day": "Ven",
+      "hour": "1"
+    },
+    "56": {
+      "day": "Mer",
+      "hour": "5"
+    },
+    "57": {
+      "day": "Lun",
+      "hour": "1"
+    },
+    "58": {
+      "day": "Ven",
+      "hour": "3"
+    },
+    "59": {
+      "day": "Gio",
+      "hour": "1"
+    },
+    "60": {
+      "day": "Ven",
+      "hour": "1"
+    },
+    "61": {
+      "day": "Gio",
+      "hour": "1"
+    },
+    "62": {
+      "day": "Mar",
+      "hour": "1"
+    },
+    "63": {
+      "day": "Gio",
+      "hour": "2"
+    },
+    "64": {
+      "day": "Ven",
+      "hour": "3"
+    },
+    "65": {
+      "day": "Gio",
+      "hour": "5"
+    },
+    "66": {
+      "day": "Ven",
+      "hour": "5"
+    },
+    "67": {
+      "day": "Mer",
+      "hour": "1"
+    },
+    "68": {
+      "day": "Mer",
+      "hour": "3"
+    },
+    "69": {
+      "day": "Gio",
+      "hour": "3"
+    },
+    "70": {
+      "day": "Mar",
+      "hour": "1",
+      "room": "Palestra"
+    },
+    "71": {
+      "day": "Lun",
+      "hour": "5",
+      "room": "Palestra"
+    },
+    "72": {
+      "day": "Mar",
+      "hour": "3",
+      "room": "Palestra"
+    },
+    "73": {
+      "day": "Gio",
+      "hour": "5",
+      "room": "Palestra"
+    },
+    "74": {
+      "day": "Mer",
+      "hour": "1",
+      "room": "Palestra"
+    },
+    "75": {
+      "day": "Mer",
+      "hour": "1"
+    },
+    "76": {
+      "day": "Mar",
+      "hour": "3"
+    },
+    "77": {
+      "day": "Lun",
+      "hour": "3"
+    },
+    "78": {
+      "day": "Ven",
+      "hour": "5"
+    },
+    "79": {
+      "day": "Lun",
+      "hour": "1"
+    },
+    "80": {
+      "day": "Gio",
+      "hour": "1"
+    },
+    "81": {
+      "day": "Ven",
+      "hour": "3"
+    },
+    "82": {
+      "day": "Lun",
+      "hour": "5"
+    },
+    "83": {
+      "day": "Mar",
+      "hour": "5"
+    },
+    "84": {
+      "day": "Gio",
+      "hour": "2"
+    },
+    "86": {
+      "day": "Mar",
+      "hour": "4",
+      "room": ""
+    },
+    "85": {
+      "day": "Lun",
+      "hour": "4",
+      "room": ""
+    }
+  },
+  "block_rules": [
+    {
+      "id": "rule_sm_all",
+      "subject": "Scienze Motorie e Sportive II Grado",
+      "percorso": "tutti",
+      "period": "tutti",
+      "total_hours": 2,
+      "blocks": "2"
+    },
+    {
+      "id": "rule_info_all",
+      "subject": "Scienze e Tecnologie Informatiche",
+      "percorso": "tutti",
+      "period": "tutti",
+      "total_hours": 2,
+      "blocks": "2"
+    },
+    {
+      "id": "rule_rel_all",
+      "subject": "Religione",
+      "percorso": "tutti",
+      "period": "tutti",
+      "total_hours": 1,
+      "blocks": "1"
+    },
+    {
+      "id": "rule_eng_all",
+      "subject": "Lingua e Cultura Straniera (Inglese)",
+      "percorso": "tutti",
+      "period": "tutti",
+      "total_hours": 3,
+      "blocks": "1+1+1"
+    },
+    {
+      "id": "rule_fra_all",
+      "subject": "Lingua e Cultura Straniera (Francese)",
+      "percorso": "tutti",
+      "period": "tutti",
+      "total_hours": 3,
+      "blocks": "1+1+1"
+    },
+    {
+      "id": "rule_ted_all",
+      "subject": "Lingua e Cultura Straniera (Tedesco)",
+      "percorso": "tutti",
+      "period": "tutti",
+      "total_hours": 3,
+      "blocks": "1+1+1"
+    },
+    {
+      "id": "rule_spa_3h",
+      "subject": "Lingua e Cultura Straniera (Spagnolo)",
+      "percorso": "tutti",
+      "period": "tutti",
+      "total_hours": 3,
+      "blocks": "1+1+1"
+    },
+    {
+      "id": "rule_spa_2h",
+      "subject": "Lingua e Cultura Straniera (Spagnolo)",
+      "percorso": "tutti",
+      "period": "tutti",
+      "total_hours": 2,
+      "blocks": "1+1"
+    },
+    {
+      "id": "rule_arte_all",
+      "subject": "Disegno Storia Arte Istituto II Grado",
+      "percorso": "tutti",
+      "period": "tutti",
+      "total_hours": 2,
+      "blocks": "1+1"
+    },
+    {
+      "id": "rule_dir_all",
+      "subject": "Diritto",
+      "percorso": "tutti",
+      "period": "tutti",
+      "total_hours": 2,
+      "blocks": "1+1"
+    },
+    {
+      "id": "rule_lett_6h",
+      "subject": "Discipline Letterarie Istituti II Grado",
+      "percorso": "tutti",
+      "period": "tutti",
+      "total_hours": 6,
+      "blocks": "2+2+1+1"
+    },
+    {
+      "id": "rule_lett_4h",
+      "subject": "Discipline Letterarie Istituti II Grado",
+      "percorso": "tutti",
+      "period": "tutti",
+      "total_hours": 4,
+      "blocks": "2+1+1"
+    },
+    {
+      "id": "rule_matfis_7h",
+      "subject": "Matematica e Fisica",
+      "percorso": "liceo",
+      "period": "triennio",
+      "total_hours": 7,
+      "blocks": "2+2+1+1+1"
+    },
+    {
+      "id": "rule_mat_lic_5h",
+      "subject": "Matematica",
+      "percorso": "liceo",
+      "period": "biennio",
+      "total_hours": 5,
+      "blocks": "2+2+1"
+    },
+    {
+      "id": "rule_mat_lic_4h",
+      "subject": "Matematica",
+      "percorso": "liceo",
+      "period": "biennio",
+      "total_hours": 4,
+      "blocks": "2+1+1"
+    },
+    {
+      "id": "rule_mat_prof_4h",
+      "subject": "Matematica",
+      "percorso": "professionale",
+      "period": "biennio",
+      "total_hours": 4,
+      "blocks": "2+1+1"
+    },
+    {
+      "id": "rule_mat_prof_tri",
+      "subject": "Matematica",
+      "percorso": "professionale",
+      "period": "triennio",
+      "total_hours": 3,
+      "blocks": "2+1"
+    },
+    {
+      "id": "rule_sma_tec_4h",
+      "subject": "Scienze Matematiche Applicate",
+      "percorso": "tecnico",
+      "period": "biennio",
+      "total_hours": 4,
+      "blocks": "2+1+1"
+    },
+    {
+      "id": "rule_sma_tec_3h",
+      "subject": "Scienze Matematiche Applicate",
+      "percorso": "tecnico",
+      "period": "triennio",
+      "total_hours": 3,
+      "blocks": "2+1"
+    },
+    {
+      "id": "rule_scienze_5h",
+      "subject": "Scienze Naturali, Chimica e Biologia",
+      "percorso": "tutti",
+      "period": "tutti",
+      "total_hours": 5,
+      "blocks": "2+2+1"
+    },
+    {
+      "id": "rule_scienze_4h",
+      "subject": "Scienze Naturali, Chimica e Biologia",
+      "percorso": "tutti",
+      "period": "tutti",
+      "total_hours": 4,
+      "blocks": "2+1+1"
+    },
+    {
+      "id": "rule_scienze_3h",
+      "subject": "Scienze Naturali, Chimica e Biologia",
+      "percorso": "tutti",
+      "period": "tutti",
+      "total_hours": 3,
+      "blocks": "2+1"
+    },
+    {
+      "id": "rule_scienze_2h",
+      "subject": "Scienze Naturali, Chimica e Biologia",
+      "percorso": "tutti",
+      "period": "tutti",
+      "total_hours": 2,
+      "blocks": "1+1"
+    },
+    {
+      "id": "rule_scienze_1h",
+      "subject": "Scienze Naturali, Chimica e Biologia",
+      "percorso": "tutti",
+      "period": "tutti",
+      "total_hours": 1,
+      "blocks": "1"
+    },
+    {
+      "id": "rule_geo_3h",
+      "subject": "Geografia",
+      "percorso": "tutti",
+      "period": "tutti",
+      "total_hours": 3,
+      "blocks": "2+1"
+    },
+    {
+      "id": "rule_geo_2h",
+      "subject": "Geografia",
+      "percorso": "tutti",
+      "period": "tutti",
+      "total_hours": 2,
+      "blocks": "1+1"
+    },
+    {
+      "id": "rule_storiageo_3h",
+      "subject": "Storia e Geografia",
+      "percorso": "tutti",
+      "period": "tutti",
+      "total_hours": 3,
+      "blocks": "2+1"
+    },
+    {
+      "id": "rule_filoumane_4h",
+      "subject": "Filosofia e Scienze Umane",
+      "percorso": "tutti",
+      "period": "triennio",
+      "total_hours": 4,
+      "blocks": "2+1+1"
+    },
+    {
+      "id": "rule_filoumane_3h",
+      "subject": "Filosofia e Scienze Umane",
+      "percorso": "tutti",
+      "period": "tutti",
+      "total_hours": 3,
+      "blocks": "2+1"
+    },
+    {
+      "id": "rule_filoumane_2h",
+      "subject": "Filosofia e Scienze Umane",
+      "percorso": "tutti",
+      "period": "tutti",
+      "total_hours": 2,
+      "blocks": "1+1"
+    },
+    {
+      "id": "rule_filoumane_1h",
+      "subject": "Filosofia e Scienze Umane",
+      "percorso": "tutti",
+      "period": "tutti",
+      "total_hours": 1,
+      "blocks": "1"
+    },
+    {
+      "id": "rule_filostoria_5h",
+      "subject": "Filosofia e Storia",
+      "percorso": "liceo",
+      "period": "triennio",
+      "total_hours": 5,
+      "blocks": "2+2+1"
+    },
+    {
+      "id": "rule_filostoria_4h",
+      "subject": "Filosofia e Storia",
+      "percorso": "liceo",
+      "period": "triennio",
+      "total_hours": 4,
+      "blocks": "2+1+1"
+    },
+    {
+      "id": "rule_metop_4h",
+      "subject": "Metodologie Operative",
+      "percorso": "professionale",
+      "period": "tutti",
+      "total_hours": 4,
+      "blocks": "2+2"
+    },
+    {
+      "id": "rule_metop_3h",
+      "subject": "Metodologie Operative",
+      "percorso": "professionale",
+      "period": "tutti",
+      "total_hours": 3,
+      "blocks": "2+1"
+    },
+    {
+      "id": "rule_san_4h",
+      "subject": "Discipline Sanitarie",
+      "percorso": "professionale",
+      "period": "triennio",
+      "total_hours": 4,
+      "blocks": "2+1+1"
+    },
+    {
+      "id": "rule_legsan_4h",
+      "subject": "Legislazione Sanitaria",
+      "percorso": "professionale",
+      "period": "triennio",
+      "total_hours": 4,
+      "blocks": "2+1+1"
+    },
+    {
+      "id": "rule_tecnamm_4h",
+      "subject": "Tecniche Amministrative",
+      "percorso": "professionale",
+      "period": "triennio",
+      "total_hours": 4,
+      "blocks": "2+2"
+    },
+    {
+      "id": "rule_tecnamm_3h",
+      "subject": "Tecniche Amministrative",
+      "percorso": "professionale",
+      "period": "triennio",
+      "total_hours": 3,
+      "blocks": "2+1"
+    },
+    {
+      "id": "rule_dirittopol_6h",
+      "subject": "Diritto ed Economia Politica",
+      "percorso": "tecnico",
+      "period": "triennio",
+      "total_hours": 6,
+      "blocks": "2+2+1+1"
+    },
+    {
+      "id": "rule_dirittopol_5h",
+      "subject": "Diritto ed Economia Politica",
+      "percorso": "tecnico",
+      "period": "triennio",
+      "total_hours": 5,
+      "blocks": "2+2+1"
+    },
+    {
+      "id": "rule_dir_rel_5h",
+      "subject": "Diritto e Relazioni Internazionali",
+      "percorso": "tecnico",
+      "period": "triennio",
+      "total_hours": 5,
+      "blocks": "2+2+1"
+    },
+    {
+      "id": "rule_dir_rel_4h",
+      "subject": "Diritto e Relazioni Internazionali",
+      "percorso": "tecnico",
+      "period": "triennio",
+      "total_hours": 4,
+      "blocks": "2+1+1"
+    },
+    {
+      "id": "rule_az_tec_8h",
+      "subject": "Scienze Economiche - Aziendali",
+      "percorso": "tecnico",
+      "period": "triennio",
+      "total_hours": 8,
+      "blocks": "2+2+2+2"
+    },
+    {
+      "id": "rule_az_tec_7h",
+      "subject": "Scienze Economiche - Aziendali",
+      "percorso": "tecnico",
+      "period": "triennio",
+      "total_hours": 7,
+      "blocks": "2+2+2+1"
+    },
+    {
+      "id": "rule_az_tec_6h",
+      "subject": "Scienze Economiche - Aziendali",
+      "percorso": "tecnico",
+      "period": "triennio",
+      "total_hours": 6,
+      "blocks": "2+2+1+1"
+    },
+    {
+      "id": "rule_az_tec_5h",
+      "subject": "Scienze Economiche - Aziendali",
+      "percorso": "tecnico",
+      "period": "triennio",
+      "total_hours": 5,
+      "blocks": "2+2+1"
+    },
+    {
+      "id": "rule_az_tec_2h",
+      "subject": "Scienze Economiche - Aziendali",
+      "percorso": "tecnico",
+      "period": "biennio",
+      "total_hours": 2,
+      "blocks": "1+1"
+    },
+    {
+      "id": "rule_ita_4h",
+      "subject": "Italiano",
+      "percorso": "tutti",
+      "period": "tutti",
+      "total_hours": 4,
+      "blocks": "2+1+1"
+    },
+    {
+      "id": "rule_fis_2h",
+      "subject": "Fisica",
+      "percorso": "tutti",
+      "period": "tutti",
+      "total_hours": 2,
+      "blocks": "1+1"
+    },
+    {
+      "id": "rule_mac_10h",
+      "subject": "Italiano Latino Storia e Geografia",
+      "percorso": "tutti",
+      "period": "tutti",
+      "total_hours": 10,
+      "blocks": "2+2+2+2+2"
+    },
+    {
+      "id": "rule_mac_7h_a",
+      "subject": "Italiano Storia e Geografia",
+      "percorso": "tutti",
+      "period": "tutti",
+      "total_hours": 7,
+      "blocks": "2+2+2+1"
+    },
+    {
+      "id": "rule_mac_7h_b",
+      "subject": "Italiano e Latino",
+      "percorso": "tutti",
+      "period": "tutti",
+      "total_hours": 7,
+      "blocks": "2+2+2+1"
+    }
+  ],
+  "buildings": [
+    {
+      "name": "Centrale",
+      "short_code": "C",
+      "comments": ""
+    },
+    {
+      "name": "Succursale",
+      "short_code": "S",
+      "comments": ""
+    }
+  ],
+  "parameters": {
+    "Nome istituto": "Liceo & Tecnico \"Pico De Paperis\" - Paperopoli",
+    "Commenti": "Orario configurato con SmartTimetable Suite FET",
+    "Nome file .fet": "ParametriOrario",
+    "Versione FET dichiarata": "7.12.0",
+    "Crea aula per classi senza aula (SI/NO)": "SI",
+    "Peso aula classe %": 100,
+    "Nomi ore in FET con orario (SI/NO)": "SI",
+    "Le classi non cambiano plesso durante la giornata (SI/NO)": "SI",
+    "Aule di appoggio automatiche (SI/NO)": "SI",
+    "Intervalli come righe dell'orario FET (SI/NO)": "SI",
+    "Min ore/giorno docenti: conta anche le ore a disposizione (SI/NO)": "NO",
+    "Ore cattedra completa": 18,
+    "Cattedra completa: giorni minimi di presenza": 5,
+    "Aule libere di riserva in ogni ora (Centrale)": 0,
+    "Docenti: ore preferite nel giorno (PRIME/ULTIME/INDIFFERENTE)": "INDIFFERENTE",
+    "Docenti: distribuzione nella settimana (COMPATTA/INDIFFERENTE)": "INDIFFERENTE",
+    "Peso delle preferenze dei docenti %": 60,
+    "Docenti 'con D' per i limiti di ore buche: almeno N ore a disposizione": 3,
+    "Ore a disposizione: tutte dopo FET (SI/NO)": "NO",
+    "Peso delle preferenze delle materie %": 70
+  },
+  "accorpamenti_rules": [
+    {
+      "id": "ita_lat_sto_geo",
+      "name": "Italiano Latino Storia e Geografia",
+      "components": [
+        "Italiano",
+        "Latino",
+        "Storia e Geografia"
+      ],
+      "active": true
+    },
+    {
+      "id": "ita_lat",
+      "name": "Italiano Latino",
+      "components": [
+        "Italiano",
+        "Latino"
+      ],
+      "active": true
+    },
+    {
+      "id": "ita_sto_geo",
+      "name": "Italiano Storia e Geografia",
+      "components": [
+        "Italiano",
+        "Storia e Geografia"
+      ],
+      "active": true
+    },
+    {
+      "id": "dir_econ",
+      "name": "Diritto ed Economia Politica",
+      "components": [
+        "Diritto",
+        "Economia Politica"
+      ],
+      "active": true
+    },
+    {
+      "id": "dir_rel_int",
+      "name": "Diritto e Relazioni Internazionali",
+      "components": [
+        "Diritto",
+        "Relazioni Internazionali"
+      ],
+      "active": true
+    }
+  ],
+  "section_percorsi": {
+    "A": "tecnico",
+    "B": "tecnico",
+    "C": "liceo",
+    "D": "liceo",
+    "E": "tecnico",
+    "F": "tecnico",
+    "G": "professionale",
+    "H": "professionale",
+    "L": "liceo"
+  },
+  "has_timetable": true,
+  "config_name": "Configurazione Corrente"
+}
