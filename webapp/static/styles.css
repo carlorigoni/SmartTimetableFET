@@ -3668,91 +3668,176 @@ input:checked + .slider:before {
     margin-right: 8px;
   }
 
-  .sidebar-wrapper {
-    width: 0 !important;
-    position: static !important;
+  /* Backdrop: overlay che oscura e sfoca SOLO il contenuto principale */
+  .sidebar-backdrop {
+    z-index: 998 !important;
+    position: fixed !important;
   }
 
+  .sidebar-wrapper {
+    width: 0 !important;
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 1000 !important;
+    pointer-events: none !important;
+  }
+
+  .sidebar-wrapper .sidebar,
   .sidebar {
     position: fixed !important;
     top: 0;
     left: 0;
     bottom: 0;
-    width: 270px !important;
-    z-index: 1000 !important;
+    width: 280px !important;
+    max-width: 85vw !important;
+    background: #ffffff !important;
+    z-index: 1001 !important;
     transform: translateX(-100%) !important;
     box-shadow: none !important;
     transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    pointer-events: auto !important;
+    opacity: 1 !important;
+    overflow-y: auto !important;
   }
 
+  .sidebar-wrapper .sidebar.mobile-open,
   .sidebar.mobile-open {
     transform: translateX(0) !important;
-    box-shadow: 4px 0 28px rgba(0, 0, 0, 0.25) !important;
+    box-shadow: 6px 0 32px rgba(15, 23, 42, 0.35) !important;
+    background: #ffffff !important;
+    opacity: 1 !important;
   }
 
-  /* Quando il drawer è aperto su mobile, mostra sempre etichette complete e controlli */
+  /* Disattiva menu flyout flottante su mobile */
   .rail-flyout-popover,
-  .rail-submenu-indicator {
+  .rail-submenu-indicator,
+  .sidebar.mobile-open .rail-submenu-indicator,
+  .sidebar-wrapper .sidebar.mobile-open .rail-submenu-indicator,
+  .sidebar-wrapper.collapsed .sidebar.mobile-open .rail-submenu-indicator {
     display: none !important;
   }
 
-  .sidebar-titles,
-  .nav-group-title,
-  .nav-label,
-  .footer-ver-tag,
-  .status-indicator-text {
-    display: block !important;
-  }
-
-  .nav-group-icon,
-  .nav-group-chevron,
-  .footer-info-btn {
-    display: inline-flex !important;
-  }
-
-  .sidebar-brand {
-    display: flex !important;
-  }
-
-  .sidebar-header {
+  /* Header e Brand sempre visibili e nitidi nel Drawer mobile */
+  .sidebar.mobile-open .sidebar-header,
+  .sidebar-wrapper .sidebar.mobile-open .sidebar-header,
+  .sidebar-wrapper.collapsed .sidebar.mobile-open .sidebar-header {
+    height: 56px !important;
     padding: 0 14px !important;
+    display: flex !important;
+    align-items: center !important;
     justify-content: space-between !important;
+  }
+
+  .sidebar.mobile-open .sidebar-brand,
+  .sidebar-wrapper .sidebar.mobile-open .sidebar-brand,
+  .sidebar-wrapper.collapsed .sidebar.mobile-open .sidebar-brand {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+  }
+
+  .sidebar.mobile-open .sidebar-titles,
+  .sidebar-wrapper .sidebar.mobile-open .sidebar-titles,
+  .sidebar-wrapper.collapsed .sidebar.mobile-open .sidebar-titles {
+    display: flex !important;
+    flex-direction: column !important;
   }
 
   .sidebar-pin-btn {
-    display: none !important; /* Non necessario su mobile */
-  }
-
-  .sidebar.mobile-open .nav-group-header {
-    width: calc(100% - 16px) !important;
-    height: 38px !important;
-    margin: 2px 8px !important;
-    padding: 0 12px !important;
-    border-radius: 19px !important;
-    justify-content: space-between !important;
-  }
-
-  .sidebar.mobile-open .nav-group:not(.collapsed) .nav-group-items {
-    display: flex !important;
-  }
-
-  .sidebar.mobile-open .nav-group.collapsed .nav-group-items {
     display: none !important;
   }
 
-  .nav-item {
+  /* Voci di navigazione con etichetta estesa ben leggibile */
+  .sidebar.mobile-open .nav-item,
+  .sidebar-wrapper .sidebar.mobile-open .nav-item,
+  .sidebar-wrapper.collapsed .sidebar.mobile-open .nav-item {
     width: calc(100% - 16px) !important;
-    height: 40px !important;
+    height: 42px !important;
     margin: 2px 8px !important;
     padding: 0 14px !important;
     justify-content: flex-start !important;
+    border-radius: 21px !important;
+  }
+
+  .sidebar.mobile-open .nav-item .nav-label,
+  .sidebar-wrapper .sidebar.mobile-open .nav-item .nav-label,
+  .sidebar-wrapper.collapsed .sidebar.mobile-open .nav-item .nav-label {
+    display: block !important;
+    font-size: 13.5px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  .sidebar.mobile-open .nav-item .badge,
+  .sidebar.mobile-open .nav-item .badge-pending-count,
+  .sidebar-wrapper .sidebar.mobile-open .nav-item .badge,
+  .sidebar-wrapper .sidebar.mobile-open .nav-item .badge-pending-count,
+  .sidebar-wrapper.collapsed .sidebar.mobile-open .nav-item .badge,
+  .sidebar-wrapper.collapsed .sidebar.mobile-open .nav-item .badge-pending-count {
+    display: inline-block !important;
+  }
+
+  /* Intestazioni di gruppo con titolo e chevron */
+  .sidebar.mobile-open .nav-group-header,
+  .sidebar-wrapper .sidebar.mobile-open .nav-group-header,
+  .sidebar-wrapper.collapsed .sidebar.mobile-open .nav-group-header {
+    width: calc(100% - 16px) !important;
+    height: 40px !important;
+    margin: 3px 8px !important;
+    padding: 0 14px !important;
+    justify-content: space-between !important;
     border-radius: 20px !important;
   }
 
-  .nav-item .nav-label,
-  .nav-item .badge,
-  .nav-item .badge-pending-count {
-    display: inline-block !important;
+  .sidebar.mobile-open .nav-group-title,
+  .sidebar-wrapper .sidebar.mobile-open .nav-group-title,
+  .sidebar-wrapper.collapsed .sidebar.mobile-open .nav-group-title {
+    display: block !important;
+    font-size: 12.5px !important;
+  }
+
+  .sidebar.mobile-open .nav-group-chevron,
+  .sidebar-wrapper .sidebar.mobile-open .nav-group-chevron,
+  .sidebar-wrapper.collapsed .sidebar.mobile-open .nav-group-chevron {
+    display: inline-flex !important;
+  }
+
+  .sidebar.mobile-open .nav-group:not(.collapsed) .nav-group-items,
+  .sidebar-wrapper .sidebar.mobile-open .nav-group:not(.collapsed) .nav-group-items,
+  .sidebar-wrapper.collapsed .sidebar.mobile-open .nav-group:not(.collapsed) .nav-group-items {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  .sidebar.mobile-open .nav-group.collapsed .nav-group-items,
+  .sidebar-wrapper .sidebar.mobile-open .nav-group.collapsed .nav-group-items,
+  .sidebar-wrapper.collapsed .sidebar.mobile-open .nav-group.collapsed .nav-group-items {
+    display: none !important;
+  }
+
+  /* Footer nel mobile drawer */
+  .sidebar.mobile-open .sidebar-footer,
+  .sidebar-wrapper .sidebar.mobile-open .sidebar-footer,
+  .sidebar-wrapper.collapsed .sidebar.mobile-open .sidebar-footer {
+    height: 44px !important;
+    padding: 0 14px !important;
+    justify-content: space-between !important;
+    display: flex !important;
+  }
+
+  .sidebar.mobile-open .footer-ver-tag,
+  .sidebar.mobile-open .footer-info-btn,
+  .sidebar.mobile-open .status-indicator-text,
+  .sidebar-wrapper .sidebar.mobile-open .footer-ver-tag,
+  .sidebar-wrapper .sidebar.mobile-open .footer-info-btn,
+  .sidebar-wrapper .sidebar.mobile-open .status-indicator-text,
+  .sidebar-wrapper.collapsed .sidebar.mobile-open .footer-ver-tag,
+  .sidebar-wrapper.collapsed .sidebar.mobile-open .footer-info-btn,
+  .sidebar-wrapper.collapsed .sidebar.mobile-open .status-indicator-text {
+    display: inline-flex !important;
   }
 
   .content-body {

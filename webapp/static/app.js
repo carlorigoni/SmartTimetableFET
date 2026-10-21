@@ -22,7 +22,7 @@ let pollSolverTimer = null;
 let currentSolverRunning = false;
 
 // --- VERSIONE E IDENTITÀ APPLICATIVA ---
-const APP_VERSION = '1.4.5';
+const APP_VERSION = '1.4.6';
 const FET_VERSION = '7.12.0';
 const APP_AUTHOR = 'Carlo Rigoni';
 
@@ -1229,10 +1229,14 @@ function initSidebarResponsive() {
 
 function handleSidebarResize() {
   const sb = document.getElementById('appSidebar');
+  const wrapper = document.getElementById('sidebarWrapper');
   const backdrop = document.getElementById('sidebarBackdrop');
-  if (window.innerWidth >= 768) {
+  if (window.innerWidth > 768) {
     if (sb) sb.classList.remove('mobile-open');
+    if (wrapper) wrapper.classList.remove('mobile-open');
     if (backdrop) backdrop.classList.remove('active');
+    const saved = localStorage.getItem('sidebar_collapsed');
+    applySidebarState(saved !== '0');
   }
 }
 
@@ -1260,15 +1264,19 @@ function toggleSidebarPin(forcePinned) {
   const backdrop = document.getElementById('sidebarBackdrop');
   if (!sb) return;
 
-  if (window.innerWidth < 768) {
+  if (window.innerWidth <= 768) {
     // Modalità Mobile: Drawer Overlay con Backdrop
     const shouldOpen = (forcePinned !== undefined) ? forcePinned : !sb.classList.contains('mobile-open');
     if (shouldOpen) {
       sb.classList.add('mobile-open');
+      if (wrapper) {
+        wrapper.classList.add('mobile-open');
+        wrapper.classList.remove('collapsed');
+      }
+      sb.classList.remove('collapsed');
       if (backdrop) backdrop.classList.add('active');
     } else {
-      sb.classList.remove('mobile-open');
-      if (backdrop) backdrop.classList.remove('active');
+      closeMobileSidebar();
     }
     return;
   }
@@ -1287,9 +1295,18 @@ function toggleSidebar(forceState) {
 
 function closeMobileSidebar() {
   const sb = document.getElementById('appSidebar');
+  const wrapper = document.getElementById('sidebarWrapper');
   const backdrop = document.getElementById('sidebarBackdrop');
   if (sb) sb.classList.remove('mobile-open');
+  if (wrapper) wrapper.classList.remove('mobile-open');
   if (backdrop) backdrop.classList.remove('active');
+  if (window.innerWidth <= 768) {
+    const saved = localStorage.getItem('sidebar_collapsed');
+    if (saved !== '0') {
+      if (wrapper) wrapper.classList.add('collapsed');
+      if (sb) sb.classList.add('collapsed');
+    }
+  }
 }
 
 // --- MODAL INFORMAZIONI SU SMARTTIMETABLE, CREDITI & CONFORMITÀ GDPR ---
