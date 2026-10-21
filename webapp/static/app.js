@@ -22,7 +22,7 @@ let pollSolverTimer = null;
 let currentSolverRunning = false;
 
 // --- VERSIONE E IDENTITÀ APPLICATIVA ---
-const APP_VERSION = '1.4.9';
+const APP_VERSION = '1.4.10';
 const FET_VERSION = '7.12.0';
 const APP_AUTHOR = 'Carlo Rigoni';
 
@@ -8968,10 +8968,13 @@ async function renderConstraints() {
         <div>
           <div class="card-title">⚡ Regole e Vincoli Rigidi di Calcolo FET</div>
           <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">
-            Regole matematiche applicate al solutore FET per compattare l'orario, azzerare le ore buche e gestire i trasferimenti tra plessi (${activeCount} vincoli attivi su ${Object.keys(cons).length}).
+            Regole matematiche applicate al solutore FET per compattare l'orario, azzerare le ore buche e gestire i trasferimenti tra plessi (<span id="constraintSubtitleCount">${activeCount} vincoli attivi su ${Object.keys(cons).length}</span>).
           </div>
         </div>
-        <button class="btn btn-primary" onclick="saveConstraintsSettings()">💾 Salva Vincoli FET</button>
+        <div id="constraintAutoSaveBadge" style="display:inline-flex;align-items:center;gap:7px;background:#f0fdf4;border:1px solid #bbf7d0;padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;color:#16a34a;box-shadow:0 1px 2px rgba(0,0,0,0.04);transition:all 0.2s ease;">
+          <span id="constraintSaveDot" style="width:8px;height:8px;border-radius:50%;background:#16a34a;display:inline-block;"></span>
+          <span id="constraintSaveText">Salvato in tempo reale</span>
+        </div>
       </div>
     </div>
 
@@ -9011,10 +9014,10 @@ async function renderConstraints() {
             <div class="constraint-ctrls">
               <div style="display:flex;align-items:center;gap:8px;">
                 <label class="switch">
-                  <input type="checkbox" id="c_active_${key}" ${c.active ? 'checked' : ''}>
+                  <input type="checkbox" id="c_active_${key}" ${c.active ? 'checked' : ''} onchange="autoSaveConstraintSingle('${key}')">
                   <span class="slider"></span>
                 </label>
-                <span style="font-size:12px;font-weight:600;color:${c.active ? 'var(--primary)' : 'var(--text-muted)'};">
+                <span id="c_active_label_${key}" style="font-size:12px;font-weight:600;color:${c.active ? 'var(--primary)' : 'var(--text-muted)'};">
                   ${c.active ? 'Attivo' : 'Disattivo'}
                 </span>
               </div>
@@ -9022,7 +9025,7 @@ async function renderConstraints() {
               <div style="display:flex;align-items:center;gap:12px;">
                 <div style="display:flex;align-items:center;gap:4px;">
                   <span style="font-size:11px;color:var(--text-muted);">Parametro:</span>
-                  <input type="number" id="c_val_${key}" class="num-input" value="${c.val !== undefined ? c.val : 0}" min="0" max="100">
+                  <input type="number" id="c_val_${key}" class="num-input" value="${c.val !== undefined ? c.val : 0}" min="0" max="100" oninput="debounceAutoSaveConstraint('${key}')" onchange="autoSaveConstraintSingle('${key}')">
                 </div>
 
                 <div style="display:flex;align-items:center;gap:4px;">
@@ -9032,7 +9035,7 @@ async function renderConstraints() {
                     </span>
                   ` : `
                     <span style="font-size:11px;color:var(--text-muted);" title="Percentuale peso nel solutore FET (0-100%)">Peso:</span>
-                    <input type="number" id="c_weight_${key}" class="num-input" value="${weightVal}" min="0" max="100" style="width:58px;" title="Percentuale peso vincolo FET (Weight_Percentage)">
+                    <input type="number" id="c_weight_${key}" class="num-input" value="${weightVal}" min="0" max="100" style="width:58px;" title="Percentuale peso vincolo FET (Weight_Percentage)" oninput="debounceAutoSaveConstraint('${key}')" onchange="autoSaveConstraintSingle('${key}')">
                     <span style="font-size:11px;color:var(--text-muted);">%</span>
                   `}
                 </div>
@@ -9050,34 +9053,119 @@ function filterConstraints(cat) {
   renderConstraints();
 }
 
-async function saveConstraintsSettings() {
-  const cons = stateData.settings?.constraints || {};
-  const updatedConstraints = {};
+let constraintAutoSaveTimer = null;
 
-  for (const key of Object.keys(cons)) {
-    const actEl = document.getElementById(`c_active_${key}`);
-    const valEl = document.getElementById(`c_val_${key}`);
-    const weightEl = document.getElementById(`c_weight_${key}`);
+function setConstraintSaveStatus(status) {
+  const badge = document.getElementById('constraintAutoSaveBadge');
+  const dot = document.getElementById('constraintSaveDot');
+  const text = document.getElementById('constraintSaveText');
+  if (!badge || !dot || !text) return;
 
-    updatedConstraints[key] = {
-      ...cons[key],
-      active: actEl ? actEl.checked : cons[key].active,
-      val: valEl ? parseInt(valEl.value, 10) : cons[key].val,
-      weight: weightEl ? parseInt(weightEl.value, 10) : (cons[key].weight !== undefined ? cons[key].weight : 100)
-    };
+  if (status === 'saving') {
+    badge.style.background = '#fef3c7';
+    badge.style.borderColor = '#fde68a';
+    badge.style.color = '#b45309';
+    dot.style.background = '#f59e0b';
+    text.innerText = 'Salvataggio in corso...';
+  } else if (status === 'saved') {
+    badge.style.background = '#f0fdf4';
+    badge.style.borderColor = '#bbf7d0';
+    badge.style.color = '#16a34a';
+    dot.style.background = '#16a34a';
+    text.innerText = 'Salvato in tempo reale';
+  } else if (status === 'error') {
+    badge.style.background = '#fef2f2';
+    badge.style.borderColor = '#fecaca';
+    badge.style.color = '#dc2626';
+    dot.style.background = '#dc2626';
+    text.innerText = 'Errore salvataggio';
   }
+}
 
+function updateConstraintSubtitleCount() {
+  const cons = stateData.settings?.constraints || {};
+  const activeCount = Object.values(cons).filter(c => c.active).length;
+  const countEl = document.getElementById('constraintSubtitleCount');
+  if (countEl) {
+    countEl.innerText = `${activeCount} vincoli attivi su ${Object.keys(cons).length}`;
+  }
+}
+
+function autoSaveConstraintSingle(key) {
+  if (constraintAutoSaveTimer) {
+    clearTimeout(constraintAutoSaveTimer);
+    constraintAutoSaveTimer = null;
+  }
+  const actEl = document.getElementById(`c_active_${key}`);
+  const labelEl = document.getElementById(`c_active_label_${key}`);
+  if (actEl && labelEl) {
+    labelEl.innerText = actEl.checked ? 'Attivo' : 'Disattivo';
+    labelEl.style.color = actEl.checked ? 'var(--primary)' : 'var(--text-muted)';
+  }
+  executeAutoSaveConstraint(key);
+}
+
+function debounceAutoSaveConstraint(key) {
+  setConstraintSaveStatus('saving');
+  if (constraintAutoSaveTimer) clearTimeout(constraintAutoSaveTimer);
+  constraintAutoSaveTimer = setTimeout(() => {
+    executeAutoSaveConstraint(key);
+  }, 400);
+}
+
+async function executeAutoSaveConstraint(key) {
+  if (!stateData.settings) stateData.settings = {};
+  if (!stateData.settings.constraints) stateData.settings.constraints = {};
+  const currentConst = stateData.settings.constraints[key] || {};
+
+  const actEl = document.getElementById(`c_active_${key}`);
+  const valEl = document.getElementById(`c_val_${key}`);
+  const weightEl = document.getElementById(`c_weight_${key}`);
+
+  const updatedItem = {
+    ...currentConst,
+    active: actEl ? actEl.checked : (currentConst.active !== undefined ? currentConst.active : true),
+    val: valEl ? (parseInt(valEl.value, 10) || 0) : (currentConst.val !== undefined ? currentConst.val : 0),
+    weight: weightEl ? (parseInt(weightEl.value, 10) || 0) : (currentConst.weight !== undefined ? currentConst.weight : 100)
+  };
+
+  stateData.settings.constraints[key] = updatedItem;
+  updateConstraintSubtitleCount();
+  setConstraintSaveStatus('saving');
+
+  try {
+    const res = await fetch('/api/settings', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        constraints: {
+          [key]: updatedItem
+        }
+      })
+    });
+
+    if (res.ok) {
+      setConstraintSaveStatus('saved');
+    } else {
+      setConstraintSaveStatus('error');
+    }
+  } catch (err) {
+    console.error('Errore durante auto-save vincolo FET:', err);
+    setConstraintSaveStatus('error');
+  }
+}
+
+async function saveConstraintsSettings() {
+  // Funzione di retrocompatibilità
+  const cons = stateData.settings?.constraints || {};
   const res = await fetch('/api/settings', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ constraints: updatedConstraints })
+    body: JSON.stringify({ constraints: cons })
   });
-
   if (res.ok) {
+    setConstraintSaveStatus('saved');
     showToast('Vincoli FET aggiornati con successo!');
-    renderConstraints();
-  } else {
-    alert('Errore durante il salvataggio dei vincoli.');
   }
 }
 
