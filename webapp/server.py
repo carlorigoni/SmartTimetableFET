@@ -250,17 +250,14 @@ class SmartTimetableHandler(BaseHTTPRequestHandler):
         if path == "/" or path == "/index.html":
             self._serve_file(os.path.join(STATIC_DIR, "index.html"), "text/html; charset=utf-8")
             return
-        elif path == "/styles.css" or path == "/static/styles.css":
-            self._serve_file(os.path.join(STATIC_DIR, "styles.css"), "text/css; charset=utf-8")
-            return
-        elif path == "/app.js" or path == "/static/app.js":
-            self._serve_file(os.path.join(STATIC_DIR, "app.js"), "application/javascript; charset=utf-8")
-            return
-        elif path == "/favicon.svg" or path == "/static/favicon.svg":
-            self._serve_file(os.path.join(STATIC_DIR, "favicon.svg"), "image/svg+xml")
-            return
-        elif path == "/favicon.ico" or path == "/static/favicon.ico":
-            self._serve_file(os.path.join(STATIC_DIR, "favicon.ico"), "image/x-icon")
+        
+        # Gestione generica file statici in STATIC_DIR (css, js, favicon ico/svg/png, apple-touch-icon)
+        clean_path = path.lstrip("/")
+        if clean_path.startswith("static/"):
+            clean_path = clean_path[len("static/"):]
+        target_static_file = os.path.abspath(os.path.join(STATIC_DIR, clean_path))
+        if os.path.commonpath([target_static_file, os.path.abspath(STATIC_DIR)]) == os.path.abspath(STATIC_DIR) and os.path.isfile(target_static_file):
+            self._serve_file(target_static_file)
             return
 
         # --- PUBLIC & AUTH API ---
