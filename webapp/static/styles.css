@@ -110,28 +110,153 @@ body {
   pointer-events: auto;
 }
 
-/* Sidebar */
+/* ==========================================================================
+   GOOGLE WORKSPACE / CLASSROOM NAVIGATION DRAWER
+   Standard Material Design 3 con Hamburger, Fissaggio Aperto/Chiuso (Pin)
+   e Hover Flyout Fluido Senza Layout Shift (Zero Page Movement)
+   ========================================================================== */
+
+/* Layout Wrapper: Riserva lo spazio di griglia fisso evitando scatti alla pagina */
+.sidebar-wrapper {
+  position: relative;
+  width: 256px;
+  flex-shrink: 0;
+  height: 100%;
+  transition: width 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: visible;
+  z-index: 100;
+}
+
+.sidebar-wrapper.collapsed {
+  width: 68px;
+}
+
+/* Sidebar Drawer */
 .sidebar {
-  width: 250px;
+  position: relative;
+  width: 256px;
+  height: 100%;
   background: var(--bg-sidebar);
   border-right: 1px solid var(--border);
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
   user-select: none;
-  transition: width 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
+  transition: width 0.22s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.22s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 10;
+  overflow-x: hidden;
+  overflow-y: hidden;
 }
 
+/* Modalità Mini-Rail Collapsed (Fissato Chiuso) */
+.sidebar-wrapper.collapsed .sidebar,
+.sidebar.collapsed {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 68px;
+  border-right: 1px solid var(--border);
+  box-shadow: none;
+  z-index: 900;
+}
+
+/* HOVER FLYOUT: Quando è chiuso e l'utente passa il mouse, si espande fluidamente 
+   in overlay sopra la pagina SENZA spostare il contenuto principale (Zero Layout Shift) */
+.sidebar-wrapper.collapsed:hover .sidebar {
+  width: 256px;
+  box-shadow: 0 4px 24px rgba(15, 23, 42, 0.16), 0 1px 4px rgba(15, 23, 42, 0.08);
+  border-right-color: transparent;
+  z-index: 1050;
+}
+
+/* Google Hamburger Button (Stile Google Classroom / Workspace) */
+.google-hamburger-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #5f6368;
+  flex-shrink: 0;
+  transition: background-color 0.18s ease, color 0.18s ease, transform 0.15s ease;
+  padding: 0;
+  outline: none;
+}
+
+.google-hamburger-btn:hover {
+  background-color: rgba(60, 64, 67, 0.08);
+  color: #202124;
+}
+
+.google-hamburger-btn:active {
+  background-color: rgba(60, 64, 67, 0.16);
+  transform: scale(0.94);
+}
+
+.google-hamburger-btn .hamburger-svg {
+  fill: currentColor;
+  display: block;
+}
+
+/* Pulsante Pin (Fissaggio Aperto/Chiuso) */
+.sidebar-pin-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #70757a;
+  flex-shrink: 0;
+  transition: all 0.18s ease;
+  padding: 0;
+  outline: none;
+}
+
+.sidebar-pin-btn:hover {
+  background-color: rgba(60, 64, 67, 0.08);
+  color: #1a73e8;
+}
+
+.sidebar-pin-btn .pin-svg {
+  fill: currentColor;
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease;
+}
+
+.sidebar-pin-btn.pinned {
+  background-color: #e8f0fe;
+  color: #1a73e8;
+}
+
+.sidebar-pin-btn.pinned .pin-svg {
+  transform: rotate(0deg);
+  opacity: 1;
+}
+
+.sidebar-pin-btn:not(.pinned) .pin-svg {
+  transform: rotate(45deg);
+  opacity: 0.7;
+}
+
+/* Header della Sidebar */
 .sidebar-header {
-  padding: 14px 16px;
+  padding: 0 12px;
   border-bottom: 1px solid var(--border-light);
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 8px;
   min-height: 64px;
+  height: 64px;
+  box-sizing: border-box;
 }
 
 .sidebar-brand {
@@ -139,6 +264,7 @@ body {
   align-items: center;
   gap: 10px;
   overflow: hidden;
+  flex: 1;
 }
 
 .sidebar-logo {
@@ -152,9 +278,10 @@ body {
 }
 
 .sidebar-title {
-  font-size: 15px;
+  font-size: 14.5px;
   font-weight: 700;
   color: var(--primary-dark);
+  letter-spacing: -0.2px;
 }
 
 .sidebar-subtitle {
@@ -162,205 +289,142 @@ body {
   color: var(--text-muted);
 }
 
-.sidebar-toggle-btn {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  width: 28px;
-  height: 28px;
-  display: flex;
-  align-items: center;
+/* Comportamento Header in stato compresso vs hover/aperto */
+.sidebar-wrapper.collapsed:not(:hover) .sidebar-header {
+  padding: 0;
   justify-content: center;
-  cursor: pointer;
-  color: var(--text-muted);
-  font-size: 11px;
-  transition: all 0.2s ease;
-  flex-shrink: 0;
 }
 
-.sidebar-toggle-btn:hover {
-  background: var(--primary-light);
-  color: var(--primary);
-  border-color: var(--primary);
-}
-
-.toggle-icon {
-  display: inline-block;
-  transition: transform 0.22s ease;
-}
-
-/* Collapsed Sidebar */
-.sidebar.collapsed {
-  width: 68px;
-}
-
-.sidebar.collapsed .sidebar-titles,
-.sidebar.collapsed .nav-section-title,
-.sidebar.collapsed .nav-label,
-.sidebar.collapsed .footer-ver {
+.sidebar-wrapper.collapsed:not(:hover) .sidebar-brand,
+.sidebar-wrapper.collapsed:not(:hover) .sidebar-pin-btn {
   display: none !important;
 }
 
-.sidebar.collapsed .sidebar-header {
-  padding: 14px 8px;
-  justify-content: center;
-  flex-direction: column;
-  gap: 8px;
+.sidebar-wrapper.collapsed:hover .sidebar-header {
+  padding: 0 12px;
+  justify-content: space-between;
 }
 
-.sidebar.collapsed .sidebar-brand {
-  justify-content: center;
+.sidebar-wrapper.collapsed:hover .sidebar-brand {
+  display: flex !important;
 }
 
-.sidebar.collapsed .toggle-icon {
-  transform: rotate(180deg);
+.sidebar-wrapper.collapsed:hover .sidebar-pin-btn {
+  display: inline-flex !important;
 }
 
-.sidebar.collapsed .nav-item {
-  justify-content: center;
-  padding: 10px 0;
-  position: relative;
-}
-
-.sidebar.collapsed .nav-icon {
-  margin: 0;
-  font-size: 18px;
-  transition: transform 0.15s ease;
-}
-
-/* Indicatore di stato attivo prominente su Mini-Sidebar (Best Practice UX/UI) */
-.sidebar.collapsed .nav-item.active {
-  background-color: var(--primary-light);
-  color: var(--primary);
-  border-left: 3.5px solid var(--primary);
-  border-radius: 0 var(--radius-md) var(--radius-md) 0;
-}
-
-.sidebar.collapsed .nav-item.active .nav-icon {
-  transform: scale(1.15);
-}
-
-/* Tooltip fluttuante elegante all'hover per Mini-Sidebar Icon-Only */
-@keyframes tooltipFadeIn {
-  from { opacity: 0; transform: translateY(-50%) translateX(-4px); }
-  to { opacity: 1; transform: translateY(-50%) translateX(0); }
-}
-
-.sidebar.collapsed .nav-item:hover::after {
-  content: attr(data-tooltip);
-  position: absolute;
-  left: calc(100% + 10px);
-  top: 50%;
-  transform: translateY(-50%);
-  background: #0f172a;
-  color: #ffffff;
-  font-size: 11.5px;
-  font-weight: 600;
-  padding: 6px 12px;
-  border-radius: 6px;
-  white-space: nowrap;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.22);
-  z-index: 9999;
-  pointer-events: none;
-  animation: tooltipFadeIn 0.12s ease-out;
-}
-
-.sidebar.collapsed .nav-item:hover::before {
-  content: '';
-  position: absolute;
-  left: calc(100% + 4px);
-  top: 50%;
-  transform: translateY(-50%);
-  border: 5px solid transparent;
-  border-right-color: #0f172a;
-  z-index: 9999;
-  pointer-events: none;
-}
-
-.sidebar.collapsed .sidebar-footer {
-  padding: 10px 4px;
-  justify-content: center;
-  text-align: center;
-}
-
-.sidebar.collapsed .footer-badge-wrap {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  max-width: 58px;
-}
-
+/* Sezioni di Navigazione */
 .sidebar-nav {
-  padding: 12px 10px;
+  padding: 8px 0;
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden;
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 2px;
 }
 
 .nav-section-title {
-  font-size: 10px;
-  font-weight: 700;
+  font-size: 11px;
+  font-weight: 600;
   text-transform: uppercase;
-  color: var(--text-sub);
-  letter-spacing: 0.5px;
-  padding: 10px 10px 4px;
+  color: #5f6368;
+  letter-spacing: 0.6px;
+  padding: 12px 18px 4px;
   white-space: nowrap;
 }
 
+.sidebar-wrapper.collapsed:not(:hover) .nav-section-title {
+  display: none !important;
+}
+
+/* Voci di Menu Pill Google Material 3 */
 .nav-item {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 8px 12px;
-  border-radius: var(--radius-md);
-  color: var(--text-main);
+  gap: 12px;
+  height: 42px;
+  margin: 2px 8px;
+  padding: 0 14px;
+  border-radius: 21px;
+  color: #3c4043;
   text-decoration: none;
+  font-size: 13.5px;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: background-color 0.16s ease, color 0.16s ease;
   white-space: nowrap;
+  box-sizing: border-box;
+  user-select: none;
 }
 
 .nav-item:hover {
-  background-color: var(--bg-hover);
+  background-color: #f1f3f4;
+  color: #202124;
 }
 
 .nav-item.active {
-  background-color: var(--primary-light);
-  color: var(--primary);
+  background-color: #e8f0fe;
+  color: #1967d2;
   font-weight: 600;
 }
 
 .nav-icon {
-  font-size: 16px;
-  width: 20px;
+  font-size: 18px;
+  width: 22px;
   text-align: center;
   flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
-/* Sidebar bottom pinned section (Best Practice UX/UI per Sistema & Configurazione) */
+.nav-label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+}
+
+/* Adattamento Voci di Menu in Mini-Rail (Chiuso e non hovered) */
+.sidebar-wrapper.collapsed:not(:hover) .nav-item {
+  width: 44px;
+  height: 44px;
+  margin: 3px auto;
+  padding: 0;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.sidebar-wrapper.collapsed:not(:hover) .nav-item .nav-label,
+.sidebar-wrapper.collapsed:not(:hover) .nav-item .badge,
+.sidebar-wrapper.collapsed:not(:hover) .nav-item .badge-pending-count {
+  display: none !important;
+}
+
+.sidebar-wrapper.collapsed:not(:hover) .nav-item.active {
+  background-color: #e8f0fe;
+  color: #1967d2;
+  border-radius: 50%;
+}
+
+/* Sezione Bottom Fissata in Basso */
 .sidebar-bottom {
-  padding: 8px 10px;
+  padding: 8px 0;
   border-top: 1px solid var(--border-light);
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 2px;
   background: var(--bg-sidebar);
 }
 
-.sidebar.collapsed .sidebar-bottom {
-  padding: 8px 4px;
+.sidebar-wrapper.collapsed:not(:hover) .sidebar-bottom {
+  padding: 8px 0;
 }
 
-.sidebar.collapsed .sidebar-bottom .nav-item {
-  justify-content: center;
-  padding: 10px 0;
-}
-
+/* Footer Sidebar */
 .sidebar-footer {
-  padding: 12px 14px;
+  padding: 12px 16px;
   border-top: 1px solid var(--border-light);
   font-size: 11px;
   color: var(--text-muted);
@@ -368,6 +432,34 @@ body {
   flex-direction: column;
   gap: 6px;
   background: var(--bg-sidebar);
+}
+
+.sidebar-wrapper.collapsed:not(:hover) .sidebar-footer {
+  padding: 10px 4px;
+  justify-content: center;
+  text-align: center;
+}
+
+.sidebar-wrapper.collapsed:not(:hover) .sidebar-footer .footer-meta,
+.sidebar-wrapper.collapsed:not(:hover) .sidebar-footer .footer-ver {
+  display: none !important;
+}
+
+.sidebar-wrapper.collapsed:not(:hover) .sidebar-footer .footer-badge-wrap {
+  justify-content: center;
+}
+
+.sidebar-wrapper.collapsed:not(:hover) #sidebarStatusBadge {
+  font-size: 0;
+  padding: 5px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.sidebar-wrapper.collapsed:not(:hover) #sidebarStatusBadge::before {
+  content: '●';
+  font-size: 10px;
 }
 
 .footer-badge-wrap {
@@ -3063,63 +3155,78 @@ input:checked + .slider:before {
   border: 1px solid #bbf7d0;
 }
 
+/* Desktop: Topbar hamburger è nascosto perché c'è già il pulsante Google nel menu laterale */
+@media (min-width: 769px) {
+  .topbar-hamburger-btn {
+    display: none !important;
+  }
+}
+
 /* --- RESPONSIVE LAYOUT & SIDEBAR BREAKPOINTS (Standard Moderno UX/UI) --- */
 /* Mobile Drawer (< 768px) */
 @media (max-width: 768px) {
-  .topbar-mobile-btn {
+  .topbar-hamburger-btn {
     display: inline-flex !important;
-    align-items: center;
-    justify-content: center;
-    width: 34px;
-    height: 34px;
-    border-radius: var(--radius-sm);
-    border: 1px solid var(--border);
-    background: #fff;
-    cursor: pointer;
+    margin-right: 8px;
+  }
+
+  .sidebar-wrapper {
+    width: 0 !important;
+    position: static !important;
   }
 
   .sidebar {
-    position: fixed;
+    position: fixed !important;
     top: 0;
     left: 0;
     bottom: 0;
-    width: 260px !important;
-    z-index: 1000;
-    transform: translateX(-100%);
-    box-shadow: none;
-    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    width: 270px !important;
+    z-index: 1000 !important;
+    transform: translateX(-100%) !important;
+    box-shadow: none !important;
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
   }
 
   .sidebar.mobile-open {
-    transform: translateX(0);
-    box-shadow: 4px 0 28px rgba(0, 0, 0, 0.25);
+    transform: translateX(0) !important;
+    box-shadow: 4px 0 28px rgba(0, 0, 0, 0.25) !important;
   }
 
   /* Quando il drawer è aperto su mobile, mostra sempre etichette complete */
-  .sidebar.collapsed {
-    width: 260px !important;
-  }
-  .sidebar.collapsed .sidebar-titles,
-  .sidebar.collapsed .nav-section-title,
-  .sidebar.collapsed .nav-label,
-  .sidebar.collapsed .footer-ver {
+  .sidebar-titles,
+  .nav-section-title,
+  .nav-label,
+  .footer-ver,
+  .footer-meta {
     display: block !important;
   }
-  .sidebar.collapsed .sidebar-header {
-    justify-content: space-between;
-    flex-direction: row;
-    padding: 14px 16px;
+
+  .sidebar-brand {
+    display: flex !important;
   }
-  .sidebar.collapsed .nav-item {
-    justify-content: flex-start;
-    padding: 8px 12px;
+
+  .sidebar-header {
+    padding: 0 14px !important;
+    justify-content: space-between !important;
   }
-  .sidebar.collapsed .nav-item:hover::after,
-  .sidebar.collapsed .nav-item:hover::before {
-    display: none !important;
+
+  .sidebar-pin-btn {
+    display: none !important; /* Non necessario su mobile */
   }
-  .sidebar.collapsed .toggle-icon {
-    transform: none;
+
+  .nav-item {
+    width: calc(100% - 16px) !important;
+    height: 42px !important;
+    margin: 2px 8px !important;
+    padding: 0 16px !important;
+    justify-content: flex-start !important;
+    border-radius: 21px !important;
+  }
+
+  .nav-item .nav-label,
+  .nav-item .badge,
+  .nav-item .badge-pending-count {
+    display: inline-block !important;
   }
 
   .content-body {

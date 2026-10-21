@@ -31,9 +31,8 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 async function initAuth() {
-  if (localStorage.getItem('sidebar_collapsed') === '1') {
-    document.getElementById('appSidebar')?.classList.add('collapsed');
-  }
+  const savedCollapsed = localStorage.getItem('sidebar_collapsed');
+  applySidebarState(savedCollapsed === '1');
   try {
     const res = await fetch('/api/auth/me');
     const data = await res.json();
@@ -645,6 +644,38 @@ async function saveAccessConfig() {
   }
 }
 
+function applySidebarState(isCollapsed) {
+  const wrapper = document.getElementById('sidebarWrapper');
+  const sb = document.getElementById('appSidebar');
+  if (isCollapsed) {
+    wrapper?.classList.add('collapsed');
+    sb?.classList.add('collapsed');
+  } else {
+    wrapper?.classList.remove('collapsed');
+    sb?.classList.remove('collapsed');
+  }
+  updateSidebarPinUi(!isCollapsed);
+}
+
+function updateSidebarPinUi(isPinned) {
+  const pinBtn = document.getElementById('sidebarPinBtn');
+  const hamBtn = document.getElementById('sidebarHamburgerBtn');
+  if (pinBtn) {
+    if (isPinned) {
+      pinBtn.classList.add('pinned');
+      pinBtn.setAttribute('title', 'Sblocca menu (passa a compresso con espansione al passaggio del mouse)');
+      pinBtn.setAttribute('aria-label', 'Sblocca menu');
+    } else {
+      pinBtn.classList.remove('pinned');
+      pinBtn.setAttribute('title', 'Fissa menu aperto');
+      pinBtn.setAttribute('aria-label', 'Fissa menu');
+    }
+  }
+  if (hamBtn) {
+    hamBtn.setAttribute('title', isPinned ? 'Comprimi menu laterale' : 'Espandi e fissa menu laterale');
+  }
+}
+
 function initSidebarResponsive() {
   const sb = document.getElementById('appSidebar');
   if (!sb) return;
@@ -652,25 +683,17 @@ function initSidebarResponsive() {
   const saved = localStorage.getItem('sidebar_collapsed');
 
   // Gestione responsive a 3 stati:
-  // Desktop (> 1200px): default espansa (a meno che l'utente non l'abbia contratta: saved === '1')
-  // Tablet (768px - 1200px): default mini-sidebar a icone 68px (a meno che l'utente non l'abbia espansa: saved === '0')
-  // Mobile (< 768px): drawer nascosto con backdrop
+  // Desktop (> 1200px): default espansa/fissata aperta (a meno che saved === '1')
+  // Tablet (768px - 1200px): default compresso a 68px con hover espansione (a meno che saved === '0')
+  // Mobile (< 768px): drawer modale a scomparsa
   if (w > 1200) {
-    if (saved === '1') {
-      sb.classList.add('collapsed');
-    } else {
-      sb.classList.remove('collapsed');
-    }
+    const isCollapsed = (saved === '1');
+    applySidebarState(isCollapsed);
   } else if (w >= 768) {
-    if (saved === '0') {
-      sb.classList.remove('collapsed');
-    } else {
-      sb.classList.add('collapsed');
-    }
+    const isCollapsed = (saved !== '0');
+    applySidebarState(isCollapsed);
   } else {
-    sb.classList.remove('mobile-open');
-    const backdrop = document.getElementById('sidebarBackdrop');
-    if (backdrop) backdrop.classList.remove('active');
+    closeMobileSidebar();
   }
 }
 
@@ -700,14 +723,15 @@ async function loadInitialData() {
   navigate('dashboard');
 }
 
-function toggleSidebar(forceState) {
+function toggleSidebarPin(forcePinned) {
   const sb = document.getElementById('appSidebar');
+  const wrapper = document.getElementById('sidebarWrapper');
   const backdrop = document.getElementById('sidebarBackdrop');
   if (!sb) return;
 
   if (window.innerWidth < 768) {
     // Modalità Mobile: Drawer Overlay con Backdrop
-    const shouldOpen = (forceState !== undefined) ? forceState : !sb.classList.contains('mobile-open');
+    const shouldOpen = (forcePinned !== undefined) ? forcePinned : !sb.classList.contains('mobile-open');
     if (shouldOpen) {
       sb.classList.add('mobile-open');
       if (backdrop) backdrop.classList.add('active');
@@ -715,17 +739,19 @@ function toggleSidebar(forceState) {
       sb.classList.remove('mobile-open');
       if (backdrop) backdrop.classList.remove('active');
     }
-  } else {
-    // Modalità Desktop / Tablet: Mini-sidebar icon-only (68px) vs Espansa (250px)
-    const shouldCollapse = (forceState !== undefined) ? forceState : !sb.classList.contains('collapsed');
-    if (shouldCollapse) {
-      sb.classList.add('collapsed');
-      localStorage.setItem('sidebar_collapsed', '1');
-    } else {
-      sb.classList.remove('collapsed');
-      localStorage.setItem('sidebar_collapsed', '0');
-    }
+    return;
   }
+
+  // Modalità Desktop / Tablet: Toggle tra Fissato Aperto (Pinned, 256px) e Compresso con Hover (Collapsed, 68px)
+  const isCurrentlyPinned = wrapper ? !wrapper.classList.contains('collapsed') : !sb.classList.contains('collapsed');
+  const newPinnedState = (forcePinned !== undefined) ? forcePinned : !isCurrentlyPinned;
+
+  applySidebarState(!newPinnedState);
+  localStorage.setItem('sidebar_collapsed', newPinnedState ? '0' : '1');
+}
+
+function toggleSidebar(forceState) {
+  toggleSidebarPin(forceState);
 }
 
 function closeMobileSidebar() {
