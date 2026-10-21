@@ -250,11 +250,17 @@ class SmartTimetableHandler(BaseHTTPRequestHandler):
         if path == "/" or path == "/index.html":
             self._serve_file(os.path.join(STATIC_DIR, "index.html"), "text/html; charset=utf-8")
             return
-        elif path == "/styles.css":
+        elif path == "/styles.css" or path == "/static/styles.css":
             self._serve_file(os.path.join(STATIC_DIR, "styles.css"), "text/css; charset=utf-8")
             return
-        elif path == "/app.js":
+        elif path == "/app.js" or path == "/static/app.js":
             self._serve_file(os.path.join(STATIC_DIR, "app.js"), "application/javascript; charset=utf-8")
+            return
+        elif path == "/favicon.svg" or path == "/static/favicon.svg":
+            self._serve_file(os.path.join(STATIC_DIR, "favicon.svg"), "image/svg+xml")
+            return
+        elif path == "/favicon.ico" or path == "/static/favicon.ico":
+            self._serve_file(os.path.join(STATIC_DIR, "favicon.ico"), "image/x-icon")
             return
 
         # --- PUBLIC & AUTH API ---
