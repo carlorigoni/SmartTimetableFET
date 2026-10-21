@@ -22,7 +22,7 @@ let pollSolverTimer = null;
 let currentSolverRunning = false;
 
 // --- VERSIONE E IDENTITÀ APPLICATIVA ---
-const APP_VERSION = '1.4.8';
+const APP_VERSION = '1.4.9';
 const FET_VERSION = '7.12.0';
 const APP_AUTHOR = 'Carlo Rigoni';
 
@@ -1115,12 +1115,26 @@ function openRailFlyout(groupId, triggerEl, isPersistent) {
 
   requestAnimationFrame(() => {
     const popoverHeight = popover.offsetHeight || 260;
-    let top = rect.top - 4;
-    const maxTop = window.innerHeight - popoverHeight - 14;
-    if (top > maxTop) top = Math.max(10, maxTop);
-    if (top < 10) top = 10;
+    const isUpward = (groupId === 'system') || ((rect.bottom + popoverHeight - 40) > window.innerHeight);
 
-    popover.style.top = top + 'px';
+    if (isUpward) {
+      // Apertura verso l'alto (Upward / Dropup): la base del popover si allinea al fondo del pulsante icona in basso
+      const bottom = Math.max(8, window.innerHeight - rect.bottom);
+      popover.style.top = 'auto';
+      popover.style.bottom = bottom + 'px';
+      popover.classList.add('popover-upward');
+    } else {
+      // Apertura standard verso il basso
+      let top = rect.top - 4;
+      const maxTop = window.innerHeight - popoverHeight - 14;
+      if (top > maxTop) top = Math.max(10, maxTop);
+      if (top < 10) top = 10;
+
+      popover.style.bottom = 'auto';
+      popover.style.top = top + 'px';
+      popover.classList.remove('popover-upward');
+    }
+
     popover.style.left = '64px';
     popover.style.visibility = 'visible';
   });
@@ -1139,6 +1153,7 @@ function closeRailFlyout(immediate) {
   const popover = document.getElementById('railFlyoutPopover');
   if (popover) {
     popover.style.display = 'none';
+    popover.classList.remove('popover-upward');
   }
 
   document.querySelectorAll('.nav-group-header').forEach(h => h.classList.remove('flyout-open'));

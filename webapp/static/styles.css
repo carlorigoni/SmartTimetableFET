@@ -463,6 +463,32 @@ body {
   gap: 0;
 }
 
+/* Sezione Fissa in Basso a Sinistra: Sistema & Configurazione */
+.sidebar-bottom-nav {
+  flex-shrink: 0;
+  padding: 0 0 2px 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-wrapper.collapsed .sidebar-bottom-nav {
+  padding: 0 0 2px 0;
+}
+
+/* Modalità Dropup in Basso: le voci interne si aprono verso l'alto */
+.nav-group.dropup-group {
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+.nav-group.dropup-group.collapsed .nav-group-chevron {
+  transform: rotate(180deg);
+}
+
+.nav-group.dropup-group:not(.collapsed) .nav-group-chevron {
+  transform: rotate(0deg);
+}
+
 /* In Mini-Rail Collapsed (64px): il gruppo diventa un pulsante icona circolare centrato (40px) */
 .sidebar-wrapper.collapsed .nav-group-header {
   width: 40px;
@@ -769,14 +795,32 @@ body {
   }
 }
 
+.rail-flyout-popover.popover-upward {
+  animation: flyoutSlideUp 0.18s cubic-bezier(0.2, 0, 0, 1) forwards;
+  transform-origin: bottom left;
+}
+
+@keyframes flyoutSlideUp {
+  from {
+    opacity: 0;
+    transform: translate(-8px, 12px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(0, 0);
+  }
+}
+
 /* Area di passaggio continua sicura (Zero Dead Zone tra icona del rail e pannello) */
 .rail-flyout-popover::before {
   content: '';
   position: absolute;
   top: 0;
+  bottom: 0;
   left: -16px;
   width: 16px;
-  height: 100%;
+  height: auto;
+  min-height: 100%;
   background: transparent;
   pointer-events: auto;
 }
