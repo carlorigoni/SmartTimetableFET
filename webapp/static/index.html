@@ -11,7 +11,7 @@
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
   <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#1a73e8">
   <link rel="shortcut icon" href="/favicon.ico">
-  <link rel="stylesheet" href="styles.css?v=1.4.0">
+  <link rel="stylesheet" href="styles.css?v=1.4.1">
   <!-- Google Identity Services OAuth -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
@@ -44,6 +44,7 @@
         </div>
 
       <nav class="sidebar-nav">
+        <!-- Funzioni Principali Sempre Visibili -->
         <a class="nav-item active" onclick="navigate('dashboard')" data-tooltip="Dashboard" title="Dashboard riassuntiva">
           <span class="nav-icon">📊</span>
           <span class="nav-label">Dashboard</span>
@@ -62,89 +63,129 @@
           <span id="navHealthBadge" class="badge badge-sm badge-ok" style="margin-left:auto;font-size:10px;padding:1px 6px;">100%</span>
         </a>
 
-        <div class="nav-section-title">Report & Stampe Ufficiali</div>
-        <a class="nav-item" onclick="openPrintClassesModal()" data-tooltip="Orario per Classe (PDF)" title="Procedura 9: Orario per classe con articolazioni e intervalli (A4 Orizzontale / PDF)">
-          <span class="nav-icon">🖨️</span>
-          <span class="nav-label">Orario per Classe (PDF)</span>
-        </a>
-        <a class="nav-item" onclick="openPrintTeachersModal()" data-tooltip="Tabellone Docenti (A3)" title="Procedura 12: Tabellone completo docenti con bande verticali (A3 Orizzontale / PDF)">
-          <span class="nav-icon">📄</span>
-          <span class="nav-label">Tabellone Docenti (A3)</span>
-        </a>
+        <!-- Gruppo 1: Report & Stampe (Comprimibile) -->
+        <div class="nav-group" id="navGroup-reports" data-group="reports">
+          <button type="button" class="nav-group-header" onclick="toggleNavGroup('reports')" title="Espandi o comprimi Report & Stampe" aria-expanded="false">
+            <span class="nav-group-title">Report & Stampe</span>
+            <svg class="nav-group-chevron" viewBox="0 0 24 24" width="16" height="16">
+              <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" fill="currentColor"/>
+            </svg>
+          </button>
+          <div class="nav-group-items">
+            <a class="nav-item" onclick="openPrintClassesModal()" data-tooltip="Orario per Classe (PDF)" title="Procedura 9: Orario per classe con articolazioni e intervalli (A4 Orizzontale / PDF)">
+              <span class="nav-icon">🖨️</span>
+              <span class="nav-label">Orario per Classe (PDF)</span>
+            </a>
+            <a class="nav-item" onclick="openPrintTeachersModal()" data-tooltip="Tabellone Docenti (A3)" title="Procedura 12: Tabellone completo docenti con bande verticali (A3 Orizzontale / PDF)">
+              <span class="nav-icon">📄</span>
+              <span class="nav-label">Tabellone Docenti (A3)</span>
+            </a>
+          </div>
+        </div>
 
-        <div class="nav-section-title">Anagrafiche & Cattedre</div>
-        <a class="nav-item" onclick="navigate('teachers')" data-tooltip="Docenti" title="Organico Docenti">
-          <span class="nav-icon">👨‍🏫</span>
-          <span class="nav-label">Docenti</span>
-        </a>
-        <a class="nav-item" onclick="navigate('classes')" data-tooltip="Classi & Gruppi" title="Classi e Gruppi">
-          <span class="nav-icon">🎓</span>
-          <span class="nav-label">Classi & Gruppi</span>
-        </a>
-        <a class="nav-item" onclick="navigate('subjects')" data-tooltip="Materie" title="Discipline e Materie">
-          <span class="nav-icon">📚</span>
-          <span class="nav-label">Materie</span>
-        </a>
-        <a class="nav-item" onclick="navigate('rooms')" data-tooltip="Plessi & Aule" title="Plessi scolastici e Aule">
-          <span class="nav-icon">🏫</span>
-          <span class="nav-label">Plessi & Aule</span>
-        </a>
-        <a class="nav-item" onclick="navigate('activities')" data-tooltip="Attività / Cattedre" title="Attività di insegnamento e Cattedre">
-          <span class="nav-icon">📝</span>
-          <span class="nav-label">Attività / Cattedre</span>
-        </a>
-        <a class="nav-item" onclick="navigate('accorpamenti')" data-tooltip="Accorpamenti" title="Gestione Accorpamenti Macro-Materie (es. Italiano Latino Storia e Geo)">
-          <span class="nav-icon">🔗</span>
-          <span class="nav-label">Accorpamenti</span>
-        </a>
+        <!-- Gruppo 2: Anagrafiche & Cattedre (Comprimibile) -->
+        <div class="nav-group" id="navGroup-anagrafiche" data-group="anagrafiche">
+          <button type="button" class="nav-group-header" onclick="toggleNavGroup('anagrafiche')" title="Espandi o comprimi Anagrafiche & Cattedre" aria-expanded="true">
+            <span class="nav-group-title">Anagrafiche & Cattedre</span>
+            <svg class="nav-group-chevron" viewBox="0 0 24 24" width="16" height="16">
+              <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" fill="currentColor"/>
+            </svg>
+          </button>
+          <div class="nav-group-items">
+            <a class="nav-item" onclick="navigate('teachers')" data-tooltip="Docenti" title="Organico Docenti">
+              <span class="nav-icon">👨‍🏫</span>
+              <span class="nav-label">Docenti</span>
+            </a>
+            <a class="nav-item" onclick="navigate('classes')" data-tooltip="Classi & Gruppi" title="Classi e Gruppi">
+              <span class="nav-icon">🎓</span>
+              <span class="nav-label">Classi & Gruppi</span>
+            </a>
+            <a class="nav-item" onclick="navigate('subjects')" data-tooltip="Materie" title="Discipline e Materie">
+              <span class="nav-icon">📚</span>
+              <span class="nav-label">Materie</span>
+            </a>
+            <a class="nav-item" onclick="navigate('rooms')" data-tooltip="Plessi & Aule" title="Plessi scolastici e Aule">
+              <span class="nav-icon">🏫</span>
+              <span class="nav-label">Plessi & Aule</span>
+            </a>
+            <a class="nav-item" onclick="navigate('activities')" data-tooltip="Attività / Cattedre" title="Attività di insegnamento e Cattedre">
+              <span class="nav-icon">📝</span>
+              <span class="nav-label">Attività / Cattedre</span>
+            </a>
+            <a class="nav-item" onclick="navigate('accorpamenti')" data-tooltip="Accorpamenti" title="Gestione Accorpamenti Macro-Materie (es. Italiano Latino Storia e Geo)">
+              <span class="nav-icon">🔗</span>
+              <span class="nav-label">Accorpamenti</span>
+            </a>
+          </div>
+        </div>
 
-        <div class="nav-section-title">Vincoli & Regole</div>
-        <a class="nav-item" onclick="navigate('block_rules')" data-tooltip="Regole Blocchi & Sezioni" title="Regole di Suddivisione Blocchi Orari e Indirizzi Sezioni (Liceo / Tecnico / Professionale)">
-          <span class="nav-icon">📐</span>
-          <span class="nav-label">Regole Blocchi & Sezioni</span>
-        </a>
-        <a class="nav-item" onclick="navigate('availability')" data-tooltip="Indisponibilità Griglia" title="Griglia disponibilità docenti e classi">
-          <span class="nav-icon">🚫</span>
-          <span class="nav-label">Indisponibilità Griglia</span>
-        </a>
-        <a class="nav-item" onclick="navigate('constraints')" data-tooltip="Vincoli Orario" title="Regole e vincoli di calcolo orario FET">
-          <span class="nav-icon">⚖️</span>
-          <span class="nav-label">Vincoli Orario</span>
-        </a>
+        <!-- Gruppo 3: Vincoli & Regole (Comprimibile) -->
+        <div class="nav-group" id="navGroup-vincoli" data-group="vincoli">
+          <button type="button" class="nav-group-header" onclick="toggleNavGroup('vincoli')" title="Espandi o comprimi Vincoli & Regole" aria-expanded="false">
+            <span class="nav-group-title">Vincoli & Regole</span>
+            <svg class="nav-group-chevron" viewBox="0 0 24 24" width="16" height="16">
+              <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" fill="currentColor"/>
+            </svg>
+          </button>
+          <div class="nav-group-items">
+            <a class="nav-item" onclick="navigate('block_rules')" data-tooltip="Regole Blocchi & Sezioni" title="Regole di Suddivisione Blocchi Orari e Indirizzi Sezioni">
+              <span class="nav-icon">📐</span>
+              <span class="nav-label">Regole Blocchi & Sezioni</span>
+            </a>
+            <a class="nav-item" onclick="navigate('availability')" data-tooltip="Indisponibilità Griglia" title="Griglia disponibilità docenti e classi">
+              <span class="nav-icon">🚫</span>
+              <span class="nav-label">Indisponibilità Griglia</span>
+            </a>
+            <a class="nav-item" onclick="navigate('constraints')" data-tooltip="Vincoli Orario" title="Regole e vincoli di calcolo orario FET">
+              <span class="nav-icon">⚖️</span>
+              <span class="nav-label">Vincoli Orario</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Gruppo 4: Sistema & Configurazione (Comprimibile) -->
+        <div class="nav-group" id="navGroup-system" data-group="system">
+          <button type="button" class="nav-group-header" onclick="toggleNavGroup('system')" title="Espandi o comprimi Sistema & Configurazione" aria-expanded="false">
+            <span class="nav-group-title">Sistema & Configurazione</span>
+            <svg class="nav-group-chevron" viewBox="0 0 24 24" width="16" height="16">
+              <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" fill="currentColor"/>
+            </svg>
+          </button>
+          <div class="nav-group-items">
+            <a class="nav-item" onclick="navigate('parameters')" data-tooltip="Parametri Istituto" title="Parametri istituto, calendario settimanale, gestione Sabato e pause">
+              <span class="nav-icon">⚙️</span>
+              <span class="nav-label">Parametri Istituto</span>
+            </a>
+            <a class="nav-item" onclick="navigate('snapshots')" data-tooltip="Backup & Snapshot" title="Archivio storico, punti di ripristino, import ed export file FET e JSON">
+              <span class="nav-icon">📦</span>
+              <span class="nav-label">Backup & Snapshot</span>
+            </a>
+            <a id="sidebarAccessMgmtItem" class="nav-item" style="display:none;" onclick="openAccessManagementModal()" data-tooltip="Gestione Accessi" title="Gestione accessi, ruoli e approvazione utenti Google OAuth">
+              <span class="nav-icon">👥</span>
+              <span class="nav-label">Gestione Accessi</span>
+              <span id="sidebarPendingBadge" class="badge-pending-count" style="display:none;margin-left:auto;">0</span>
+            </a>
+            <a class="nav-item" onclick="openAboutModal()" data-tooltip="Info & Crediti" title="Informazioni sul software, crediti FET e conformità GDPR">
+              <span class="nav-icon">ℹ️</span>
+              <span class="nav-label">Info & Crediti</span>
+            </a>
+          </div>
+        </div>
       </nav>
 
-      <!-- Sezione Configurazione Fissata in Basso a SX -->
-      <div class="sidebar-bottom">
-        <div class="nav-section-title">Sistema & Configurazione</div>
-        <a class="nav-item" onclick="navigate('parameters')" data-tooltip="Parametri Istituto" title="Parametri istituto, calendario settimanale, gestione Sabato e pause">
-          <span class="nav-icon">⚙️</span>
-          <span class="nav-label">Parametri Istituto</span>
-        </a>
-        <a class="nav-item" onclick="navigate('snapshots')" data-tooltip="Backup & Snapshot" title="Archivio storico, punti di ripristino, import ed export file FET e JSON">
-          <span class="nav-icon">📦</span>
-          <span class="nav-label">Backup & Snapshot</span>
-        </a>
-        <a id="sidebarAccessMgmtItem" class="nav-item" style="display:none;" onclick="openAccessManagementModal()" data-tooltip="Gestione Accessi" title="Gestione accessi, ruoli e approvazione utenti Google OAuth">
-          <span class="nav-icon">👥</span>
-          <span class="nav-label">Gestione Accessi</span>
-          <span id="sidebarPendingBadge" class="badge-pending-count" style="display:none;margin-left:auto;">0</span>
-        </a>
-        <a class="nav-item" onclick="openAboutModal()" data-tooltip="Info & Crediti" title="Informazioni sul software, crediti FET e conformità GDPR">
-          <span class="nav-icon">ℹ️</span>
-          <span class="nav-label">Info & Crediti</span>
-        </a>
-      </div>
-
+      <!-- Footer Compatto a Riga Singola di Stato (Altezza: 36px) -->
       <div class="sidebar-footer">
-        <div class="footer-badge-wrap">
-          <span id="sidebarStatusBadge" class="badge badge-ok">● FET 7.12.0 Nativo</span>
-          <span class="footer-ver">v1.4.0</span>
-        </div>
-        <div class="footer-meta">
-          <div class="footer-author">Autore: <b>Carlo Rigoni</b> &bull; Mentore: <b>Federico Rettore</b></div>
-          <div class="footer-links">
-            <a href="javascript:void(0)" onclick="openAboutModal()">Credits & Info</a> • <a href="https://lalescu.ro/liviu/fet/" target="_blank" rel="noopener" title="Sito ufficiale FET Free Software">FET Free Software</a>
-          </div>
+        <div class="sidebar-status-row">
+          <span id="sidebarStatusBadge" class="sidebar-status-badge" title="FET 7.12.0 Nativo C++ attivo">
+            <span class="status-indicator-dot"></span>
+            <span class="status-indicator-text">FET 7.12</span>
+          </span>
+          <span class="footer-ver-tag" title="Versione SmartTimetable">v1.4.0</span>
+          <button class="footer-info-btn" onclick="openAboutModal()" title="Crediti, Mentore e Info Legali" aria-label="Informazioni e crediti">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+            </svg>
+          </button>
         </div>
       </div>
     </aside>
@@ -623,6 +664,6 @@
     </div>
   </div>
 
-  <script src="app.js?v=1.4.0"></script>
+  <script src="app.js?v=1.4.1"></script>
 </body>
 </html>

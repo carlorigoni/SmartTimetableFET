@@ -32,6 +32,7 @@ let authPollInterval = null;
 let googleClientId = '';
 
 document.addEventListener('DOMContentLoaded', () => {
+  initNavGroups();
   initAuth();
 });
 
@@ -718,6 +719,65 @@ async function saveAccessConfig() {
   }
 }
 
+// --- GESTIONE SEZIONI ACCORDION SIDEBAR (MATERIAL DESIGN 3) ---
+function getNavGroupsState() {
+  try {
+    const saved = localStorage.getItem('nav_groups_state');
+    if (saved) return JSON.parse(saved);
+  } catch (e) {
+    console.error('Errore parsing nav_groups_state:', e);
+  }
+  // Default: Anagrafiche aperta, altre sezioni secondarie chiuse
+  return {
+    reports: false,
+    anagrafiche: true,
+    vincoli: false,
+    system: false
+  };
+}
+
+function setNavGroupsState(state) {
+  try {
+    localStorage.setItem('nav_groups_state', JSON.stringify(state));
+  } catch (e) {}
+}
+
+function toggleNavGroup(groupId, forceOpen) {
+  const groupEl = document.getElementById('navGroup-' + groupId);
+  if (!groupEl) return;
+  const isCurrentlyCollapsed = groupEl.classList.contains('collapsed');
+  const shouldOpen = (forceOpen !== undefined) ? forceOpen : isCurrentlyCollapsed;
+
+  if (shouldOpen) {
+    groupEl.classList.remove('collapsed');
+  } else {
+    groupEl.classList.add('collapsed');
+  }
+  const btn = groupEl.querySelector('.nav-group-header');
+  if (btn) btn.setAttribute('aria-expanded', shouldOpen ? 'true' : 'false');
+
+  const state = getNavGroupsState();
+  state[groupId] = shouldOpen;
+  setNavGroupsState(state);
+}
+
+function initNavGroups() {
+  const state = getNavGroupsState();
+  ['reports', 'anagrafiche', 'vincoli', 'system'].forEach(id => {
+    const shouldOpen = (state[id] !== undefined) ? !!state[id] : (id === 'anagrafiche');
+    const groupEl = document.getElementById('navGroup-' + id);
+    if (groupEl) {
+      if (shouldOpen) {
+        groupEl.classList.remove('collapsed');
+      } else {
+        groupEl.classList.add('collapsed');
+      }
+      const btn = groupEl.querySelector('.nav-group-header');
+      if (btn) btn.setAttribute('aria-expanded', shouldOpen ? 'true' : 'false');
+    }
+  });
+}
+
 function applySidebarState(isCollapsed) {
   const wrapper = document.getElementById('sidebarWrapper');
   const sb = document.getElementById('appSidebar');
@@ -974,11 +1034,18 @@ function navigate(view, pushHistory = true, customLabel = null) {
     closeMobileSidebar();
   }
 
-  // Aggiorna classe active nella sidebar (sia menu principale che menu fisso in basso)
+  // Aggiorna classe active nella sidebar e auto-espandi il gruppo genitore se collassato
   document.querySelectorAll('.sidebar .nav-item').forEach(el => {
     el.classList.remove('active');
     if (el.getAttribute('onclick') && el.getAttribute('onclick').includes(view)) {
       el.classList.add('active');
+      const parentGroup = el.closest('.nav-group');
+      if (parentGroup) {
+        const groupId = parentGroup.getAttribute('data-group');
+        if (groupId) {
+          toggleNavGroup(groupId, true);
+        }
+      }
     }
   });
 

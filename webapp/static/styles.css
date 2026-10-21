@@ -119,7 +119,7 @@ body {
 /* Layout Wrapper: Riserva lo spazio di griglia fisso evitando scatti alla pagina */
 .sidebar-wrapper {
   position: relative;
-  width: 256px;
+  width: 250px;
   flex-shrink: 0;
   height: 100%;
   transition: width 0.22s cubic-bezier(0.4, 0, 0.2, 1);
@@ -128,13 +128,13 @@ body {
 }
 
 .sidebar-wrapper.collapsed {
-  width: 68px;
+  width: 64px;
 }
 
 /* Sidebar Drawer */
 .sidebar {
   position: relative;
-  width: 256px;
+  width: 250px;
   height: 100%;
   background: var(--bg-sidebar);
   border-right: 1px solid var(--border);
@@ -155,7 +155,7 @@ body {
   top: 0;
   left: 0;
   bottom: 0;
-  width: 68px;
+  width: 64px;
   border-right: 1px solid var(--border);
   box-shadow: none;
   z-index: 900;
@@ -164,7 +164,7 @@ body {
 /* HOVER FLYOUT: Quando è chiuso e l'utente passa il mouse, si espande fluidamente 
    in overlay sopra la pagina SENZA spostare il contenuto principale (Zero Layout Shift) */
 .sidebar-wrapper.collapsed:hover .sidebar {
-  width: 256px;
+  width: 250px;
   box-shadow: 0 4px 24px rgba(15, 23, 42, 0.16), 0 1px 4px rgba(15, 23, 42, 0.08);
   border-right-color: transparent;
   z-index: 1050;
@@ -324,58 +324,129 @@ body {
   gap: 0;
 }
 
-/* Titoli di sezione con ingombro costante (36px totali: 6px top + 28px height + 2px bottom) */
-.nav-section-title {
-  height: 28px;
-  line-height: 28px;
-  margin: 6px 0 2px 0;
-  padding: 0 16px;
+/* Scrollbar sottile ed elegante Material 3 */
+.sidebar-nav::-webkit-scrollbar {
+  width: 5px;
+}
+.sidebar-nav::-webkit-scrollbar-track {
+  background: transparent;
+}
+.sidebar-nav::-webkit-scrollbar-thumb {
+  background: #dadce0;
+  border-radius: 4px;
+}
+.sidebar-nav::-webkit-scrollbar-thumb:hover {
+  background: #bdc1c6;
+}
+
+/* Gruppi Comprimibili (Accordion Material 3) */
+.nav-group {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+}
+
+/* Header di Sezione con Accordion Toggle (Ingombro costante: 32px height + 4px top + 2px bottom = 38px) */
+.nav-group-header {
+  height: 32px;
+  min-height: 32px;
+  max-height: 32px;
+  margin: 4px 8px 2px 8px;
+  padding: 0 8px;
+  border: none;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 6px;
+  cursor: pointer;
+  user-select: none;
+  box-sizing: border-box;
+  flex-shrink: 0;
+  color: #5f6368;
+  transition: background-color 0.15s ease, color 0.15s ease;
+  outline: none;
+}
+
+.nav-group-header:hover {
+  background-color: rgba(60, 64, 67, 0.06);
+  color: #202124;
+}
+
+.nav-group-title {
   font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
-  color: #5f6368;
   letter-spacing: 0.6px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  box-sizing: border-box;
-  display: flex;
-  align-items: center;
-  flex-shrink: 0;
-  transition: opacity 0.15s ease;
+  flex: 1;
+  text-align: left;
 }
 
-/* In modalità compressa (non hovered), il titolo mantiene ESATTAMENTE lo stesso ingombro verticale (36px),
-   nascondendo il testo e mostrando un divisore orizzontale sottile centrato (zero vertical layout shift) */
-.sidebar-wrapper.collapsed:not(:hover) .nav-section-title {
-  height: 28px;
-  line-height: 28px;
-  margin: 6px 0 2px 0;
-  padding: 0;
-  font-size: 0 !important;
-  color: transparent !important;
+.nav-group-chevron {
+  flex-shrink: 0;
+  color: #5f6368;
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
-  user-select: none;
 }
 
-.sidebar-wrapper.collapsed:not(:hover) .nav-section-title::before {
+/* Stato Collapsed dell'Accordion: chevron ruotato e voci nascoste */
+.nav-group.collapsed .nav-group-chevron {
+  transform: rotate(-90deg);
+}
+
+.nav-group.collapsed .nav-group-items {
+  display: none !important;
+}
+
+/* Voci interne al gruppo */
+.nav-group-items {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* In Mini-Rail Collapsed (non hovered): il gruppo header mantiene ESATTAMENTE 38px verticali,
+   mostrando una sottile linea orizzontale centrata a zero layout shift */
+.sidebar-wrapper.collapsed:not(:hover) .nav-group-header {
+  height: 32px;
+  min-height: 32px;
+  max-height: 32px;
+  margin: 4px 0 2px 0;
+  padding: 0;
+  justify-content: center;
+  background: transparent !important;
+  cursor: pointer;
+}
+
+.sidebar-wrapper.collapsed:not(:hover) .nav-group-title,
+.sidebar-wrapper.collapsed:not(:hover) .nav-group-chevron {
+  display: none !important;
+}
+
+.sidebar-wrapper.collapsed:not(:hover) .nav-group-header::before {
   content: '';
   display: block;
-  width: 28px;
+  width: 24px;
   height: 1px;
   background: var(--border-light);
+  margin: auto;
 }
 
-/* Voci di Menu Pill Google Material 3 (Ingombro verticale: 2px top + 40px height + 2px bottom = 44px) */
+/* Voci di Menu Pill Google Material 3 (Ingombro verticale: 3px top + 40px height + 3px bottom = 46px) */
 .nav-item {
   display: flex;
   align-items: center;
   gap: 12px;
   height: 40px;
-  margin: 2px 10px;
+  min-height: 40px;
+  max-height: 40px;
+  margin: 3px 8px;
   padding: 0 12px;
   border-radius: 20px;
   color: #3c4043;
@@ -420,12 +491,12 @@ body {
 }
 
 /* Adattamento Voci di Menu in Mini-Rail (Chiuso e non hovered):
-   Mantiene ESATTAMENTE l'ingombro di 44px verticali (2px top + 40px height + 2px bottom)
-   e la coordinata X del centro dell'icona a 34px (perfettamente allineata) */
+   Mantiene ESATTAMENTE l'ingombro di 46px verticali (3px top + 40px height + 3px bottom)
+   e la coordinata X del centro dell'icona a 32px (perfettamente allineata) */
 .sidebar-wrapper.collapsed:not(:hover) .nav-item {
   width: 40px;
   height: 40px;
-  margin: 2px auto;
+  margin: 3px auto;
   padding: 0;
   justify-content: center;
   border-radius: 50%;
@@ -443,92 +514,106 @@ body {
   border-radius: 50%;
 }
 
-/* Sezione Bottom Fissata in Basso (Ingombro verticale stabile a zero layout shift) */
-.sidebar-bottom {
-  padding: 6px 0;
-  border-top: 1px solid var(--border-light);
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-  background: var(--bg-sidebar);
-  flex-shrink: 0;
-}
-
-.sidebar-wrapper.collapsed:not(:hover) .sidebar-bottom {
-  padding: 6px 0;
-}
-
-/* Footer Sidebar (Altezza costante 68px in entrambi gli stati: zero vertical push) */
+/* Footer Sidebar Compatto a Riga Singola (Altezza: 36px costante in entrambi gli stati: zero vertical push) */
 .sidebar-footer {
-  height: 68px;
-  padding: 8px 12px;
+  height: 36px;
+  min-height: 36px;
+  max-height: 36px;
+  padding: 0 12px;
   border-top: 1px solid var(--border-light);
-  font-size: 11px;
-  color: var(--text-muted);
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 4px;
+  align-items: center;
+  justify-content: space-between;
   background: var(--bg-sidebar);
   box-sizing: border-box;
   flex-shrink: 0;
 }
 
-.sidebar-wrapper.collapsed:not(:hover) .sidebar-footer {
-  height: 68px;
-  padding: 8px 0;
+.sidebar-status-row {
+  display: flex;
   align-items: center;
-  justify-content: center;
-  text-align: center;
-  box-sizing: border-box;
-}
-
-.sidebar-wrapper.collapsed:not(:hover) .sidebar-footer .footer-meta,
-.sidebar-wrapper.collapsed:not(:hover) .sidebar-footer .footer-ver {
-  display: none !important;
-}
-
-.sidebar-wrapper.collapsed:not(:hover) .sidebar-footer .footer-badge-wrap {
-  justify-content: center;
+  justify-content: space-between;
   width: 100%;
+  gap: 8px;
 }
 
-.sidebar-wrapper.collapsed:not(:hover) #sidebarStatusBadge {
-  font-size: 0;
-  padding: 5px;
-  width: 12px;
-  height: 12px;
+.sidebar-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #e6f4ea;
+  color: #137333;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 12px;
+  letter-spacing: -0.1px;
+}
+
+.status-indicator-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: #1e8e3e;
+  display: inline-block;
+  box-shadow: 0 0 0 2px rgba(30, 142, 62, 0.2);
+}
+
+.footer-ver-tag {
+  font-size: 11px;
+  font-weight: 500;
+  color: #80868b;
+  letter-spacing: -0.1px;
+}
+
+.footer-info-btn {
+  background: none;
+  border: none;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
+  color: #70757a;
+  padding: 0;
+  transition: background-color 0.15s ease, color 0.15s ease;
+  outline: none;
 }
 
-.sidebar-wrapper.collapsed:not(:hover) #sidebarStatusBadge::before {
-  content: '●';
-  font-size: 10px;
+.footer-info-btn:hover {
+  background-color: rgba(60, 64, 67, 0.1);
+  color: #1a73e8;
 }
 
-.footer-badge-wrap {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+/* In Mini-Rail (non hovered), il footer mostra solo il pallino verde centrato */
+.sidebar-wrapper.collapsed:not(:hover) .sidebar-footer {
+  height: 36px;
+  padding: 0;
+  justify-content: center;
 }
 
-.footer-meta {
-  font-size: 10.5px;
-  line-height: 1.4;
-  color: #64748b;
+.sidebar-wrapper.collapsed:not(:hover) .sidebar-status-row {
+  justify-content: center;
+  width: 100%;
 }
 
-.footer-meta a {
-  color: var(--primary);
-  text-decoration: none;
-  font-weight: 600;
+.sidebar-wrapper.collapsed:not(:hover) .footer-ver-tag,
+.sidebar-wrapper.collapsed:not(:hover) .footer-info-btn,
+.sidebar-wrapper.collapsed:not(:hover) .status-indicator-text {
+  display: none !important;
 }
 
-.footer-meta a:hover {
-  text-decoration: underline;
+.sidebar-wrapper.collapsed:not(:hover) .sidebar-status-badge {
+  background: transparent;
+  padding: 0;
+  justify-content: center;
+}
+
+.sidebar-wrapper.collapsed:not(:hover) .status-indicator-dot {
+  width: 8px;
+  height: 8px;
 }
 
 .app-page-footer {
@@ -3266,13 +3351,18 @@ input:checked + .slider:before {
     box-shadow: 4px 0 28px rgba(0, 0, 0, 0.25) !important;
   }
 
-  /* Quando il drawer è aperto su mobile, mostra sempre etichette complete */
+  /* Quando il drawer è aperto su mobile, mostra sempre etichette complete e controlli */
   .sidebar-titles,
-  .nav-section-title,
+  .nav-group-title,
   .nav-label,
-  .footer-ver,
-  .footer-meta {
+  .footer-ver-tag,
+  .status-indicator-text {
     display: block !important;
+  }
+
+  .nav-group-chevron,
+  .footer-info-btn {
+    display: inline-flex !important;
   }
 
   .sidebar-brand {
@@ -3288,13 +3378,22 @@ input:checked + .slider:before {
     display: none !important; /* Non necessario su mobile */
   }
 
+  .nav-group-header {
+    padding: 0 12px !important;
+    justify-content: space-between !important;
+  }
+
+  .nav-group-header::before {
+    display: none !important;
+  }
+
   .nav-item {
     width: calc(100% - 16px) !important;
-    height: 42px !important;
+    height: 40px !important;
     margin: 2px 8px !important;
-    padding: 0 16px !important;
+    padding: 0 14px !important;
     justify-content: flex-start !important;
-    border-radius: 21px !important;
+    border-radius: 20px !important;
   }
 
   .nav-item .nav-label,
