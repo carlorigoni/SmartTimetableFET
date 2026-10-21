@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>SmartTimetable - Web App Configurazione & Solver FET 7.12.0</title>
-  <link rel="stylesheet" href="styles.css?v=1.3.7">
+  <link rel="stylesheet" href="styles.css?v=1.4.0">
   <!-- Google Identity Services OAuth -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
@@ -123,17 +123,21 @@
           <span class="nav-label">Gestione Accessi</span>
           <span id="sidebarPendingBadge" class="badge-pending-count" style="display:none;margin-left:auto;">0</span>
         </a>
+        <a class="nav-item" onclick="openAboutModal()" data-tooltip="Info & Crediti" title="Informazioni sul software, crediti FET e conformità GDPR">
+          <span class="nav-icon">ℹ️</span>
+          <span class="nav-label">Info & Crediti</span>
+        </a>
       </div>
 
       <div class="sidebar-footer">
         <div class="footer-badge-wrap">
           <span id="sidebarStatusBadge" class="badge badge-ok">● FET 7.12.0 Nativo</span>
-          <span class="footer-ver">v1.3.6</span>
+          <span class="footer-ver">v1.4.0</span>
         </div>
         <div class="footer-meta">
           <div class="footer-author">Autore: <b>Carlo Rigoni</b></div>
           <div class="footer-links">
-            <a href="https://lalescu.ro/liviu/fet/" target="_blank" rel="noopener" title="Sito ufficiale FET Free Software">FET Free Software</a> • AI Assisted
+            <a href="javascript:void(0)" onclick="openAboutModal()">Credits & Info</a> • <a href="https://lalescu.ro/liviu/fet/" target="_blank" rel="noopener" title="Sito ufficiale FET Free Software">FET Free Software</a>
           </div>
         </div>
       </div>
@@ -149,34 +153,39 @@
             <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
           </svg>
         </button>
-          <button id="navBackBtn" class="nav-back-btn" onclick="navigateBack()" title="Torna alla schermata precedente" style="display:none;">
-            <span>◀</span> <span id="navBackText">Indietro</span>
-          </button>
-          <span id="pageTitle" class="topbar-title">Dashboard</span>
-          <span id="instBadge" class="badge badge-info">SmartTimetable</span>
+        <button id="navBackBtn" class="nav-back-btn" onclick="navigateBack()" title="Torna alla schermata precedente" style="display:none;">
+          <span>◀</span> <span id="navBackText">Indietro</span>
+        </button>
+        <span id="pageTitle" class="topbar-title">Dashboard</span>
+        <span id="instBadge" class="badge badge-info">SmartTimetable</span>
+      </div>
+      <div class="topbar-right">
+        <button id="topbarInfoBtn" class="topbar-info-btn" onclick="openAboutModal()" title="Informazioni su SmartTimetable e Crediti" aria-label="Informazioni">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+          </svg>
+        </button>
+        <div id="topbarUserPill" class="user-pill" style="display:none;">
+          <img id="topbarUserAvatar" class="user-avatar" src="" alt="Avatar" style="display:none;" />
+          <span id="topbarUserName" class="user-name"></span>
+          <span id="topbarUserRole" class="badge badge-role"></span>
+          <button class="btn-logout" onclick="logout()" title="Disconnetti">🚪</button>
         </div>
-        <div class="topbar-right">
-          <div id="topbarUserPill" class="user-pill" style="display:none;">
-            <img id="topbarUserAvatar" class="user-avatar" src="" alt="Avatar" style="display:none;" />
-            <span id="topbarUserName" class="user-name"></span>
-            <span id="topbarUserRole" class="badge badge-role"></span>
-            <button class="btn-logout" onclick="logout()" title="Disconnetti">🚪</button>
-          </div>
-        </div>
-      </header>
+      </div>
+    </header>
 
-      <main class="content-body" id="mainContent">
-        <!-- I contenuti delle singole viste vengono renderizzati dinamicamente da app.js -->
-      </main>
+    <main class="content-body" id="mainContent">
+      <!-- I contenuti delle singole viste vengono renderizzati dinamicamente da app.js -->
+    </main>
 
-      <footer class="app-page-footer">
-        <div>
-          <b>SmartTimetable FET Suite</b> &mdash; Versione <span class="badge-ver">v1.3.6</span> &bull; Autore: <b>Carlo Rigoni</b>
-        </div>
-        <div style="font-size:11.5px;color:var(--text-muted);">
-          Algoritmo euristico: <a href="https://lalescu.ro/liviu/fet/" target="_blank" rel="noopener" style="color:var(--primary);text-decoration:none;font-weight:600;">FET Free Timetabling Software</a> &bull; AI Pair Programming: Google DeepMind Antigravity
-        </div>
-      </footer>
+    <footer class="app-page-footer">
+      <div>
+        <b>SmartTimetable FET Suite</b> &mdash; Versione <span class="badge-ver">v1.4.0</span> &bull; Autore: <b>Carlo Rigoni</b> &bull; Motore: <b>FET 7.12.0</b> &bull; <a href="javascript:void(0)" onclick="openAboutModal()" style="color:var(--primary);text-decoration:none;font-weight:600;">Crediti & Note Legali</a>
+      </div>
+      <div style="font-size:11.5px;color:var(--text-muted);">
+        Algoritmo euristico: <a href="https://lalescu.ro/liviu/fet/" target="_blank" rel="noopener" style="color:var(--primary);text-decoration:none;font-weight:600;">FET Free Timetabling Software</a> &bull; AI Pair Programming: Google DeepMind Antigravity
+      </div>
+    </footer>
     </div>
   </div>
 
@@ -475,6 +484,92 @@
     </div>
   </div>
 
-  <script src="app.js?v=1.3.6"></script>
+  <!-- Modal Informazioni su SmartTimetable & Crediti (Stato dell'arte) -->
+  <div id="aboutModal" class="modal-backdrop" style="display:none;" onclick="if(event.target===this) closeAboutModal()">
+    <div class="modal-dialog" style="max-width:640px;">
+      <div class="modal-header">
+        <div class="modal-title" style="display:flex;align-items:center;gap:12px;">
+          <span style="font-size:26px;">🏫</span>
+          <div>
+            <div style="font-size:16px;font-weight:700;color:var(--text-main);">SmartTimetable FET Suite</div>
+            <div style="font-size:11.5px;color:var(--text-muted);">Configurazione, Vincoli & Compilatore Orario FET 7.12.0</div>
+          </div>
+        </div>
+        <button class="modal-close" onclick="closeAboutModal()" title="Chiudi">✕</button>
+      </div>
+      <div class="modal-body" style="gap:14px;max-height:calc(85vh - 130px);overflow-y:auto;">
+        <!-- Banner Versione -->
+        <div style="display:flex;align-items:center;justify-content:space-between;background:#f8fafc;border:1px solid #e2e8f0;border-radius:var(--radius-sm);padding:10px 14px;">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span class="badge badge-info" style="font-size:12px;padding:3px 8px;font-weight:700;">v1.4.0</span>
+            <span style="font-size:11.5px;color:#64748b;">Release Stabile</span>
+          </div>
+          <div style="font-size:11.5px;color:#64748b;">
+            Engine: <b>FET 7.12.0 Nativo</b>
+          </div>
+        </div>
+
+        <!-- Crediti Autore & Architettura -->
+        <div style="display:flex;flex-direction:column;gap:4px;">
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:#64748b;letter-spacing:0.5px;">Ideazione & Architettura</div>
+          <div style="background:#ffffff;border:1px solid var(--border-light);border-radius:var(--radius-sm);padding:12px 14px;display:flex;align-items:flex-start;gap:12px;">
+            <div style="font-size:24px;">👨‍💻</div>
+            <div style="font-size:12.5px;color:var(--text-main);line-height:1.45;">
+              <div style="font-weight:700;font-size:13.5px;color:var(--primary-dark);">Carlo Rigoni</div>
+              <div>Autore, Architetto del Software e Maintainer del progetto SmartTimetable.</div>
+              <div style="font-size:11.5px;color:#64748b;margin-top:2px;">Progettazione funzionale, adattamento alla scuola italiana, modello vincoli cattedre/disposizioni e integrazione procedurale.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Crediti FET & Solutore -->
+        <div style="display:flex;flex-direction:column;gap:4px;">
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:#64748b;letter-spacing:0.5px;">Motore Euristico di Calcolo</div>
+          <div style="background:#ffffff;border:1px solid var(--border-light);border-radius:var(--radius-sm);padding:12px 14px;display:flex;align-items:flex-start;gap:12px;">
+            <div style="font-size:24px;">⚡</div>
+            <div style="font-size:12.5px;color:var(--text-main);line-height:1.45;">
+              <div style="font-weight:700;font-size:13.5px;color:var(--primary-dark);">FET Free Timetabling Software (v7.12.0)</div>
+              <div>Solutore euristico ad altissima efficienza per orari scolastici complessi, ideato e sviluppato da <b>Liviu Lalescu</b> con il contributo della comunità internazionale FET (licenza GNU GPL v2/v3).</div>
+              <div style="margin-top:4px;">
+                <a href="https://lalescu.ro/liviu/fet/" target="_blank" rel="noopener" style="color:var(--primary);text-decoration:none;font-weight:600;font-size:11.5px;">🌐 Sito ufficiale FET Free Software</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- AI Pair Programming Antigravity -->
+        <div style="display:flex;flex-direction:column;gap:4px;">
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:#64748b;letter-spacing:0.5px;">AI Engineering & Pair Programming</div>
+          <div style="background:#ffffff;border:1px solid var(--border-light);border-radius:var(--radius-sm);padding:12px 14px;display:flex;align-items:flex-start;gap:12px;">
+            <div style="font-size:24px;">🤖</div>
+            <div style="font-size:12.5px;color:var(--text-main);line-height:1.45;">
+              <div style="font-weight:700;font-size:13.5px;color:var(--primary-dark);">Google DeepMind Antigravity</div>
+              <div>Advanced Agentic Coding: ingegnerizzazione full-stack, interfaccia Google Classroom Material 3, Relaxation Engine diagnostico per i vincoli, parser Microsoft Word (.docx) e containerizzazione multi-arch.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Trattamento Dati & GDPR -->
+        <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:var(--radius-sm);padding:12px 14px;font-size:12px;color:#1e3a8a;line-height:1.45;">
+          <div style="font-weight:700;display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+            <span>🛡️</span> <span>Conformità GDPR (Reg. UE 2016/679) & Privacy by Design</span>
+          </div>
+          <div>SmartTimetable opera <b>esclusivamente on-premise</b> all'interno della rete locale dell'Istituto. Nessun dato dell'orario o anagrafico viene trasmesso a server cloud terzi. L'Istituto Scolastico che installa e utilizza il software agisce come <b>Titolare del Trattamento</b> (Art. 4, n. 7 GDPR) ai sensi di legge.</div>
+        </div>
+
+        <!-- Collegamenti esterni -->
+        <div style="display:flex;gap:12px;justify-content:center;padding-top:4px;font-size:12px;">
+          <a href="https://github.com/carlorigoni/SmartTimetableFET" target="_blank" rel="noopener" style="color:var(--primary);text-decoration:none;font-weight:600;">GitHub Repository</a> &bull;
+          <a href="https://hub.docker.com/r/carlorigoni/smarttimetablefet" target="_blank" rel="noopener" style="color:var(--primary);text-decoration:none;font-weight:600;">Docker Hub</a> &bull;
+          <a href="https://lalescu.ro/liviu/fet/" target="_blank" rel="noopener" style="color:var(--primary);text-decoration:none;font-weight:600;">FET Project</a>
+        </div>
+      </div>
+      <div class="modal-footer" style="justify-content:flex-end;">
+        <button class="btn btn-primary" onclick="closeAboutModal()">Chiudi</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js?v=1.4.0"></script>
 </body>
 </html>

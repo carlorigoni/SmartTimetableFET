@@ -22,3 +22,14 @@ services:
       timeout: 5s
       retries: 3
       start_period: 15s
+
+  # [Consigliato per Server Ubuntu] Aggiornamento automatico container all'uscita di nuove versioni Docker Hub
+  watchtower:
+    container_name: smarttimetable_watchtower
+    image: containrrr/watchtower
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: --interval 3600 --cleanup smarttimetable
+    profiles:
+      - auto-update

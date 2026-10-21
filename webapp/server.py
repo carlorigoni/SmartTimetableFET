@@ -84,6 +84,11 @@ def fetch_google_doc_docx_bytes(url):
     except Exception as e:
         raise ValueError(f"Impossibile scaricare il Google Doc: {e}")
 
+APP_VERSION = "1.4.0"
+FET_VERSION = "7.12.0"
+APP_AUTHOR = "Carlo Rigoni"
+APP_CREDITS = "FET Free Software (Liviu Lalescu) & Google DeepMind Antigravity"
+
 HOST = os.environ.get("HOST", "0.0.0.0")
 PORT = int(os.environ.get("PORT", "8000"))
 STATIC_DIR = os.path.join(BASE_DIR, "static")
@@ -254,7 +259,17 @@ class SmartTimetableHandler(BaseHTTPRequestHandler):
 
         # --- PUBLIC & AUTH API ---
         if path == "/api/health":
-            self._json(200, {"status": "ok"})
+            self._json(200, {"status": "ok", "version": APP_VERSION})
+            return
+        elif path == "/api/info":
+            self._json(200, {
+                "app_name": "SmartTimetable FET Suite",
+                "version": APP_VERSION,
+                "fet_version": FET_VERSION,
+                "author": APP_AUTHOR,
+                "credits": APP_CREDITS,
+                "gdpr_mode": "on-premise self-hosted"
+            })
             return
         elif path == "/api/auth/config":
             self._json(200, {
@@ -285,7 +300,11 @@ class SmartTimetableHandler(BaseHTTPRequestHandler):
 
         # Docker healthcheck local bypass (127.0.0.1)
         if path == "/api/summary" and self.client_address[0] in ("127.0.0.1", "::1", "localhost"):
-            self._json(200, db.get_summary())
+            sum_data = db.get_summary()
+            sum_data["app_version"] = APP_VERSION
+            sum_data["fet_version"] = FET_VERSION
+            sum_data["author"] = APP_AUTHOR
+            self._json(200, sum_data)
             return
 
         # --- REPORT & STAMPE UFFICIALI (Procedura 9 & 12) ---
@@ -374,7 +393,11 @@ class SmartTimetableHandler(BaseHTTPRequestHandler):
 
         # --- REST API ---
         if path == "/api/summary":
-            self._json(200, db.get_summary())
+            sum_data = db.get_summary()
+            sum_data["app_version"] = APP_VERSION
+            sum_data["fet_version"] = FET_VERSION
+            sum_data["author"] = APP_AUTHOR
+            self._json(200, sum_data)
 
         elif path == "/api/teachers":
             self._json(200, db.get_teachers())
@@ -1708,11 +1731,13 @@ class SmartTimetableHandler(BaseHTTPRequestHandler):
 def main():
     fet_bin = find_fet_cl()
     print("=" * 70)
-    print("  SmartTimetable Web App - Suite Completa FET 7.12.0")
+    print(f"  SmartTimetable Web App - Suite Completa FET {FET_VERSION} (v{APP_VERSION})")
+    print(f"  Autore: {APP_AUTHOR} • AI Pair Programming: Google DeepMind Antigravity")
     print("=" * 70)
     print(f"  • Host e Porta:       http://{HOST}:{PORT}")
     print(f"  • fet-cl solver:      {fet_bin or 'NON TROVATO'}")
     print(f"  • Database attivo:    {DATA_DIR}/current_project.json")
+    print(f"  • Privacy & GDPR:     100% On-Premise (Titolare del trattamento: Istituto)")
     print("=" * 70)
     print(f"  Server pronto. Apri Safari o Chrome su: http://localhost:{PORT}\n")
 

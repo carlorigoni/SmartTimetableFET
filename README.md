@@ -1,8 +1,13 @@
 # 🎓 SmartTimetable - Suite Completa per l'Orario Scolastico con FET 7.12.0
 
+[![Version](https://img.shields.io/badge/version-1.4.0-blue.svg)](https://github.com/carlorigoni/SmartTimetableFET)
+[![Docker Hub](https://img.shields.io/badge/docker%20hub-carlorigoni%2Fsmarttimetablefet%3Alatest-blue?logo=docker)](https://hub.docker.com/r/carlorigoni/smarttimetablefet)
+[![FET Solver](https://img.shields.io/badge/FET%20engine-7.12.0-orange.svg)](https://lalescu.ro/liviu/fet/)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-green.svg)](https://www.gnu.org/licenses/gpl-3.0)
+
 Applicazione web moderna, performante e intuitiva per la progettazione, ottimizzazione e pubblicazione dell'orario scolastico negli Istituti Superiori italiani, integrata con il solutore open source ad alte prestazioni **FET (Free Timetabling Software) 7.12.0**.
 
-Zero dipendenze esterne Python, interfaccia reattiva e immagine container multi-architettura pronta all'uso.
+Zero dipendenze esterne Python, interfaccia reattiva in stile Google Classroom / Material 3 e immagine container multi-architettura pronta all'uso su Docker Hub.
 
 ---
 
@@ -177,15 +182,127 @@ Include:
 
 ---
 
+## 🔄 Aggiornamento Automatico del Server di Produzione (Ubuntu Linux)
+
+Quando viene pubblicata una nuova versione dell'immagine su Docker Hub (`carlorigoni/smarttimetablefet:latest`), è possibile aggiornare il server di produzione in modo completamente automatico senza interventi manuali e senza rischiare la perdita dei dati.
+
+### Metodo 1: Aggiornamento Continuo con Watchtower (Scelta Consigliata)
+
+[Watchtower](https://containrrr.dev/watchtower/) è il container standard de facto dell'ecosistema Docker per monitorare il registro Docker Hub, scaricare la nuova immagine e riavviare il container applicando fedelmente le stesse configurazioni e gli stessi volumi persistenti.
+
+#### Aggiunta diretta a `docker-compose.yml`:
+È sufficiente aggiungere il servizio `watchtower` al tuo `docker-compose.yml`:
+
+```yaml
+version: '3.8'
+
+services:
+  smarttimetable:
+    container_name: smarttimetable
+    image: carlorigoni/smarttimetablefet:latest
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - HOST=0.0.0.0
+      - PORT=8000
+      - PYTHONUNBUFFERED=1
+      - ADMIN_EMAIL=admin@tuascuola.edu
+    volumes:
+      - ./data:/app/webapp/data
+
+  # Servizio di aggiornamento automatico intelligente
+  watchtower:
+    image: containrrr/watchtower
+    container_name: watchtower
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: --interval 3600 --cleanup smarttimetable
+```
+
+- `--interval 3600`: controlla ogni ora se è presente un aggiornamento (in alternativa, puoi usare `--schedule "0 0 3 * * *"` per aggiornare solo ogni notte alle 03:00).
+- `--cleanup`: rimuove automaticamente le vecchie immagini dismesse dal disco dopo l'aggiornamento, evitando di saturare lo spazio del server.
+- `smarttimetable`: indica a Watchtower di monitorare esclusivamente il container dell'orario scolastico.
+
+#### Oppure avvio rapido one-line con `docker run`:
+```bash
+docker run -d \
+  --name watchtower \
+  --restart unless-stopped \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  containrrr/watchtower \
+  --cleanup \
+  --schedule "0 0 3 * * *" \
+  smarttimetable
+```
+
+---
+
+### Metodo 2: Aggiornamento tramite Cron Job o Systemd Timer
+
+Se preferisci non utilizzare container ausiliari, puoi configurare un'attività pianificata (`cron`) direttamente su Ubuntu:
+
+1. Modifica il crontab di root:
+   ```bash
+   sudo crontab -e
+   ```
+2. Inserisci la seguente riga per eseguire l'aggiornamento ogni notte alle 03:30:
+   ```cron
+   30 3 * * * cd /opt/smarttimetable && docker compose pull && docker compose up -d && docker image prune -f >> /var/log/smarttimetable_update.log 2>&1
+   ```
+
+> [!IMPORTANT]
+> **Sicurezza dei Dati durante gli Aggiornamenti:**
+> Grazie al volume montato `./data:/app/webapp/data`, il database dell'istituto (`current_project.json`), gli orari risolti, gli snapshot storici e la configurazione degli utenti **non risiedono all'interno dell'immagine effimera**, ma sono memorizzati stabilmente sul disco dell'host. L'aggiornamento dell'immagine container non cancella né sovrascrive mai i dati della scuola.
+
+---
+
+## 🛡️ Trattamento dei Dati Personali e Conformità GDPR (Reg. UE 2016/679)
+
+SmartTimetable FET Suite è progettato e distribuito come **software on-premise autonomo e open source**, destinato all'installazione diretta presso l'infrastruttura tecnologica dell'Istituto Scolastico (server locale, NAS d'istituto o macchina virtuale controllata).
+
+### 1. Ruolo del Titolare del Trattamento (Data Controller)
+- Ai sensi dell'**Articolo 4, punto 7 del Regolamento Generale sulla Protezione dei Dati (GDPR - UE 2016/679)**, l'**Istituto Scolastico o l'Ente** che installa, configura e utilizza il software agisce in via esclusiva come **Titolare del Trattamento dei Dati Personali**.
+- L'autore (Carlo Rigoni), gli sviluppatori e i contributori del progetto open source **non sono Responsabili del Trattamento (Data Processor)**, non hanno accesso, non raccolgono, non visualizzano, non archiviano e non trasmettono ad alcun server cloud o terza parte i dati trattati dalla scuola (anagrafiche dei docenti, cattedre, indisponibilità, classi, gruppi di studenti o orari).
+
+### 2. Privacy by Design & Privacy by Default (Art. 25 GDPR)
+L'architettura del software implementa nativamente i principi cardine di protezione dei dati:
+- **Esecuzione 100% Locale / On-Premise**: L'intero database e gli algoritmi di calcolo risiedono all'interno del perimetro di sicurezza della scuola. Nessuna chiamata di telemetria, tracciamento, profilazione o analytics verso server esterni.
+- **Zero Trust & Default Inactive Account**: Quando un utente accede per la prima volta con Google OAuth, il suo account viene posto in stato `pending`. Non ha alcun accesso ai dati dell'istituto fino a esplicita revisione e sblocco da parte dell'amministratore d'istituto, con attribuzione puntuale del ruolo (`viewer`, `editor`, `admin`).
+- **Minimizzazione dei Dati (Art. 5, par. 1, lett. c)**: L'autenticazione richiede unicamente l'ID univoco e l'email istituzionale verificata via token crittografico Google. Nessuna password personale viene memorizzata nel sistema.
+- **Accesso di Emergenza Cifrato**: Il passcode master per il primo avvio o disaster recovery è protetto con funzione di hash PBKDF2/SHA-256 e salt crittografico, mai salvato in chiaro.
+
+### 3. Responsabilità e Oneri a Carico dell'Amministratore d'Istituto
+Per una piena conformità normativa, l'Istituto Scolastico è tenuto a:
+1. **Adottare HTTPS in produzione**: Pubblicare il servizio esclusivamente tramite Reverse Proxy protetto da certificato TLS/SSL (es. Let's Encrypt o certificato d'istituto) per garantire la cifratura del traffico in transito.
+2. **Informativa Privacy (Artt. 13-14 GDPR)**: Integrare la gestione dell'orario scolastico nel proprio *Registro dei Trattamenti* (Art. 30 GDPR) sotto la base giuridica dell'adempimento di un obbligo legale e compito di interesse pubblico (Art. 6, par. 1, lett. c ed e GDPR).
+3. **Politica di Backup**: Conservare regolarmente copie di sicurezza della cartella `/data` su supporti cifrati e protetti da accessi non autorizzati.
+
+---
+
+## 📜 Riconoscimenti & Credits
+
+Il progetto SmartTimetable nasce dalla sinergia tra competenze didattiche e organizzative scolastiche, software libero ad altissime prestazioni e ingegneria AI:
+
+- 👨‍🏫 **Autore, Ideazione & Architettura**:
+  **Carlo Rigoni** &mdash; Ideazione, progettazione del modello dati scolastico italiano (organico cattedre, cdc, articolazioni di lingue, compresenze, ore a disposizione, accorpamenti macro-materie, regole blocchi orari e stampe ufficiali per collegio e classi).
+- ⚡ **Motore Euristico di Calcolo FET**:
+  **Liviu Lalescu** e la comunità internazionale del progetto [FET (Free Educational Timetabling Software)](https://lalescu.ro/liviu/fet/) &mdash; Straordinario algoritmo euristico C++ nativo ad alte prestazioni, distribuito come Software Libero sotto licenza GNU GPL.
+- 🤖 **AI Engineering & Pair Programming**:
+  **Google DeepMind Antigravity** &mdash; Ingegnerizzazione dell'architettura full-stack, design interfaccia reattiva Material 3 (stile Google Classroom), Relaxation Engine dell'Advisor vincoli, parser e generatore Microsoft Word (.docx), pipeline Docker multi-architettura e test.
+
+---
+
 ## 📁 Struttura del Repository
 
 ```text
 ├── Dockerfile                   # Build multi-stage Linux (FET 7.12.0 + Python 3.12)
-├── docker-compose.yml           # Configurazione Docker Compose per server/Synology
+├── docker-compose.yml           # Configurazione Docker Compose per server/Synology/Watchtower
 ├── .dockerignore                # Esclusioni per build Docker
 ├── .gitignore                   # Esclusioni repository Git
 ├── SYNOLOGY_GUIDE.md            # Guida installazione su Synology NAS
-├── README.md                    # Questa documentazione
+├── README.md                    # Questa documentazione completa
 ├── setup_fet_cl.sh              # Script compilazione locale macOS di fet-cl
 ├── webapp/
 │   ├── server.py                # Backend REST API e server HTTP (Zero dipendenze)
@@ -211,5 +328,5 @@ Include:
 
 ## 📄 Licenza
 
-Distribuito sotto licenza GNU GPL v3 in conformità con la licenza del motore solutore FET.
-Autore: **Carlo Rigoni** &bull; AI Pair Programming: Google DeepMind Antigravity.
+Distribuito sotto licenza **GNU General Public License v3 (GNU GPL v3)** in piena conformità con la licenza del motore solutore FET.  
+Autore: **Carlo Rigoni** &bull; Motore: **FET 7.12.0** &bull; AI Pair Programming: **Google DeepMind Antigravity**.

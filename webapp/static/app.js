@@ -21,6 +21,11 @@ let stateData = {
 let pollSolverTimer = null;
 let currentSolverRunning = false;
 
+// --- VERSIONE E IDENTITÀ APPLICATIVA ---
+const APP_VERSION = '1.4.0';
+const FET_VERSION = '7.12.0';
+const APP_AUTHOR = 'Carlo Rigoni';
+
 // --- AUTENTICAZIONE & CONTROLLO ACCESSI (GOOGLE OAUTH & WHITELIST APPROVAL) ---
 let currentUser = null;
 let authPollInterval = null;
@@ -760,6 +765,27 @@ function closeMobileSidebar() {
   if (sb) sb.classList.remove('mobile-open');
   if (backdrop) backdrop.classList.remove('active');
 }
+
+// --- MODAL INFORMAZIONI SU SMARTTIMETABLE, CREDITI & CONFORMITÀ GDPR ---
+function openAboutModal() {
+  const m = document.getElementById('aboutModal');
+  if (m) m.style.display = 'flex';
+}
+
+function closeAboutModal() {
+  const m = document.getElementById('aboutModal');
+  if (m) m.style.display = 'none';
+}
+
+// Chiusura modal tramite tasto Escape
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    closeAboutModal();
+    if (typeof closePrintClassesModal === 'function') closePrintClassesModal();
+    if (typeof closePrintTeachersModal === 'function') closePrintTeachersModal();
+    if (typeof closeAccessManagementModal === 'function') closeAccessManagementModal();
+  }
+});
 
 // --- ROUTER & NAVIGAZIONE CON CRONOLOGIA (PULSANTE INDIETRO GLOBALE) ---
 let navigationHistory = [];
