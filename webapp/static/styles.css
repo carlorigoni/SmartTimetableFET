@@ -87,7 +87,7 @@ body {
   height: 100%;
 }
 
-/* Sidebar Backdrop (Mobile Drawer Overlay) */
+/* Sidebar Backdrop (Mobile Drawer Overlay Scrim) */
 .sidebar-backdrop {
   display: none;
   position: fixed;
@@ -95,12 +95,10 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(15, 23, 42, 0.55);
-  backdrop-filter: blur(2px);
-  -webkit-backdrop-filter: blur(2px);
-  z-index: 990;
+  background: rgba(15, 23, 42, 0.6);
+  z-index: 998;
   opacity: 0;
-  transition: opacity 0.25s ease-in-out;
+  transition: opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   pointer-events: none;
 }
 
@@ -3668,18 +3666,34 @@ input:checked + .slider:before {
     margin-right: 8px;
   }
 
-  /* Backdrop: overlay che oscura e sfoca SOLO il contenuto principale */
+  /* Backdrop: overlay scuro pulito senza filtri blur per evitare bug su GPU mobile (iOS/Android) */
   .sidebar-backdrop {
-    z-index: 998 !important;
+    display: none;
     position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    background: rgba(15, 23, 42, 0.65) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    z-index: 998 !important;
+    opacity: 0;
+    transition: opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    pointer-events: none;
+  }
+
+  .sidebar-backdrop.active {
+    display: block !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
   }
 
   .sidebar-wrapper {
+    position: static !important;
     width: 0 !important;
-    position: fixed !important;
-    top: 0;
-    left: 0;
-    bottom: 0;
+    height: 0 !important;
+    overflow: visible !important;
     z-index: 1000 !important;
     pointer-events: none !important;
   }
@@ -3687,25 +3701,32 @@ input:checked + .slider:before {
   .sidebar-wrapper .sidebar,
   .sidebar {
     position: fixed !important;
-    top: 0;
-    left: 0;
-    bottom: 0;
+    top: 0 !important;
+    left: 0 !important;
+    bottom: 0 !important;
     width: 280px !important;
     max-width: 85vw !important;
+    height: 100% !important;
+    height: 100dvh !important;
     background: #ffffff !important;
     z-index: 1001 !important;
-    transform: translateX(-100%) !important;
+    -webkit-transform: translate3d(-100%, 0, 0) !important;
+    transform: translate3d(-100%, 0, 0) !important;
     box-shadow: none !important;
-    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    transition: -webkit-transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), transform 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
     pointer-events: auto !important;
     opacity: 1 !important;
     overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    -webkit-backface-visibility: hidden !important;
+    backface-visibility: hidden !important;
   }
 
   .sidebar-wrapper .sidebar.mobile-open,
   .sidebar.mobile-open {
-    transform: translateX(0) !important;
-    box-shadow: 6px 0 32px rgba(15, 23, 42, 0.35) !important;
+    -webkit-transform: translate3d(0, 0, 0) !important;
+    transform: translate3d(0, 0, 0) !important;
+    box-shadow: 6px 0 32px rgba(15, 23, 42, 0.45) !important;
     background: #ffffff !important;
     opacity: 1 !important;
   }
