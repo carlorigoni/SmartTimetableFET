@@ -248,7 +248,7 @@ body {
 
 /* Header della Sidebar */
 .sidebar-header {
-  padding: 0 12px;
+  padding: 0 14px;
   border-bottom: 1px solid var(--border-light);
   display: flex;
   align-items: center;
@@ -301,7 +301,7 @@ body {
 }
 
 .sidebar-wrapper.collapsed:hover .sidebar-header {
-  padding: 0 12px;
+  padding: 0 14px;
   justify-content: space-between;
 }
 
@@ -315,47 +315,79 @@ body {
 
 /* Sezioni di Navigazione */
 .sidebar-nav {
-  padding: 8px 0;
+  padding: 6px 0;
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 0;
 }
 
+/* Titoli di sezione con ingombro costante (36px totali: 6px top + 28px height + 2px bottom) */
 .nav-section-title {
+  height: 28px;
+  line-height: 28px;
+  margin: 6px 0 2px 0;
+  padding: 0 16px;
   font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
   color: #5f6368;
   letter-spacing: 0.6px;
-  padding: 12px 18px 4px;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  transition: opacity 0.15s ease;
 }
 
+/* In modalità compressa (non hovered), il titolo mantiene ESATTAMENTE lo stesso ingombro verticale (36px),
+   nascondendo il testo e mostrando un divisore orizzontale sottile centrato (zero vertical layout shift) */
 .sidebar-wrapper.collapsed:not(:hover) .nav-section-title {
-  display: none !important;
+  height: 28px;
+  line-height: 28px;
+  margin: 6px 0 2px 0;
+  padding: 0;
+  font-size: 0 !important;
+  color: transparent !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  user-select: none;
 }
 
-/* Voci di Menu Pill Google Material 3 */
+.sidebar-wrapper.collapsed:not(:hover) .nav-section-title::before {
+  content: '';
+  display: block;
+  width: 28px;
+  height: 1px;
+  background: var(--border-light);
+}
+
+/* Voci di Menu Pill Google Material 3 (Ingombro verticale: 2px top + 40px height + 2px bottom = 44px) */
 .nav-item {
   display: flex;
   align-items: center;
   gap: 12px;
-  height: 42px;
-  margin: 2px 8px;
-  padding: 0 14px;
-  border-radius: 21px;
+  height: 40px;
+  margin: 2px 10px;
+  padding: 0 12px;
+  border-radius: 20px;
   color: #3c4043;
   text-decoration: none;
   font-size: 13.5px;
   font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.16s ease, color 0.16s ease;
+  transition: background-color 0.15s ease, color 0.15s ease;
   white-space: nowrap;
   box-sizing: border-box;
   user-select: none;
+  flex-shrink: 0;
 }
 
 .nav-item:hover {
@@ -371,7 +403,8 @@ body {
 
 .nav-icon {
   font-size: 18px;
-  width: 22px;
+  width: 24px;
+  height: 24px;
   text-align: center;
   flex-shrink: 0;
   display: inline-flex;
@@ -386,11 +419,13 @@ body {
   flex: 1;
 }
 
-/* Adattamento Voci di Menu in Mini-Rail (Chiuso e non hovered) */
+/* Adattamento Voci di Menu in Mini-Rail (Chiuso e non hovered):
+   Mantiene ESATTAMENTE l'ingombro di 44px verticali (2px top + 40px height + 2px bottom)
+   e la coordinata X del centro dell'icona a 34px (perfettamente allineata) */
 .sidebar-wrapper.collapsed:not(:hover) .nav-item {
-  width: 44px;
-  height: 44px;
-  margin: 3px auto;
+  width: 40px;
+  height: 40px;
+  margin: 2px auto;
   padding: 0;
   justify-content: center;
   border-radius: 50%;
@@ -408,36 +443,44 @@ body {
   border-radius: 50%;
 }
 
-/* Sezione Bottom Fissata in Basso */
+/* Sezione Bottom Fissata in Basso (Ingombro verticale stabile a zero layout shift) */
 .sidebar-bottom {
-  padding: 8px 0;
+  padding: 6px 0;
   border-top: 1px solid var(--border-light);
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 0;
   background: var(--bg-sidebar);
+  flex-shrink: 0;
 }
 
 .sidebar-wrapper.collapsed:not(:hover) .sidebar-bottom {
-  padding: 8px 0;
+  padding: 6px 0;
 }
 
-/* Footer Sidebar */
+/* Footer Sidebar (Altezza costante 68px in entrambi gli stati: zero vertical push) */
 .sidebar-footer {
-  padding: 12px 16px;
+  height: 68px;
+  padding: 8px 12px;
   border-top: 1px solid var(--border-light);
   font-size: 11px;
   color: var(--text-muted);
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  justify-content: center;
+  gap: 4px;
   background: var(--bg-sidebar);
+  box-sizing: border-box;
+  flex-shrink: 0;
 }
 
 .sidebar-wrapper.collapsed:not(:hover) .sidebar-footer {
-  padding: 10px 4px;
+  height: 68px;
+  padding: 8px 0;
+  align-items: center;
   justify-content: center;
   text-align: center;
+  box-sizing: border-box;
 }
 
 .sidebar-wrapper.collapsed:not(:hover) .sidebar-footer .footer-meta,
@@ -447,14 +490,18 @@ body {
 
 .sidebar-wrapper.collapsed:not(:hover) .sidebar-footer .footer-badge-wrap {
   justify-content: center;
+  width: 100%;
 }
 
 .sidebar-wrapper.collapsed:not(:hover) #sidebarStatusBadge {
   font-size: 0;
   padding: 5px;
-  width: 10px;
-  height: 10px;
+  width: 12px;
+  height: 12px;
   border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .sidebar-wrapper.collapsed:not(:hover) #sidebarStatusBadge::before {

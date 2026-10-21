@@ -268,7 +268,8 @@ class SmartTimetableHandler(BaseHTTPRequestHandler):
                 "fet_version": FET_VERSION,
                 "author": APP_AUTHOR,
                 "credits": APP_CREDITS,
-                "gdpr_mode": "on-premise self-hosted"
+                "deployment": "on-premise or controlled vm/vps (self-hosted by installer)",
+                "gdpr_mode": "on-premise or controlled vm/vps (self-hosted by installer)"
             })
             return
         elif path == "/api/auth/config":
@@ -1737,7 +1738,7 @@ def main():
     print(f"  • Host e Porta:       http://{HOST}:{PORT}")
     print(f"  • fet-cl solver:      {fet_bin or 'NON TROVATO'}")
     print(f"  • Database attivo:    {DATA_DIR}/current_project.json")
-    print(f"  • Privacy & GDPR:     100% On-Premise (Titolare del trattamento: Istituto)")
+    print(f"  • Privacy & GDPR:     On-Premise / VM / VPS controllata (Titolare: Istituto)")
     print("=" * 70)
     print(f"  Server pronto. Apri Safari o Chrome su: http://localhost:{PORT}\n")
 

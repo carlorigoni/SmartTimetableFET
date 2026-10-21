@@ -329,7 +329,7 @@ Se preferisci non utilizzare container ausiliari, puoi configurare un'attività 
 
 ## 🛡️ Trattamento dei Dati Personali e Conformità GDPR (Reg. UE 2016/679)
 
-SmartTimetable FET Suite è progettato e distribuito come **software on-premise autonomo e open source**, destinato all'installazione diretta presso l'infrastruttura tecnologica dell'Istituto Scolastico (server locale, NAS d'istituto o macchina virtuale controllata).
+SmartTimetable FET Suite è progettato e distribuito come **software autonomo e open source**, operante **esclusivamente on-premise** all'interno della rete locale dell'Istituto, oppure su **macchina virtuale (VM) o VPS controllata** (a totale carico e gestione dell'installatore).
 
 ### 1. Ruolo del Titolare del Trattamento (Data Controller)
 - Ai sensi dell'**Articolo 4, punto 7 del Regolamento Generale sulla Protezione dei Dati (GDPR - UE 2016/679)**, l'**Istituto Scolastico o l'Ente** che installa, configura e utilizza il software agisce in via esclusiva come **Titolare del Trattamento dei Dati Personali**.
@@ -337,13 +337,13 @@ SmartTimetable FET Suite è progettato e distribuito come **software on-premise 
 
 ### 2. Privacy by Design & Privacy by Default (Art. 25 GDPR)
 L'architettura del software implementa nativamente i principi cardine di protezione dei dati:
-- **Esecuzione 100% Locale / On-Premise**: L'intero database e gli algoritmi di calcolo risiedono all'interno del perimetro di sicurezza della scuola. Nessuna chiamata di telemetria, tracciamento, profilazione o analytics verso server esterni.
+- **Esecuzione 100% Locale / On-Premise / VPS Controllata**: L'intero database e gli algoritmi di calcolo risiedono all'interno dell'infrastruttura governata dalla scuola o dall'installatore. Nessuna chiamata di telemetria, tracciamento, profilazione o analytics verso server esterni.
 - **Zero Trust & Default Inactive Account**: Quando un utente accede per la prima volta con Google OAuth, il suo account viene posto in stato `pending`. Non ha alcun accesso ai dati dell'istituto fino a esplicita revisione e sblocco da parte dell'amministratore d'istituto, con attribuzione puntuale del ruolo (`viewer`, `editor`, `admin`).
 - **Minimizzazione dei Dati (Art. 5, par. 1, lett. c)**: L'autenticazione richiede unicamente l'ID univoco e l'email istituzionale verificata via token crittografico Google. Nessuna password personale viene memorizzata nel sistema.
 - **Accesso di Emergenza Cifrato**: Il passcode master per il primo avvio o disaster recovery è protetto con funzione di hash PBKDF2/SHA-256 e salt crittografico, mai salvato in chiaro.
 
 ### 3. Responsabilità e Oneri a Carico dell'Amministratore d'Istituto
-Per una piena conformità normativa, l'Istituto Scolastico è tenuto a:
+Per una piena conformità normativa, l'Istituto Scolastico o l'installatore è tenuto a:
 1. **Adottare HTTPS in produzione**: Pubblicare il servizio esclusivamente tramite Reverse Proxy protetto da certificato TLS/SSL (es. Let's Encrypt o certificato d'istituto) per garantire la cifratura del traffico in transito.
 2. **Informativa Privacy (Artt. 13-14 GDPR)**: Integrare la gestione dell'orario scolastico nel proprio *Registro dei Trattamenti* (Art. 30 GDPR) sotto la base giuridica dell'adempimento di un obbligo legale e compito di interesse pubblico (Art. 6, par. 1, lett. c ed e GDPR).
 3. **Politica di Backup**: Conservare regolarmente copie di sicurezza della cartella `/data` su supporti cifrati e protetti da accessi non autorizzati.
@@ -360,8 +360,8 @@ Il progetto SmartTimetable nasce dalla sinergia tra competenze didattiche e orga
   **Liviu Lalescu** e la comunità internazionale del progetto [FET (Free Educational Timetabling Software)](https://lalescu.ro/liviu/fet/) &mdash; Straordinario algoritmo euristico C++ nativo ad alte prestazioni, distribuito come Software Libero sotto licenza GNU GPL.
 - 🤖 **AI Engineering & Pair Programming**:
   **Google DeepMind Antigravity** &mdash; Ingegnerizzazione dell'architettura full-stack, design interfaccia reattiva Material 3 (stile Google Classroom), Relaxation Engine dell'Advisor vincoli, parser e generatore Microsoft Word (.docx), pipeline Docker multi-architettura e test.
-
----
+- 🔒 **Infrastruttura & Sovranità dei Dati**:
+  SmartTimetable opera **esclusivamente on-premise** oppure su **macchina virtuale (VM) o VPS controllata** (a totale carico e gestione dell'installatore). Nessun dato risiede o transita su server cloud proprietari terzi.
 
 ## 📁 Struttura del Repository
 
