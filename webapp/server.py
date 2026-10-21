@@ -18,6 +18,7 @@ import base64
 import mimetypes
 import threading
 import subprocess
+import platform
 import urllib.request
 import urllib.error
 from datetime import datetime
@@ -84,7 +85,7 @@ def fetch_google_doc_docx_bytes(url):
     except Exception as e:
         raise ValueError(f"Impossibile scaricare il Google Doc: {e}")
 
-APP_VERSION = "1.4.0"
+APP_VERSION = "1.4.1"
 FET_VERSION = "7.12.0"
 APP_AUTHOR = "Carlo Rigoni"
 APP_MENTOR = "Federico Rettore"
@@ -137,6 +138,62 @@ def find_fet_cl():
         if c and os.path.isfile(c) and os.access(c, os.X_OK):
             return os.path.abspath(c)
     return None
+
+
+def get_fet_binary_info():
+    """
+    Rileva dinamicamente l'architettura su cui è in esecuzione il sistema e per cui
+    è stato compilato il binario del solutore fet-cl (es. macOS ARM64, Linux x86_64, Linux ARM64).
+    In assenza di informazioni puntuali restituisce una dicitura generica e pulita.
+    """
+    fet_bin = find_fet_cl()
+    sys_arch = platform.machine() or ""
+    sys_os = platform.system() or ""
+    os_name = "Linux" if sys_os == "Linux" else ("macOS" if sys_os == "Darwin" else sys_os)
+    
+    bin_arch = None
+    if fet_bin and os.path.isfile(fet_bin):
+        try:
+            res = subprocess.run(["file", fet_bin], capture_output=True, text=True, timeout=3)
+            out = res.stdout.lower()
+            if "arm64" in out or "aarch64" in out:
+                bin_arch = "ARM64"
+            elif "x86_64" in out or "x86-64" in out or "x64" in out:
+                bin_arch = "x86_64"
+            elif "i386" in out or "i686" in out:
+                bin_arch = "x86"
+        except Exception:
+            pass
+
+    if not bin_arch and sys_arch:
+        if sys_arch.lower() in ("arm64", "aarch64"):
+            bin_arch = "ARM64"
+        elif sys_arch.lower() in ("x86_64", "amd64"):
+            bin_arch = "x86_64"
+        else:
+            bin_arch = sys_arch
+
+    arch_parts = []
+    if os_name:
+        arch_parts.append(os_name)
+    if bin_arch:
+        arch_parts.append(bin_arch)
+    
+    arch_label = " ".join(arch_parts).strip()
+    
+    if arch_label:
+        title_label = f"Solver FET CLI {FET_VERSION} ({arch_label})"
+    else:
+        title_label = f"Solver FET CLI {FET_VERSION}"
+        
+    return {
+        "found": bool(fet_bin),
+        "path": fet_bin,
+        "os": os_name,
+        "arch": bin_arch,
+        "arch_label": arch_label or "Standard",
+        "title_label": title_label
+    }
 
 
 class ThreadingHTTPServer(ThreadingMixIn, HTTPServer):
@@ -282,10 +339,14 @@ class SmartTimetableHandler(BaseHTTPRequestHandler):
             self._json(200, {"status": "ok", "version": APP_VERSION})
             return
         elif path == "/api/info":
+            fet_info = get_fet_binary_info()
             self._json(200, {
                 "app_name": "SmartTimetable FET Suite",
                 "version": APP_VERSION,
                 "fet_version": FET_VERSION,
+                "fet_found": fet_info["found"],
+                "fet_arch": fet_info["arch_label"],
+                "fet_title": fet_info["title_label"],
                 "author": APP_AUTHOR,
                 "mentor": APP_MENTOR,
                 "credits": APP_CREDITS,
@@ -334,6 +395,9 @@ class SmartTimetableHandler(BaseHTTPRequestHandler):
             sum_data = db.get_summary()
             sum_data["app_version"] = APP_VERSION
             sum_data["fet_version"] = FET_VERSION
+            fet_info = get_fet_binary_info()
+            sum_data["fet_arch"] = fet_info["arch_label"]
+            sum_data["fet_title"] = fet_info["title_label"]
             sum_data["author"] = APP_AUTHOR
             self._json(200, sum_data)
             return
@@ -427,6 +491,9 @@ class SmartTimetableHandler(BaseHTTPRequestHandler):
             sum_data = db.get_summary()
             sum_data["app_version"] = APP_VERSION
             sum_data["fet_version"] = FET_VERSION
+            fet_info = get_fet_binary_info()
+            sum_data["fet_arch"] = fet_info["arch_label"]
+            sum_data["fet_title"] = fet_info["title_label"]
             sum_data["author"] = APP_AUTHOR
             self._json(200, sum_data)
 
@@ -1775,14 +1842,15 @@ class SmartTimetableHandler(BaseHTTPRequestHandler):
 
 
 def main():
-    fet_bin = find_fet_cl()
+    fet_info = get_fet_binary_info()
+    fet_bin = fet_info["path"]
     print("=" * 70)
     print(f"  SmartTimetable Web App - Suite Completa FET {FET_VERSION} (v{APP_VERSION})")
     print(f"  Autore: {APP_AUTHOR} • Mentore dell'Orario: {APP_MENTOR}")
     print(f"  AI Pair Programming: Google DeepMind Antigravity • Solver: FET Free Software")
     print("=" * 70)
     print(f"  • Host e Porta:       http://{HOST}:{PORT}")
-    print(f"  • fet-cl solver:      {fet_bin or 'NON TROVATO'}")
+    print(f"  • fet-cl solver:      {fet_bin or 'NON TROVATO'} [{fet_info['arch_label']}]")
     print(f"  • Database attivo:    {DATA_DIR}/current_project.json")
     print(f"  • Privacy & GDPR:     On-Premise / VM / VPS controllata (Titolare: Istituto)")
     print("=" * 70)

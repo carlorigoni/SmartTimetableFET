@@ -19,6 +19,7 @@ import shutil
 import glob
 import subprocess
 import threading
+import platform
 from datetime import datetime
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from urllib.parse import urlparse
@@ -452,7 +453,8 @@ function checkInit() {
       var fetBadge = document.getElementById("fetBadge");
       if (d.fet_cl_found) {
         fetBadge.className = "badge ok";
-        fetBadge.innerText = "● fet-cl 7.12.0 rilevato (Apple Silicon)";
+        var archStr = d.fet_arch ? " (" + d.fet_arch + ")" : "";
+        fetBadge.innerText = "● fet-cl 7.12.0 rilevato" + archStr;
       } else {
         fetBadge.className = "badge err";
         fetBadge.innerText = "● fet-cl non trovato";
@@ -511,12 +513,17 @@ class FETRequestHandler(BaseHTTPRequestHandler):
 
         if path == "/" or path == "/ping":
             fet_bin = find_fet_cl()
+            sys_arch = platform.machine() or ""
+            sys_os = platform.system() or ""
+            os_name = "Linux" if sys_os == "Linux" else ("macOS" if sys_os == "Darwin" else sys_os)
+            fet_arch = f"{os_name} {sys_arch}".strip()
             data = {
                 "status": "ok",
                 "message": "FET Bridge è attivo e pronto per la compilazione!",
                 "version": "1.0",
                 "fet_cl_found": fet_bin is not None,
-                "fet_path": fet_bin or "NON TROVATO"
+                "fet_path": fet_bin or "NON TROVATO",
+                "fet_arch": fet_arch
             }
             self._send_json(200, data)
 

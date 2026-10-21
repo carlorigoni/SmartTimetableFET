@@ -22,7 +22,7 @@ let pollSolverTimer = null;
 let currentSolverRunning = false;
 
 // --- VERSIONE E IDENTITÀ APPLICATIVA ---
-const APP_VERSION = '1.4.0';
+const APP_VERSION = '1.4.1';
 const FET_VERSION = '7.12.0';
 const APP_AUTHOR = 'Carlo Rigoni';
 
@@ -1628,7 +1628,7 @@ function renderSolver() {
   container.innerHTML = `
     <div class="card">
       <div class="card-title">
-        <span>Solver FET CLI Nativo (Apple Silicon 7.12.0)</span>
+        <span>${escapeHtml(stateData.summary?.fet_title || 'Solver FET CLI 7.12.0')}</span>
         <div style="display:flex;gap:6px;align-items:center;">
           <span id="solverStatusBadge" class="badge badge-ok">● Solver Pronto</span>
           ${(stateData.summary?.locked_activities_count > 0) ? `<span class="badge badge-info" title="Ore fissate che non verranno spostate dal calcolo">🔒 <b>${stateData.summary.locked_activities_count}</b> ${stateData.summary.locked_activities_count === 1 ? 'ora fissata' : 'ore fissate'}</span>` : ''}
