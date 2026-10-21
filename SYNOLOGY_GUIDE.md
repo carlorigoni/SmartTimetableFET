@@ -40,8 +40,6 @@ Questa guida illustra passo per passo come installare e pubblicare **SmartTimeta
 Incolla il seguente codice nel riquadro:
 
 ```yaml
-version: '3.8'
-
 services:
   smarttimetable:
     container_name: smarttimetable

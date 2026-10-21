@@ -49,10 +49,8 @@ Non è necessario installare compiler C++, Qt o librerie grafiche: l'immagine in
 
 ### Opzione 1: Con Docker Compose (Consigliata)
 
-1. Crea o usa il file `docker-compose.yml` presente nel repository:
+1. Usa o modifica il file `docker-compose.yml` presente nel repository:
    ```yaml
-   version: '3.8'
-
    services:
      smarttimetable:
        container_name: smarttimetable
@@ -67,12 +65,36 @@ Non è necessario installare compiler C++, Qt o librerie grafiche: l'immagine in
          - ADMIN_EMAIL=admin@tuascuola.edu
        volumes:
          - ./data:/app/webapp/data
+       healthcheck:
+         test: ["CMD", "curl", "-f", "http://localhost:8000/api/summary"]
+         interval: 30s
+         timeout: 5s
+         retries: 3
+         start_period: 15s
+
+     # [Opzionale] Aggiornamento automatico intelligente all'uscita di nuove versioni su Docker Hub
+     watchtower:
+       container_name: smarttimetable_watchtower
+       image: containrrr/watchtower
+       restart: unless-stopped
+       volumes:
+         - /var/run/docker.sock:/var/run/docker.sock
+       command: --interval 3600 --cleanup smarttimetable
+       profiles:
+         - auto-update
    ```
 
-2. Avvia il container:
-   ```bash
-   docker compose up -d
-   ```
+2. **Avvia i container**:
+   - **Modalità Standard (SENZA aggiornamento automatico)**:
+     ```bash
+     docker compose up -d
+     ```
+     *(Avvia solo `smarttimetable`; Watchtower rimane dormiente)*.
+   - **Modalità con AGGIORNAMENTO AUTOMATICO ATTIVO (Watchtower)**:
+     ```bash
+     docker compose --profile auto-update up -d
+     ```
+     *(Avvia sia l'orario scolastico sia il demone Watchtower, che controllerà periodicamente Docker Hub e aggiornerà il server in modo invisibile e senza perdita di dati)*.
 
 3. Apri il browser su [http://localhost:8000](http://localhost:8000).
 
@@ -186,16 +208,53 @@ Include:
 
 Quando viene pubblicata una nuova versione dell'immagine su Docker Hub (`carlorigoni/smarttimetablefet:latest`), è possibile aggiornare il server di produzione in modo completamente automatico senza interventi manuali e senza rischiare la perdita dei dati.
 
-### Metodo 1: Aggiornamento Continuo con Watchtower (Scelta Consigliata)
+### ❓ Bisogna installare qualcosa sul sistema operativo Ubuntu?
+**Assolutamente NO!** Non devi installare nessun programma, pacchetto apt o servizio esterno su Ubuntu.
+Watchtower è **esso stesso un normale container Docker** (`image: containrrr/watchtower`) che gira all'interno di Docker comunicando con il socket di sistema (`/var/run/docker.sock`). Non tocca in alcun modo il sistema operativo host.
 
-[Watchtower](https://containrrr.dev/watchtower/) è il container standard de facto dell'ecosistema Docker per monitorare il registro Docker Hub, scaricare la nuova immagine e riavviare il container applicando fedelmente le stesse configurazioni e gli stessi volumi persistenti.
+---
 
-#### Aggiunta diretta a `docker-compose.yml`:
-È sufficiente aggiungere il servizio `watchtower` al tuo `docker-compose.yml`:
+### Metodo 1: Gestione Integrata con Docker Compose (Scelta Consigliata)
+
+Il servizio `watchtower` è già configurato all'interno del file `docker-compose.yml` con il tag `profiles: [auto-update]`. Questo ti consente di decidere con un singolo comando se attivare o meno l'aggiornamento automatico:
+
+#### 1. Come avviare CON AGGIORNAMENTO AUTOMATICO ATTIVO:
+```bash
+docker compose --profile auto-update up -d
+```
+* **Cosa succede:** Docker avvia in background sia il server scolastico `smarttimetable` sia il container `smarttimetable_watchtower`.
+* **Cosa fa Watchtower:**
+  1. Controlla periodicamente (ogni 60 minuti o all'orario notturno impostato) se su Docker Hub è stata rilasciata una nuova versione di `carlorigoni/smarttimetablefet:latest`.
+  2. Se trova un aggiornamento, scarica l'immagine (`docker pull`).
+  3. Ferma il vecchio container con spegnimento controllato e lo riavvia riapplicando **gli stessi volumi montati** (`./data`) e le stesse porte.
+  4. Rimuove la vecchia immagine dismessa liberando lo spazio su disco (`--cleanup`).
+  5. Il database della scuola (`current_project.json`) e gli orari non vengono mai persi né alterati.
+
+#### 2. Come avviare SENZA AGGIORNAMENTO AUTOMATICO (Modalità Manuale):
+```bash
+docker compose up -d
+```
+* **Cosa succede:** Docker avvia **esclusivamente** `smarttimetable`. Watchtower rimane completamente spento. L'aggiornamento avverrà solo quando deciderai tu di lanciare manualmente `docker compose pull && docker compose up -d`.
+
+#### 3. Comandi utili per monitorare Watchtower:
+* **Verificare i container in esecuzione:**
+  ```bash
+  docker compose ps
+  ```
+* **Leggere i log di Watchtower in tempo reale:**
+  ```bash
+  docker compose logs -f watchtower
+  ```
+* **Spegnere solo Watchtower mantenendo acceso il programma dell'orario:**
+  ```bash
+  docker compose stop watchtower
+  ```
+
+---
+
+### Configurazione in `docker-compose.yml`:
 
 ```yaml
-version: '3.8'
-
 services:
   smarttimetable:
     container_name: smarttimetable
@@ -210,22 +269,32 @@ services:
       - ADMIN_EMAIL=admin@tuascuola.edu
     volumes:
       - ./data:/app/webapp/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/summary"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
 
-  # Servizio di aggiornamento automatico intelligente
+  # Servizio di aggiornamento automatico (attivabile con --profile auto-update)
   watchtower:
+    container_name: smarttimetable_watchtower
     image: containrrr/watchtower
-    container_name: watchtower
     restart: unless-stopped
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     command: --interval 3600 --cleanup smarttimetable
+    profiles:
+      - auto-update
 ```
 
-- `--interval 3600`: controlla ogni ora se è presente un aggiornamento (in alternativa, puoi usare `--schedule "0 0 3 * * *"` per aggiornare solo ogni notte alle 03:00).
-- `--cleanup`: rimuove automaticamente le vecchie immagini dismesse dal disco dopo l'aggiornamento, evitando di saturare lo spazio del server.
-- `smarttimetable`: indica a Watchtower di monitorare esclusivamente il container dell'orario scolastico.
+* `--interval 3600`: frequenza di verifica in secondi (ogni 60 minuti). In alternativa puoi usare `--schedule "0 0 3 * * *"` per aggiornare solo ogni notte alle 03:00.
+* `--cleanup`: cancella automaticamente le immagini orfane vecchie per non occupare spazio sul disco del server.
 
-#### Oppure avvio rapido one-line con `docker run`:
+---
+
+### Metodo 2: Esecuzione Standalone con `docker run` (Senza Compose)
+Se non utilizzi Docker Compose, puoi avviare Watchtower con un singolo comando:
 ```bash
 docker run -d \
   --name watchtower \
