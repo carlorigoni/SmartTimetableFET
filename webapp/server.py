@@ -189,7 +189,7 @@ class SmartTimetableHandler(BaseHTTPRequestHandler):
             return None
         if user.get("status") != "approved":
             self._json(403, {
-                "error": "Accesso in attesa di autorizzazione da parte dell'amministratore (Carlo Rigoni)",
+                "error": "Accesso in attesa di autorizzazione da parte dell'amministratore",
                 "code": "AUTH_PENDING",
                 "user": user
             })
@@ -259,7 +259,7 @@ class SmartTimetableHandler(BaseHTTPRequestHandler):
         elif path == "/api/auth/config":
             self._json(200, {
                 "google_client_id": auth_manager.config.get("google_client_id", ""),
-                "admin_email": auth_manager.config.get("admin_email", "carlo.rigoni@gmail.com")
+                "admin_email": auth_manager.config.get("admin_email", "admin@paperopoli.edu")
             })
             return
         elif path == "/api/auth/me":

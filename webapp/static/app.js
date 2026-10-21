@@ -596,7 +596,7 @@ async function testSmtpEmail() {
       showToast(data.error || 'Errore durante l\'invio del test', 'error');
       return;
     }
-    showToast('✅ Email di test inviata a carlo.rigoni@gmail.com! Controlla la posta.', 'ok');
+    showToast('✅ Email di test inviata con successo! Controlla la posta.', 'ok');
   } catch (e) {
     showToast('Errore durante il test: ' + e.message, 'error');
   }

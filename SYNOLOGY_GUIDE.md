@@ -45,7 +45,7 @@ version: '3.8'
 services:
   smarttimetable:
     container_name: smarttimetable
-    image: ghcr.io/carlorigoni/smarttimetablefet:latest
+    image: carlorigoni/smarttimetablefet:latest
     restart: unless-stopped
     ports:
       - "8000:8000"
@@ -53,7 +53,7 @@ services:
       - HOST=0.0.0.0
       - PORT=8000
       - PYTHONUNBUFFERED=1
-      - ADMIN_EMAIL=carlo.rigoni@gmail.com
+      - ADMIN_EMAIL=admin@tuascuola.edu
       # - GOOGLE_CLIENT_ID=tuo-client-id.apps.googleusercontent.com
     volumes:
       # Mappa la cartella dei dati sul NAS Synology
@@ -67,7 +67,7 @@ services:
 ```
 
 > **💡 Vantaggio:**  
-> Usando `ghcr.io/carlorigoni/smarttimetablefet:latest`, il NAS scarica l'immagine già pronta in pochi secondi senza dover compilare il motore FET C++ sul processore del NAS!
+> Usando `carlorigoni/smarttimetablefet:latest`, il NAS scarica l'immagine già pronta in pochi secondi senza dover compilare il motore FET C++ sul processore del NAS!
 
 ### Passo 3: Avvia il progetto
 1. Clicca su **Avanti** e poi su **Fine**.

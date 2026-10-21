@@ -26,7 +26,7 @@ from email.message import EmailMessage
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(BASE_DIR, "data")
 AUTH_FILE = os.path.join(DATA_DIR, "auth_config.json")
-DEFAULT_ADMIN_EMAIL = os.environ.get("ADMIN_EMAIL", "carlo.rigoni@gmail.com").lower().strip()
+DEFAULT_ADMIN_EMAIL = os.environ.get("ADMIN_EMAIL", "admin@paperopoli.edu").lower().strip()
 DEFAULT_GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID", "").strip()
 SMTP_ENABLED_ENV = os.environ.get("SMTP_ENABLED", "").lower() in ("1", "true", "yes")
 SMTP_USER_ENV = os.environ.get("SMTP_USER", "").strip()
@@ -53,7 +53,7 @@ class AuthManager:
             "users": {
                 DEFAULT_ADMIN_EMAIL: {
                     "email": DEFAULT_ADMIN_EMAIL,
-                    "name": "Carlo Rigoni",
+                    "name": "Amministratore",
                     "picture": "",
                     "role": "admin",
                     "status": "approved",
@@ -90,7 +90,7 @@ class AuthManager:
                         if admin not in users:
                             users[admin] = {
                                 "email": admin,
-                                "name": "Carlo Rigoni",
+                                "name": "Amministratore",
                                 "picture": "",
                                 "role": "admin",
                                 "status": "approved",
