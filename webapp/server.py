@@ -231,9 +231,12 @@ class SmartTimetableHandler(BaseHTTPRequestHandler):
 
         self.send_response(200)
         self.send_header("Content-Type", content_type)
-        self.send_header("Cache-Control", "no-cache, no-store, must-revalidate")
-        self.send_header("Pragma", "no-cache")
-        self.send_header("Expires", "0")
+        if file_path.endswith((".ico", ".png", ".svg", ".jpg", ".jpeg", ".webp", ".woff", ".woff2")):
+            self.send_header("Cache-Control", "public, max-age=86400")
+        else:
+            self.send_header("Cache-Control", "no-cache, must-revalidate")
+            self.send_header("Pragma", "no-cache")
+            self.send_header("Expires", "0")
         self.send_header("Content-Length", str(len(content)))
         if attachment_name:
             self.send_header("Content-Disposition", f'attachment; filename="{attachment_name}"')
