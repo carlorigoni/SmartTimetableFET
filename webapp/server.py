@@ -44,6 +44,7 @@ from webapp.print_engine import (
     generate_teachers_master_docx,
     generate_organico_template_docx
 )
+from webapp import updater
 
 
 def fetch_google_doc_docx_bytes(url):
@@ -85,7 +86,7 @@ def fetch_google_doc_docx_bytes(url):
     except Exception as e:
         raise ValueError(f"Impossibile scaricare il Google Doc: {e}")
 
-APP_VERSION = "1.4.3"
+APP_VERSION = "1.4.4"
 FET_VERSION = "7.12.0"
 APP_AUTHOR = "Carlo Rigoni"
 APP_MENTOR = "Federico Rettore"
@@ -353,6 +354,11 @@ class SmartTimetableHandler(BaseHTTPRequestHandler):
                 "deployment": "on-premise or controlled vm/vps (self-hosted by installer)",
                 "gdpr_mode": "on-premise or controlled vm/vps (self-hosted by installer)"
             })
+            return
+        elif path == "/api/version/check":
+            force = "force" in query and query["force"][0] in ("1", "true")
+            update_info = updater.check_for_updates(APP_VERSION, force=force)
+            self._json(200, update_info)
             return
         elif path == "/api/auth/config":
             self._json(200, {

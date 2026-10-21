@@ -1,6 +1,6 @@
 # 🎓 SmartTimetable - Suite Completa per l'Orario Scolastico con FET 7.12.0
 
-[![Version](https://img.shields.io/badge/version-1.4.3-blue.svg)](https://github.com/carlorigoni/SmartTimetableFET)
+[![Version](https://img.shields.io/badge/version-1.4.4-blue.svg)](https://github.com/carlorigoni/SmartTimetableFET)
 [![Docker Hub](https://img.shields.io/badge/docker%20hub-carlorigoni%2Fsmarttimetablefet%3Alatest-blue?logo=docker)](https://hub.docker.com/r/carlorigoni/smarttimetablefet)
 [![FET Solver](https://img.shields.io/badge/FET%20engine-7.12.0-orange.svg)](https://lalescu.ro/liviu/fet/)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-green.svg)](https://www.gnu.org/licenses/gpl-3.0)

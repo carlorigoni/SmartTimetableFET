@@ -11,7 +11,7 @@
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
   <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#1a73e8">
   <link rel="shortcut icon" href="/favicon.ico">
-  <link rel="stylesheet" href="styles.css?v=1.4.3">
+  <link rel="stylesheet" href="styles.css?v=1.4.4">
   <!-- Google Identity Services OAuth -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
@@ -223,11 +223,11 @@
       <!-- Footer Compatto a Riga Singola di Stato (Altezza: 36px) -->
       <div class="sidebar-footer">
         <div class="sidebar-status-row">
-          <span id="sidebarStatusBadge" class="sidebar-status-badge" title="FET 7.12.0 Nativo C++ attivo">
-            <span class="status-indicator-dot"></span>
-            <span class="status-indicator-text">FET 7.12</span>
+          <span id="sidebarStatusBadge" class="sidebar-status-badge" onclick="handleFooterBadgeClick()" title="SmartTimetable FET Suite v1.4.4">
+            <span id="statusIndicatorDot" class="status-indicator-dot dot-green"></span>
+            <span id="statusIndicatorText" class="status-indicator-text">FET 7.12</span>
           </span>
-          <span class="footer-ver-tag" title="Versione SmartTimetable">v1.4.3</span>
+          <span id="sidebarVerTag" class="footer-ver-tag" title="Versione SmartTimetable">v1.4.4</span>
           <button class="footer-info-btn" onclick="openAboutModal()" title="Crediti, Mentore e Info Legali" aria-label="Informazioni e crediti">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
               <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
@@ -290,7 +290,7 @@
 
     <footer class="app-page-footer">
       <div>
-        <b>SmartTimetable FET Suite</b> &mdash; Versione <span class="badge-ver">v1.4.3</span> &bull; Autore: <b>Carlo Rigoni</b> &bull; Mentore: <b>Federico Rettore</b> &bull; Motore: <b>FET 7.12.0</b> &bull; <a href="javascript:void(0)" onclick="openAboutModal()" style="color:var(--primary);text-decoration:none;font-weight:600;">Crediti & Note Legali</a>
+        <b>SmartTimetable FET Suite</b> &mdash; Versione <span class="badge-ver">v1.4.4</span> &bull; Autore: <b>Carlo Rigoni</b> &bull; Mentore: <b>Federico Rettore</b> &bull; Motore: <b>FET 7.12.0</b> &bull; <a href="javascript:void(0)" onclick="openAboutModal()" style="color:var(--primary);text-decoration:none;font-weight:600;">Crediti & Note Legali</a>
       </div>
       <div style="font-size:11.5px;color:var(--text-muted);">
         Algoritmo euristico: <a href="https://lalescu.ro/liviu/fet/" target="_blank" rel="noopener" style="color:var(--primary);text-decoration:none;font-weight:600;">FET Free Timetabling Software</a> &bull; AI Pair Programming: Google DeepMind Antigravity
@@ -359,7 +359,7 @@
           La tua richiesta di accesso è stata registrata ed è attualmente <b>in attesa di sblocco</b> da parte dell'amministratore.
         </p>
         <div class="pending-status-box">
-          <span class="status-indicator-dot"></span> In attesa di approvazione... (verifica automatica in corso)
+          <span class="auth-status-dot"></span> In attesa di approvazione... (verifica automatica in corso)
         </div>
         <div class="auth-actions-row">
           <button class="btn btn-primary" onclick="checkAuthMe()">🔄 Verifica Ora</button>
@@ -643,14 +643,19 @@
         <button class="modal-close" onclick="closeAboutModal()" title="Chiudi">✕</button>
       </div>
       <div class="modal-body" style="gap:14px;max-height:calc(85vh - 130px);overflow-y:auto;">
-        <!-- Banner Versione -->
-        <div style="display:flex;align-items:center;justify-content:space-between;background:#f8fafc;border:1px solid #e2e8f0;border-radius:var(--radius-sm);padding:10px 14px;">
+        <!-- Banner Versione & Verifica Aggiornamenti -->
+        <div style="display:flex;align-items:center;justify-content:space-between;background:#f8fafc;border:1px solid #e2e8f0;border-radius:var(--radius-sm);padding:10px 14px;flex-wrap:wrap;gap:8px;">
           <div style="display:flex;align-items:center;gap:8px;">
-            <span class="badge badge-info" style="font-size:12px;padding:3px 8px;font-weight:700;">v1.4.3</span>
-            <span style="font-size:11.5px;color:#64748b;">Release Stabile</span>
+            <span class="badge badge-info" style="font-size:12px;padding:3px 8px;font-weight:700;">v1.4.4</span>
+            <span id="aboutUpdateStatusText" style="font-size:11.5px;color:#64748b;">Release Stabile</span>
           </div>
-          <div style="font-size:11.5px;color:#64748b;">
-            Engine: <b>FET 7.12.0 Nativo</b>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <button class="btn btn-sm btn-sec" onclick="openUpdateModal()" style="font-size:11px;padding:3px 8px;display:flex;align-items:center;gap:4px;cursor:pointer;">
+              <span>🚀</span> <span>Verifica Aggiornamenti</span>
+            </button>
+            <div style="font-size:11.5px;color:#64748b;">
+              Engine: <b>FET 7.12.0 Nativo</b>
+            </div>
           </div>
         </div>
 
@@ -727,6 +732,87 @@
     </div>
   </div>
 
-  <script src="app.js?v=1.4.3"></script>
+  <!-- Modal Aggiornamento Software (Docker Hub & GitHub) -->
+  <div id="updateModal" class="modal-backdrop" style="display:none;" onclick="if(event.target===this) closeUpdateModal()">
+    <div class="modal-dialog" style="max-width: 580px;">
+      <div class="modal-header">
+        <div class="modal-title" style="display:flex;align-items:center;gap:12px;">
+          <span style="font-size:26px;">🚀</span>
+          <div>
+            <div style="font-size:16px;font-weight:700;color:var(--text-main);">Aggiornamento SmartTimetable</div>
+            <div style="font-size:11.5px;color:var(--text-muted);">Verifica immagini Docker Hub & Release Ufficiali</div>
+          </div>
+        </div>
+        <button class="modal-close" onclick="closeUpdateModal()" title="Chiudi">✕</button>
+      </div>
+
+      <div class="modal-body" style="gap:14px;max-height:calc(85vh - 130px);overflow-y:auto;">
+        <!-- Banner Stato Aggiornamento -->
+        <div id="updateStatusBanner" style="padding: 12px 14px; border-radius: var(--radius-sm); font-size: 13px; display: flex; align-items: flex-start; gap: 10px; background: #f8fafc; border: 1px solid #e2e8f0;">
+          <span id="updateBannerIcon" style="font-size: 20px;">🔍</span>
+          <div style="flex: 1;">
+            <div id="updateBannerTitle" style="font-weight: 700; color: var(--text-main);">Verifica aggiornamenti in corso...</div>
+            <div id="updateBannerDesc" style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Confronto tra la versione locale e il repository su Docker Hub.</div>
+          </div>
+        </div>
+
+        <!-- Confronto Versioni -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: var(--radius-sm); padding: 12px; text-align: center;">
+            <div style="font-size: 11px; text-transform: uppercase; font-weight: 700; color: #64748b; letter-spacing: 0.5px;">Versione Corrente</div>
+            <div id="updateCurrentVer" style="font-size: 18px; font-weight: 800; color: #1e293b; margin-top: 4px;">v1.4.4</div>
+            <div id="updateCurrentTag" style="font-size: 11px; color: #64748b; margin-top: 2px;">In esecuzione sul server</div>
+          </div>
+          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: var(--radius-sm); padding: 12px; text-align: center;">
+            <div style="font-size: 11px; text-transform: uppercase; font-weight: 700; color: #64748b; letter-spacing: 0.5px;">Ultima su Docker Hub</div>
+            <div id="updateRemoteVer" style="font-size: 18px; font-weight: 800; color: #2563eb; margin-top: 4px;">--</div>
+            <div id="updateRemoteDate" style="font-size: 11px; color: #64748b; margin-top: 2px;">Verifica...</div>
+          </div>
+        </div>
+
+        <!-- Guida all'Aggiornamento -->
+        <div id="updateGuideSection" style="display: flex; flex-direction: column; gap: 8px;">
+          <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; color: #64748b; letter-spacing: 0.5px;">
+            🛠️ Come Applicare l'Aggiornamento
+          </div>
+          <div style="background: #ffffff; border: 1px solid var(--border-light); border-radius: var(--radius-sm); padding: 14px; display: flex; flex-direction: column; gap: 10px;">
+            <div style="font-size: 12.5px; color: var(--text-main); line-height: 1.45;">
+              <strong>1. Aggiornamento Automatico con Watchtower:</strong><br>
+              Se il tuo server Docker ha il container <em>containrrr/watchtower</em> configurato, l'immagine verrà aggiornata automaticamente all'orario impostato senza alcun intervento manuale.
+            </div>
+            <div style="font-size: 12.5px; color: var(--text-main); line-height: 1.45;">
+              <strong>2. Aggiornamento Manuale Immediato:</strong><br>
+              Per aggiornare subito da terminale sul server o VPS, esegui nella cartella del progetto:
+            </div>
+            <div style="position: relative; background: #0f172a; border-radius: 6px; padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+              <code id="dockerUpdateCmdText" style="color: #38bdf8; font-family: var(--font-mono); font-size: 12px; word-break: break-all;">docker compose pull && docker compose up -d</code>
+              <button id="btnCopyUpdateCmd" class="btn btn-sm btn-sec" onclick="copyDockerUpdateCmd()" style="background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.25); color: #fff; padding: 4px 10px; font-size: 11.5px; flex-shrink: 0; cursor: pointer;">
+                📋 Copia
+              </button>
+            </div>
+            <div style="font-size: 11.5px; color: #64748b; line-height: 1.4;">
+              💡 <strong>Sicurezza Dati:</strong> Tutti i dati, i vincoli e gli orari generati risiedono nei volumi persistenti e non vengono sovrascritti durante gli aggiornamenti dell'immagine.
+            </div>
+          </div>
+        </div>
+
+        <!-- Sezione Ultimo Controllo -->
+        <div style="font-size: 11px; color: #94a3b8; text-align: right; padding-top: 4px;">
+          Ultimo controllo: <span id="updateLastCheckedTime">adesso</span>
+        </div>
+      </div>
+
+      <div class="modal-footer" style="display:flex;justify-content:space-between;align-items:center;">
+        <button id="btnForceCheckUpdate" class="btn btn-sec" onclick="checkUpdatesManually(true)" style="font-size: 12px;">
+          🔄 Ricontrolla Ora
+        </button>
+        <button class="btn btn-primary" onclick="closeUpdateModal()" style="font-size: 12px;">
+          Chiudi
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js?v=1.4.4"></script>
 </body>
 </html>

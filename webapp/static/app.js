@@ -22,7 +22,7 @@ let pollSolverTimer = null;
 let currentSolverRunning = false;
 
 // --- VERSIONE E IDENTITÀ APPLICATIVA ---
-const APP_VERSION = '1.4.3';
+const APP_VERSION = '1.4.4';
 const FET_VERSION = '7.12.0';
 const APP_AUTHOR = 'Carlo Rigoni';
 
@@ -34,6 +34,8 @@ let googleClientId = '';
 document.addEventListener('DOMContentLoaded', () => {
   initNavGroups();
   initAuth();
+  checkSoftwareUpdates();
+  setInterval(() => checkSoftwareUpdates(false), 30 * 60 * 1000);
 });
 
 async function initAuth() {
@@ -1099,6 +1101,7 @@ async function loadInitialData() {
   } catch (e) {
     console.error('Errore caricamento summary:', e);
   }
+  checkSoftwareUpdates();
   navigate('dashboard');
 }
 
@@ -1151,10 +1154,202 @@ function closeAboutModal() {
   if (m) m.style.display = 'none';
 }
 
+// --- GESTIONE AGGIORNAMENTI (DOCKER HUB & GITHUB RELEASES) ---
+let latestUpdateInfo = null;
+
+async function checkSoftwareUpdates(force = false) {
+  try {
+    const url = force ? '/api/version/check?force=1' : '/api/version/check';
+    const res = await fetch(url);
+    if (!res.ok) return null;
+    const data = await res.json();
+    latestUpdateInfo = data;
+    renderUpdateStatus(data);
+    return data;
+  } catch (err) {
+    console.warn('Controllo aggiornamenti offline o non disponibile:', err);
+    return null;
+  }
+}
+
+function renderUpdateStatus(data) {
+  if (!data) return;
+  const badge = document.getElementById('sidebarStatusBadge');
+  const dot = document.getElementById('statusIndicatorDot');
+  const text = document.getElementById('statusIndicatorText');
+  const verTag = document.getElementById('sidebarVerTag');
+  const aboutVerStatus = document.getElementById('aboutUpdateStatusText');
+
+  const curVer = data.current_version || APP_VERSION;
+  if (verTag) verTag.innerText = `v${curVer}`;
+
+  if (data.update_available) {
+    // 🔔 Aggiornamento disponibile su Docker Hub! Pallino arancione lampeggiante
+    if (dot) {
+      dot.className = 'status-indicator-dot dot-orange-blinking';
+    }
+    if (text) {
+      text.innerText = `⬆️ v${data.remote_version} disp.`;
+    }
+    if (badge) {
+      badge.classList.add('status-update-available');
+      badge.title = `Nuova versione v${data.remote_version} disponibile su Docker Hub! Clicca per dettagli e comando di aggiornamento.`;
+      badge.setAttribute('aria-label', `Nuova versione v${data.remote_version} disponibile`);
+    }
+    if (aboutVerStatus) {
+      aboutVerStatus.innerHTML = `<span style="color:#b45309;font-weight:700;">⬆️ Nuova v${data.remote_version} disponibile!</span>`;
+    }
+  } else {
+    // ✅ Nessun aggiornamento: pallino verde calmo e fisso
+    if (dot) {
+      dot.className = 'status-indicator-dot dot-green';
+    }
+    if (text) {
+      text.innerText = 'FET 7.12';
+    }
+    if (badge) {
+      badge.classList.remove('status-update-available');
+      badge.title = `SmartTimetable v${curVer} • Suite FET 7.12 C++ Attivo (Nessun aggiornamento in sospeso)`;
+      badge.removeAttribute('aria-label');
+    }
+    if (aboutVerStatus) {
+      aboutVerStatus.innerHTML = `<span style="color:#16a34a;font-weight:600;">✅ Release Stabile Aggiornata</span>`;
+    }
+  }
+}
+
+function handleFooterBadgeClick() {
+  if (latestUpdateInfo && latestUpdateInfo.update_available) {
+    openUpdateModal();
+  } else {
+    openAboutModal();
+  }
+}
+
+function openUpdateModal() {
+  const m = document.getElementById('updateModal');
+  if (!m) return;
+  m.style.display = 'flex';
+  populateUpdateModal(latestUpdateInfo);
+  if (!latestUpdateInfo) {
+    checkUpdatesManually(false);
+  }
+}
+
+function closeUpdateModal() {
+  const m = document.getElementById('updateModal');
+  if (m) m.style.display = 'none';
+}
+
+function populateUpdateModal(info) {
+  const banner = document.getElementById('updateStatusBanner');
+  const icon = document.getElementById('updateBannerIcon');
+  const title = document.getElementById('updateBannerTitle');
+  const desc = document.getElementById('updateBannerDesc');
+  const curVer = document.getElementById('updateCurrentVer');
+  const remVer = document.getElementById('updateRemoteVer');
+  const remDate = document.getElementById('updateRemoteDate');
+  const lastCheck = document.getElementById('updateLastCheckedTime');
+
+  if (curVer) curVer.innerText = `v${APP_VERSION}`;
+  if (lastCheck) lastCheck.innerText = info && info.checked_at ? info.checked_at : new Date().toLocaleTimeString();
+
+  if (!info) {
+    if (banner) {
+      banner.style.background = '#f8fafc';
+      banner.style.borderColor = '#e2e8f0';
+    }
+    if (icon) icon.innerText = '🔍';
+    if (title) title.innerText = 'Controllo versione in corso...';
+    if (desc) desc.innerText = 'Interrogazione di Docker Hub e GitHub...';
+    if (remVer) remVer.innerText = '--';
+    return;
+  }
+
+  if (remVer) remVer.innerText = info.remote_version ? `v${info.remote_version}` : 'latest';
+  if (remDate) {
+    if (info.docker_hub_last_updated) {
+      const dt = new Date(info.docker_hub_last_updated);
+      remDate.innerText = isNaN(dt.getTime()) ? info.docker_hub_last_updated : `Push: ${dt.toLocaleDateString()}`;
+    } else {
+      remDate.innerText = 'Docker Hub';
+    }
+  }
+
+  if (info.update_available) {
+    if (banner) {
+      banner.style.background = '#fef3c7';
+      banner.style.borderColor = '#fde68a';
+    }
+    if (icon) icon.innerText = '🚀';
+    if (title) {
+      title.innerText = `Nuova Versione v${info.remote_version} Disponibile!`;
+      title.style.color = '#92400e';
+    }
+    if (desc) {
+      desc.innerText = 'Una nuova build con miglioramenti e fix è pronta su Docker Hub per il download.';
+      desc.style.color = '#b45309';
+    }
+  } else {
+    if (banner) {
+      banner.style.background = '#f0fdf4';
+      banner.style.borderColor = '#bbf7d0';
+    }
+    if (icon) icon.innerText = '✅';
+    if (title) {
+      title.innerText = 'SmartTimetable è Aggiornato!';
+      title.style.color = '#166534';
+    }
+    if (desc) {
+      desc.innerText = `Sei all'ultima versione disponibile (v${APP_VERSION}). Non sono richiesti aggiornamenti.`;
+      desc.style.color = '#15803d';
+    }
+  }
+}
+
+async function checkUpdatesManually(force = true) {
+  const btn = document.getElementById('btnForceCheckUpdate');
+  const originalText = btn ? btn.innerHTML : '';
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = '<span>⏳ Controllo...</span>';
+  }
+
+  populateUpdateModal(null);
+  const data = await checkSoftwareUpdates(force);
+  populateUpdateModal(data);
+
+  if (btn) {
+    btn.disabled = false;
+    btn.innerHTML = originalText;
+  }
+}
+
+function copyDockerUpdateCmd() {
+  const cmd = 'docker compose pull && docker compose up -d';
+  navigator.clipboard.writeText(cmd).then(() => {
+    const btn = document.getElementById('btnCopyUpdateCmd');
+    if (btn) {
+      const prev = btn.innerHTML;
+      btn.innerHTML = '✅ Copiato!';
+      btn.style.background = '#15803d';
+      btn.style.borderColor = '#166534';
+      setTimeout(() => {
+        btn.innerHTML = prev;
+        btn.style.background = 'rgba(255,255,255,0.12)';
+        btn.style.borderColor = 'rgba(255,255,255,0.25)';
+      }, 2000);
+    }
+  }).catch(() => {
+    prompt('Copia il comando di aggiornamento:', cmd);
+  });
+}
+
 // Chiusura modal tramite tasto Escape
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
     closeAboutModal();
+    closeUpdateModal();
     if (typeof closePrintClassesModal === 'function') closePrintClassesModal();
     if (typeof closePrintTeachersModal === 'function') closePrintTeachersModal();
     if (typeof closeAccessManagementModal === 'function') closeAccessManagementModal();
