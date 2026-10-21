@@ -32,23 +32,35 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Log in to Docker Hub
+      - name: Determine Docker Registries and Credentials
+        id: registries
+        run: |
+          IMAGE_LOWER=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
+          IMAGES="${{ env.REGISTRY }}/${IMAGE_LOWER}"
+          if [ -n "${{ secrets.DOCKERHUB_USERNAME }}" ] && [ -n "${{ secrets.DOCKERHUB_TOKEN }}" ]; then
+            echo "has_dockerhub=true" >> "$GITHUB_OUTPUT"
+            IMAGES="${IMAGES}"$'\n'"carlorigoni/smarttimetablefet"
+          else
+            echo "has_dockerhub=false" >> "$GITHUB_OUTPUT"
+          fi
+          {
+            echo "images<<EOF"
+            echo "$IMAGES"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Log in to Docker Hub (if secrets provided)
+        if: steps.registries.outputs.has_dockerhub == 'true'
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Set Lowercase Image Name
-        run: |
-          echo "IMAGE_NAME_LOWER=$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
-
       - name: Extract Docker metadata
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: |
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_LOWER }}
-            carlorigoni/smarttimetablefet
+          images: ${{ steps.registries.outputs.images }}
           tags: |
             type=raw,value=latest
             type=sha
