@@ -330,6 +330,20 @@ body {
   background: #bdc1c6;
 }
 
+/* Divisore tra funzioni rapide e categorie con sottomenu */
+.nav-rail-divider {
+  height: 1px;
+  background: var(--border-light);
+  margin: 6px 14px;
+}
+
+.sidebar-wrapper.collapsed .nav-rail-divider {
+  width: 28px;
+  height: 1px;
+  background: var(--border-light);
+  margin: 6px auto;
+}
+
 /* Gruppi Comprimibili (Accordion MD3 su sidebar aperta / Icone con Flyout su Rail 64px) */
 .nav-group {
   display: flex;
@@ -340,6 +354,7 @@ body {
 
 /* Header di Sezione con Accordion Toggle (Ingombro costante) */
 .nav-group-header {
+  position: relative;
   height: 34px;
   min-height: 34px;
   max-height: 34px;
@@ -358,6 +373,43 @@ body {
   color: #5f6368;
   transition: background-color 0.15s ease, color 0.15s ease;
   outline: none;
+}
+
+/* Indicatore visuale "padre con sottomenu" (freccina › in basso a destra nel rail collassato) */
+.rail-submenu-indicator {
+  display: none !important;
+}
+
+.sidebar-wrapper.collapsed .rail-submenu-indicator {
+  display: inline-flex !important;
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 1.5px solid #cbd5e1;
+  color: #64748b;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+  pointer-events: none;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+}
+
+.sidebar-wrapper.collapsed .nav-group-header:hover .rail-submenu-indicator,
+.sidebar-wrapper.collapsed .nav-group-header.flyout-open .rail-submenu-indicator {
+  background: #1967d2;
+  border-color: #ffffff;
+  color: #ffffff;
+  transform: scale(1.1);
+}
+
+.sidebar-wrapper.collapsed .nav-group-header.has-active-child .rail-submenu-indicator {
+  background: #1967d2;
+  border-color: #ffffff;
+  color: #ffffff;
 }
 
 .nav-group-header:hover {
@@ -3519,7 +3571,8 @@ input:checked + .slider:before {
   }
 
   /* Quando il drawer è aperto su mobile, mostra sempre etichette complete e controlli */
-  .rail-flyout-popover {
+  .rail-flyout-popover,
+  .rail-submenu-indicator {
     display: none !important;
   }
 
