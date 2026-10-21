@@ -26,6 +26,8 @@ from email.message import EmailMessage
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(BASE_DIR, "data")
 AUTH_FILE = os.path.join(DATA_DIR, "auth_config.json")
+LOGS_FILE = os.path.join(DATA_DIR, "access_logs.json")
+MAX_LOG_ENTRIES = 1500
 DEFAULT_ADMIN_EMAIL = os.environ.get("ADMIN_EMAIL", "admin@paperopoli.edu").lower().strip()
 DEFAULT_GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID", "").strip()
 SMTP_ENABLED_ENV = os.environ.get("SMTP_ENABLED", "").lower() in ("1", "true", "yes")
@@ -117,6 +119,58 @@ class AuthManager:
         except Exception as e:
             print(f"[AUTH] Errore nel salvataggio di {AUTH_FILE}: {e}")
 
+    # --- ACCESS LOGGING (AUDIT TRAIL) ---
+
+    def log_access(self, event, email, role, status, ip=None, user_agent=None, details=""):
+        try:
+            now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            entry = {
+                "timestamp": now_str,
+                "event": str(event),
+                "email": str(email or "-"),
+                "role": str(role or "-"),
+                "status": str(status),  # "SUCCESS", "FAILED", "DENIED", "INFO"
+                "ip": str(ip or "-"),
+                "user_agent": str(user_agent or "-")[:120],
+                "details": str(details or "")
+            }
+            logs = self._load_logs()
+            logs.append(entry)
+            if len(logs) > MAX_LOG_ENTRIES:
+                logs = logs[-MAX_LOG_ENTRIES:]
+            self._save_logs(logs)
+        except Exception as e:
+            print(f"[AUTH LOG] Errore registrazione log: {e}")
+
+    def _load_logs(self):
+        if os.path.exists(LOGS_FILE):
+            try:
+                with open(LOGS_FILE, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                    if isinstance(data, list):
+                        return data
+            except Exception:
+                pass
+        return []
+
+    def _save_logs(self, logs):
+        try:
+            temp_file = LOGS_FILE + ".tmp"
+            with open(temp_file, "w", encoding="utf-8") as f:
+                json.dump(logs, f, indent=2, ensure_ascii=False)
+            os.replace(temp_file, LOGS_FILE)
+        except Exception as e:
+            print(f"[AUTH LOG] Errore salvataggio {LOGS_FILE}: {e}")
+
+    def get_access_logs(self, limit=250):
+        logs = self._load_logs()
+        return list(reversed(logs[-limit:]))
+
+    def clear_access_logs(self, admin_email=None, ip=None):
+        self._save_logs([])
+        self.log_access("LOGS_CLEARED", admin_email or "admin", "admin", "INFO", ip, "-", "Registro accessi azzerato dall'amministratore")
+        return True
+
     # --- SESSION MANAGEMENT ---
 
     def create_session(self, email):
@@ -143,8 +197,11 @@ class AuthManager:
             return None
         return dict(user)
 
-    def destroy_session(self, token):
+    def destroy_session(self, token, ip=None, user_agent=None):
         if token in self.sessions:
+            email = self.sessions[token].get("email")
+            u = self.config["users"].get(email, {})
+            self.log_access("LOGOUT", email, u.get("role", "-"), "SUCCESS", ip, user_agent, "Disconnessione utente (Logout)")
             del self.sessions[token]
 
     # --- GOOGLE TOKEN VERIFICATION ---
@@ -190,13 +247,18 @@ class AuthManager:
 
     # --- LOGIN & REQUEST ACCESS WORKFLOW ---
 
-    def handle_google_login(self, id_token):
+    def handle_google_login(self, id_token, ip=None, user_agent=None):
         """
         Autentica un utente tramite Google ID Token.
         Se l'utente non esiste, registra la richiesta con stato 'pending'.
         Se è l'admin, lo approva automaticamente.
         """
-        user_info = self.verify_google_id_token(id_token)
+        try:
+            user_info = self.verify_google_id_token(id_token)
+        except Exception as e:
+            self.log_access("GOOGLE_LOGIN_FAIL", "-", "anonymous", "FAILED", ip, user_agent, f"Token Google non valido o errore: {e}")
+            raise
+
         email = user_info["email"]
         now_iso = datetime.now().isoformat()
 
@@ -242,6 +304,11 @@ class AuthManager:
         session_token = None
         if user["status"] == "approved":
             session_token = self.create_session(email)
+            self.log_access("LOGIN_SUCCESS", email, user["role"], "SUCCESS", ip, user_agent, f"Accesso Google OAuth riuscito ({user['role']})")
+        elif user["status"] == "pending":
+            self.log_access("LOGIN_PENDING", email, "pending", "DENIED", ip, user_agent, "Richiesta di accesso registrata: in attesa di approvazione")
+        elif user["status"] == "rejected":
+            self.log_access("LOGIN_REJECTED", email, "rejected", "DENIED", ip, user_agent, "Accesso bloccato: account revocato o non autorizzato")
 
         return {
             "session_token": session_token,
@@ -249,12 +316,13 @@ class AuthManager:
             "is_new_request": is_new_request
         }
 
-    def handle_emergency_login(self, passcode):
+    def handle_emergency_login(self, passcode, ip=None, user_agent=None):
         """
         Accesso di emergenza / fallback locale con passcode amministratore.
         """
         configured_pass = self.config.get("emergency_passcode", "admin2026")
         if not passcode or passcode != configured_pass:
+            self.log_access("EMERGENCY_LOGIN_FAIL", "admin", "anonymous", "FAILED", ip, user_agent, "Tentativo di accesso con passcode master errato")
             raise ValueError("Passcode di emergenza errato")
 
         admin_email = self.config["admin_email"]
@@ -262,6 +330,7 @@ class AuthManager:
         user = dict(self.config["users"][admin_email])
         user["last_login"] = datetime.now().isoformat()
         self._save()
+        self.log_access("EMERGENCY_LOGIN", admin_email, "admin", "SUCCESS", ip, user_agent, "Accesso riuscito con passcode master")
         return {
             "session_token": session_token,
             "user": user
@@ -334,7 +403,7 @@ SmartTimetable Automated Security Notification
         print(f"[AUTH EMAIL] Email di test inviata con successo a {to_email}")
         return True
 
-    def approve_user(self, email, role="editor"):
+    def approve_user(self, email, role="editor", admin_email=None, ip=None):
         self._load()
         email = (email or "").lower().strip()
         if email not in self.config["users"]:
@@ -346,9 +415,10 @@ SmartTimetable Automated Security Notification
             u["role"] = role
         u["approved_at"] = datetime.now().isoformat()
         self._save()
+        self.log_access("USER_APPROVED", email, role, "SUCCESS", ip, "-", f"Utente approvato con ruolo '{role}' da {admin_email or 'admin'}")
         return u
 
-    def reject_user(self, email):
+    def reject_user(self, email, admin_email=None, ip=None):
         self._load()
         email = (email or "").lower().strip()
         if email == self.config["admin_email"]:
@@ -359,9 +429,10 @@ SmartTimetable Automated Security Notification
         u = self.config["users"][email]
         u["status"] = "rejected"
         self._save()
+        self.log_access("USER_REJECTED", email, "-", "SUCCESS", ip, "-", f"Richiesta utente rifiutata da {admin_email or 'admin'}")
         return u
 
-    def revoke_user(self, email):
+    def revoke_user(self, email, admin_email=None, ip=None):
         self._load()
         email = (email or "").lower().strip()
         if email == self.config["admin_email"]:
@@ -374,10 +445,11 @@ SmartTimetable Automated Security Notification
                 if s.get("email") == email:
                     del self.sessions[tok]
             self._save()
+            self.log_access("USER_REVOKED", email, "-", "SUCCESS", ip, "-", f"Autorizzazione utente revocata da {admin_email or 'admin'}")
             return u
         raise ValueError("Utente non trovato")
 
-    def delete_user(self, email):
+    def delete_user(self, email, admin_email=None, ip=None):
         self._load()
         email = (email or "").lower().strip()
         if email == self.config["admin_email"]:
@@ -388,6 +460,7 @@ SmartTimetable Automated Security Notification
                 if s.get("email") == email:
                     del self.sessions[tok]
             self._save()
+            self.log_access("USER_DELETED", email, "-", "SUCCESS", ip, "-", f"Account eliminato da {admin_email or 'admin'}")
             return True
         return False
 

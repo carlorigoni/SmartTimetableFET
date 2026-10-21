@@ -9,11 +9,14 @@ services:
       - HOST=0.0.0.0
       - PORT=8000
       - PYTHONUNBUFFERED=1
+      - TZ=Europe/Rome
       - ADMIN_EMAIL=admin@paperopoli.edu
       # - GOOGLE_CLIENT_ID=tuo-client-id.apps.googleusercontent.com
     volumes:
       # Persistenza dati: database scolastico, orari risolti e snapshot
       - ./data:/app/webapp/data
+      # Fuso orario italiano sincronizzato con l'host Ubuntu
+      - /etc/localtime:/etc/localtime:ro
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/api/summary"]
       interval: 30s

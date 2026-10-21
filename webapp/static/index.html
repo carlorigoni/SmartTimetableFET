@@ -141,7 +141,7 @@
           <span class="footer-ver">v1.4.0</span>
         </div>
         <div class="footer-meta">
-          <div class="footer-author">Autore: <b>Carlo Rigoni</b></div>
+          <div class="footer-author">Autore: <b>Carlo Rigoni</b> &bull; Mentore: <b>Federico Rettore</b></div>
           <div class="footer-links">
             <a href="javascript:void(0)" onclick="openAboutModal()">Credits & Info</a> • <a href="https://lalescu.ro/liviu/fet/" target="_blank" rel="noopener" title="Sito ufficiale FET Free Software">FET Free Software</a>
           </div>
@@ -186,7 +186,7 @@
 
     <footer class="app-page-footer">
       <div>
-        <b>SmartTimetable FET Suite</b> &mdash; Versione <span class="badge-ver">v1.4.0</span> &bull; Autore: <b>Carlo Rigoni</b> &bull; Motore: <b>FET 7.12.0</b> &bull; <a href="javascript:void(0)" onclick="openAboutModal()" style="color:var(--primary);text-decoration:none;font-weight:600;">Crediti & Note Legali</a>
+        <b>SmartTimetable FET Suite</b> &mdash; Versione <span class="badge-ver">v1.4.0</span> &bull; Autore: <b>Carlo Rigoni</b> &bull; Mentore: <b>Federico Rettore</b> &bull; Motore: <b>FET 7.12.0</b> &bull; <a href="javascript:void(0)" onclick="openAboutModal()" style="color:var(--primary);text-decoration:none;font-weight:600;">Crediti & Note Legali</a>
       </div>
       <div style="font-size:11.5px;color:var(--text-muted);">
         Algoritmo euristico: <a href="https://lalescu.ro/liviu/fet/" target="_blank" rel="noopener" style="color:var(--primary);text-decoration:none;font-weight:600;">FET Free Timetabling Software</a> &bull; AI Pair Programming: Google DeepMind Antigravity
@@ -290,6 +290,9 @@
           <button class="access-tab-btn" id="tabBtnApproved" onclick="switchAccessTab('approved')">
             Utenti Autorizzati (<span id="modalApprovedCount">0</span>)
           </button>
+          <button class="access-tab-btn" id="tabBtnLogs" onclick="switchAccessTab('logs')">
+            📜 Registro Accessi
+          </button>
           <button class="access-tab-btn" id="tabBtnConfig" onclick="switchAccessTab('config')">
             ⚙️ Impostazioni OAuth & Notifiche
           </button>
@@ -354,6 +357,38 @@
           <div style="margin-top:24px;display:flex;justify-content:flex-end;gap:10px;">
             <button class="btn btn-sec" onclick="testSmtpEmail()">📧 Invia Email di Test</button>
             <button class="btn btn-primary" onclick="saveAccessConfig()">💾 Salva Impostazioni</button>
+          </div>
+        </div>
+
+        <!-- Tab 4: Registro Accessi (Audit Log per Admin) -->
+        <div id="tabLogs" class="access-tab-content" style="display:none;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;gap:10px;">
+            <div>
+              <div style="font-weight:700;font-size:13.5px;color:var(--primary-dark);">📜 Registro Cronologico degli Accessi</div>
+              <div style="font-size:11.5px;color:var(--text-muted);">Tracciamento degli eventi di sicurezza: login riusciti, passcode master, richieste Google e revoche.</div>
+            </div>
+            <div style="display:flex;gap:8px;">
+              <button class="btn btn-sm btn-sec" onclick="loadAccessLogs()">🔄 Aggiorna</button>
+              <button class="btn btn-sm btn-danger" onclick="clearAccessLogs()">🗑️ Svuota Registro</button>
+            </div>
+          </div>
+          <div class="table-responsive" style="max-height:420px;overflow-y:auto;border:1px solid var(--border-light);border-radius:var(--radius-sm);">
+            <table class="data-table" id="accessLogsTable" style="width:100%;font-size:11.5px;">
+              <thead>
+                <tr style="position:sticky;top:0;background:#f8fafc;z-index:2;">
+                  <th style="width:135px;">Data & Ora</th>
+                  <th style="width:125px;">Evento</th>
+                  <th>Utente / Email</th>
+                  <th style="width:70px;">Ruolo</th>
+                  <th style="width:110px;">Indirizzo IP</th>
+                  <th style="width:85px;">Esito</th>
+                  <th>Dettagli Operazione</th>
+                </tr>
+              </thead>
+              <tbody id="accessLogsTbody">
+                <!-- Popolato via JS -->
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
@@ -524,6 +559,18 @@
               <div style="font-weight:700;font-size:13.5px;color:var(--primary-dark);">Carlo Rigoni</div>
               <div>Autore, Architetto del Software e Maintainer del progetto SmartTimetable.</div>
               <div style="font-size:11.5px;color:#64748b;margin-top:2px;">Progettazione funzionale, adattamento alla scuola italiana, modello vincoli cattedre/disposizioni e integrazione procedurale.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mentore dell'Orario & Guida Metodologica -->
+        <div style="display:flex;flex-direction:column;gap:4px;">
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:#64748b;letter-spacing:0.5px;">Mentore dell'Orario & Guida Metodologica</div>
+          <div style="background:#ffffff;border:1px solid var(--border-light);border-radius:var(--radius-sm);padding:12px 14px;display:flex;align-items:flex-start;gap:12px;">
+            <div style="font-size:24px;">🎓</div>
+            <div style="font-size:12.5px;color:var(--text-main);line-height:1.45;">
+              <div style="font-weight:700;font-size:13.5px;color:var(--primary-dark);">Federico Rettore</div>
+              <div>Mentore dell'Orario e guida metodologica per l'equilibratura dei carichi orari docenti, la gestione dei vincoli e delle articolazioni cattedre nella scuola secondaria italiana.</div>
             </div>
           </div>
         </div>

@@ -359,14 +359,82 @@ function closeAccessManagementModal() {
 function switchAccessTab(tab) {
   document.getElementById('tabBtnPending')?.classList.toggle('active', tab === 'pending');
   document.getElementById('tabBtnApproved')?.classList.toggle('active', tab === 'approved');
+  document.getElementById('tabBtnLogs')?.classList.toggle('active', tab === 'logs');
   document.getElementById('tabBtnConfig')?.classList.toggle('active', tab === 'config');
 
   document.getElementById('tabPendingUsers').style.display = (tab === 'pending') ? 'block' : 'none';
   document.getElementById('tabApprovedUsers').style.display = (tab === 'approved') ? 'block' : 'none';
+  if (document.getElementById('tabLogs')) document.getElementById('tabLogs').style.display = (tab === 'logs') ? 'block' : 'none';
   document.getElementById('tabConfig').style.display = (tab === 'config') ? 'block' : 'none';
 
   if (tab === 'config') {
     populateConfigFields();
+  } else if (tab === 'logs') {
+    loadAccessLogs();
+  }
+}
+
+async function loadAccessLogs() {
+  const tbody = document.getElementById('accessLogsTbody');
+  if (!tbody) return;
+  tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--text-muted);">Caricamento registro accessi in corso...</td></tr>';
+  try {
+    const res = await fetch('/api/auth/access_logs?limit=250');
+    if (!res.ok) {
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:20px;color:#dc2626;">Errore durante il caricamento del registro accessi</td></tr>';
+      return;
+    }
+    const data = await res.json();
+    const logs = data.logs || [];
+    if (logs.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--text-muted);">Nessun evento di accesso registrato finora.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = logs.map(l => {
+      let badgeClass = 'badge-ok';
+      let statusColor = '#16a34a';
+      let statusIcon = '✓';
+      if (l.status === 'FAILED' || l.status === 'DENIED') {
+        badgeClass = 'badge-danger';
+        statusColor = '#dc2626';
+        statusIcon = '✕';
+      } else if (l.event === 'LOGIN_PENDING') {
+        badgeClass = 'badge-warn';
+        statusColor = '#ea580c';
+        statusIcon = '⏳';
+      } else if (l.status === 'INFO') {
+        badgeClass = 'badge-info';
+        statusColor = '#2563eb';
+        statusIcon = 'ℹ️';
+      }
+      return `<tr>
+        <td style="font-family:var(--font-mono);font-size:11px;color:#475569;white-space:nowrap;">${escapeHtml(l.timestamp || '-')}</td>
+        <td style="white-space:nowrap;"><span class="badge ${badgeClass}" style="font-size:10px;padding:2px 6px;">${escapeHtml(l.event || '-')}</span></td>
+        <td style="font-weight:600;color:var(--text-main);">${escapeHtml(l.email || '-')}</td>
+        <td style="text-transform:uppercase;font-size:10.5px;color:#64748b;font-weight:600;">${escapeHtml(l.role || '-')}</td>
+        <td style="font-family:var(--font-mono);font-size:11px;color:#334155;">${escapeHtml(l.ip || '-')}</td>
+        <td style="white-space:nowrap;font-weight:700;color:${statusColor};">${statusIcon} ${escapeHtml(l.status || '-')}</td>
+        <td style="color:#64748b;font-size:11.5px;">${escapeHtml(l.details || '-')}</td>
+      </tr>`;
+    }).join('');
+  } catch (e) {
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:20px;color:#dc2626;">Errore caricamento: ${escapeHtml(e.message)}</td></tr>`;
+  }
+}
+
+async function clearAccessLogs() {
+  if (!confirm('Sei sicuro di voler azzerare il registro cronologico degli accessi?')) return;
+  try {
+    const res = await fetch('/api/auth/access_logs/clear', { method: 'POST' });
+    const data = await res.json();
+    if (!res.ok) {
+      showToast(data.error || 'Errore azzeramento registro', 'error');
+      return;
+    }
+    showToast('Registro accessi azzerato con successo', 'ok');
+    loadAccessLogs();
+  } catch (e) {
+    showToast('Errore azzeramento: ' + e.message, 'error');
   }
 }
 

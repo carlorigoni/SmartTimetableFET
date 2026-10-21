@@ -42,6 +42,7 @@ fet_workspace/
 logs/
 timetables/
 webapp/data/solver_run/
+webapp/data/access_logs.json
 
 # Docker compose local volume (if created in root)
 /data/

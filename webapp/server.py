@@ -87,7 +87,8 @@ def fetch_google_doc_docx_bytes(url):
 APP_VERSION = "1.4.0"
 FET_VERSION = "7.12.0"
 APP_AUTHOR = "Carlo Rigoni"
-APP_CREDITS = "FET Free Software (Liviu Lalescu) & Google DeepMind Antigravity"
+APP_MENTOR = "Federico Rettore"
+APP_CREDITS = "Autore: Carlo Rigoni • Mentore dell'Orario: Federico Rettore • FET Free Software (Liviu Lalescu) • Google DeepMind Antigravity"
 
 HOST = os.environ.get("HOST", "0.0.0.0")
 PORT = int(os.environ.get("PORT", "8000"))
@@ -218,6 +219,19 @@ class SmartTimetableHandler(BaseHTTPRequestHandler):
         except Exception as e:
             return None
 
+    def _get_client_ip(self):
+        xff = self.headers.get("X-Forwarded-For")
+        if xff:
+            return xff.split(",")[0].strip()
+        x_real_ip = self.headers.get("X-Real-IP")
+        if x_real_ip:
+            return x_real_ip.strip()
+        return self.client_address[0] if (self.client_address and len(self.client_address) > 0) else "127.0.0.1"
+
+    def _get_user_agent(self):
+        ua = self.headers.get("User-Agent") or "-"
+        return ua[:120]
+
     def _serve_file(self, file_path, content_type=None, attachment_name=None):
         if not os.path.exists(file_path):
             self.send_error(404, "File non trovato")
@@ -273,6 +287,7 @@ class SmartTimetableHandler(BaseHTTPRequestHandler):
                 "version": APP_VERSION,
                 "fet_version": FET_VERSION,
                 "author": APP_AUTHOR,
+                "mentor": APP_MENTOR,
                 "credits": APP_CREDITS,
                 "deployment": "on-premise or controlled vm/vps (self-hosted by installer)",
                 "gdpr_mode": "on-premise or controlled vm/vps (self-hosted by installer)"
@@ -303,6 +318,15 @@ class SmartTimetableHandler(BaseHTTPRequestHandler):
             if not self._require_admin():
                 return
             self._json(200, auth_manager.list_users())
+            return
+        elif path == "/api/auth/access_logs":
+            if not self._require_admin():
+                return
+            limit = int(query.get("limit", [250])[0])
+            self._json(200, {
+                "ok": True,
+                "logs": auth_manager.get_access_logs(limit=limit)
+            })
             return
 
         # Docker healthcheck local bypass (127.0.0.1)
@@ -566,12 +590,15 @@ class SmartTimetableHandler(BaseHTTPRequestHandler):
         body = self._read_json()
 
         # --- AUTH POST ENDPOINTS ---
+        client_ip = self._get_client_ip()
+        client_ua = self._get_user_agent()
+
         if path == "/api/auth/google":
             if not body or not body.get("credential"):
                 self._json(400, {"error": "Google ID Token mancante"})
                 return
             try:
-                res = auth_manager.handle_google_login(body["credential"])
+                res = auth_manager.handle_google_login(body["credential"], ip=client_ip, user_agent=client_ua)
                 tok = res.get("session_token")
                 self._json(200, {
                     "ok": True,
@@ -587,7 +614,7 @@ class SmartTimetableHandler(BaseHTTPRequestHandler):
                 self._json(400, {"error": "Passcode mancante"})
                 return
             try:
-                res = auth_manager.handle_emergency_login(body["passcode"])
+                res = auth_manager.handle_emergency_login(body["passcode"], ip=client_ip, user_agent=client_ua)
                 self._json(200, {
                     "ok": True,
                     "user": res["user"]
@@ -599,60 +626,72 @@ class SmartTimetableHandler(BaseHTTPRequestHandler):
         elif path == "/api/auth/logout":
             tok = self._get_session_token()
             if tok:
-                auth_manager.destroy_session(tok)
+                auth_manager.destroy_session(tok, ip=client_ip, user_agent=client_ua)
             self._json(200, {"ok": True}, clear_cookie=True)
             return
 
         elif path == "/api/auth/users/approve":
-            if not self._require_admin():
+            admin = self._require_admin()
+            if not admin:
                 return
             if not body or not body.get("email"):
                 self._json(400, {"error": "Email mancante"})
                 return
             try:
-                u = auth_manager.approve_user(body["email"], body.get("role", "editor"))
+                u = auth_manager.approve_user(body["email"], body.get("role", "editor"), admin_email=admin.get("email"), ip=client_ip)
                 self._json(200, {"ok": True, "user": u})
             except Exception as e:
                 self._json(400, {"error": str(e)})
             return
 
         elif path == "/api/auth/users/reject":
-            if not self._require_admin():
+            admin = self._require_admin()
+            if not admin:
                 return
             if not body or not body.get("email"):
                 self._json(400, {"error": "Email mancante"})
                 return
             try:
-                u = auth_manager.reject_user(body["email"])
+                u = auth_manager.reject_user(body["email"], admin_email=admin.get("email"), ip=client_ip)
                 self._json(200, {"ok": True, "user": u})
             except Exception as e:
                 self._json(400, {"error": str(e)})
             return
 
         elif path == "/api/auth/users/revoke":
-            if not self._require_admin():
+            admin = self._require_admin()
+            if not admin:
                 return
             if not body or not body.get("email"):
                 self._json(400, {"error": "Email mancante"})
                 return
             try:
-                u = auth_manager.revoke_user(body["email"])
+                u = auth_manager.revoke_user(body["email"], admin_email=admin.get("email"), ip=client_ip)
                 self._json(200, {"ok": True, "user": u})
             except Exception as e:
                 self._json(400, {"error": str(e)})
             return
 
         elif path == "/api/auth/users/delete":
-            if not self._require_admin():
+            admin = self._require_admin()
+            if not admin:
                 return
             if not body or not body.get("email"):
                 self._json(400, {"error": "Email mancante"})
                 return
             try:
-                ok = auth_manager.delete_user(body["email"])
+                ok = auth_manager.delete_user(body["email"], admin_email=admin.get("email"), ip=client_ip)
                 self._json(200, {"ok": ok})
             except Exception as e:
                 self._json(400, {"error": str(e)})
+            return
+
+        elif path == "/api/auth/access_logs/clear":
+            admin = self._require_admin()
+            if not admin:
+                return
+            auth_manager.clear_access_logs(admin_email=admin.get("email"), ip=client_ip)
+            self._json(200, {"ok": True, "message": "Registro accessi azzerato con successo"})
             return
 
         elif path == "/api/auth/config":
@@ -1739,7 +1778,8 @@ def main():
     fet_bin = find_fet_cl()
     print("=" * 70)
     print(f"  SmartTimetable Web App - Suite Completa FET {FET_VERSION} (v{APP_VERSION})")
-    print(f"  Autore: {APP_AUTHOR} • AI Pair Programming: Google DeepMind Antigravity")
+    print(f"  Autore: {APP_AUTHOR} • Mentore dell'Orario: {APP_MENTOR}")
+    print(f"  AI Pair Programming: Google DeepMind Antigravity • Solver: FET Free Software")
     print("=" * 70)
     print(f"  • Host e Porta:       http://{HOST}:{PORT}")
     print(f"  • fet-cl solver:      {fet_bin or 'NON TROVATO'}")

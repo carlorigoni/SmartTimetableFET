@@ -341,6 +341,7 @@ L'architettura del software implementa nativamente i principi cardine di protezi
 - **Zero Trust & Default Inactive Account**: Quando un utente accede per la prima volta con Google OAuth, il suo account viene posto in stato `pending`. Non ha alcun accesso ai dati dell'istituto fino a esplicita revisione e sblocco da parte dell'amministratore d'istituto, con attribuzione puntuale del ruolo (`viewer`, `editor`, `admin`).
 - **Minimizzazione dei Dati (Art. 5, par. 1, lett. c)**: L'autenticazione richiede unicamente l'ID univoco e l'email istituzionale verificata via token crittografico Google. Nessuna password personale viene memorizzata nel sistema.
 - **Accesso di Emergenza Cifrato**: Il passcode master per il primo avvio o disaster recovery è protetto con funzione di hash PBKDF2/SHA-256 e salt crittografico, mai salvato in chiaro.
+- **Registro degli Accessi & Audit Log (Art. 32 GDPR)**: Tracciamento cronologico e persistente nel volume `/data` di tutti gli eventi di sicurezza (login Google, tentativi errati, passcode master, approvazioni e revoche ruoli con data, ora, IP ed esito), consultabile direttamente dall'amministratore nella sezione *Gestione Accessi*.
 
 ### 3. Responsabilità e Oneri a Carico dell'Amministratore d'Istituto
 Per una piena conformità normativa, l'Istituto Scolastico o l'installatore è tenuto a:
@@ -356,6 +357,8 @@ Il progetto SmartTimetable nasce dalla sinergia tra competenze didattiche e orga
 
 - 👨‍🏫 **Autore, Ideazione & Architettura**:
   **Carlo Rigoni** &mdash; Ideazione, progettazione del modello dati scolastico italiano (organico cattedre, cdc, articolazioni di lingue, compresenze, ore a disposizione, accorpamenti macro-materie, regole blocchi orari e stampe ufficiali per collegio e classi).
+- 🎓 **Mentore dell'Orario & Guida Metodologica**:
+  **Federico Rettore** &mdash; Mentore e riferimento metodologico per i principi organizzativi dell'orario scolastico italiano, l'equilibratura dei carichi docenti, la gestione dei vincoli e la prassi applicata degli istituti secondari.
 - ⚡ **Motore Euristico di Calcolo FET**:
   **Liviu Lalescu** e la comunità internazionale del progetto [FET (Free Educational Timetabling Software)](https://lalescu.ro/liviu/fet/) &mdash; Straordinario algoritmo euristico C++ nativo ad alte prestazioni, distribuito come Software Libero sotto licenza GNU GPL.
 - 🤖 **AI Engineering & Pair Programming**:
