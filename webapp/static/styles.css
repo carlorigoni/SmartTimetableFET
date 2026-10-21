@@ -745,12 +745,13 @@ body {
 .rail-flyout-popover {
   position: fixed;
   left: 64px;
-  width: 250px;
+  width: 310px;
+  max-width: calc(100vw - 80px);
   background: #ffffff;
   border: 1px solid var(--border);
   border-left: none; /* Perfetto aggancio alla linea destra del rail a 64px */
-  border-radius: 0 12px 12px 0;
-  box-shadow: 4px 8px 26px rgba(15, 23, 42, 0.16), 0 2px 6px rgba(15, 23, 42, 0.08);
+  border-radius: 0 14px 14px 0;
+  box-shadow: 6px 12px 32px rgba(15, 23, 42, 0.18), 0 2px 8px rgba(15, 23, 42, 0.08);
   z-index: 1050;
   display: flex;
   flex-direction: column;
@@ -762,7 +763,7 @@ body {
 @keyframes flyoutSlideIn {
   from {
     opacity: 0;
-    transform: translateX(-6px);
+    transform: translateX(-8px);
   }
   to {
     opacity: 1;
@@ -775,22 +776,22 @@ body {
   content: '';
   position: absolute;
   top: 0;
-  left: -14px;
-  width: 14px;
+  left: -16px;
+  width: 16px;
   height: 100%;
   background: transparent;
   pointer-events: auto;
 }
 
 .flyout-header {
-  height: 42px;
-  padding: 0 12px;
+  height: 44px;
+  padding: 0 14px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   border-bottom: 1px solid var(--border-light);
   background: #f8fafc;
-  border-radius: 0 11px 0 0;
+  border-radius: 0 13px 0 0;
   user-select: none;
   box-sizing: border-box;
 }
@@ -803,7 +804,7 @@ body {
 }
 
 .flyout-icon {
-  font-size: 16px;
+  font-size: 17px;
   flex-shrink: 0;
 }
 
@@ -829,7 +830,7 @@ body {
   font-weight: 600;
   background: #e0f2fe;
   color: #0284c7;
-  padding: 2px 6px;
+  padding: 2px 7px;
   border-radius: 8px;
   letter-spacing: -0.1px;
 }
@@ -838,8 +839,8 @@ body {
   background: none;
   border: none;
   color: #64748b;
-  width: 22px;
-  height: 22px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
   cursor: pointer;
   display: inline-flex;
@@ -858,30 +859,98 @@ body {
 
 .flyout-items-container {
   padding: 6px 0;
-  max-height: 440px;
+  max-height: 460px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
 }
 
-.flyout-items-container .nav-item {
-  width: calc(100% - 16px) !important;
-  height: 38px !important;
-  margin: 2px 8px !important;
-  padding: 0 12px !important;
-  justify-content: flex-start !important;
-  border-radius: 19px !important;
-  display: flex !important;
+/* Elemento Voce nel Flyout: Icona + Titolo + Descrizione Estesa */
+.flyout-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 9px 12px;
+  margin: 2px 8px;
+  border-radius: 10px;
+  cursor: pointer;
+  text-decoration: none;
+  background: transparent;
+  border: 1px solid transparent;
+  transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+  outline: none;
+  box-sizing: border-box;
 }
 
-.flyout-items-container .nav-item .nav-label {
-  display: block !important;
-  font-size: 13px !important;
+.flyout-item:hover,
+.flyout-item:focus-visible {
+  background-color: #f1f5f9;
+  border-color: #e2e8f0;
 }
 
-.flyout-items-container .nav-item .badge,
-.flyout-items-container .nav-item .badge-pending-count {
-  display: inline-block !important;
+.flyout-item.active {
+  background-color: #eff6ff;
+  border-color: #bfdbfe;
+}
+
+.flyout-item-icon {
+  font-size: 20px;
+  width: 24px;
+  height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.flyout-item-content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.flyout-item-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.flyout-item-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1e293b;
+  line-height: 1.3;
+}
+
+.flyout-item.active .flyout-item-title {
+  color: #1d4ed8;
+  font-weight: 700;
+}
+
+.flyout-item-desc {
+  font-size: 11.5px;
+  color: #64748b;
+  line-height: 1.35;
+  margin-top: 2px;
+}
+
+.flyout-item.active .flyout-item-desc {
+  color: #2563eb;
+}
+
+.flyout-item-chevron {
+  color: #94a3b8;
+  flex-shrink: 0;
+  margin-top: 6px;
+  transition: transform 0.15s ease, color 0.15s ease;
+}
+
+.flyout-item:hover .flyout-item-chevron {
+  color: #2563eb;
+  transform: translateX(2px);
 }
 
 .app-page-footer {

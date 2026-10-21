@@ -22,7 +22,7 @@ let pollSolverTimer = null;
 let currentSolverRunning = false;
 
 // --- VERSIONE E IDENTITÀ APPLICATIVA ---
-const APP_VERSION = '1.4.4';
+const APP_VERSION = '1.4.5';
 const FET_VERSION = '7.12.0';
 const APP_AUTHOR = 'Carlo Rigoni';
 
@@ -120,14 +120,27 @@ function handleAuthenticatedState(data) {
   }
 }
 
+let latestPendingCount = 0;
+
 function updatePendingBadge(count) {
+  latestPendingCount = count || 0;
   const badge = document.getElementById('sidebarPendingBadge') || document.getElementById('topbarPendingBadge');
-  if (!badge) return;
-  if (count > 0) {
-    badge.innerText = count;
-    badge.style.display = 'inline-block';
-  } else {
-    badge.style.display = 'none';
+  if (badge) {
+    if (count > 0) {
+      badge.innerText = count;
+      badge.style.display = 'inline-block';
+    } else {
+      badge.style.display = 'none';
+    }
+  }
+  const flyBadge = document.getElementById('flyoutPendingBadge');
+  if (flyBadge) {
+    if (count > 0) {
+      flyBadge.innerText = count;
+      flyBadge.style.display = 'inline-block';
+    } else {
+      flyBadge.style.display = 'none';
+    }
   }
 }
 
@@ -914,6 +927,109 @@ function handleFlyoutMouseLeave() {
   }, HOVER_CLOSE_DELAY);
 }
 
+// Definizione metadati ricchi voci sottomenu (Icona, Titolo, Descrizione / Sottotitolo)
+const FLYOUT_GROUP_ITEMS = {
+  reports: [
+    {
+      icon: '🖨️',
+      title: 'Orario per Classe (PDF)',
+      desc: 'Stampa A4 orizzontale con articolazioni e intervalli',
+      action: 'openPrintClassesModal()'
+    },
+    {
+      icon: '📄',
+      title: 'Tabellone Docenti (A3)',
+      desc: 'Tabellone orizzontale completo con bande verticali (A3/PDF)',
+      action: 'openPrintTeachersModal()'
+    }
+  ],
+  anagrafiche: [
+    {
+      icon: '👨‍🏫',
+      title: 'Docenti',
+      desc: 'Organico docenti, cattedre e ore di insegnamento',
+      view: 'teachers'
+    },
+    {
+      icon: '🎓',
+      title: 'Classi & Gruppi',
+      desc: 'Sezioni, articolazioni orarie e gruppi studenti',
+      view: 'classes'
+    },
+    {
+      icon: '📚',
+      title: 'Materie',
+      desc: 'Discipline scolastiche, codici e carichi orari',
+      view: 'subjects'
+    },
+    {
+      icon: '🏫',
+      title: 'Plessi & Aule',
+      desc: 'Sedi dell\'istituto, aule ordinarie e laboratori',
+      view: 'rooms'
+    },
+    {
+      icon: '📝',
+      title: 'Attività / Cattedre',
+      desc: 'Insegnamenti, compresenze e cattedre FET',
+      view: 'activities'
+    },
+    {
+      icon: '🔗',
+      title: 'Accorpamenti',
+      desc: 'Macro-materie (es. Italiano, Latino, Storia e Geo)',
+      view: 'accorpamenti'
+    }
+  ],
+  vincoli: [
+    {
+      icon: '📐',
+      title: 'Regole Blocchi & Sezioni',
+      desc: 'Suddivisione blocchi orari e indirizzi sezioni',
+      view: 'block_rules'
+    },
+    {
+      icon: '🚫',
+      title: 'Indisponibilità Griglia',
+      desc: 'Desiderata docenti, palestre e giorni liberi',
+      view: 'availability'
+    },
+    {
+      icon: '⚖️',
+      title: 'Vincoli Orario',
+      desc: 'Pesi percentuali, buchi e ore buche FET',
+      view: 'constraints'
+    }
+  ],
+  system: [
+    {
+      icon: '⚙️',
+      title: 'Parametri Istituto',
+      desc: 'Campanelle, sabati, pause e calendario scolastico',
+      view: 'parameters'
+    },
+    {
+      icon: '📦',
+      title: 'Backup & Snapshot',
+      desc: 'Punti di ripristino, import/export FET e JSON',
+      view: 'snapshots'
+    },
+    {
+      icon: '👥',
+      title: 'Gestione Accessi',
+      desc: 'Ruoli, permessi e approvazione utenti Google OAuth',
+      action: 'openAccessManagementModal()',
+      adminOnly: true
+    },
+    {
+      icon: 'ℹ️',
+      title: 'Info & Crediti',
+      desc: 'Versione FET 7.12, crediti e conformità GDPR',
+      action: 'openAboutModal()'
+    }
+  ]
+};
+
 function openRailFlyout(groupId, triggerEl, isPersistent) {
   const popover = document.getElementById('railFlyoutPopover');
   const groupEl = document.getElementById('navGroup-' + groupId);
@@ -925,7 +1041,6 @@ function openRailFlyout(groupId, triggerEl, isPersistent) {
 
   const titleEl = groupEl.querySelector('.nav-group-title');
   const iconEl = groupEl.querySelector('.nav-group-icon');
-  const itemsEl = groupEl.querySelector('.nav-group-items');
 
   const flyoutTitle = document.getElementById('flyoutTitle');
   const flyoutIcon = document.getElementById('flyoutIcon');
@@ -936,18 +1051,52 @@ function openRailFlyout(groupId, triggerEl, isPersistent) {
   if (flyoutIcon && iconEl) flyoutIcon.innerText = iconEl.innerText;
   if (pinBadge) pinBadge.style.display = isPersistent ? 'inline-block' : 'none';
 
-  if (flyoutItemsContainer && itemsEl) {
-    flyoutItemsContainer.innerHTML = itemsEl.innerHTML;
+  // Rendering ricco degli elementi con Icona + Titolo + Descrizione Estesa
+  if (flyoutItemsContainer) {
+    const items = FLYOUT_GROUP_ITEMS[groupId] || [];
+    let html = '';
+    const currentView = (typeof stateData !== 'undefined' && stateData.currentView) ? stateData.currentView : '';
 
-    // Chiudi il flyout al click su una qualsiasi voce
-    flyoutItemsContainer.querySelectorAll('.nav-item').forEach(item => {
-      const originalClick = item.getAttribute('onclick');
-      if (originalClick) {
-        item.setAttribute('onclick', `${originalClick}; closeRailFlyout(true);`);
+    items.forEach(it => {
+      if (it.adminOnly && (!currentUser || currentUser.role !== 'admin')) {
+        return;
       }
-      item.setAttribute('tabindex', '0');
+      const isActive = it.view && it.view === currentView;
+      const clickHandler = it.view ? `navigate('${it.view}'); closeRailFlyout(true);` : `${it.action}; closeRailFlyout(true);`;
+
+      let badgeHtml = '';
+      if (it.adminOnly) {
+        const pCount = (currentUser && currentUser.role === 'admin' && latestPendingCount) ? latestPendingCount : 0;
+        if (pCount > 0) {
+          badgeHtml = `<span id="flyoutPendingBadge" class="badge-pending-count" style="display:inline-block;margin-left:auto;">${pCount}</span>`;
+        }
+      }
+
+      html += `
+        <div class="flyout-item ${isActive ? 'active' : ''}" onclick="${clickHandler}" tabindex="0" role="button" aria-label="${it.title}">
+          <span class="flyout-item-icon">${it.icon}</span>
+          <div class="flyout-item-content">
+            <div class="flyout-item-title-row">
+              <span class="flyout-item-title">${it.title}</span>
+              ${badgeHtml}
+            </div>
+            <div class="flyout-item-desc">${it.desc}</div>
+          </div>
+          <svg class="flyout-item-chevron" viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+            <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/>
+          </svg>
+        </div>
+      `;
+    });
+    flyoutItemsContainer.innerHTML = html;
+
+    // Gestione tastiera e accessibilità (Enter/Spazio per attivare, Esc per chiudere)
+    flyoutItemsContainer.querySelectorAll('.flyout-item').forEach(item => {
       item.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          item.click();
+        } else if (e.key === 'Escape') {
           closeRailFlyout(true);
           triggerEl?.focus();
         }
