@@ -22,7 +22,7 @@ let pollSolverTimer = null;
 let currentSolverRunning = false;
 
 // --- VERSIONE E IDENTITÀ APPLICATIVA ---
-const APP_VERSION = '1.4.1';
+const APP_VERSION = '1.4.2';
 const FET_VERSION = '7.12.0';
 const APP_AUTHOR = 'Carlo Rigoni';
 
@@ -778,7 +778,256 @@ function initNavGroups() {
   });
 }
 
+// --- GESTIONE FLYOUT POPOVER SOTTOMENU (MINI-RAIL 64px) ---
+// Comportamento ibrido: apertura ritardata all'hover su desktop (200-300ms),
+// apertura immediata e blocco persistente al clic, chiusura ritardata (300-500ms),
+// supporto completo per touch e tastiera.
+const HOVER_OPEN_DELAY = 220;
+const HOVER_CLOSE_DELAY = 350;
+
+let railFlyoutState = {
+  currentGroup: null,
+  isPersistent: false,
+  openTimer: null,
+  closeTimer: null,
+  triggerEl: null
+};
+
+function isSidebarCollapsed() {
+  const sb = document.getElementById('appSidebar');
+  const wrapper = document.getElementById('sidebarWrapper');
+  if (window.innerWidth < 768) return false;
+  return wrapper ? wrapper.classList.contains('collapsed') : (sb ? sb.classList.contains('collapsed') : false);
+}
+
+function handleNavCategoryMouseEnter(groupId, triggerEl, event) {
+  // Solo su desktop e quando la sidebar è in modalità mini-rail (64px)
+  if (!isSidebarCollapsed()) return;
+  if (event && event.pointerType === 'touch') return;
+  if ('ontouchstart' in window && window.matchMedia('(pointer: coarse)').matches) return;
+
+  // Se un popover è già persistente su un'altra categoria, non aprire al semplice passaggio
+  if (railFlyoutState.isPersistent && railFlyoutState.currentGroup && railFlyoutState.currentGroup !== groupId) {
+    return;
+  }
+
+  // Cancella eventuale timer di chiusura pendente
+  if (railFlyoutState.closeTimer) {
+    clearTimeout(railFlyoutState.closeTimer);
+    railFlyoutState.closeTimer = null;
+  }
+
+  if (railFlyoutState.currentGroup === groupId) return;
+
+  // Apertura ritardata (200–300 ms) per evitare aperture accidentali al passaggio rapido
+  if (railFlyoutState.openTimer) clearTimeout(railFlyoutState.openTimer);
+  railFlyoutState.openTimer = setTimeout(() => {
+    openRailFlyout(groupId, triggerEl, false);
+  }, HOVER_OPEN_DELAY);
+}
+
+function handleNavCategoryMouseLeave(groupId, triggerEl, event) {
+  if (!isSidebarCollapsed()) return;
+  if (event && event.pointerType === 'touch') return;
+
+  // Cancella il timer di apertura se il cursore è uscito prima della scadenza
+  if (railFlyoutState.openTimer) {
+    clearTimeout(railFlyoutState.openTimer);
+    railFlyoutState.openTimer = null;
+  }
+
+  // Se il popover è aperto in modalità persistente (bloccato da clic), non chiuderlo al mouseleave
+  if (railFlyoutState.isPersistent) return;
+
+  // Se aperto temporaneamente via hover, avvia timer di chiusura ritardata (300–500 ms)
+  if (railFlyoutState.currentGroup === groupId) {
+    if (railFlyoutState.closeTimer) clearTimeout(railFlyoutState.closeTimer);
+    railFlyoutState.closeTimer = setTimeout(() => {
+      closeRailFlyout(false);
+    }, HOVER_CLOSE_DELAY);
+  }
+}
+
+function handleNavCategoryClick(groupId, triggerEl, event) {
+  if (event) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+
+  // Se la sidebar è APERTA (250px), usa il normale accordion inline
+  if (!isSidebarCollapsed()) {
+    toggleNavGroup(groupId);
+    return;
+  }
+
+  // Modalità Mini-Rail 64px:
+  // Clic = Apertura immediata (0 ms) e PERSISTENTE (bloccata)
+  if (railFlyoutState.openTimer) {
+    clearTimeout(railFlyoutState.openTimer);
+    railFlyoutState.openTimer = null;
+  }
+
+  if (railFlyoutState.currentGroup === groupId && railFlyoutState.isPersistent) {
+    // Secondo clic sulla stessa categoria: chiudi
+    closeRailFlyout(true);
+  } else {
+    // Apri o scambia categoria in modalità persistente
+    openRailFlyout(groupId, triggerEl, true);
+  }
+}
+
+function handleNavCategoryKeyDown(groupId, triggerEl, event) {
+  if (event.key === 'Enter' || event.key === ' ') {
+    event.preventDefault();
+    if (!isSidebarCollapsed()) {
+      toggleNavGroup(groupId);
+    } else {
+      openRailFlyout(groupId, triggerEl, true);
+      setTimeout(() => {
+        const firstItem = document.querySelector('#flyoutItemsContainer .nav-item');
+        if (firstItem) firstItem.focus();
+      }, 40);
+    }
+  } else if (event.key === 'Escape') {
+    closeRailFlyout(true);
+  }
+}
+
+function handleFlyoutMouseEnter() {
+  // Cursore dentro l'area del sottomenu flottante: mantieni aperto annullando il timer di chiusura
+  if (railFlyoutState.closeTimer) {
+    clearTimeout(railFlyoutState.closeTimer);
+    railFlyoutState.closeTimer = null;
+  }
+}
+
+function handleFlyoutMouseLeave() {
+  // Se è persistente (bloccato da clic), non chiudere all'uscita del cursore
+  if (railFlyoutState.isPersistent) return;
+
+  // Uscita dall'intera area del menu: avvia chiusura ritardata
+  if (railFlyoutState.closeTimer) clearTimeout(railFlyoutState.closeTimer);
+  railFlyoutState.closeTimer = setTimeout(() => {
+    closeRailFlyout(false);
+  }, HOVER_CLOSE_DELAY);
+}
+
+function openRailFlyout(groupId, triggerEl, isPersistent) {
+  const popover = document.getElementById('railFlyoutPopover');
+  const groupEl = document.getElementById('navGroup-' + groupId);
+  if (!popover || !groupEl) return;
+
+  railFlyoutState.currentGroup = groupId;
+  railFlyoutState.isPersistent = !!isPersistent;
+  railFlyoutState.triggerEl = triggerEl;
+
+  const titleEl = groupEl.querySelector('.nav-group-title');
+  const iconEl = groupEl.querySelector('.nav-group-icon');
+  const itemsEl = groupEl.querySelector('.nav-group-items');
+
+  const flyoutTitle = document.getElementById('flyoutTitle');
+  const flyoutIcon = document.getElementById('flyoutIcon');
+  const flyoutItemsContainer = document.getElementById('flyoutItemsContainer');
+  const pinBadge = document.getElementById('flyoutPinBadge');
+
+  if (flyoutTitle && titleEl) flyoutTitle.innerText = titleEl.innerText;
+  if (flyoutIcon && iconEl) flyoutIcon.innerText = iconEl.innerText;
+  if (pinBadge) pinBadge.style.display = isPersistent ? 'inline-block' : 'none';
+
+  if (flyoutItemsContainer && itemsEl) {
+    flyoutItemsContainer.innerHTML = itemsEl.innerHTML;
+
+    // Chiudi il flyout al click su una qualsiasi voce
+    flyoutItemsContainer.querySelectorAll('.nav-item').forEach(item => {
+      const originalClick = item.getAttribute('onclick');
+      if (originalClick) {
+        item.setAttribute('onclick', `${originalClick}; closeRailFlyout(true);`);
+      }
+      item.setAttribute('tabindex', '0');
+      item.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          closeRailFlyout(true);
+          triggerEl?.focus();
+        }
+      });
+    });
+  }
+
+  // Evidenzia categoria attiva sul rail
+  document.querySelectorAll('.nav-group-header').forEach(h => h.classList.remove('flyout-open'));
+  triggerEl.classList.add('flyout-open');
+
+  // Posiziona il sottomenu a destra della barra (left: 64px) allineato all'icona
+  const rect = triggerEl.getBoundingClientRect();
+  popover.style.display = 'flex';
+  popover.style.visibility = 'hidden';
+
+  requestAnimationFrame(() => {
+    const popoverHeight = popover.offsetHeight || 260;
+    let top = rect.top - 4;
+    const maxTop = window.innerHeight - popoverHeight - 14;
+    if (top > maxTop) top = Math.max(10, maxTop);
+    if (top < 10) top = 10;
+
+    popover.style.top = top + 'px';
+    popover.style.left = '64px';
+    popover.style.visibility = 'visible';
+  });
+}
+
+function closeRailFlyout(immediate) {
+  if (railFlyoutState.openTimer) {
+    clearTimeout(railFlyoutState.openTimer);
+    railFlyoutState.openTimer = null;
+  }
+  if (railFlyoutState.closeTimer) {
+    clearTimeout(railFlyoutState.closeTimer);
+    railFlyoutState.closeTimer = null;
+  }
+
+  const popover = document.getElementById('railFlyoutPopover');
+  if (popover) {
+    popover.style.display = 'none';
+  }
+
+  document.querySelectorAll('.nav-group-header').forEach(h => h.classList.remove('flyout-open'));
+
+  railFlyoutState.currentGroup = null;
+  railFlyoutState.isPersistent = false;
+  railFlyoutState.triggerEl = null;
+}
+
+function updateRailActiveCategories() {
+  document.querySelectorAll('.sidebar-nav .nav-group').forEach(group => {
+    const header = group.querySelector('.nav-group-header');
+    const hasActiveChild = !!group.querySelector('.nav-group-items .nav-item.active');
+    if (header) {
+      if (hasActiveChild) {
+        header.classList.add('has-active-child');
+      } else {
+        header.classList.remove('has-active-child');
+      }
+    }
+  });
+}
+
+// Chiusura al clic esterno e tasto Escape
+document.addEventListener('click', (e) => {
+  if (!railFlyoutState.currentGroup) return;
+  const popover = document.getElementById('railFlyoutPopover');
+  if (popover && popover.contains(e.target)) return;
+  if (railFlyoutState.triggerEl && railFlyoutState.triggerEl.contains(e.target)) return;
+  closeRailFlyout(true);
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && railFlyoutState.currentGroup) {
+    closeRailFlyout(true);
+  }
+});
+
 function applySidebarState(isCollapsed) {
+  closeRailFlyout(true);
   const wrapper = document.getElementById('sidebarWrapper');
   const sb = document.getElementById('appSidebar');
   if (isCollapsed) {
@@ -789,6 +1038,7 @@ function applySidebarState(isCollapsed) {
     sb?.classList.remove('collapsed');
   }
   updateSidebarPinUi(!isCollapsed);
+  updateRailActiveCategories();
 }
 
 function updateSidebarPinUi(isPinned) {
@@ -1034,13 +1284,16 @@ function navigate(view, pushHistory = true, customLabel = null) {
     closeMobileSidebar();
   }
 
-  // Aggiorna classe active nella sidebar e auto-espandi il gruppo genitore se collassato
+  // Chiudi eventuale sottomenu flyout aperto
+  closeRailFlyout(true);
+
+  // Aggiorna classe active nella sidebar e auto-espandi il gruppo genitore se la sidebar è aperta
   document.querySelectorAll('.sidebar .nav-item').forEach(el => {
     el.classList.remove('active');
     if (el.getAttribute('onclick') && el.getAttribute('onclick').includes(view)) {
       el.classList.add('active');
       const parentGroup = el.closest('.nav-group');
-      if (parentGroup) {
+      if (parentGroup && !isSidebarCollapsed()) {
         const groupId = parentGroup.getAttribute('data-group');
         if (groupId) {
           toggleNavGroup(groupId, true);
@@ -1048,6 +1301,9 @@ function navigate(view, pushHistory = true, customLabel = null) {
       }
     }
   });
+
+  // Aggiorna evidenziazione categoria attiva sul rail
+  updateRailActiveCategories();
 
   document.getElementById('pageTitle').innerText = VIEW_TITLES[view] || 'SmartTimetable';
 

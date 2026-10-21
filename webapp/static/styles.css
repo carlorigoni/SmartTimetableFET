@@ -148,7 +148,7 @@ body {
   overflow-y: hidden;
 }
 
-/* Modalità Mini-Rail Collapsed (Fissato Chiuso) */
+/* Modalità Mini-Rail Collapsed (Fissato Chiuso a 64px) */
 .sidebar-wrapper.collapsed .sidebar,
 .sidebar.collapsed {
   position: absolute;
@@ -159,15 +159,6 @@ body {
   border-right: 1px solid var(--border);
   box-shadow: none;
   z-index: 900;
-}
-
-/* HOVER FLYOUT: Quando è chiuso e l'utente passa il mouse, si espande fluidamente 
-   in overlay sopra la pagina SENZA spostare il contenuto principale (Zero Layout Shift) */
-.sidebar-wrapper.collapsed:hover .sidebar {
-  width: 250px;
-  box-shadow: 0 4px 24px rgba(15, 23, 42, 0.16), 0 1px 4px rgba(15, 23, 42, 0.08);
-  border-right-color: transparent;
-  z-index: 1050;
 }
 
 /* Google Hamburger Button (Stile Google Classroom / Workspace) */
@@ -289,27 +280,27 @@ body {
   color: var(--text-muted);
 }
 
-/* Comportamento Header in stato compresso vs hover/aperto */
-.sidebar-wrapper.collapsed:not(:hover) .sidebar-header {
+/* Comportamento Header in stato compresso vs aperto */
+.sidebar-wrapper.collapsed .sidebar-header {
   padding: 0;
   justify-content: center;
 }
 
-.sidebar-wrapper.collapsed:not(:hover) .sidebar-brand,
-.sidebar-wrapper.collapsed:not(:hover) .sidebar-pin-btn {
+.sidebar-wrapper.collapsed .sidebar-brand,
+.sidebar-wrapper.collapsed .sidebar-pin-btn {
   display: none !important;
 }
 
-.sidebar-wrapper.collapsed:hover .sidebar-header {
+.sidebar-wrapper:not(.collapsed) .sidebar-header {
   padding: 0 14px;
   justify-content: space-between;
 }
 
-.sidebar-wrapper.collapsed:hover .sidebar-brand {
+.sidebar-wrapper:not(.collapsed) .sidebar-brand {
   display: flex !important;
 }
 
-.sidebar-wrapper.collapsed:hover .sidebar-pin-btn {
+.sidebar-wrapper:not(.collapsed) .sidebar-pin-btn {
   display: inline-flex !important;
 }
 
@@ -339,7 +330,7 @@ body {
   background: #bdc1c6;
 }
 
-/* Gruppi Comprimibili (Accordion Material 3) */
+/* Gruppi Comprimibili (Accordion MD3 su sidebar aperta / Icone con Flyout su Rail 64px) */
 .nav-group {
   display: flex;
   flex-direction: column;
@@ -347,19 +338,19 @@ body {
   padding: 0;
 }
 
-/* Header di Sezione con Accordion Toggle (Ingombro costante: 32px height + 4px top + 2px bottom = 38px) */
+/* Header di Sezione con Accordion Toggle (Ingombro costante) */
 .nav-group-header {
-  height: 32px;
-  min-height: 32px;
-  max-height: 32px;
+  height: 34px;
+  min-height: 34px;
+  max-height: 34px;
   margin: 4px 8px 2px 8px;
-  padding: 0 8px;
+  padding: 0 10px;
   border: none;
   background: transparent;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
   user-select: none;
   box-sizing: border-box;
@@ -370,8 +361,19 @@ body {
 }
 
 .nav-group-header:hover {
-  background-color: rgba(60, 64, 67, 0.06);
+  background-color: rgba(60, 64, 67, 0.08);
   color: #202124;
+}
+
+.nav-group-icon {
+  font-size: 16px;
+  width: 22px;
+  height: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 8px;
+  flex-shrink: 0;
 }
 
 .nav-group-title {
@@ -395,7 +397,7 @@ body {
   justify-content: center;
 }
 
-/* Stato Collapsed dell'Accordion: chevron ruotato e voci nascoste */
+/* Stato Collapsed dell'Accordion (Sidebar Aperta) */
 .nav-group.collapsed .nav-group-chevron {
   transform: rotate(-90deg);
 }
@@ -411,31 +413,55 @@ body {
   gap: 0;
 }
 
-/* In Mini-Rail Collapsed (non hovered): il gruppo header mantiene ESATTAMENTE 38px verticali,
-   mostrando una sottile linea orizzontale centrata a zero layout shift */
-.sidebar-wrapper.collapsed:not(:hover) .nav-group-header {
-  height: 32px;
-  min-height: 32px;
-  max-height: 32px;
-  margin: 4px 0 2px 0;
+/* In Mini-Rail Collapsed (64px): il gruppo diventa un pulsante icona circolare centrato (40px) */
+.sidebar-wrapper.collapsed .nav-group-header {
+  width: 40px;
+  height: 40px;
+  min-height: 40px;
+  max-height: 40px;
+  margin: 3px auto;
   padding: 0;
   justify-content: center;
-  background: transparent !important;
+  border-radius: 50%;
   cursor: pointer;
+  box-sizing: border-box;
 }
 
-.sidebar-wrapper.collapsed:not(:hover) .nav-group-title,
-.sidebar-wrapper.collapsed:not(:hover) .nav-group-chevron {
+.sidebar-wrapper.collapsed .nav-group-title,
+.sidebar-wrapper.collapsed .nav-group-chevron {
   display: none !important;
 }
 
-.sidebar-wrapper.collapsed:not(:hover) .nav-group-header::before {
-  content: '';
-  display: block;
+.sidebar-wrapper.collapsed .nav-group-icon {
+  font-size: 18px;
   width: 24px;
-  height: 1px;
-  background: var(--border-light);
-  margin: auto;
+  height: 24px;
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Quando la rail è collassata a 64px, le voci inline del gruppo sono nascoste: vengono servite dal Popover Flottante */
+.sidebar-wrapper.collapsed .nav-group-items {
+  display: none !important;
+}
+
+/* Evidenziazione categoria su rail quando il popover è aperto o ha un figlio attivo */
+.nav-group-header.flyout-open {
+  background-color: #e8f0fe !important;
+  color: #1967d2 !important;
+}
+
+.nav-group-header.has-active-child {
+  background-color: #f1f3f4;
+  color: #1967d2;
+}
+
+.sidebar-wrapper.collapsed .nav-group-header.has-active-child {
+  background-color: #e8f0fe;
+  color: #1967d2;
+  border-radius: 50%;
 }
 
 /* Voci di Menu Pill Google Material 3 (Ingombro verticale: 3px top + 40px height + 3px bottom = 46px) */
@@ -490,10 +516,8 @@ body {
   flex: 1;
 }
 
-/* Adattamento Voci di Menu in Mini-Rail (Chiuso e non hovered):
-   Mantiene ESATTAMENTE l'ingombro di 46px verticali (3px top + 40px height + 3px bottom)
-   e la coordinata X del centro dell'icona a 32px (perfettamente allineata) */
-.sidebar-wrapper.collapsed:not(:hover) .nav-item {
+/* Adattamento Voci di Menu in Mini-Rail (64px) */
+.sidebar-wrapper.collapsed .nav-item {
   width: 40px;
   height: 40px;
   margin: 3px auto;
@@ -502,19 +526,19 @@ body {
   border-radius: 50%;
 }
 
-.sidebar-wrapper.collapsed:not(:hover) .nav-item .nav-label,
-.sidebar-wrapper.collapsed:not(:hover) .nav-item .badge,
-.sidebar-wrapper.collapsed:not(:hover) .nav-item .badge-pending-count {
+.sidebar-wrapper.collapsed .nav-item .nav-label,
+.sidebar-wrapper.collapsed .nav-item .badge,
+.sidebar-wrapper.collapsed .nav-item .badge-pending-count {
   display: none !important;
 }
 
-.sidebar-wrapper.collapsed:not(:hover) .nav-item.active {
+.sidebar-wrapper.collapsed .nav-item.active {
   background-color: #e8f0fe;
   color: #1967d2;
   border-radius: 50%;
 }
 
-/* Footer Sidebar Compatto a Riga Singola (Altezza: 36px costante in entrambi gli stati: zero vertical push) */
+/* Footer Sidebar Compatto a Riga Singola (Altezza: 36px) */
 .sidebar-footer {
   height: 36px;
   min-height: 36px;
@@ -587,33 +611,176 @@ body {
   color: #1a73e8;
 }
 
-/* In Mini-Rail (non hovered), il footer mostra solo il pallino verde centrato */
-.sidebar-wrapper.collapsed:not(:hover) .sidebar-footer {
+/* In Mini-Rail 64px, il footer mostra solo il pallino verde centrato */
+.sidebar-wrapper.collapsed .sidebar-footer {
   height: 36px;
   padding: 0;
   justify-content: center;
 }
 
-.sidebar-wrapper.collapsed:not(:hover) .sidebar-status-row {
+.sidebar-wrapper.collapsed .sidebar-status-row {
   justify-content: center;
   width: 100%;
 }
 
-.sidebar-wrapper.collapsed:not(:hover) .footer-ver-tag,
-.sidebar-wrapper.collapsed:not(:hover) .footer-info-btn,
-.sidebar-wrapper.collapsed:not(:hover) .status-indicator-text {
+.sidebar-wrapper.collapsed .footer-ver-tag,
+.sidebar-wrapper.collapsed .footer-info-btn,
+.sidebar-wrapper.collapsed .status-indicator-text {
   display: none !important;
 }
 
-.sidebar-wrapper.collapsed:not(:hover) .sidebar-status-badge {
+.sidebar-wrapper.collapsed .sidebar-status-badge {
   background: transparent;
   padding: 0;
   justify-content: center;
 }
 
-.sidebar-wrapper.collapsed:not(:hover) .status-indicator-dot {
+.sidebar-wrapper.collapsed .status-indicator-dot {
   width: 8px;
   height: 8px;
+}
+
+/* --- FLOATING FLYOUT SUBMENU POPOVER (Mini-Rail 64px) --- */
+.rail-flyout-popover {
+  position: fixed;
+  left: 64px;
+  width: 250px;
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-left: none; /* Perfetto aggancio alla linea destra del rail a 64px */
+  border-radius: 0 12px 12px 0;
+  box-shadow: 4px 8px 26px rgba(15, 23, 42, 0.16), 0 2px 6px rgba(15, 23, 42, 0.08);
+  z-index: 1050;
+  display: flex;
+  flex-direction: column;
+  overflow: visible;
+  animation: flyoutSlideIn 0.18s cubic-bezier(0.2, 0, 0, 1) forwards;
+  box-sizing: border-box;
+}
+
+@keyframes flyoutSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Area di passaggio continua sicura (Zero Dead Zone tra icona del rail e pannello) */
+.rail-flyout-popover::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -14px;
+  width: 14px;
+  height: 100%;
+  background: transparent;
+  pointer-events: auto;
+}
+
+.flyout-header {
+  height: 42px;
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border-light);
+  background: #f8fafc;
+  border-radius: 0 11px 0 0;
+  user-select: none;
+  box-sizing: border-box;
+}
+
+.flyout-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow: hidden;
+}
+
+.flyout-icon {
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.flyout-title {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--primary-dark);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.flyout-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.flyout-pin-badge {
+  font-size: 10px;
+  font-weight: 600;
+  background: #e0f2fe;
+  color: #0284c7;
+  padding: 2px 6px;
+  border-radius: 8px;
+  letter-spacing: -0.1px;
+}
+
+.flyout-close-btn {
+  background: none;
+  border: none;
+  color: #64748b;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  padding: 0;
+  transition: background-color 0.15s ease, color 0.15s ease;
+  outline: none;
+}
+
+.flyout-close-btn:hover {
+  background-color: rgba(60, 64, 67, 0.1);
+  color: #1e293b;
+}
+
+.flyout-items-container {
+  padding: 6px 0;
+  max-height: 440px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.flyout-items-container .nav-item {
+  width: calc(100% - 16px) !important;
+  height: 38px !important;
+  margin: 2px 8px !important;
+  padding: 0 12px !important;
+  justify-content: flex-start !important;
+  border-radius: 19px !important;
+  display: flex !important;
+}
+
+.flyout-items-container .nav-item .nav-label {
+  display: block !important;
+  font-size: 13px !important;
+}
+
+.flyout-items-container .nav-item .badge,
+.flyout-items-container .nav-item .badge-pending-count {
+  display: inline-block !important;
 }
 
 .app-page-footer {
@@ -3352,6 +3519,10 @@ input:checked + .slider:before {
   }
 
   /* Quando il drawer è aperto su mobile, mostra sempre etichette complete e controlli */
+  .rail-flyout-popover {
+    display: none !important;
+  }
+
   .sidebar-titles,
   .nav-group-title,
   .nav-label,
@@ -3360,6 +3531,7 @@ input:checked + .slider:before {
     display: block !important;
   }
 
+  .nav-group-icon,
   .nav-group-chevron,
   .footer-info-btn {
     display: inline-flex !important;
@@ -3378,12 +3550,20 @@ input:checked + .slider:before {
     display: none !important; /* Non necessario su mobile */
   }
 
-  .nav-group-header {
+  .sidebar.mobile-open .nav-group-header {
+    width: calc(100% - 16px) !important;
+    height: 38px !important;
+    margin: 2px 8px !important;
     padding: 0 12px !important;
+    border-radius: 19px !important;
     justify-content: space-between !important;
   }
 
-  .nav-group-header::before {
+  .sidebar.mobile-open .nav-group:not(.collapsed) .nav-group-items {
+    display: flex !important;
+  }
+
+  .sidebar.mobile-open .nav-group.collapsed .nav-group-items {
     display: none !important;
   }
 

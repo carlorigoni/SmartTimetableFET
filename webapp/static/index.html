@@ -11,7 +11,7 @@
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
   <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#1a73e8">
   <link rel="shortcut icon" href="/favicon.ico">
-  <link rel="stylesheet" href="styles.css?v=1.4.1">
+  <link rel="stylesheet" href="styles.css?v=1.4.2">
   <!-- Google Identity Services OAuth -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
@@ -63,9 +63,15 @@
           <span id="navHealthBadge" class="badge badge-sm badge-ok" style="margin-left:auto;font-size:10px;padding:1px 6px;">100%</span>
         </a>
 
-        <!-- Gruppo 1: Report & Stampe (Comprimibile) -->
+        <!-- Gruppo 1: Report & Stampe (Comprimibile / Flyout Rail) -->
         <div class="nav-group" id="navGroup-reports" data-group="reports">
-          <button type="button" class="nav-group-header" onclick="toggleNavGroup('reports')" title="Espandi o comprimi Report & Stampe" aria-expanded="false">
+          <button type="button" class="nav-group-header"
+                  onclick="handleNavCategoryClick('reports', this, event)"
+                  onmouseenter="handleNavCategoryMouseEnter('reports', this, event)"
+                  onmouseleave="handleNavCategoryMouseLeave('reports', this, event)"
+                  onkeydown="handleNavCategoryKeyDown('reports', this, event)"
+                  data-tooltip="Report & Stampe" title="Report & Stampe" aria-expanded="false" aria-haspopup="true">
+            <span class="nav-group-icon">📑</span>
             <span class="nav-group-title">Report & Stampe</span>
             <svg class="nav-group-chevron" viewBox="0 0 24 24" width="16" height="16">
               <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" fill="currentColor"/>
@@ -83,9 +89,15 @@
           </div>
         </div>
 
-        <!-- Gruppo 2: Anagrafiche & Cattedre (Comprimibile) -->
+        <!-- Gruppo 2: Anagrafiche & Cattedre (Comprimibile / Flyout Rail) -->
         <div class="nav-group" id="navGroup-anagrafiche" data-group="anagrafiche">
-          <button type="button" class="nav-group-header" onclick="toggleNavGroup('anagrafiche')" title="Espandi o comprimi Anagrafiche & Cattedre" aria-expanded="true">
+          <button type="button" class="nav-group-header"
+                  onclick="handleNavCategoryClick('anagrafiche', this, event)"
+                  onmouseenter="handleNavCategoryMouseEnter('anagrafiche', this, event)"
+                  onmouseleave="handleNavCategoryMouseLeave('anagrafiche', this, event)"
+                  onkeydown="handleNavCategoryKeyDown('anagrafiche', this, event)"
+                  data-tooltip="Anagrafiche & Cattedre" title="Anagrafiche & Cattedre" aria-expanded="true" aria-haspopup="true">
+            <span class="nav-group-icon">👥</span>
             <span class="nav-group-title">Anagrafiche & Cattedre</span>
             <svg class="nav-group-chevron" viewBox="0 0 24 24" width="16" height="16">
               <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" fill="currentColor"/>
@@ -119,9 +131,15 @@
           </div>
         </div>
 
-        <!-- Gruppo 3: Vincoli & Regole (Comprimibile) -->
+        <!-- Gruppo 3: Vincoli & Regole (Comprimibile / Flyout Rail) -->
         <div class="nav-group" id="navGroup-vincoli" data-group="vincoli">
-          <button type="button" class="nav-group-header" onclick="toggleNavGroup('vincoli')" title="Espandi o comprimi Vincoli & Regole" aria-expanded="false">
+          <button type="button" class="nav-group-header"
+                  onclick="handleNavCategoryClick('vincoli', this, event)"
+                  onmouseenter="handleNavCategoryMouseEnter('vincoli', this, event)"
+                  onmouseleave="handleNavCategoryMouseLeave('vincoli', this, event)"
+                  onkeydown="handleNavCategoryKeyDown('vincoli', this, event)"
+                  data-tooltip="Vincoli & Regole" title="Vincoli & Regole" aria-expanded="false" aria-haspopup="true">
+            <span class="nav-group-icon">📐</span>
             <span class="nav-group-title">Vincoli & Regole</span>
             <svg class="nav-group-chevron" viewBox="0 0 24 24" width="16" height="16">
               <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" fill="currentColor"/>
@@ -143,9 +161,15 @@
           </div>
         </div>
 
-        <!-- Gruppo 4: Sistema & Configurazione (Comprimibile) -->
+        <!-- Gruppo 4: Sistema & Configurazione (Comprimibile / Flyout Rail) -->
         <div class="nav-group" id="navGroup-system" data-group="system">
-          <button type="button" class="nav-group-header" onclick="toggleNavGroup('system')" title="Espandi o comprimi Sistema & Configurazione" aria-expanded="false">
+          <button type="button" class="nav-group-header"
+                  onclick="handleNavCategoryClick('system', this, event)"
+                  onmouseenter="handleNavCategoryMouseEnter('system', this, event)"
+                  onmouseleave="handleNavCategoryMouseLeave('system', this, event)"
+                  onkeydown="handleNavCategoryKeyDown('system', this, event)"
+                  data-tooltip="Sistema & Configurazione" title="Sistema & Configurazione" aria-expanded="false" aria-haspopup="true">
+            <span class="nav-group-icon">⚙️</span>
             <span class="nav-group-title">Sistema & Configurazione</span>
             <svg class="nav-group-chevron" viewBox="0 0 24 24" width="16" height="16">
               <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" fill="currentColor"/>
@@ -180,7 +204,7 @@
             <span class="status-indicator-dot"></span>
             <span class="status-indicator-text">FET 7.12</span>
           </span>
-          <span class="footer-ver-tag" title="Versione SmartTimetable">v1.4.1</span>
+          <span class="footer-ver-tag" title="Versione SmartTimetable">v1.4.2</span>
           <button class="footer-info-btn" onclick="openAboutModal()" title="Crediti, Mentore e Info Legali" aria-label="Informazioni e crediti">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
               <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
@@ -189,6 +213,22 @@
         </div>
       </div>
     </aside>
+
+    <!-- Floating Flyout Submenu Panel (Mini-Rail Mode: Hover con ritardo & Clic per bloccare) -->
+    <div id="railFlyoutPopover" class="rail-flyout-popover" role="region" aria-label="Sottomenu" style="display:none;"
+         onmouseenter="handleFlyoutMouseEnter()" onmouseleave="handleFlyoutMouseLeave()">
+      <div class="flyout-header">
+        <div class="flyout-title-wrap">
+          <span id="flyoutIcon" class="flyout-icon">👥</span>
+          <span id="flyoutTitle" class="flyout-title">Anagrafiche & Cattedre</span>
+        </div>
+        <div class="flyout-actions">
+          <span id="flyoutPinBadge" class="flyout-pin-badge" style="display:none;" title="Menu bloccato aperto con un clic">Bloccato 📌</span>
+          <button type="button" class="flyout-close-btn" onclick="closeRailFlyout(true)" title="Chiudi sottomenu (Esc)" aria-label="Chiudi sottomenu">✕</button>
+        </div>
+      </div>
+      <div id="flyoutItemsContainer" class="flyout-items-container"></div>
+    </div>
   </div>
 
   <!-- Main Content Area -->
@@ -227,7 +267,7 @@
 
     <footer class="app-page-footer">
       <div>
-        <b>SmartTimetable FET Suite</b> &mdash; Versione <span class="badge-ver">v1.4.1</span> &bull; Autore: <b>Carlo Rigoni</b> &bull; Mentore: <b>Federico Rettore</b> &bull; Motore: <b>FET 7.12.0</b> &bull; <a href="javascript:void(0)" onclick="openAboutModal()" style="color:var(--primary);text-decoration:none;font-weight:600;">Crediti & Note Legali</a>
+        <b>SmartTimetable FET Suite</b> &mdash; Versione <span class="badge-ver">v1.4.2</span> &bull; Autore: <b>Carlo Rigoni</b> &bull; Mentore: <b>Federico Rettore</b> &bull; Motore: <b>FET 7.12.0</b> &bull; <a href="javascript:void(0)" onclick="openAboutModal()" style="color:var(--primary);text-decoration:none;font-weight:600;">Crediti & Note Legali</a>
       </div>
       <div style="font-size:11.5px;color:var(--text-muted);">
         Algoritmo euristico: <a href="https://lalescu.ro/liviu/fet/" target="_blank" rel="noopener" style="color:var(--primary);text-decoration:none;font-weight:600;">FET Free Timetabling Software</a> &bull; AI Pair Programming: Google DeepMind Antigravity
@@ -583,7 +623,7 @@
         <!-- Banner Versione -->
         <div style="display:flex;align-items:center;justify-content:space-between;background:#f8fafc;border:1px solid #e2e8f0;border-radius:var(--radius-sm);padding:10px 14px;">
           <div style="display:flex;align-items:center;gap:8px;">
-            <span class="badge badge-info" style="font-size:12px;padding:3px 8px;font-weight:700;">v1.4.1</span>
+            <span class="badge badge-info" style="font-size:12px;padding:3px 8px;font-weight:700;">v1.4.2</span>
             <span style="font-size:11.5px;color:#64748b;">Release Stabile</span>
           </div>
           <div style="font-size:11.5px;color:#64748b;">
@@ -664,6 +704,6 @@
     </div>
   </div>
 
-  <script src="app.js?v=1.4.1"></script>
+  <script src="app.js?v=1.4.2"></script>
 </body>
 </html>
