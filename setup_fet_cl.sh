@@ -66,7 +66,10 @@ rm -rf "$BUILD_TMP"
 mkdir -p "$BUILD_TMP"
 cd "$BUILD_TMP"
 
-FET_VER="7.12.0"
+# Rileva automaticamente l'ultima versione ufficiale di FET disponibile a monte
+UPSTREAM_VER=$(curl -s https://lalescu.ro/liviu/fet/download/ | grep -oE 'fet-[0-9]+\.[0-9]+\.[0-9]+\.tar\.xz' | head -n 1 | sed 's/fet-//;s/\.tar\.xz//' || true)
+FET_VER="${UPSTREAM_VER:-7.12.0}"
+echo "Versione FET upstream rilevata: $FET_VER"
 echo "Download sorgenti FET $FET_VER..."
 curl -L -s -o "fet-$FET_VER.tar.xz" "https://lalescu.ro/liviu/fet/download/fet-$FET_VER.tar.xz"
 
@@ -87,12 +90,16 @@ elif [ -f "build/fet-cl" ]; then
 fi
 
 if [ -n "$BIN_FOUND" ]; then
+    echo "🔍 Esecuzione Sanity Check di non-regressione sul binario compilato..."
+    chmod +x "$BIN_FOUND"
+    python3 "$DIR/scripts/check_and_update_fet.py" --sanity-check-only "$BIN_FOUND"
+    
     cp "$BIN_FOUND" "$DIR/fet-cl"
     chmod +x "$DIR/fet-cl"
     echo ""
     echo "=================================================================="
-    echo "✅ COMPILAZIONE COMPLETATA CON SUCCESSO!"
-    echo "   Eseguibile salvato in: $DIR/fet-cl"
+    echo "✅ COMPILAZIONE E SANITY CHECK COMPLETATI CON SUCCESSO!"
+    echo "   Eseguibile validato salvato in: $DIR/fet-cl"
     echo "=================================================================="
     "$DIR/fet-cl" --version || true
     rm -rf "$BUILD_TMP"

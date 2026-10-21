@@ -1,5 +1,5 @@
 """
-SmartTimetable - Modulo Advisor Intelligente e Relaxation Engine (v1.4.7)
+SmartTimetable - Modulo Advisor Intelligente e Relaxation Engine (v1.4.8)
 Analizza sia in FASE PREVENTIVA (prima del lancio) sia in FASE DI COMPILAZIONE (durante/dopo FET)
 i conflitti matematici, i colli di bottiglia, le locked activities e i cicli di deadlock ricorsivo.
 Fornisce diagnosi "Causa Radice" (Root Cause Analysis) e una scala progressiva di raccomandazioni

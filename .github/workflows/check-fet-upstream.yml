@@ -1,0 +1,55 @@
+name: Auto-Update FET Engine (Upstream & Sanity Check)
+
+on:
+  schedule:
+    # Esegue ogni lunedì notte alle 03:00 UTC
+    - cron: '0 3 * * 1'
+  workflow_dispatch:
+    # Consente l'avvio manuale a 1 clic dalla scheda Actions di GitHub
+
+permissions:
+  contents: write
+
+jobs:
+  check-and-update-fet:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Qt6 and CMake build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential \
+            cmake \
+            qt6-base-dev \
+            qt6-base-dev-tools \
+            curl \
+            xz-utils
+
+      - name: Run Upstream Check, Compile & Sanity Check
+        id: check
+        run: |
+          python3 scripts/check_and_update_fet.py --ci
+
+      - name: Commit and Push if Sanity Check Passed and Updated
+        if: steps.check.outputs.update_available == 'true'
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          
+          FET_VER="${{ steps.check.outputs.fet_version }}"
+          echo "Commit modifiche per FET $FET_VER..."
+          
+          git add Dockerfile webapp/ README.md
+          git commit -m "chore(fet): upgrade FET engine to v${FET_VER} [Sanity Check PASSED]"
+          git push origin main
