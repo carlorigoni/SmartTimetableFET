@@ -37,7 +37,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function initAuth() {
   const savedCollapsed = localStorage.getItem('sidebar_collapsed');
-  applySidebarState(savedCollapsed === '1');
+  // Apertura di default: menu collassato a 68px (hover flyout), a meno che l'utente non l'abbia esplicitamente fissato aperto ('0')
+  applySidebarState(savedCollapsed !== '0');
   try {
     const res = await fetch('/api/auth/me');
     const data = await res.json();
@@ -687,14 +688,9 @@ function initSidebarResponsive() {
   const w = window.innerWidth;
   const saved = localStorage.getItem('sidebar_collapsed');
 
-  // Gestione responsive a 3 stati:
-  // Desktop (> 1200px): default espansa/fissata aperta (a meno che saved === '1')
-  // Tablet (768px - 1200px): default compresso a 68px con hover espansione (a meno che saved === '0')
-  // Mobile (< 768px): drawer modale a scomparsa
-  if (w > 1200) {
-    const isCollapsed = (saved === '1');
-    applySidebarState(isCollapsed);
-  } else if (w >= 768) {
+  // Apertura di default dell'applicazione: menu collassato (mini-rail a sole icone a 68px con hover flyout),
+  // a meno che l'utente non abbia esplicitamente cliccato sul pulsante pin o hamburger per fissarlo aperto (saved === '0').
+  if (w >= 768) {
     const isCollapsed = (saved !== '0');
     applySidebarState(isCollapsed);
   } else {

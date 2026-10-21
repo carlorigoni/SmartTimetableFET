@@ -1634,13 +1634,21 @@ def generate_organico_template_docx(data=None):
             })
 
     if not teachers_rows:
-        # Esempio completo Paperopoli
+        # Esempio completo con evidenza di più docenti per la stessa CdC (senza ripetere la CdC)
         teachers_rows = [
+            # Gruppo A012: 2 docenti sulla stessa CdC (il secondo docente ha la cella CdC vuota)
             {"cdc": "A012 - Discipline Letterarie", "name": "Gastone Paperone", "classi": "1A (4) Italiano - 2A (4) Italiano - 3A (4) Italiano - 4A (3) Italiano - 5A (3) Italiano", "hours": "18"},
+            {"cdc": "A012 - Discipline Letterarie", "name": "Paperina", "classi": "1B (4) Italiano - 2B (4) Italiano - 3B (4) Italiano - 4B (3) Italiano - 5B (3) Italiano", "hours": "18"},
+            
+            # Gruppo A019: 1 docente
             {"cdc": "A019 - Storia e Filosofia", "name": "Pico De Paperis", "classi": "1A (2) Storia - 2A (2) Storia - 3A (4) Filosofia - 4A (5) Filosofia - 5A (5) Filosofia", "hours": "18"},
-            {"cdc": "A020 - Fisica e Invenzioni", "name": "Archimede Pitagorico", "classi": "1A (3) Fisica - 2A (3) Fisica - 3A (4) Laboratorio - 4A (4) Laboratorio - 5A (4) Laboratorio", "hours": "18"},
+            
+            # Gruppo A026: 2 docenti sulla stessa CdC (il secondo docente ha la cella CdC vuota)
+            {"cdc": "A026 - Matematica e Fisica", "name": "Dinamite Bla", "classi": "1A (4) Matematica - 2A (4) Matematica - 3A (4) Matematica - 4A (3) Matematica - 5A (3) Matematica", "hours": "18"},
+            {"cdc": "A026 - Matematica e Fisica", "name": "Archimede Pitagorico", "classi": "1B (4) Matematica - 2B (4) Matematica - 3A (3) Fisica - 4A (3) Fisica - 5A (4) Fisica", "hours": "18"},
+            
+            # Altri docenti
             {"cdc": "A024 - Lingua Inglese", "name": "Battista", "classi": "1A (3) Inglese - 2A (3) Inglese - 3A (3) Inglese - 4A (3) Inglese - 5A (3) Inglese - POT (3)", "hours": "18"},
-            {"cdc": "A026 - Matematica", "name": "Dinamite Bla", "classi": "1A (4) Matematica - 2A (4) Matematica - 3A (4) Matematica - 4A (3) Matematica - 5A (3) Matematica", "hours": "18"},
             {"cdc": "A046 - Economia e Diritto", "name": "Paperon de' Paperoni", "classi": "1A (3) Diritto - 2A (3) Diritto - 3A (4) Economia - 4A (4) Economia - 5A (4) Finanza", "hours": "18"},
             {"cdc": "A048 - Scienze Motorie", "name": "Paperino Paolino", "classi": "1A (2) Motoria - 2A (2) Motoria - 3A (2) Motoria - 4A (2) Motoria - 5A (2) Motoria - POT (8)", "hours": "18"},
             {"cdc": "A050 - Scienze Naturali", "name": "Nonna Papera", "classi": "1A (4) Scienze - 2A (4) Scienze - 3A (4) Botanica - 4A (3) Biologia - 5A (3) Chimica", "hours": "18"}
@@ -1690,7 +1698,7 @@ def generate_organico_template_docx(data=None):
           <w:sz w:val="18"/>
           <w:color w:val="475569"/>
         </w:rPr>
-        <w:t>Istruzioni: compilare la tabella rispettando le 4 colonne. Nella colonna 'Classi e Cattedra' indicare ciascuna classe seguita dalle ore tra parentesi, separate da trattino (es. 1A (4) Italiano - 2A (4) Italiano). Supporta anche ore a disposizione (DISP) e potenziamento (POT).</w:t>
+        <w:t>ISTRUZIONI: Compilare la tabella rispettando le 4 colonne. Per più docenti appartenenti alla stessa Classe di Concorso (CdC), indicare la CdC solo sulla prima riga del gruppo e lasciare VUOTA la cella 'Classe di Concorso' per i docenti successivi della stessa cattedra (come illustrato nell'esempio per A012 e A026); il sistema la eredita automaticamente. Nella colonna 'Classi e Cattedra' indicare ciascuna classe seguita dalle ore tra parentesi, separate da trattino (es. 1A (4) Italiano - 2A (4) Italiano). Sono supportate anche ore di potenziamento POT (ore) e a disposizione DISP (ore).</w:t>
       </w:r>
     </w:p>
     <w:tbl>

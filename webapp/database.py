@@ -74,6 +74,96 @@ def compute_short_name(name):
     return f'{" ".join(cogn).upper()} {iniziali}'.strip()
 
 
+def normalize_legacy_gym_rooms(data):
+    """
+    Rileva e converte automaticamente le vecchie configurazioni con palestre
+    suddivise in 3 blocchi separati (es. 'Palestra 1', 'Palestra 2', 'Palestra 3'
+    oppure 'Palestra-1', 'Palestra-2', 'Palestra-3') nella nuova modalità unica
+    a capienza complessiva (57 posti, fino a 3 classi contemporanee).
+    Aggiorna coerentemente 'rooms', 'activities' e 'timetable'.
+    """
+    if not isinstance(data, dict):
+        return data
+
+    rooms = data.get("rooms", [])
+    if not isinstance(rooms, list):
+        return data
+
+    gym_pattern = re.compile(r"^palestra[\s\-_]*(\d+|[a-c])$", re.IGNORECASE)
+    split_gym_rooms = []
+    other_rooms = []
+    gym_building = "Centrale"
+    has_generic_palestra = False
+
+    for r in rooms:
+        r_name = (r.get("name", "") if isinstance(r, dict) else str(r)).strip()
+        if gym_pattern.match(r_name):
+            split_gym_rooms.append(r)
+            if isinstance(r, dict) and r.get("building"):
+                gym_building = r.get("building")
+        elif r_name.lower() == "palestra":
+            has_generic_palestra = True
+            other_rooms.append(r)
+        else:
+            other_rooms.append(r)
+
+    # Se sono state trovate 2 o più palestre numerate (es. Palestra 1, Palestra 2, Palestra 3)
+    if len(split_gym_rooms) >= 2 or (split_gym_rooms and has_generic_palestra):
+        split_gym_names = set()
+        for r in split_gym_rooms:
+            name = (r.get("name", "") if isinstance(r, dict) else str(r)).strip()
+            split_gym_names.add(name)
+
+        if not has_generic_palestra:
+            unified_gym = {
+                "name": "Palestra",
+                "building": gym_building or "Centrale",
+                "capacity": 57,
+                "room_type": "gym",
+                "max_concurrent": 3,
+                "is_lab_or_gym": True,
+                "comments": "Palestra Unica Centrale (Capienza max 57 persone, 2 o 3 classi contemporanee)"
+            }
+            other_rooms.append(unified_gym)
+        else:
+            for r in other_rooms:
+                if isinstance(r, dict) and r.get("name", "").strip().lower() == "palestra":
+                    r["room_type"] = "gym"
+                    r["capacity"] = max(r.get("capacity", 57), 57)
+                    r["max_concurrent"] = 3
+                    r["is_lab_or_gym"] = True
+
+        data["rooms"] = other_rooms
+
+        # Normalizza stanze nelle attività
+        for act in data.get("activities", []):
+            if isinstance(act, dict):
+                act_room = (act.get("room") or "").strip()
+                if act_room in split_gym_names or gym_pattern.match(act_room):
+                    act["room"] = "Palestra"
+
+        # Normalizza stanze nell'orario risolto
+        timetable = data.get("timetable", {})
+        if isinstance(timetable, dict):
+            for aid, entry in timetable.items():
+                if isinstance(entry, dict):
+                    t_room = (entry.get("room") or "").strip()
+                    if t_room in split_gym_names or gym_pattern.match(t_room):
+                        entry["room"] = "Palestra"
+
+    elif has_generic_palestra:
+        for r in rooms:
+            if isinstance(r, dict) and r.get("name", "").strip().lower() == "palestra":
+                r["room_type"] = "gym"
+                r["is_lab_or_gym"] = True
+                if not r.get("max_concurrent"):
+                    r["max_concurrent"] = 3
+                if not r.get("capacity"):
+                    r["capacity"] = 57
+
+    return data
+
+
 ACCORPAMENTI_DEFAULT_RULES = [
     {
         "id": "ita_lat_sto_geo",
@@ -301,6 +391,7 @@ class Database:
             try:
                 with open(PROJECT_FILE, "r", encoding="utf-8") as f:
                     data = json.load(f)
+                    data = normalize_legacy_gym_rooms(data)
             except Exception:
                 pass
 
@@ -2676,6 +2767,7 @@ class Database:
                 data_to_restore = meta.get("data")
                 if not data_to_restore:
                     return False
+                data_to_restore = normalize_legacy_gym_rooms(data_to_restore)
                 
                 self.data = copy.deepcopy(data_to_restore)
                 self.data["config_name"] = meta.get("name", "Configurazione Ripristinata")
@@ -2739,6 +2831,7 @@ class Database:
                 try:
                     parsed = json.loads(content_str)
                     raw_data = parsed.get("data") if ("data" in parsed and "stats" in parsed) else parsed
+                    raw_data = normalize_legacy_gym_rooms(raw_data)
                     snap_name = parsed.get("name", clean_name)
                     desc = parsed.get("description", f"Importato da file {filename}")
                     
