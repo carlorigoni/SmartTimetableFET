@@ -22,7 +22,7 @@ let pollSolverTimer = null;
 let currentSolverRunning = false;
 
 // --- VERSIONE E IDENTITÀ APPLICATIVA ---
-const APP_VERSION = '1.5.1';
+const APP_VERSION = '1.5.2';
 
 // Helper traduzione i18n universale
 function _t(key, fallback = '') {
@@ -3695,6 +3695,7 @@ function onContractTypeChange(ctype) {
 }
 
 function openEditTeacherModal(name) {
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
   const teacher = (stateData.teachers || []).find(t => t.name === name) || { name: name };
   const cdc = teacher.cdc || '';
   const targetH = teacher.target_hours !== undefined ? teacher.target_hours : 18;
@@ -3727,39 +3728,41 @@ function openEditTeacherModal(name) {
   showModal(`
     <div class="modal-dialog">
       <div class="modal-header">
-        <div class="modal-title">👨‍🏫 Parametri Docente: ${escapeHtml(name)}</div>
+        <div class="modal-title">👨‍🏫 ${isEn ? 'Teacher Parameters:' : 'Parametri Docente:'} ${escapeHtml(name)}</div>
         <button class="modal-close" onclick="closeModal()">×</button>
       </div>
       <div class="modal-body">
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
           <div class="form-group">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
-              <label class="form-label" style="margin-bottom:0;">Nome Completo Docente</label>
-              <span style="font-size:11px;color:var(--primary);font-weight:600;">✏️ Modificabile</span>
+              <label class="form-label" style="margin-bottom:0;">${isEn ? 'Full Teacher Name' : 'Nome Completo Docente'}</label>
+              <span style="font-size:11px;color:var(--primary);font-weight:600;">✏️ ${isEn ? 'Editable' : 'Modificabile'}</span>
             </div>
-            <input type="text" id="editTeacherFullName" class="form-input" value="${escapeHtml(name)}" placeholder="es. ROSSI MARIO" oninput="onTeacherFullNameChange(this.value)">
+            <input type="text" id="editTeacherFullName" class="form-input" value="${escapeHtml(name)}" placeholder="${isEn ? 'e.g. SMITH JOHN' : 'es. ROSSI MARIO'}" oninput="onTeacherFullNameChange(this.value)">
           </div>
           <div class="form-group">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
-              <label class="form-label" style="margin-bottom:0;">Nome Breve per Stampe</label>
+              <label class="form-label" style="margin-bottom:0;">${isEn ? 'Short Name for Printing' : 'Nome Breve per Stampe'}</label>
               <button type="button" class="btn btn-sm btn-sec" style="font-size:10.5px;padding:1px 6px;" onclick="autoComputeShortName(document.getElementById('editTeacherFullName')?.value || '${escapeJs(name)}')">
-                ⚡ Ricalcola Standard
+                ⚡ ${isEn ? 'Recalculate Standard' : 'Ricalcola Standard'}
               </button>
             </div>
-            <input type="text" id="editTeacherShortName" class="form-input" value="${escapeHtml(shortName)}" placeholder="es. ROSSI M." style="font-family:var(--font-mono);font-weight:700;text-transform:uppercase;" oninput="this.dataset.manuallyEdited='1'">
+            <input type="text" id="editTeacherShortName" class="form-input" value="${escapeHtml(shortName)}" placeholder="${isEn ? 'e.g. SMITH J.' : 'es. ROSSI M.'}" style="font-family:var(--font-mono);font-weight:700;text-transform:uppercase;" oninput="this.dataset.manuallyEdited='1'">
           </div>
         </div>
         <div style="font-size:11.5px;color:var(--text-muted);margin-top:-6px;margin-bottom:12px;">
-          💡 Puoi modificare il <b>Nome Completo</b> (tutte le cattedre e disponibilità verranno collegate al nuovo nominativo) e il <b>Nome Breve</b> (standard: <code>COGNOME N.</code>).
+          ${isEn
+            ? '💡 You can edit the <b>Full Name</b> (all assignments and availability will be linked to the new name) and <b>Short Name</b> (standard: <code>SURNAME I.</code>).'
+            : '💡 Puoi modificare il <b>Nome Completo</b> (tutte le cattedre e disponibilità verranno collegate al nuovo nominativo) e il <b>Nome Breve</b> (standard: <code>COGNOME N.</code>).'}
         </div>
 
         <!-- Selezione Tipologia di Cattedra (Intera, COE, Spezzone, Part-Time) -->
         <div class="form-group" style="margin-top:6px;">
-          <label class="form-label">Tipologia di Cattedra / Contratto</label>
+          <label class="form-label">${isEn ? 'Contract / Assignment Type' : 'Tipologia di Cattedra / Contratto'}</label>
           <div style="display:grid;grid-template-columns:repeat(4, 1fr);gap:8px;">
             <label class="radio-pill ${contractType === 'intera' ? 'active' : ''}" style="border:1px solid var(--border);padding:8px 8px;border-radius:6px;cursor:pointer;display:flex;align-items:center;gap:6px;font-size:12px;">
               <input type="radio" name="editTeacherContractType" value="intera" ${contractType === 'intera' ? 'checked' : ''} onchange="onContractTypeChange('intera')">
-              <span>🏛️ <b>Intera (18h)</b></span>
+              <span>🏛️ <b>${isEn ? 'Full (18h)' : 'Intera (18h)'}</b></span>
             </label>
             <label class="radio-pill ${contractType === 'coe' ? 'active' : ''}" style="border:1px solid var(--border);padding:8px 8px;border-radius:6px;cursor:pointer;display:flex;align-items:center;gap:6px;font-size:12px;">
               <input type="radio" name="editTeacherContractType" value="coe" ${contractType === 'coe' ? 'checked' : ''} onchange="onContractTypeChange('coe')">
@@ -3767,7 +3770,7 @@ function openEditTeacherModal(name) {
             </label>
             <label class="radio-pill ${contractType === 'spezzone' ? 'active' : ''}" style="border:1px solid var(--border);padding:8px 8px;border-radius:6px;cursor:pointer;display:flex;align-items:center;gap:6px;font-size:12px;">
               <input type="radio" name="editTeacherContractType" value="spezzone" ${contractType === 'spezzone' ? 'checked' : ''} onchange="onContractTypeChange('spezzone')">
-              <span>🧩 <b>Spezzone</b></span>
+              <span>🧩 <b>${isEn ? 'Fraction' : 'Spezzone'}</b></span>
             </label>
             <label class="radio-pill ${contractType === 'part_time' ? 'active' : ''}" style="border:1px solid var(--border);padding:8px 8px;border-radius:6px;cursor:pointer;display:flex;align-items:center;gap:6px;font-size:12px;">
               <input type="radio" name="editTeacherContractType" value="part_time" ${contractType === 'part_time' ? 'checked' : ''} onchange="onContractTypeChange('part_time')">
@@ -3775,17 +3778,19 @@ function openEditTeacherModal(name) {
             </label>
           </div>
           <div style="font-size:11.5px;color:var(--text-muted);margin-top:5px;" id="contractTypeHint">
-            ${contractType === 'coe' ? '🏫 Cattedra Orario Esterna (COE): il docente completa l\'orario in un altro istituto scolastico.' : (contractType === 'spezzone' ? '🧩 Spezzone Orario: cattedra su frazione o spezzone residuo a ore.' : (contractType === 'part_time' ? '⏳ Part-Time: docente con contratto a orario parziale su propria richiesta.' : '🏛️ Cattedra Ordinaria Intera (18 ore contrattuali).'))}
+            ${isEn
+              ? (contractType === 'coe' ? '🏫 External Timetable Assignment (COE): teacher completes hours in another school.' : (contractType === 'spezzone' ? '🧩 Fractional Assignment: residual teaching hours.' : (contractType === 'part_time' ? '⏳ Part-Time: reduced working hours upon teacher request.' : '🏛️ Full Standard Contract (18 contractual hours).')))
+              : (contractType === 'coe' ? '🏫 Cattedra Orario Esterna (COE): il docente completa l\'orario in un altro istituto scolastico.' : (contractType === 'spezzone' ? '🧩 Spezzone Orario: cattedra su frazione o spezzone residuo a ore.' : (contractType === 'part_time' ? '⏳ Part-Time: docente con contratto a orario parziale su propria richiesta.' : '🏛️ Cattedra Ordinaria Intera (18 ore contrattuali).')))}
           </div>
         </div>
 
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
           <div class="form-group">
-            <label class="form-label">Classe di Concorso (CDC)</label>
+            <label class="form-label">${isEn ? 'Teaching Certificate Class (CDC)' : 'Classe di Concorso (CDC)'}</label>
             <input type="text" id="editTeacherCdc" class="form-input" value="${escapeHtml(cdc)}" placeholder="es. A027, A047, A012">
           </div>
           <div class="form-group">
-            <label class="form-label">Ore Cattedra Contrattuali (Target)</label>
+            <label class="form-label">${isEn ? 'Contractual Target Hours' : 'Ore Cattedra Contrattuali (Target)'}</label>
             <input type="number" id="editTeacherTarget" class="form-input" value="${targetH}" min="1" max="36" oninput="updateDispPreview(${totalH})">
           </div>
         </div>
@@ -3793,21 +3798,21 @@ function openEditTeacherModal(name) {
         <!-- Box Calcolo e Evidenziazione Disposizione D -->
         <div id="dispPreviewBox" style="background:#f5f3ff;border:1px solid #ddd6fe;border-radius:6px;padding:10px 14px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
           <div>
-            <span style="font-size:12px;color:#5b21b6;font-weight:600;">Ore Lezione Frontale Assegnate:</span>
+            <span style="font-size:12px;color:#5b21b6;font-weight:600;">${isEn ? 'Assigned Teaching Hours:' : 'Ore Lezione Frontale Assegnate:'}</span>
             <b style="font-size:14px;color:#4c1d95;margin-left:4px;">${totalH} h</b>
           </div>
           <div id="dispCalculationResult">
             ${targetH > totalH ? `
               <span class="badge-disp" style="font-size:12px;padding:3px 10px;">
-                📌 D = ${targetH - totalH}h Disposizione (non coperte da lezioni)
+                📌 D = ${targetH - totalH}h ${isEn ? 'Duty Hours (uncovered by lessons)' : 'Disposizione (non coperte da lezioni)'}
               </span>
             ` : (targetH === totalH ? `
               <span style="color:var(--color-ok);font-weight:700;font-size:12px;">
-                ✓ Cattedra Coperta al 100% (0h D)
+                ${isEn ? '✓ Assignment 100% Covered (0h Duty)' : '✓ Cattedra Coperta al 100% (0h D)'}
               </span>
             ` : `
               <span style="color:var(--primary);font-weight:700;font-size:12px;">
-                +${totalH - targetH}h Esubero / Ore Eccedenti
+                +${totalH - targetH}h ${isEn ? 'Surplus / Overtime Hours' : 'Esubero / Ore Eccedenti'}
               </span>
             `)}
           </div>
@@ -3815,11 +3820,11 @@ function openEditTeacherModal(name) {
 
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
           <div class="form-group">
-            <label class="form-label">Minimo Giorni Insegnamento</label>
+            <label class="form-label">${isEn ? 'Min Teaching Days' : 'Minimo Giorni Insegnamento'}</label>
             <input type="number" id="editTeacherMinDays" class="form-input" value="${minDays}" min="1" max="6">
           </div>
           <div class="form-group">
-            <label class="form-label">Massimo Giorni Insegnamento</label>
+            <label class="form-label">${isEn ? 'Max Teaching Days' : 'Massimo Giorni Insegnamento'}</label>
             <input type="number" id="editTeacherMaxDays" class="form-input" value="${maxDays}" min="1" max="6">
           </div>
         </div>
@@ -3827,44 +3832,44 @@ function openEditTeacherModal(name) {
         <!-- SEZIONE: Preferenze & Desiderata Orario Docente -->
         <div class="pref-section-box">
           <div class="pref-section-title">
-            <span>🎨 Preferenze & Desiderata Orario</span>
-            <span style="font-size:11px;font-weight:normal;color:var(--text-muted);">(Fasce, Pesi e Giorno Libero)</span>
+            <span>🎨 ${isEn ? 'Timetable Preferences & Desiderata' : 'Preferenze & Desiderata Orario'}</span>
+            <span style="font-size:11px;font-weight:normal;color:var(--text-muted);">(${isEn ? 'Shifts, Weights & Free Day' : 'Fasce, Pesi e Giorno Libero'})</span>
           </div>
 
           <!-- 1. Fascia Oraria Preferita -->
           <div style="margin-bottom:12px;">
-            <label class="form-label" style="font-size:12px;margin-bottom:6px;">1. Fascia Oraria Giornaliera Preferita</label>
+            <label class="form-label" style="font-size:12px;margin-bottom:6px;">${isEn ? '1. Preferred Daily Time Slot' : '1. Fascia Oraria Giornaliera Preferita'}</label>
             <input type="hidden" id="editTeacherPrefShift" value="${escapeHtml(prefShift)}">
             <div class="pref-card-grid">
               <div class="pref-card ${prefShift === 'prime' ? 'selected' : ''}" onclick="selectTeacherPrefShift('prime', event)">
                 <div class="pref-card-icon">🌅</div>
-                <div class="pref-card-title">Prime Ore</div>
-                <div class="pref-card-desc">1ª-4ª ora / uscita anticipata</div>
+                <div class="pref-card-title">${isEn ? 'Early Hours' : 'Prime Ore'}</div>
+                <div class="pref-card-desc">${isEn ? '1st-4th period / early departure' : '1ª-4ª ora / uscita anticipata'}</div>
               </div>
               <div class="pref-card ${prefShift === 'ultime' ? 'selected' : ''}" onclick="selectTeacherPrefShift('ultime', event)">
                 <div class="pref-card-icon">🌇</div>
-                <div class="pref-card-title">Ultime Ore</div>
-                <div class="pref-card-desc">3ª-6ª ora / ingr. posticipato</div>
+                <div class="pref-card-title">${isEn ? 'Late Hours' : 'Ultime Ore'}</div>
+                <div class="pref-card-desc">${isEn ? '3rd-6th period / late arrival' : '3ª-6ª ora / ingr. posticipato'}</div>
               </div>
               <div class="pref-card ${prefShift === 'bilanciato' ? 'selected' : ''}" onclick="selectTeacherPrefShift('bilanciato', event)">
                 <div class="pref-card-icon">⚖️</div>
-                <div class="pref-card-title">Bilanciato</div>
-                <div class="pref-card-desc">2ª-5ª ora / distribuzione equa</div>
+                <div class="pref-card-title">${isEn ? 'Balanced' : 'Bilanciato'}</div>
+                <div class="pref-card-desc">${isEn ? '2nd-5th period / even spread' : '2ª-5ª ora / distribuzione equa'}</div>
               </div>
               <div class="pref-card ${prefShift === 'none' ? 'selected' : ''}" onclick="selectTeacherPrefShift('none', event)">
                 <div class="pref-card-icon">🎲</div>
-                <div class="pref-card-title">Flessibile</div>
-                <div class="pref-card-desc">Nessuna preferenza (libero)</div>
+                <div class="pref-card-title">${isEn ? 'Flexible' : 'Flessibile'}</div>
+                <div class="pref-card-desc">${isEn ? 'No preference (free)' : 'Nessuna preferenza (libero)'}</div>
               </div>
             </div>
 
             <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;background:#fff;padding:8px 12px;border:1px solid #e2e8f0;border-radius:6px;">
-              <span style="font-size:11.5px;color:var(--text-sub);font-weight:600;">Rigidità Preferenza Fascia:</span>
+              <span style="font-size:11.5px;color:var(--text-sub);font-weight:600;">${isEn ? 'Shift Preference Strictness:' : 'Rigidità Preferenza Fascia:'}</span>
               <input type="hidden" id="editTeacherPrefWeight" value="${prefWeight}">
               <div class="pref-pills-row">
                 <button type="button" class="pref-weight-btn ${prefWeight === 70 ? 'active' : ''}" onclick="selectTeacherPrefWeight(70, event)">💡 Soft (70%)</button>
-                <button type="button" class="pref-weight-btn ${prefWeight === 85 ? 'active' : ''}" onclick="selectTeacherPrefWeight(85, event)">🎯 Alta Priorità (85%)</button>
-                <button type="button" class="pref-weight-btn ${prefWeight === 100 ? 'active' : ''}" onclick="selectTeacherPrefWeight(100, event)">🔒 Tassativo (100%)</button>
+                <button type="button" class="pref-weight-btn ${prefWeight === 85 ? 'active' : ''}" onclick="selectTeacherPrefWeight(85, event)">🎯 ${isEn ? 'High Priority' : 'Alta Priorità'} (85%)</button>
+                <button type="button" class="pref-weight-btn ${prefWeight === 100 ? 'active' : ''}" onclick="selectTeacherPrefWeight(100, event)">🔒 ${isEn ? 'Strict' : 'Tassativo'} (100%)</button>
               </div>
             </div>
           </div>
@@ -3872,19 +3877,20 @@ function openEditTeacherModal(name) {
           <!-- 2. Giorno Libero Settimanale -->
           <div style="margin-bottom:12px;">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
-              <label class="form-label" style="font-size:12px;margin-bottom:0;">2. Giorno Libero Settimanale Desiderato</label>
-              <span style="font-size:11px;color:var(--text-muted);">1° click: ⭐ 1ª scelta | 2° click: 👍 2ª scelta | 3° click: reset</span>
+              <label class="form-label" style="font-size:12px;margin-bottom:0;">${isEn ? '2. Desired Weekly Free Day' : '2. Giorno Libero Settimanale Desiderato'}</label>
+              <span style="font-size:11px;color:var(--text-muted);">${isEn ? '1st click: ⭐ 1st choice | 2nd click: 👍 2nd choice | 3rd click: reset' : '1° click: ⭐ 1ª scelta | 2° click: 👍 2ª scelta | 3° click: reset'}</span>
             </div>
             <input type="hidden" id="editTeacherFreeDay1" value="${escapeHtml(freeDay1)}">
             <input type="hidden" id="editTeacherFreeDay2" value="${escapeHtml(freeDay2)}">
             <div class="pref-pills-row" style="margin-bottom:8px;" id="freeDayPillContainer">
               ${['Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab'].map(d => {
+                const dayLabel = formatDayName(d);
                 const isFirst = (freeDay1 === d);
                 const isSecond = (freeDay2 === d);
-                let label = d;
+                let label = dayLabel;
                 let cls = '';
-                if (isFirst) { cls = 'is-first'; label = `⭐ ${d} (1ª)`; }
-                else if (isSecond) { cls = 'is-second'; label = `👍 ${d} (2ª)`; }
+                if (isFirst) { cls = 'is-first'; label = `⭐ ${dayLabel} (1ª)`; }
+                else if (isSecond) { cls = 'is-second'; label = `👍 ${dayLabel} (2ª)`; }
                 return `<button type="button" class="pref-day-btn ${cls}" onclick="cycleFreeDay('${d}')">${label}</button>`;
               }).join('')}
             </div>
@@ -3892,40 +3898,40 @@ function openEditTeacherModal(name) {
             <div style="background:#fff;padding:8px 12px;border:1px solid #e2e8f0;border-radius:6px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
               <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer;margin:0;">
                 <input type="checkbox" id="editTeacherFreeDayStrict" ${freeDayStrict ? 'checked' : ''} style="cursor:pointer;">
-                <span>🔒 <b>Giorno Libero 100% Tassativo</b> (Indisponibilità contrattuale assoluta)</span>
+                <span>🔒 <b>${isEn ? '100% Strict Free Day' : 'Giorno Libero 100% Tassativo'}</b> (${isEn ? 'Absolute contractual unavailability' : 'Indisponibilità contrattuale assoluta'})</span>
               </label>
-              <span style="font-size:11px;color:var(--text-muted);">Se disattivo, FET tratterà il giorno libero come desiderata flessibile</span>
+              <span style="font-size:11px;color:var(--text-muted);">${isEn ? 'If unchecked, FET treats free day as a soft desideratum' : 'Se disattivo, FET tratterà il giorno libero come desiderata flessibile'}</span>
             </div>
           </div>
 
           <!-- 3. Permanenza a Scuola & Carico Giornaliero -->
           <div>
-            <label class="form-label" style="font-size:12px;margin-bottom:6px;">3. Limiti di Permanenza & Carico Giornaliero (Opzionali)</label>
+            <label class="form-label" style="font-size:12px;margin-bottom:6px;">${isEn ? '3. Daily Span & Workload Limits (Optional)' : '3. Limiti di Permanenza & Carico Giornaliero (Opzionali)'}</label>
             <div style="display:grid;grid-template-columns:repeat(3, 1fr);gap:10px;">
               <div>
-                <label style="font-size:11px;color:var(--text-sub);display:block;margin-bottom:3px;">⏱️ Max permanenza (h/die)</label>
-                <input type="number" id="editTeacherMaxSpan" class="form-input" style="font-size:12px;padding:5px 8px;" value="${maxSpan}" placeholder="es. 5 (con buche)" min="1" max="8" title="Massimo numero di ore a scuola al giorno compresi gli stacchi/buche">
+                <label style="font-size:11px;color:var(--text-sub);display:block;margin-bottom:3px;">⏱️ ${isEn ? 'Max span (hrs/day)' : 'Max permanenza (h/die)'}</label>
+                <input type="number" id="editTeacherMaxSpan" class="form-input" style="font-size:12px;padding:5px 8px;" value="${maxSpan}" placeholder="${isEn ? 'e.g. 5 (incl. gaps)' : 'es. 5 (con buche)'}" min="1" max="8" title="${isEn ? 'Maximum hours at school per day including gaps' : 'Massimo numero di ore a scuola al giorno compresi gli stacchi/buche'}">
               </div>
               <div>
-                <label style="font-size:11px;color:var(--text-sub);display:block;margin-bottom:3px;">📖 Max lezioni / giorno</label>
-                <input type="number" id="editTeacherMaxDailyLessons" class="form-input" style="font-size:12px;padding:5px 8px;" value="${maxDailyLessons}" placeholder="es. 4" min="1" max="8" title="Massimo ore di lezione frontale in una giornata">
+                <label style="font-size:11px;color:var(--text-sub);display:block;margin-bottom:3px;">📖 ${isEn ? 'Max lessons / day' : 'Max lezioni / giorno'}</label>
+                <input type="number" id="editTeacherMaxDailyLessons" class="form-input" style="font-size:12px;padding:5px 8px;" value="${maxDailyLessons}" placeholder="es. 4" min="1" max="8" title="${isEn ? 'Maximum teaching hours in a single day' : 'Massimo ore di lezione frontale in una giornata'}">
               </div>
               <div>
-                <label style="font-size:11px;color:var(--text-sub);display:block;margin-bottom:3px;">☕ Max buche / giorno</label>
-                <input type="number" id="editTeacherMaxGapsPerDay" class="form-input" style="font-size:12px;padding:5px 8px;" value="${maxGaps}" placeholder="es. 1" min="0" max="4" title="Massimo ore buche al giorno per questo docente">
+                <label style="font-size:11px;color:var(--text-sub);display:block;margin-bottom:3px;">☕ ${isEn ? 'Max gaps / day' : 'Max buche / giorno'}</label>
+                <input type="number" id="editTeacherMaxGapsPerDay" class="form-input" style="font-size:12px;padding:5px 8px;" value="${maxGaps}" placeholder="es. 1" min="0" max="4" title="${isEn ? 'Maximum gaps/window hours per day' : 'Massimo ore buche al giorno per questo docente'}">
               </div>
             </div>
           </div>
         </div>
 
         <div class="form-group">
-          <label class="form-label">Note / Istruzioni Didattiche</label>
-          <textarea id="editTeacherComments" class="form-input" rows="2" placeholder="Note per l'orario o vincoli specifici">${escapeHtml(comments)}</textarea>
+          <label class="form-label">${isEn ? 'Notes / Didactic Instructions' : 'Note / Istruzioni Didattiche'}</label>
+          <textarea id="editTeacherComments" class="form-input" rows="2" placeholder="${isEn ? 'Timetable notes or specific constraints' : 'Note per l\'orario o vincoli specifici'}">${escapeHtml(comments)}</textarea>
         </div>
       </div>
       <div class="modal-footer">
         <button class="btn btn-sec" onclick="closeModal()" data-i18n="common.cancel">${_t('common.cancel', 'Annulla')}</button>
-        <button class="btn btn-primary" onclick="submitEditTeacher('${escapeJs(name)}')">💾 Salva Parametri</button>
+        <button class="btn btn-primary" onclick="submitEditTeacher('${escapeJs(name)}')">💾 ${isEn ? 'Save Parameters' : 'Salva Parametri'}</button>
       </div>
     </div>
   `);
@@ -4699,15 +4705,18 @@ async function renderClasses() {
   });
 
   const isClassesView = activeClassSubView === 'classes';
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
   const container = document.getElementById('mainContent');
 
   const centraleClasses = resClasses.filter(c => !(c.building || '').toLowerCase().includes('succ'));
   const succursaleClasses = resClasses.filter(c => (c.building || '').toLowerCase().includes('succ'));
 
   container.innerHTML = `
-    ${getNavReturnBarHtml('Gestione classi, sezioni e studenti per classe.')}
+    ${getNavReturnBarHtml(isEn ? 'Management of classes, sections, and students per class.' : 'Gestione classi, sezioni e studenti per classe.')}
     <div class="info-banner-blue">
-      🎓 <b>Architettura Didattica - Classi & Studenti:</b> Le <b>Classi</b> rappresentano i gruppi di studenti dell'anno scolastico (es. <b>2L</b> con <b>26 alunni</b>). Ogni classe ha un'<b>Aula Base</b> (es. <i>Aula 53 - Sede Centrale</i>) in cui risiede per le lezioni ordinarie. Per materie come <i>Scienze Motorie</i> o <i>Informatica</i>, la classe si sposta in <b>Palestra</b> o in <b>Laboratorio</b>; se questi si trovano in un altro plesso, il motore FET pianifica il <b>cambio di plesso</b> e i tempi di trasferimento.
+      ${isEn
+        ? '🎓 <b>Didactic Architecture - Classes & Students:</b> <b>Classes</b> represent cohorts of students for the academic year (e.g. <b>2L</b> with <b>26 students</b>). Each class has a resident <b>Homeroom</b> (e.g. <i>Room 53 - Main Campus</i>) for regular lessons. For subjects like <i>Physical Education</i> or <i>Computer Science</i>, the class relocates to the <b>Gym</b> or <b>Lab</b>; if these are located in another campus, the FET engine automatically schedules the <b>campus transfer</b> and travel allowances.'
+        : '🎓 <b>Architettura Didattica - Classi & Studenti:</b> Le <b>Classi</b> rappresentano i gruppi di studenti dell\'anno scolastico (es. <b>2L</b> con <b>26 alunni</b>). Ogni classe ha un\'<b>Aula Base</b> (es. <i>Aula 53 - Sede Centrale</i>) in cui risiede per le lezioni ordinarie. Per materie come <i>Scienze Motorie</i> o <i>Informatica</i>, la classe si sposta in <b>Palestra</b> o in <b>Laboratorio</b>; se questi si trovano in un altro plesso, il motore FET pianifica il <b>cambio di plesso</b> e i tempi di trasferimento.'}
     </div>
 
     <!-- SELETTORE INDIRIZZO PER SEZIONE (LICEO / TECNICO / PROFESSIONALE) -->
@@ -4715,14 +4724,16 @@ async function renderClasses() {
       <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;">
         <div>
           <div style="font-size:14px;font-weight:700;color:var(--text-main);display:flex;align-items:center;gap:8px;">
-            🏷️ Indirizzo di Studio per Sezione (Liceo / Tecnico / Professionale)
+            ${isEn ? '🏷️ Study Track by Section (High School / Technical / Vocational)' : '🏷️ Indirizzo di Studio per Sezione (Liceo / Tecnico / Professionale)'}
           </div>
           <div style="font-size:12px;color:var(--text-muted);margin-top:3px;max-width:850px;line-height:1.4;">
-            L'indirizzo di studio è determinato <b>esclusivamente in base alla sezione</b> (A, B, C, D, E, F, G, H, L) per tutte le classi da 1 a 5. Il sistema rileva automaticamente se la classe appartiene al <b>Biennio</b> (1-2) o al <b>Triennio</b> (3-5) e applica la suddivisione blocchi orari di default (le eventuali eccezioni vengono specificate a livello di singola cattedra).
+            ${isEn
+              ? 'The study track is determined <b>strictly by section</b> (A, B, C, D, E, F, G, H, L) for all classes 1-5. The system automatically detects whether the class is in <b>Lower</b> (1-2) or <b>Upper</b> (3-5) years and applies the default timetable block formula (exceptions are set at individual assignment level).'
+              : 'L\'indirizzo di studio è determinato <b>esclusivamente in base alla sezione</b> (A, B, C, D, E, F, G, H, L) per tutte le classi da 1 a 5. Il sistema rileva automaticamente se la classe appartiene al <b>Biennio</b> (1-2) o al <b>Triennio</b> (3-5) e applica la suddivisione blocchi orari di default (le eventuali eccezioni vengono specificate a livello di singola cattedra).'}
           </div>
         </div>
-        <button class="btn btn-sm btn-sec" onclick="navigate('block_rules')" title="Configura o visualizza la tabella completa delle regole di default">
-          📐 Regole Blocchi & Sezioni
+        <button class="btn btn-sm btn-sec" onclick="navigate('block_rules')" title="${isEn ? 'Configure or view complete default rules table' : 'Configura o visualizza la tabella completa delle regole di default'}">
+          ${isEn ? '📐 Block & Section Rules' : '📐 Regole Blocchi & Sezioni'}
         </button>
       </div>
 
@@ -4732,18 +4743,18 @@ async function renderClasses() {
           return `
             <div style="background:#f8fafc;border:1px solid var(--border);border-radius:6px;padding:6px 10px;display:flex;flex-direction:column;gap:5px;">
               <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;">
-                <b style="font-size:13px;color:var(--text-main);">Sezione ${s.section}</b>
-                <span style="font-size:11px;color:var(--text-muted);" title="${(s.classes || []).join(', ')}">${s.classes_count} classi</span>
+                <b style="font-size:13px;color:var(--text-main);">${isEn ? 'Section' : 'Sezione'} ${s.section}</b>
+                <span style="font-size:11px;color:var(--text-muted);" title="${(s.classes || []).join(', ')}">${s.classes_count} ${isEn ? 'classes' : 'classi'}</span>
               </div>
               <div class="percorso-btn-group">
-                <button type="button" class="percorso-btn ${p === 'liceo' ? 'active liceo' : ''}" onclick="updateSectionPercorso('${s.section}', 'liceo')" title="Imposta Sezione ${s.section} come Liceo">
-                  🎓 Liceo
+                <button type="button" class="percorso-btn ${p === 'liceo' ? 'active liceo' : ''}" onclick="updateSectionPercorso('${s.section}', 'liceo')" title="${isEn ? 'Set Section ' + s.section + ' as High School' : 'Imposta Sezione ' + s.section + ' come Liceo'}">
+                  ${isEn ? '🎓 High School' : '🎓 Liceo'}
                 </button>
-                <button type="button" class="percorso-btn ${p === 'tecnico' ? 'active tecnico' : ''}" onclick="updateSectionPercorso('${s.section}', 'tecnico')" title="Imposta Sezione ${s.section} come Tecnico">
-                  ⚙️ Tecnico
+                <button type="button" class="percorso-btn ${p === 'tecnico' ? 'active tecnico' : ''}" onclick="updateSectionPercorso('${s.section}', 'tecnico')" title="${isEn ? 'Set Section ' + s.section + ' as Technical' : 'Imposta Sezione ' + s.section + ' come Tecnico'}">
+                  ${isEn ? '⚙️ Technical' : '⚙️ Tecnico'}
                 </button>
-                <button type="button" class="percorso-btn ${p === 'professionale' ? 'active professionale' : ''}" onclick="updateSectionPercorso('${s.section}', 'professionale')" title="Imposta Sezione ${s.section} come Professionale">
-                  🏥 Prof.
+                <button type="button" class="percorso-btn ${p === 'professionale' ? 'active professionale' : ''}" onclick="updateSectionPercorso('${s.section}', 'professionale')" title="${isEn ? 'Set Section ' + s.section + ' as Vocational' : 'Imposta Sezione ' + s.section + ' come Professionale'}">
+                  ${isEn ? '🏥 Vocat.' : '🏥 Prof.'}
                 </button>
               </div>
             </div>
@@ -4755,48 +4766,48 @@ async function renderClasses() {
     <div class="toolbar" style="flex-wrap:wrap;gap:10px;">
       <div class="segmented-control">
         <button class="segmented-btn ${isClassesView ? 'active' : ''}" onclick="switchClassSubView('classes')">
-          🎓 Classi Ordinarie (${resClasses.length})
+          🎓 ${isEn ? 'Regular Classes' : 'Classi Ordinarie'} (${resClasses.length})
         </button>
         <button class="segmented-btn ${!isClassesView ? 'active' : ''}" onclick="switchClassSubView('groups')">
-          👥 Gruppi & Articolazioni (${resGroups.length}) (Tab Gruppi Excel)
+          👥 ${isEn ? 'Groups & Subdivisions' : 'Gruppi & Articolazioni'} (${resGroups.length}) ${isEn ? '(Excel Groups Tab)' : '(Tab Gruppi Excel)'}
         </button>
       </div>
 
       ${isClassesView ? `
         <div class="segmented-control" style="background:var(--bg-card);border:1px solid var(--border);">
           <button class="segmented-btn class-bld-btn ${activeClassBuildingFilter === 'all' ? 'active' : ''}" data-bld="all" onclick="filterClassesByBuilding('all')">
-            Tutte (${resClasses.length})
+            ${isEn ? 'All' : 'Tutte'} (${resClasses.length})
           </button>
-          <button class="segmented-btn class-bld-btn ${activeClassBuildingFilter === 'centrale' ? 'active' : ''}" data-bld="centrale" onclick="filterClassesByBuilding('centrale')" title="Mostra solo le classi della Sede Centrale">
-            🏛️ Sede Centrale (${centraleClasses.length})
+          <button class="segmented-btn class-bld-btn ${activeClassBuildingFilter === 'centrale' ? 'active' : ''}" data-bld="centrale" onclick="filterClassesByBuilding('centrale')" title="${isEn ? 'Show only Main Campus classes' : 'Mostra solo le classi della Sede Centrale'}">
+            🏛️ ${isEn ? 'Main Campus' : 'Sede Centrale'} (${centraleClasses.length})
           </button>
-          <button class="segmented-btn class-bld-btn ${activeClassBuildingFilter === 'succursale' ? 'active' : ''}" data-bld="succursale" onclick="filterClassesByBuilding('succursale')" title="Mostra solo le classi della Sede Succursale">
-            🏛️ Sede Succursale (${succursaleClasses.length})
+          <button class="segmented-btn class-bld-btn ${activeClassBuildingFilter === 'succursale' ? 'active' : ''}" data-bld="succursale" onclick="filterClassesByBuilding('succursale')" title="${isEn ? 'Show only Branch Campus classes' : 'Mostra solo le classi della Sede Succursale'}">
+            🏛️ ${isEn ? 'Branch Campus' : 'Sede Succursale'} (${succursaleClasses.length})
           </button>
         </div>
       ` : ''}
 
-      <input type="text" id="${isClassesView ? 'classSearchInput' : 'groupSearchInput'}" class="search-input" placeholder="${isClassesView ? '🔍 Cerca classe, aula o sede...' : '🔍 Cerca gruppo o classe...'}" oninput="${isClassesView ? 'applyClassFilters()' : 'filterTable(\'groupTable\', this.value)'}" style="min-width:180px;">
+      <input type="text" id="${isClassesView ? 'classSearchInput' : 'groupSearchInput'}" class="search-input" placeholder="${isEn ? (isClassesView ? '🔍 Search class, room or campus...' : '🔍 Search group or class...') : (isClassesView ? '🔍 Cerca classe, aula o sede...' : '🔍 Cerca gruppo o classe...')}" oninput="${isClassesView ? 'applyClassFilters()' : 'filterTable(\'groupTable\', this.value)'}" style="min-width:180px;">
 
       ${isClassesView ? `
         <div style="display:flex;gap:8px;margin-left:auto;align-items:center;flex-wrap:wrap;">
-          <button class="btn btn-outline" onclick="openImportStudentsModal()" title="Importa o sincronizza il numero di alunni per classe dal foglio Excel / Parametri Orario" style="font-weight:600;display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--primary);color:var(--primary);background:var(--bg-main);white-space:nowrap;padding:7px 12px;">
-            <span>📥</span> Importa Alunni (Excel)
+          <button class="btn btn-outline" onclick="openImportStudentsModal()" title="${isEn ? 'Import or sync student count per class from Excel' : 'Importa o sincronizza il numero di alunni per classe dal foglio Excel / Parametri Orario'}" style="font-weight:600;display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--primary);color:var(--primary);background:var(--bg-main);white-space:nowrap;padding:7px 12px;">
+            <span>📥</span> ${isEn ? 'Import Students (Excel)' : 'Importa Alunni (Excel)'}
           </button>
-          <input type="text" id="newClassName" class="search-input" placeholder="Nuova classe (es. 4A)" style="width:140px;">
-          <input type="number" id="newClassStudents" class="search-input" placeholder="Alunni" value="25" style="width:75px;">
+          <input type="text" id="newClassName" class="search-input" placeholder="${isEn ? 'New class (e.g. 4A)' : 'Nuova classe (es. 4A)'}" style="width:140px;">
+          <input type="number" id="newClassStudents" class="search-input" placeholder="${isEn ? 'Students' : 'Alunni'}" value="25" style="width:75px;">
           <select id="newClassBuilding" class="search-input" style="width:125px;">
-            <option value="Centrale">Sede Centrale</option>
-            <option value="Succursale">Sede Succursale</option>
+            <option value="Centrale">${isEn ? 'Main Campus' : 'Sede Centrale'}</option>
+            <option value="Succursale">${isEn ? 'Branch Campus' : 'Sede Succursale'}</option>
           </select>
-          <button class="btn btn-primary" onclick="addClass()">+ Aggiungi Classe</button>
+          <button class="btn btn-primary" onclick="addClass()">+ ${isEn ? 'Add Class' : 'Aggiungi Classe'}</button>
         </div>
       ` : `
         <div style="display:flex;gap:8px;margin-left:auto;align-items:center;flex-wrap:wrap;">
-          <button class="btn btn-outline" onclick="openImportStudentsModal()" title="Importa o sincronizza il numero di alunni per classe e gruppo dal foglio Excel / Parametri Orario" style="font-weight:600;display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--primary);color:var(--primary);background:var(--bg-main);white-space:nowrap;padding:7px 12px;">
-            <span>📥</span> Importa Alunni (Excel)
+          <button class="btn btn-outline" onclick="openImportStudentsModal()" title="${isEn ? 'Import or sync student count per class and group from Excel' : 'Importa o sincronizza il numero di alunni per classe e gruppo dal foglio Excel / Parametri Orario'}" style="font-weight:600;display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--primary);color:var(--primary);background:var(--bg-main);white-space:nowrap;padding:7px 12px;">
+            <span>📥</span> ${isEn ? 'Import Students (Excel)' : 'Importa Alunni (Excel)'}
           </button>
-          <button class="btn btn-primary" onclick="openAddGroupModal()">+ Aggiungi Gruppo Articolato</button>
+          <button class="btn btn-primary" onclick="openAddGroupModal()">+ ${isEn ? 'Add Subgroup' : 'Aggiungi Gruppo Articolato'}</button>
         </div>
       `}
     </div>
@@ -4807,12 +4818,12 @@ async function renderClasses() {
           <thead>
             <tr>
               <th style="width:45px;">#</th>
-              <th style="width:140px;">Classe & Indirizzo</th>
-              <th style="width:95px;text-align:center;">N. Alunni</th>
-              <th style="min-width:180px;">Sede & Aula Base Residente</th>
-              <th>Gruppi Articolati (Lingue, Religione/Alt, Sottogruppi)</th>
-              <th style="width:85px;text-align:center;">Ore/Sett.</th>
-              <th style="text-align:right;min-width:270px;">Azioni Rapide</th>
+              <th style="width:140px;">${isEn ? 'Class & Track' : 'Classe & Indirizzo'}</th>
+              <th style="width:95px;text-align:center;">${isEn ? 'Students' : 'N. Alunni'}</th>
+              <th style="min-width:180px;">${isEn ? 'Campus & Homeroom' : 'Sede & Aula Base Residente'}</th>
+              <th>${isEn ? 'Subgroups (Languages, Ethics/Alt, Subgroups)' : 'Gruppi Articolati (Lingue, Religione/Alt, Sottogruppi)'}</th>
+              <th style="width:85px;text-align:center;">${isEn ? 'Hrs/Wk' : 'Ore/Sett.'}</th>
+              <th style="text-align:right;min-width:270px;">${isEn ? 'Quick Actions' : 'Azioni Rapide'}</th>
             </tr>
           </thead>
           <tbody>
@@ -4821,7 +4832,8 @@ async function renderClasses() {
               const secLetter = m ? m[2].toUpperCase()[0] : '';
               const percorso = (sectionsData.section_percorsi || {})[secLetter] || 'tecnico';
               const yearNum = m ? parseInt(m[1], 10) : 1;
-              const period = yearNum <= 2 ? 'Biennio' : 'Triennio';
+              const period = isEn ? (yearNum <= 2 ? 'Lower' : 'Upper') : (yearNum <= 2 ? 'Biennio' : 'Triennio');
+              const percDisplay = isEn ? (percorso === 'liceo' ? 'HIGH SCHOOL' : (percorso === 'tecnico' ? 'TECHNICAL' : 'VOCATIONAL')) : percorso.toUpperCase();
               const cGroups = groupsByClass[c.name] || [];
               const isSucc = (c.building || '').toLowerCase().includes('succ');
               return `
@@ -4829,32 +4841,32 @@ async function renderClasses() {
                   <td style="color:var(--text-sub);">${idx + 1}</td>
                   <td>
                     <b style="font-size:14.5px;color:var(--primary);">🎓 ${escapeHtml(c.name)}</b>
-                    <span class="badge ${percorso === 'liceo' ? 'badge-liceo' : (percorso === 'tecnico' ? 'badge-tecnico' : 'badge-professionale')}" style="font-size:10px;margin-left:4px;" title="Indirizzo determinato dalla Sezione ${secLetter} (${period})">
-                      ${percorso.toUpperCase()} (${period})
+                    <span class="badge ${percorso === 'liceo' ? 'badge-liceo' : (percorso === 'tecnico' ? 'badge-tecnico' : 'badge-professionale')}" style="font-size:10px;margin-left:4px;" title="${isEn ? 'Track determined by Section ' + secLetter + ' (' + period + ')' : 'Indirizzo determinato dalla Sezione ' + secLetter + ' (' + period + ')'}">
+                      ${percDisplay} (${period})
                     </span>
                   </td>
                   <td style="text-align:center;">
                     <span style="font-size:13px;font-weight:700;color:var(--text-main);">${c.students || 0}</span>
-                    <button class="btn-sm btn-sec" style="padding:1px 5px;font-size:10px;margin-left:3px;" onclick="quickEditClassStudents('${escapeJs(c.name)}', ${c.students || 25})" title="Modifica numero alunni">✏️</button>
+                    <button class="btn-sm btn-sec" style="padding:1px 5px;font-size:10px;margin-left:3px;" onclick="quickEditClassStudents('${escapeJs(c.name)}', ${c.students || 25})" title="${isEn ? 'Edit student count' : 'Modifica numero alunni'}">✏️</button>
                   </td>
                   <td>
                     <span class="badge ${isSucc ? 'badge-warn' : 'badge-info'}" style="margin-right:6px;">
-                      🏛️ ${escapeHtml(c.building || 'Centrale')}
+                      🏛️ ${escapeHtml(c.building ? (isEn && c.building === 'Centrale' ? 'Main' : (isEn && c.building.includes('Succ') ? 'Branch' : c.building)) : (isEn ? 'Main' : 'Centrale'))}
                     </span>
-                    <span class="item-chip" title="Aula Ordinaria di questa classe">
-                      🚪 ${escapeHtml(c.base_room || ('Aula ' + c.name))}
+                    <span class="item-chip" title="${isEn ? 'Resident Homeroom of this class' : 'Aula Ordinaria di questa classe'}">
+                      🚪 ${escapeHtml(c.base_room || ((isEn ? 'Room ' : 'Aula ') + c.name))}
                     </span>
                   </td>
                   <td>
                     <div style="display:flex;flex-wrap:wrap;align-items:center;gap:4px;">
                       ${cGroups.length > 0 ? cGroups.map(g => `
                         <span class="group-badge">
-                          👥 <b>${escapeHtml(g.name)}</b> ${g.students ? `(${g.students} al.)` : ''}
-                          <span class="del-btn" onclick="deleteGroup('${escapeJs(g.name)}')" title="Elimina gruppo articolato">×</span>
+                          👥 <b>${escapeHtml(g.name)}</b> ${g.students ? `(${g.students} ${isEn ? 'st.' : 'al.'})` : ''}
+                          <span class="del-btn" onclick="deleteGroup('${escapeJs(g.name)}')" title="${isEn ? 'Delete subgroup' : 'Elimina gruppo articolato'}">×</span>
                         </span>
-                      `).join('') : '<span style="color:var(--text-muted);font-size:12px;margin-right:6px;">Nessun gruppo</span>'}
-                      <button class="btn-add-group" onclick="openAddGroupModal('${escapeJs(c.name)}')" title="Crea un gruppo articolato per ${escapeJs(c.name)}">
-                        + Gruppo
+                      `).join('') : `<span style="color:var(--text-muted);font-size:12px;margin-right:6px;">${isEn ? 'No groups' : 'Nessun gruppo'}</span>`}
+                      <button class="btn-add-group" onclick="openAddGroupModal('${escapeJs(c.name)}')" title="${isEn ? 'Create subgroup for ' + escapeJs(c.name) : 'Crea un gruppo articolato per ' + escapeJs(c.name)}">
+                        + ${isEn ? 'Group' : 'Gruppo'}
                       </button>
                     </div>
                   </td>
@@ -4862,13 +4874,13 @@ async function renderClasses() {
                     <span class="badge badge-info">${c.total_hours || 0} h</span>
                   </td>
                   <td style="text-align:right;white-space:nowrap;">
-                    <button class="btn btn-sm btn-primary" onclick="openNewCattedraModal({ className: '${escapeJs(c.name)}' })" title="Assegna nuova cattedra a ${escapeJs(c.name)}">
-                      ➕ Cattedra
+                    <button class="btn btn-sm btn-primary" onclick="openNewCattedraModal({ className: '${escapeJs(c.name)}' })" title="${isEn ? 'Assign new teaching assignment to ' + escapeJs(c.name) : 'Assegna nuova cattedra a ' + escapeJs(c.name)}">
+                      ➕ ${isEn ? 'Assignment' : 'Cattedra'}
                     </button>
-                    <button class="btn btn-sm btn-sec" onclick="jumpToActivities({ className: '${escapeJs(c.name)}' })" title="Vedi cattedre della classe ${escapeJs(c.name)}">
-                      📚 Cattedre
+                    <button class="btn btn-sm btn-sec" onclick="jumpToActivities({ className: '${escapeJs(c.name)}' })" title="${isEn ? 'View assignments for class ' + escapeJs(c.name) : 'Vedi cattedre della classe ' + escapeJs(c.name)}">
+                      📚 ${isEn ? 'Assignments' : 'Cattedre'}
                     </button>
-                    <button class="btn btn-sm btn-sec" onclick="openEditClassModal('${escapeJs(c.name)}')" title="Modifica alunni, aula base e sede">✏️ Sede</button>
+                    <button class="btn btn-sm btn-sec" onclick="openEditClassModal('${escapeJs(c.name)}')" title="${isEn ? 'Edit students, homeroom and campus' : 'Modifica alunni, aula base e sede'}">✏️ ${isEn ? 'Campus/Room' : 'Sede'}</button>
                     <button class="btn btn-sm btn-sec" onclick="openClassAvailability('${escapeJs(c.name)}')">📅</button>
                     <button class="btn btn-sm btn-danger" onclick="deleteClass('${escapeJs(c.name)}')">🗑️</button>
                   </td>
@@ -4884,12 +4896,12 @@ async function renderClasses() {
           <thead>
             <tr>
               <th style="width:45px;">#</th>
-              <th style="width:130px;">Classe Padre</th>
-              <th style="min-width:180px;">Nome Gruppo / Articolazione</th>
-              <th style="width:110px;text-align:center;">N. Alunni</th>
-              <th style="width:110px;text-align:center;">Ore Assegnate</th>
-              <th>Note & Tipologia</th>
-              <th style="text-align:right;min-width:260px;">Azioni Rapide</th>
+              <th style="width:130px;">${isEn ? 'Parent Class' : 'Classe Padre'}</th>
+              <th style="min-width:180px;">${isEn ? 'Group / Division Name' : 'Nome Gruppo / Articolazione'}</th>
+              <th style="width:110px;text-align:center;">${isEn ? 'Students' : 'N. Alunni'}</th>
+              <th style="width:110px;text-align:center;">${isEn ? 'Assigned Hours' : 'Ore Assegnate'}</th>
+              <th>${isEn ? 'Notes & Type' : 'Note & Tipologia'}</th>
+              <th style="text-align:right;min-width:260px;">${isEn ? 'Quick Actions' : 'Azioni Rapide'}</th>
             </tr>
           </thead>
           <tbody>
@@ -4904,19 +4916,19 @@ async function renderClasses() {
                 </td>
                 <td style="text-align:center;">
                   <span style="font-size:13px;font-weight:700;">${g.students || 0}</span>
-                  <button class="btn-sm btn-sec" style="padding:1px 5px;font-size:10px;margin-left:3px;" onclick="quickEditGroupStudents('${escapeJs(g.name)}', ${g.students || 0})" title="Modifica numero alunni nel gruppo">✏️</button>
+                  <button class="btn-sm btn-sec" style="padding:1px 5px;font-size:10px;margin-left:3px;" onclick="quickEditGroupStudents('${escapeJs(g.name)}', ${g.students || 0})" title="${isEn ? 'Edit student count in group' : 'Modifica numero alunni nel gruppo'}">✏️</button>
                 </td>
                 <td style="text-align:center;">
                   <span class="badge ${g.total_hours > 0 ? 'badge-info' : ''}" style="font-weight:700;">${g.total_hours || 0} h</span>
                 </td>
                 <td style="color:var(--text-muted);font-size:12px;">
-                  ${escapeHtml(g.comments || 'Gruppo articolato / sottogruppo')}
+                  ${escapeHtml(g.comments || (isEn ? 'Subgroup / division' : 'Gruppo articolato / sottogruppo'))}
                 </td>
                 <td style="text-align:right;white-space:nowrap;">
-                  <button class="btn btn-sm btn-sec" onclick="openEditGroupModal('${escapeJs(g.name)}')" title="Modifica gruppo">✏️ Modifica</button>
-                  <button class="btn btn-sm btn-primary" onclick="openNewCattedraModal({ className: '${escapeJs(g.name)}' })" title="Assegna nuova cattedra a questo gruppo">➕ Cattedra</button>
-                  <button class="btn btn-sm btn-sec" onclick="jumpToActivities({ className: '${escapeJs(g.name)}' })" title="Vedi cattedre del gruppo">📚 Cattedre</button>
-                  <button class="btn btn-sm btn-danger" onclick="deleteGroup('${escapeJs(g.name)}')" title="Elimina gruppo">🗑️</button>
+                  <button class="btn btn-sm btn-sec" onclick="openEditGroupModal('${escapeJs(g.name)}')" title="${isEn ? 'Edit group' : 'Modifica gruppo'}">✏️ ${isEn ? 'Edit' : 'Modifica'}</button>
+                  <button class="btn btn-sm btn-primary" onclick="openNewCattedraModal({ className: '${escapeJs(g.name)}' })" title="${isEn ? 'Assign new assignment to this group' : 'Assegna nuova cattedra a questo gruppo'}">➕ ${isEn ? 'Assignment' : 'Cattedra'}</button>
+                  <button class="btn btn-sm btn-sec" onclick="jumpToActivities({ className: '${escapeJs(g.name)}' })" title="${isEn ? 'View group assignments' : 'Vedi cattedre del gruppo'}">📚 ${isEn ? 'Assignments' : 'Cattedre'}</button>
+                  <button class="btn btn-sm btn-danger" onclick="deleteGroup('${escapeJs(g.name)}')" title="${isEn ? 'Delete group' : 'Elimina gruppo'}">🗑️</button>
                 </td>
               </tr>
             `).join('')}
@@ -5392,6 +5404,7 @@ function handleStudentsFileUpload(event) {
 // 6. GESTIONE MATERIE (CON CARICO POMERIDIANO, ORE PREFERITE E SALTO CATTEDRE)
 // ============================================================================
 async function renderSubjects() {
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
   const res = await fetch('/api/subjects');
   const rawSubjects = await res.json();
   const subjects = (rawSubjects || []).filter(s => !(s.name || '').toLowerCase().startsWith('disposiz'));
@@ -5400,11 +5413,11 @@ async function renderSubjects() {
   const container = document.getElementById('mainContent');
   container.innerHTML = `
     <div class="toolbar" style="flex-wrap:wrap;gap:10px;">
-      <input type="text" class="search-input" placeholder="🔍 Cerca materia, CDC, docente o classe..." oninput="filterTable('subjTable', this.value)" style="min-width:220px;">
+      <input type="text" class="search-input" placeholder="${isEn ? '🔍 Search subject, CDC, teacher or class...' : '🔍 Cerca materia, CDC, docente o classe...'}" oninput="filterTable('subjTable', this.value)" style="min-width:220px;">
       <div style="display:flex;gap:8px;margin-left:auto;">
-        <input type="text" id="newSubjName" class="search-input" placeholder="Nome materia (es. Filosofia)" style="width:190px;">
-        <input type="text" id="newSubjCdc" class="search-input" placeholder="CDC (es. A018)" style="width:140px;font-family:var(--font-mono);font-weight:600;" title="Classe di concorso abilitata">
-        <button class="btn btn-primary" onclick="addSubject()">+ Aggiungi Materia</button>
+        <input type="text" id="newSubjName" class="search-input" placeholder="${isEn ? 'Subject name (e.g. Philosophy)' : 'Nome materia (es. Filosofia)'}" style="width:190px;">
+        <input type="text" id="newSubjCdc" class="search-input" placeholder="CDC (es. A018)" style="width:140px;font-family:var(--font-mono);font-weight:600;" title="${isEn ? 'Qualified teaching certificate class' : 'Classe di concorso abilitata'}">
+        <button class="btn btn-primary" onclick="addSubject()">+ ${isEn ? 'Add Subject' : 'Aggiungi Materia'}</button>
       </div>
     </div>
 
@@ -5415,11 +5428,11 @@ async function renderSubjects() {
             <th style="width:40px;">#</th>
             <th style="min-width:180px;">${_t('subjects.th_name', 'Materia / Disciplina')}</th>
             <th style="width:145px;text-align:center;">${_t('teachers.th_cdc', 'Classe di Concorso (CDC)')}</th>
-            <th style="width:145px;text-align:center;">Rientri Pomeridiani</th>
-            <th style="width:145px;text-align:center;">Fascia Preferita</th>
+            <th style="width:145px;text-align:center;">${isEn ? 'Afternoon Periods' : 'Rientri Pomeridiani'}</th>
+            <th style="width:145px;text-align:center;">${isEn ? 'Preferred Time Slot' : 'Fascia Preferita'}</th>
             <th style="width:110px;text-align:center;">${_t('subjects.th_hours', 'Ore Totali')}</th>
-            <th style="min-width:180px;">Docenti che la Insegnano</th>
-            <th style="min-width:160px;">Classi Destinatarie</th>
+            <th style="min-width:180px;">${isEn ? 'Teachers' : 'Docenti che la Insegnano'}</th>
+            <th style="min-width:160px;">${isEn ? 'Assigned Classes' : 'Classi Destinatarie'}</th>
             <th>${_t('teachers.th_notes', 'Note')}</th>
             <th style="text-align:right;min-width:260px;">${_t('teachers.th_actions', 'Azioni Rapide')}</th>
           </tr>
@@ -5433,39 +5446,39 @@ async function renderSubjects() {
             <tr>
               <td style="color:var(--text-sub);">${idx + 1}</td>
               <td>
-                <b style="font-size:13.5px;color:var(--text-main);cursor:pointer;" onclick="openEditSubjectModal('${escapeJs(s.name)}')" title="Clicca per modificare regole materia">📚 ${escapeHtml(s.name)}</b>
+                <b style="font-size:13.5px;color:var(--text-main);cursor:pointer;" onclick="openEditSubjectModal('${escapeJs(s.name)}')" title="${isEn ? 'Click to edit subject rules' : 'Clicca per modificare regole materia'}">📚 ${escapeHtml(s.name)}</b>
               </td>
               <td style="text-align:center;">
                 ${s.cdc ? `
-                  <span class="item-chip" style="font-family:var(--font-mono);font-size:11.5px;font-weight:700;color:var(--primary);cursor:pointer;" onclick="openEditSubjectModal('${escapeJs(s.name)}')" title="Classe di concorso associata (clicca per modificare)">
+                  <span class="item-chip" style="font-family:var(--font-mono);font-size:11.5px;font-weight:700;color:var(--primary);cursor:pointer;" onclick="openEditSubjectModal('${escapeJs(s.name)}')" title="${isEn ? 'Associated teaching certificate (click to edit)' : 'Classe di concorso associata (clicca per modificare)'}">
                     🏷️ ${escapeHtml(s.cdc)}
                   </span>
                 ` : `
-                  <span style="color:var(--text-muted);font-size:12px;cursor:pointer;" onclick="openEditSubjectModal('${escapeJs(s.name)}')">+ Assegna CDC</span>
+                  <span style="color:var(--text-muted);font-size:12px;cursor:pointer;" onclick="openEditSubjectModal('${escapeJs(s.name)}')">+ ${isEn ? 'Assign CDC' : 'Assegna CDC'}</span>
                 `}
               </td>
               <td style="text-align:center;">
                 ${noRientri ? `
-                  <span class="badge-no-rientri" title="Esclusa categoricamente dai pomeriggi (ore 7 e 8)">
-                    🚫 No Rientri
+                  <span class="badge-no-rientri" title="${isEn ? 'Categorically excluded from afternoon sessions (7th and 8th periods)' : 'Esclusa categoricamente dai pomeriggi (ore 7 e 8)'}">
+                    🚫 ${isEn ? 'No Afternoons' : 'No Rientri'}
                   </span>
                 ` : `
-                  <span class="badge badge-ok" style="font-size:10.5px;" title="Ammessa sia al mattino sia al pomeriggio">
-                    ✅ Ammessa
+                  <span class="badge badge-ok" style="font-size:10.5px;" title="${isEn ? 'Allowed in both morning and afternoon periods' : 'Ammessa sia al mattino sia al pomeriggio'}">
+                    ✅ ${isEn ? 'Allowed' : 'Ammessa'}
                   </span>
                 `}
               </td>
               <td style="text-align:center;">
                 ${prefHours === 'PRIME' ? `
-                  <span class="badge-pref-prime" title="FET favorisce la collocazione nelle prime 2-3 ore del mattino">
-                    🌅 Prime Ore
+                  <span class="badge-pref-prime" title="${isEn ? 'FET prefers placing this in early morning periods (1st-3rd)' : 'FET favorisce la collocazione nelle prime 2-3 ore del mattino'}">
+                    🌅 ${isEn ? 'Early Hours' : 'Prime Ore'}
                   </span>
                 ` : prefHours === 'ULTIME' ? `
-                  <span class="badge-pref-ultime" title="FET favorisce la collocazione nelle ultime ore di lezione">
-                    🌇 Ultime Ore
+                  <span class="badge-pref-ultime" title="${isEn ? 'FET prefers placing this in later periods' : 'FET favorisce la collocazione nelle ultime ore di lezione'}">
+                    🌇 ${isEn ? 'Late Hours' : 'Ultime Ore'}
                   </span>
                 ` : `
-                  <span style="font-size:11.5px;color:var(--text-muted);">⚖️ Indifferente</span>
+                  <span style="font-size:11.5px;color:var(--text-muted);">⚖️ ${isEn ? 'Indifferent' : 'Indifferente'}</span>
                 `}
               </td>
               <td style="text-align:center;">
@@ -5473,33 +5486,33 @@ async function renderSubjects() {
                   ${s.total_hours || 0} h
                 </span>
                 <div style="font-size:10.5px;color:var(--text-muted);margin-top:2px;">
-                  (${s.cattedre_count || 0} cattedre)
+                  (${s.cattedre_count || 0} ${isEn ? 'assignments' : 'cattedre'})
                 </div>
               </td>
               <td>
                 <div style="display:flex;flex-wrap:wrap;gap:4px;">
                   ${(s.teachers || []).length > 0 ? (s.teachers || []).map(t => `
-                    <span class="item-chip" title="Docente assegnato">👨‍🏫 ${escapeHtml(t)}</span>
-                  `).join('') : '<span style="color:var(--text-muted);font-size:12px;">Nessun docente</span>'}
+                    <span class="item-chip" title="${isEn ? 'Assigned teacher' : 'Docente assegnato'}">👨‍🏫 ${escapeHtml(t)}</span>
+                  `).join('') : `<span style="color:var(--text-muted);font-size:12px;">${isEn ? 'No teachers' : 'Nessun docente'}</span>`}
                 </div>
               </td>
               <td>
                 <div style="display:flex;flex-wrap:wrap;gap:4px;">
                   ${(s.classes || []).length > 0 ? (s.classes || []).map(c => `
-                    <span class="item-chip primary" title="Classe con questa materia">🎓 ${escapeHtml(c)}</span>
+                    <span class="item-chip primary" title="${isEn ? 'Class with this subject' : 'Classe con questa materia'}">🎓 ${escapeHtml(c)}</span>
                   `).join('') : '<span style="color:var(--text-muted);font-size:12px;">-</span>'}
                 </div>
               </td>
               <td style="color:var(--text-muted);font-size:12px;">${escapeHtml(s.comments || '-')}</td>
               <td style="text-align:right;white-space:nowrap;">
-                <button class="btn btn-sm btn-sec" onclick="openEditSubjectModal('${escapeJs(s.name)}')" title="Modifica regole: CDC, rientri pomeridiani, fascia oraria, note">
-                  ✏️ Modifica
+                <button class="btn btn-sm btn-sec" onclick="openEditSubjectModal('${escapeJs(s.name)}')" title="${isEn ? 'Edit rules: CDC, afternoons, preferred slot, notes' : 'Modifica regole: CDC, rientri pomeridiani, fascia oraria, note'}">
+                  ✏️ ${isEn ? 'Edit' : 'Modifica'}
                 </button>
-                <button class="btn btn-sm btn-primary" onclick="openNewCattedraModal({ subject: '${escapeJs(s.name)}' })" title="Assegna un docente e una classe per ${escapeJs(s.name)}">
-                  ➕ Cattedra
+                <button class="btn btn-sm btn-primary" onclick="openNewCattedraModal({ subject: '${escapeJs(s.name)}' })" title="${isEn ? 'Assign teacher and class for ' + escapeJs(s.name) : 'Assegna un docente e una classe per ' + escapeJs(s.name)}">
+                  ➕ ${isEn ? 'Assignment' : 'Cattedra'}
                 </button>
-                <button class="btn btn-sm btn-sec" onclick="jumpToActivities({ subject: '${escapeJs(s.name)}' })" title="Vedi tutte le cattedre di ${escapeJs(s.name)}">
-                  📚 Cattedre
+                <button class="btn btn-sm btn-sec" onclick="jumpToActivities({ subject: '${escapeJs(s.name)}' })" title="${isEn ? 'View all assignments of ' + escapeJs(s.name) : 'Vedi tutte le cattedre di ' + escapeJs(s.name)}">
+                  📚 ${isEn ? 'Assignments' : 'Cattedre'}
                 </button>
                 <button class="btn btn-sm btn-danger" onclick="deleteSubject('${escapeJs(s.name)}')">🗑️</button>
               </td>
@@ -5637,6 +5650,7 @@ async function deleteSubject(name) {
 let activeRoomPlessoFilter = 'all'; // 'all' | 'Centrale' | 'Succursale' | 'special'
 
 async function renderRooms() {
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
   const res = await fetch('/api/rooms');
   const rData = await res.json();
   stateData.rooms = rData.rooms || [];
@@ -5682,19 +5696,24 @@ async function renderRooms() {
   container.innerHTML = `
     <!-- Banner Chiarezza Concettuale Aule vs Classi -->
     <div class="info-banner">
-      🏫 <b>Distinzione Struttura Spazi vs Classi Studenti:</b><br>
-      • <b>Nome Aula (Spazio Fisico):</b> Entità dell'edificio (es. <b>Aula 53</b>, <b>INFO 1</b>, <b>Palestra</b>) con <b>Capienza Massima</b> e <b>Plesso</b>.<br>
-      • <b>Palestra Unica Sede Centrale:</b> L'istituto dispone di un'<b>unica Palestra in Sede Centrale</b> con capienza massima di <b>57 persone</b>. Il programma gestisce internamente la contemporaneità ospitando 2 o 3 classi per fascia oraria in base alla somma effettiva degli studenti per non superare mai la capienza complessiva. I laboratori <b>INFO 1</b> e <b>INFO 2</b> sono invece <b>spazi fisici separati</b> con 28 postazioni ciascuno.<br>
-      • <b>Flag Laboratorio / Palestra:</b> Innescano automaticamente i <b>cambi di plesso</b> e i tempi di trasferimento per le classi residenti in un'altra sede.
+      ${isEn
+        ? '🏫 <b>Facility Spaces vs Student Cohorts Distinction:</b><br>' +
+          '• <b>Room Name (Physical Space):</b> Physical building entity (e.g. <b>Room 53</b>, <b>INFO 1</b>, <b>Gym</b>) with <b>Maximum Capacity</b> and <b>Campus</b>.<br>' +
+          '• <b>Single Main Campus Gym:</b> The institute has a <b>single Gym at Main Campus</b> with a maximum capacity of <b>57 persons</b>. The system accommodates 2 or 3 simultaneous classes based on the real student count to never exceed total capacity. Computer labs <b>INFO 1</b> and <b>INFO 2</b> are <b>physically separate rooms</b> with 28 workstations each.<br>' +
+          '• <b>Lab / Gym Flag:</b> Automatically triggers <b>campus transfers</b> and travel allowances for cohorts residing at another campus.'
+        : '🏫 <b>Distinzione Struttura Spazi vs Classi Studenti:</b><br>' +
+          '• <b>Nome Aula (Spazio Fisico):</b> Entità dell\'edificio (es. <b>Aula 53</b>, <b>INFO 1</b>, <b>Palestra</b>) con <b>Capienza Massima</b> e <b>Plesso</b>.<br>' +
+          '• <b>Palestra Unica Sede Centrale:</b> L\'istituto dispone di un\'<b>unica Palestra in Sede Centrale</b> con capienza massima di <b>57 persone</b>. Il programma gestisce internamente la contemporaneità ospitando 2 o 3 classi per fascia oraria in base alla somma effettiva degli studenti per non superare mai la capienza complessiva. I laboratori <b>INFO 1</b> e <b>INFO 2</b> sono invece <b>spazi fisici separati</b> con 28 postazioni ciascuno.<br>' +
+          '• <b>Flag Laboratorio / Palestra:</b> Innescano automaticamente i <b>cambi di plesso</b> e i tempi di trasferimento per le classi residenti in un\'altra sede.'}
     </div>
 
     <!-- Schede di Gestione Sedi / Plessi -->
     <div style="background:#fff;border:1px solid var(--border);border-radius:var(--radius-md);padding:16px;margin-bottom:16px;">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
         <div style="font-weight:700;font-size:14px;color:var(--text-main);">
-          🏛️ Configurazione Sedi & Plessi dell'Istituto (${stateData.buildingsList.length} Sedi Attive)
+          🏛️ ${isEn ? `Campus & Buildings Configuration (${stateData.buildingsList.length} Active Campuses)` : `Configurazione Sedi & Plessi dell'Istituto (${stateData.buildingsList.length} Sedi Attive)`}
         </div>
-        <button class="btn btn-sm btn-primary" onclick="openAddBuildingModal()">+ Aggiungi Nuovo Plesso / Sede</button>
+        <button class="btn btn-sm btn-primary" onclick="openAddBuildingModal()">+ ${isEn ? 'Add New Campus / Building' : 'Aggiungi Nuovo Plesso / Sede'}</button>
       </div>
 
       <div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(320px, 1fr));gap:12px;">
@@ -5710,16 +5729,16 @@ async function renderRooms() {
                   <span style="font-size:16px;">${isSucc ? '🏢' : '🏛️'}</span>
                   <b style="font-size:13.5px;color:var(--text-main);">${escapeHtml(b.name)}</b>
                   <span class="badge ${isSucc ? 'badge-warn' : 'badge-info'}" style="font-weight:700;">
-                    Sigla: ${escapeHtml(b.short_code || b.name[0])}
+                    ${isEn ? 'Code' : 'Sigla'}: ${escapeHtml(b.short_code || b.name[0])}
                   </span>
                 </div>
                 <div style="display:flex;gap:4px;">
-                  <button class="btn-sm btn-sec" onclick="openEditBuildingModal('${escapeJs(b.name)}', '${escapeJs(b.short_code || '')}', '${escapeJs(b.comments || '')}')" title="Modifica nome, sigla o note del plesso">✏️</button>
-                  <button class="btn-sm btn-danger" onclick="deleteBuilding('${escapeJs(b.name)}')" title="Elimina plesso">🗑️</button>
+                  <button class="btn-sm btn-sec" onclick="openEditBuildingModal('${escapeJs(b.name)}', '${escapeJs(b.short_code || '')}', '${escapeJs(b.comments || '')}')" title="${isEn ? 'Edit campus name, code or notes' : 'Modifica nome, sigla o note del plesso'}">✏️</button>
+                  <button class="btn-sm btn-danger" onclick="deleteBuilding('${escapeJs(b.name)}')" title="${isEn ? 'Delete campus' : 'Elimina plesso'}">🗑️</button>
                 </div>
               </div>
               <div style="font-size:12px;color:var(--text-muted);line-height:1.4;">
-                <div>Aule associate: <b>${rList.length}</b> (Capienza tot: <b>${capTot} posti</b>)</div>
+                <div>${isEn ? 'Associated rooms:' : 'Aule associate:'} <b>${rList.length}</b> (${isEn ? 'Total capacity:' : 'Capienza tot:'} <b>${capTot} ${isEn ? 'seats' : 'posti'}</b>)</div>
                 ${b.comments ? `<div style="font-style:italic;margin-top:2px;">${escapeHtml(b.comments)}</div>` : ''}
               </div>
             </div>
@@ -5730,35 +5749,35 @@ async function renderRooms() {
 
     <!-- Toolbar e Filtri Plesso -->
     <div class="toolbar" style="flex-wrap:wrap;">
-      <input type="text" class="search-input" placeholder="🔍 Cerca aula, laboratorio, plesso..." oninput="filterTable('roomTable', this.value)">
+      <input type="text" class="search-input" placeholder="${isEn ? '🔍 Search room, lab, campus...' : '🔍 Cerca aula, laboratorio, plesso...'}" oninput="filterTable('roomTable', this.value)">
 
       <div class="segmented-control">
         <button class="segmented-btn ${activeRoomPlessoFilter === 'all' ? 'active' : ''}" onclick="filterRoomsByPlesso('all')">
-          Tutti (${rooms.length})
+          ${isEn ? 'All' : 'Tutti'} (${rooms.length})
         </button>
         <button class="segmented-btn ${activeRoomPlessoFilter === 'Centrale' ? 'active' : ''}" onclick="filterRoomsByPlesso('Centrale')">
-          🏛️ Centrale (${centraleRooms.length})
+          🏛️ ${isEn ? 'Main' : 'Centrale'} (${centraleRooms.length})
         </button>
         <button class="segmented-btn ${activeRoomPlessoFilter === 'Succursale' ? 'active' : ''}" onclick="filterRoomsByPlesso('Succursale')">
-          🏢 Succursale (${succursaleRooms.length})
+          🏢 ${isEn ? 'Branch' : 'Succursale'} (${succursaleRooms.length})
         </button>
         <button class="segmented-btn ${activeRoomPlessoFilter === 'special' ? 'active' : ''}" onclick="filterRoomsByPlesso('special')">
-          🧪 Lab & Palestre (${rooms.filter(r => r.is_lab_or_gym).length})
+          🧪 ${isEn ? 'Labs & Gyms' : 'Lab & Palestre'} (${rooms.filter(r => r.is_lab_or_gym).length})
         </button>
       </div>
 
       <div style="display:flex;gap:6px;margin-left:auto;">
-        <input type="text" id="newRoomName" class="search-input" placeholder="Nome aula (es. Aula 53)" style="width:130px;">
+        <input type="text" id="newRoomName" class="search-input" placeholder="${isEn ? 'Room name (e.g. Room 53)' : 'Nome aula (es. Aula 53)'}" style="width:130px;">
         <select id="newRoomBuilding" class="search-input" style="width:120px;">
           ${stateData.buildings.map(b => `<option value="${escapeHtml(b)}">${escapeHtml(b)}</option>`).join('')}
         </select>
         <select id="newRoomType" class="search-input" style="width:125px;">
-          <option value="standard">🚪 Ordinaria</option>
-          <option value="lab">🧪 Laboratorio</option>
-          <option value="gym">🏀 Palestra</option>
+          <option value="standard">🚪 ${isEn ? 'Standard' : 'Ordinaria'}</option>
+          <option value="lab">🧪 ${isEn ? 'Laboratory' : 'Laboratorio'}</option>
+          <option value="gym">🏀 ${isEn ? 'Gymnasium' : 'Palestra'}</option>
         </select>
-        <input type="number" id="newRoomCap" class="search-input" placeholder="Capienza" value="30" style="width:75px;" title="Capienza Massima Alunni">
-        <button class="btn btn-primary" onclick="addRoom()">+ Aggiungi</button>
+        <input type="number" id="newRoomCap" class="search-input" placeholder="${isEn ? 'Capacity' : 'Capienza'}" value="30" style="width:75px;" title="${isEn ? 'Maximum Student Capacity' : 'Capienza Massima Alunni'}">
+        <button class="btn btn-primary" onclick="addRoom()">+ ${isEn ? 'Add' : 'Aggiungi'}</button>
       </div>
     </div>
 
@@ -5771,9 +5790,9 @@ async function renderRooms() {
             <th style="min-width:170px;">${_t('rooms.th_room', 'Nome Aula / Spazio')}</th>
             <th style="width:150px;">${_t('rooms.th_building', 'Plesso (Disposizione)')}</th>
             <th style="min-width:180px;">${_t('rooms.th_lab', 'Tipologia & Architettura Spazio')}</th>
-            <th style="width:160px;text-align:center;">Flag Cambio Plesso</th>
+            <th style="width:160px;text-align:center;">${isEn ? 'Campus Transfer Flag' : 'Flag Cambio Plesso'}</th>
             <th style="width:125px;text-align:center;">${_t('rooms.th_capacity', 'Capienza Max')}</th>
-            <th style="min-width:180px;">Classe Base Residente</th>
+            <th style="min-width:180px;">${isEn ? 'Resident Homeroom Class' : 'Classe Base Residente'}</th>
             <th style="text-align:right;width:110px;">${_t('rooms.th_actions', 'Azioni')}</th>
           </tr>
         </thead>
@@ -5796,62 +5815,62 @@ async function renderRooms() {
                   ${r.comments ? `<div style="font-size:11px;color:var(--text-muted);">${escapeHtml(r.comments)}</div>` : ''}
                 </td>
                 <td>
-                  <select class="table-select" onchange="changeRoomBuilding('${escapeJs(r.name)}', this.value)" title="Cambia al volo la disposizione del plesso">
+                  <select class="table-select" onchange="changeRoomBuilding('${escapeJs(r.name)}', this.value)" title="${isEn ? 'Change campus disposition' : 'Cambia al volo la disposizione del plesso'}">
                     ${stateData.buildings.map(b => `
                       <option value="${escapeHtml(b)}" ${r.building === b ? 'selected' : ''}>
-                        ${b === 'Centrale' ? '🏛️ Centrale' : (b === 'Succursale' ? '🏢 Succursale' : escapeHtml(b))}
+                        ${b === 'Centrale' ? (isEn ? '🏛️ Main' : '🏛️ Centrale') : (b === 'Succursale' ? (isEn ? '🏢 Branch' : '🏢 Succursale') : escapeHtml(b))}
                       </option>
                     `).join('')}
                   </select>
                 </td>
                 <td>
                   ${isGym ? `
-                    <span class="badge-gym-module" style="background:#fef3c7;border-color:#f59e0b;color:#92400e;" title="Unico impianto sportivo dell'istituto in Sede Centrale (Capienza max 57 studenti, gestisce internamente 2 o 3 classi contemporanee)">
-                      🏀 Palestra Unica (57 posti - 2 o 3 classi)
+                    <span class="badge-gym-module" style="background:#fef3c7;border-color:#f59e0b;color:#92400e;" title="${isEn ? 'Single sports facility at Main Campus (Max 57 students, accommodates 2 or 3 simultaneous classes)' : 'Unico impianto sportivo dell\'istituto in Sede Centrale (Capienza max 57 studenti, gestisce internamente 2 o 3 classi contemporanee)'}">
+                      🏀 ${isEn ? 'Single Gym (57 seats - 2 or 3 classes)' : 'Palestra Unica (57 posti - 2 o 3 classi)'}
                     </span>
                   ` : isInfoLab ? `
-                    <span class="badge-lab-module" title="Laboratorio Didattico Fisicamente Separato con 28 postazioni PC">
-                      🧪 Lab Fisico Separato (28 posti)
+                    <span class="badge-lab-module" title="${isEn ? 'Physically separated lab with 28 PC workstations' : 'Laboratorio Didattico Fisicamente Separato con 28 postazioni PC'}">
+                      🧪 ${isEn ? 'Separate Lab (28 seats)' : 'Lab Fisico Separato (28 posti)'}
                     </span>
                   ` : `
-                    <select class="table-select" onchange="changeRoomType('${escapeJs(r.name)}', this.value)" title="Cambia la tipologia di stanza">
-                      <option value="standard" ${(!r.is_lab_or_gym && r.room_type === 'standard') ? 'selected' : ''}>🚪 Aula Ordinaria</option>
-                      <option value="lab" ${isLab ? 'selected' : ''}>🧪 Laboratorio</option>
-                      <option value="gym" ${isGym ? 'selected' : ''}>🏀 Palestra</option>
+                    <select class="table-select" onchange="changeRoomType('${escapeJs(r.name)}', this.value)" title="${isEn ? 'Change room type' : 'Cambia la tipologia di stanza'}">
+                      <option value="standard" ${(!r.is_lab_or_gym && r.room_type === 'standard') ? 'selected' : ''}>🚪 ${isEn ? 'Standard Room' : 'Aula Ordinaria'}</option>
+                      <option value="lab" ${isLab ? 'selected' : ''}>🧪 ${isEn ? 'Laboratory' : 'Laboratorio'}</option>
+                      <option value="gym" ${isGym ? 'selected' : ''}>🏀 ${isEn ? 'Gymnasium' : 'Palestra'}</option>
                     </select>
                   `}
                 </td>
                 <td style="text-align:center;">
                   ${r.is_lab_or_gym ? `
-                    <span class="badge-flag-transfer" title="Quando le classi usano questa stanza, si innescano i vincoli di cambio plesso">
-                      ⚡ Innesca Cambio
+                    <span class="badge-flag-transfer" title="${isEn ? 'When cohorts use this room, campus transfer constraints apply' : 'Quando le classi usano questa stanza, si innescano i vincoli di cambio plesso'}">
+                      ⚡ ${isEn ? 'Triggers Transfer' : 'Innesca Cambio'}
                     </span>
                   ` : `
-                    <span style="font-size:11.5px;color:var(--text-muted);">Interna</span>
+                    <span style="font-size:11.5px;color:var(--text-muted);">${isEn ? 'Internal' : 'Interna'}</span>
                   `}
                 </td>
                 <td style="text-align:center;">
                   <div style="display:inline-flex;align-items:center;gap:3px;">
-                    <input type="number" class="table-num-input" value="${r.capacity || 30}" min="1" max="150" onchange="changeRoomCapacity('${escapeJs(r.name)}', this.value)" title="Modifica e premi invio per salvare la capienza">
-                    <span style="font-size:11.5px;color:var(--text-muted);">al.</span>
+                    <input type="number" class="table-num-input" value="${r.capacity || 30}" min="1" max="150" onchange="changeRoomCapacity('${escapeJs(r.name)}', this.value)" title="${isEn ? 'Edit and press Enter to save capacity' : 'Modifica e premi invio per salvare la capienza'}">
+                    <span style="font-size:11.5px;color:var(--text-muted);">${isEn ? 'seats' : 'al.'}</span>
                   </div>
                 </td>
                 <td>
                   ${assignedClasses.length > 0 ? `
                     <div style="display:flex;align-items:center;gap:6px;">
-                      <span class="item-chip primary" title="Classe residente qui">🎓 ${assignedClasses.join(', ')} (${assignedStud} al.)</span>
+                      <span class="item-chip primary" title="${isEn ? 'Resident cohort here' : 'Classe residente qui'}">🎓 ${assignedClasses.join(', ')} (${assignedStud} ${isEn ? 'st.' : 'al.'})</span>
                       ${isOvercrowded ? `
-                        <span class="badge badge-err" style="font-size:10px;" title="Attenzione: ${assignedStud} studenti per ${r.capacity} posti a sedere!">⚠️ Sovraffollamento</span>
+                        <span class="badge badge-err" style="font-size:10px;" title="${isEn ? `Warning: ${assignedStud} students for ${r.capacity} seats!` : `Attenzione: ${assignedStud} studenti per ${r.capacity} posti a sedere!`}">${isEn ? '⚠️ Overcrowded' : '⚠️ Sovraffollamento'}</span>
                       ` : `
                         <span class="badge badge-ok" style="font-size:10px;">🟢 OK</span>
                       `}
                     </div>
                   ` : `
-                    <span style="font-size:11.5px;color:var(--text-muted);font-style:italic;">Nessuna classe base</span>
+                    <span style="font-size:11.5px;color:var(--text-muted);font-style:italic;">${isEn ? 'No homeroom class' : 'Nessuna classe base'}</span>
                   `}
                 </td>
                 <td style="text-align:right;white-space:nowrap;">
-                  <button class="btn btn-sm btn-sec" onclick="openEditRoomModal('${escapeJs(r.name)}')" title="Modifica dettagli stanza">✏️</button>
+                  <button class="btn btn-sm btn-sec" onclick="openEditRoomModal('${escapeJs(r.name)}')" title="${isEn ? 'Edit room details' : 'Modifica dettagli stanza'}">✏️</button>
                   <button class="btn btn-sm btn-danger" onclick="deleteRoom('${escapeJs(r.name)}')">🗑️</button>
                 </td>
               </tr>
@@ -6251,69 +6270,72 @@ async function renderActivities() {
 
   let initialSearch = '';
   let activeFilterLabel = '';
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
   if (pendingActivityFilter) {
     if (pendingActivityFilter.teacher) {
       initialSearch = pendingActivityFilter.teacher;
-      activeFilterLabel = `Docente: ${pendingActivityFilter.teacher}`;
+      activeFilterLabel = `${isEn ? 'Teacher' : 'Docente'}: ${pendingActivityFilter.teacher}`;
     } else if (pendingActivityFilter.subject) {
       initialSearch = pendingActivityFilter.subject;
-      activeFilterLabel = `Materia: ${pendingActivityFilter.subject}`;
+      activeFilterLabel = `${isEn ? 'Subject' : 'Materia'}: ${pendingActivityFilter.subject}`;
     } else if (pendingActivityFilter.className) {
       initialSearch = pendingActivityFilter.className;
-      activeFilterLabel = `Classe: ${pendingActivityFilter.className}`;
+      activeFilterLabel = `${isEn ? 'Class' : 'Classe'}: ${pendingActivityFilter.className}`;
     }
     pendingActivityFilter = null;
   }
 
   container.innerHTML = `
-    ${getNavReturnBarHtml(activeFilterLabel ? `Filtro visualizzazione: <b>${escapeHtml(activeFilterLabel)}</b>` : 'Cattedre e attività di insegnamento.')}
+    ${getNavReturnBarHtml(activeFilterLabel ? `${isEn ? 'Filter view:' : 'Filtro visualizzazione:'} <b>${escapeHtml(activeFilterLabel)}</b>` : (isEn ? 'Teaching assignments and activities.' : 'Cattedre e attività di insegnamento.'))}
     <div class="toolbar" style="gap:12px;flex-wrap:wrap;">
-      <input type="text" id="activitySearchInput" class="search-input" value="${escapeHtml(initialSearch)}" placeholder="🔍 Cerca docente, classe o materia..." oninput="filterActivities(this.value)">
+      <input type="text" id="activitySearchInput" class="search-input" value="${escapeHtml(initialSearch)}" placeholder="${isEn ? '🔍 Search teacher, class or subject...' : '🔍 Cerca docente, classe o materia...'}" oninput="filterActivities(this.value)">
 
       ${activeFilterLabel ? `
         <div id="activeFilterPill" style="display:flex;align-items:center;gap:6px;background:var(--primary-subtle);color:var(--primary);padding:4px 10px;border-radius:20px;font-size:12px;font-weight:600;">
-          <span>🔍 Filtro attivo: <b>${escapeHtml(activeFilterLabel)}</b></span>
-          <span style="cursor:pointer;font-weight:700;margin-left:4px;" onclick="clearActivityFilter()" title="Azzera filtro">✕</span>
+          <span>🔍 ${isEn ? 'Active filter:' : 'Filtro attivo:'} <b>${escapeHtml(activeFilterLabel)}</b></span>
+          <span style="cursor:pointer;font-weight:700;margin-left:4px;" onclick="clearActivityFilter()" title="${isEn ? 'Clear filter' : 'Azzera filtro'}">✕</span>
         </div>
       ` : ''}
 
-      <button class="btn btn-primary" onclick="openNewCattedraModal()" title="Crea una nuova cattedra con docente, classe/gruppo e suddivisione blocchi">
-        ➕ Nuova Cattedra / Attività
+      <button class="btn btn-primary" onclick="openNewCattedraModal()" title="${isEn ? 'Create a new teaching assignment with teacher, class/group and block division' : 'Crea una nuova cattedra con docente, classe/gruppo e suddivisione blocchi'}">
+        ➕ ${isEn ? 'New Assignment / Activity' : 'Nuova Cattedra / Attività'}
       </button>
-      <button class="btn btn-sec" onclick="openAccorpamentiModal()" title="Gestisci accorpamenti di macro-materie (es. Italiano Latino Storia e Geografia)">
-        🔗 Accorpamenti Macro-Materie
+      <button class="btn btn-sec" onclick="openAccorpamentiModal()" title="${isEn ? 'Manage multi-subject composite groupings' : 'Gestisci accorpamenti di macro-materie (es. Italiano Latino Storia e Geografia)'}">
+        🔗 ${isEn ? 'Subject Groupings' : 'Accorpamenti Macro-Materie'}
       </button>
-      <button class="btn btn-sec" onclick="navigate('block_rules')" title="Gestisci regole di default suddivisione blocchi e indirizzi sezioni">
-        📐 Regole Blocchi & Sezioni
+      <button class="btn btn-sec" onclick="navigate('block_rules')" title="${isEn ? 'Manage default block division rules and section tracks' : 'Gestisci regole di default suddivisione blocchi e indirizzi sezioni'}">
+        📐 ${isEn ? 'Block & Section Rules' : 'Regole Blocchi & Sezioni'}
       </button>
-      <button class="btn btn-sec" onclick="resetAllCattedreToDefault()" title="Reimposta tutte le cattedre alla formula standard di default didattica (elimina le suddivisioni puntuali)">
-        ↩️ Ripristina Default Didattici
+      <button class="btn btn-sec" onclick="resetAllCattedreToDefault()" title="${isEn ? 'Reset all assignments to standard didactic default formulas' : 'Reimposta tutte le cattedre alla formula standard di default didattica (elimina le suddivisioni puntuali)'}">
+        ↩️ ${isEn ? 'Reset Didactic Defaults' : 'Ripristina Default Didattici'}
       </button>
 
       <div class="segmented-control">
         <button class="segmented-btn ${isGrouped ? 'active' : ''}" onclick="switchActivityView('grouped')">
-          👥 Vista Cattedre (${totalGrouped})
+          👥 ${isEn ? 'Assignments View' : 'Vista Cattedre'} (${totalGrouped})
         </button>
         <button class="segmented-btn ${!isGrouped ? 'active' : ''}" onclick="switchActivityView('raw')">
-          📋 Dettaglio FET (${resActs.length})
+          📋 ${isEn ? 'FET Detail' : 'Dettaglio FET'} (${resActs.length})
         </button>
       </div>
 
       ${isGrouped ? `
         <div class="segmented-control" style="background:var(--bg-card);border:1px solid var(--border);">
           <button class="segmented-btn ${activityExceptionFilter === 'all' ? 'active' : ''}" onclick="setActivityExceptionFilter('all')">
-            Tutte (${totalGrouped})
+            ${isEn ? 'All' : 'Tutte'} (${totalGrouped})
           </button>
-          <button class="segmented-btn ${activityExceptionFilter === 'exceptions' ? 'active' : ''}" onclick="setActivityExceptionFilter('exceptions')" title="Visualizza solo le cattedre con suddivisione blocchi diversa dallo standard di default">
-            ⚡ Solo Eccezioni (${exceptionsCount})
+          <button class="segmented-btn ${activityExceptionFilter === 'exceptions' ? 'active' : ''}" onclick="setActivityExceptionFilter('exceptions')" title="${isEn ? 'Show only assignments with non-default block divisions' : 'Visualizza solo le cattedre con suddivisione blocchi diversa dallo standard di default'}">
+            ⚡ ${isEn ? 'Exceptions Only' : 'Solo Eccezioni'} (${exceptionsCount})
           </button>
         </div>
       ` : ''}
 
       <div style="font-size:12px;color:var(--text-muted);margin-left:auto;">
         ${isGrouped 
-          ? `Cattedre: <b>${finalGrouped.length}</b> (Ore tot: <b>${finalGrouped.reduce((acc, g) => acc + g.total_hours, 0)} h</b>)`
-          : `Sotto-attività FET: <b>${resActs.length}</b>`}
+          ? (isEn 
+              ? `Assignments: <b>${finalGrouped.length}</b> (Total hours: <b>${finalGrouped.reduce((acc, g) => acc + g.total_hours, 0)} h</b>)`
+              : `Cattedre: <b>${finalGrouped.length}</b> (Ore tot: <b>${finalGrouped.reduce((acc, g) => acc + g.total_hours, 0)} h</b>)`)
+          : (isEn ? `FET Sub-activities: <b>${resActs.length}</b>` : `Sotto-attività FET: <b>${resActs.length}</b>`)}
       </div>
     </div>
 
@@ -6357,46 +6379,46 @@ async function renderActivities() {
             return `
               <tr class="${g.is_exception ? 'has-exception-row' : ''}">
                 <td><span class="badge badge-info" style="font-size:12px;font-weight:700;">${escapeHtml(g.students_display)}</span></td>
-                <td><b style="color:var(--text-main);cursor:pointer;" onclick="openEditCattedraModal('${escapeJs(g.id)}')" title="Clicca per modificare la cattedra">${escapeHtml(g.subject)}</b></td>
+                <td><b style="color:var(--text-main);cursor:pointer;" onclick="openEditCattedraModal('${escapeJs(g.id)}')" title="${isEn ? 'Click to edit assignment' : 'Clicca per modificare la cattedra'}">${escapeHtml(g.subject)}</b></td>
                 <td>${escapeHtml(g.teachers_display)}</td>
                 <td>
                   ${hasRoom ? `
-                    <span class="badge ${roomBadgeClass}" title="Spazio assegnato">
+                    <span class="badge ${roomBadgeClass}" title="${isEn ? 'Assigned space' : 'Spazio assegnato'}">
                       ${roomIcon} ${escapeHtml(g.rooms_display)}
                     </span>
-                  ` : `<span style="color:var(--text-muted);font-size:12px;" title="Utilizza l'aula base della classe">🏠 Aula Base</span>`}
+                  ` : `<span style="color:var(--text-muted);font-size:12px;" title="${isEn ? 'Uses class resident homeroom' : 'Utilizza l\'aula base della classe'}">🏠 ${isEn ? 'Homeroom' : 'Aula Base'}</span>`}
                 </td>
                 <td style="text-align:center;"><b style="font-size:13px;color:var(--primary);">${g.total_hours} h</b></td>
                 <td style="text-align:center;">
                   ${g.is_exception ? `
-                    <span class="block-badge block-exception" title="ECCEZIONE: Differisce dalla formula standard di default (${escapeHtml(g.default_blocks || '')})">
+                    <span class="block-badge block-exception" title="${isEn ? `EXCEPTION: Differs from standard default (${escapeHtml(g.default_blocks || '')})` : `ECCEZIONE: Differisce dalla formula standard di default (${escapeHtml(g.default_blocks || '')})`}">
                       ⚡ ${escapeHtml(g.blocks)} <span class="exc-tag">Exc</span>
                     </span>
                   ` : `
-                    <span class="block-badge block-default" title="Suddivisione standard di default per ${escapeHtml(g.subject)} (${escapeHtml(g.percorso || '')} ${escapeHtml(g.period || '')})">
+                    <span class="block-badge block-default" title="${isEn ? `Standard default division for ${escapeHtml(g.subject)} (${escapeHtml(g.percorso || '')} ${escapeHtml(g.period || '')})` : `Suddivisione standard di default per ${escapeHtml(g.subject)} (${escapeHtml(g.percorso || '')} ${escapeHtml(g.period || '')})`}">
                       ${escapeHtml(g.blocks)}
                     </span>
                   `}
                   ${g.is_feasible === false ? `
                     <div style="margin-top:3px;">
                       <span class="badge badge-err" style="font-size:10.5px;cursor:pointer;" onclick="openEditBlocksModal('${g.sub_activity_ids.join(',')}', '${escapeJs(g.blocks)}', ${g.total_hours}, '${escapeJs(g.teachers_display)} - ${escapeJs(g.subject)} (${escapeJs(g.students_display)})', '${escapeJs(g.default_blocks || '')}', '${escapeJs(g.subject)}', '${escapeJs(g.students_display)}', '${escapeJs(g.percorso || '')}', '${escapeJs(g.period || '')}', false, '${escapeJs((g.feasibility_warnings || []).join('\n'))}', '${escapeJs(g.suggested_blocks || '')}')" title="${escapeHtml((g.feasibility_warnings || []).join('\n'))}">
-                        ⚠️ Incompatibile (${escapeHtml(g.suggested_blocks || '')})
+                        ⚠️ ${isEn ? 'Incompatible' : 'Incompatibile'} (${escapeHtml(g.suggested_blocks || '')})
                       </span>
                     </div>
                   ` : ''}
                 </td>
                 <td>
                   <span class="sub-acts-tag">
-                    ${(g.sub_activity_ids || []).map(id => `<a href="javascript:void(0)" onclick="jumpToSubActivity('${id}')" class="sub-act-pill" title="Salta al record FET #${id}">#${id}</a>`).join('')}
+                    ${(g.sub_activity_ids || []).map(id => `<a href="javascript:void(0)" onclick="jumpToSubActivity('${id}')" class="sub-act-pill" title="${isEn ? 'Jump to FET record #' + id : 'Salta al record FET #' + id}">#${id}</a>`).join('')}
                   </span>
                 </td>
                 <td style="text-align:center;">
-                  <span class="badge ${g.active ? 'badge-ok' : 'badge-err'}">${g.active ? 'Attiva' : 'Disattiva'}</span>
+                  <span class="badge ${g.active ? 'badge-ok' : 'badge-err'}">${g.active ? (isEn ? 'Active' : 'Attiva') : (isEn ? 'Inactive' : 'Disattiva')}</span>
                 </td>
                 <td style="text-align:right;white-space:nowrap;">
-                  <button class="btn btn-sm btn-primary" onclick="openEditCattedraModal('${escapeJs(g.id)}')" title="Modifica tutti i dati della cattedra: docente, compresenze, classe, materia, ore, blocchi, aula">✏️ Modifica</button>
-                  <button class="btn btn-sm ${g.is_feasible === false ? 'btn-danger' : 'btn-sec'}" onclick="openEditBlocksModal('${g.sub_activity_ids.join(',')}', '${escapeJs(g.blocks)}', ${g.total_hours}, '${escapeJs(g.teachers_display)} - ${escapeJs(g.subject)} (${escapeJs(g.students_display)})', '${escapeJs(g.default_blocks || '')}', '${escapeJs(g.subject)}', '${escapeJs(g.students_display)}', '${escapeJs(g.percorso || '')}', '${escapeJs(g.period || '')}', ${g.is_feasible === false ? 'false' : 'true'}, '${escapeJs((g.feasibility_warnings || []).join('\n'))}', '${escapeJs(g.suggested_blocks || '')}')" title="Rimodula la suddivisione blocchi (es. 2+1 o 1+1+1)">⏱️ Blocchi</button>
-                  <button class="btn btn-sm btn-danger" onclick="deleteCattedra('${g.sub_activity_ids.join(',')}', '${escapeJs(g.teachers_display)} - ${escapeJs(g.subject)} (${escapeJs(g.students_display)})')" title="Elimina l'intera cattedra">🗑️</button>
+                  <button class="btn btn-sm btn-primary" onclick="openEditCattedraModal('${escapeJs(g.id)}')" title="${isEn ? 'Edit assignment: teacher, class, subject, hours, blocks, room' : 'Modifica tutti i dati della cattedra: docente, compresenze, classe, materia, ore, blocchi, aula'}">✏️ ${isEn ? 'Edit' : 'Modifica'}</button>
+                  <button class="btn btn-sm ${g.is_feasible === false ? 'btn-danger' : 'btn-sec'}" onclick="openEditBlocksModal('${g.sub_activity_ids.join(',')}', '${escapeJs(g.blocks)}', ${g.total_hours}, '${escapeJs(g.teachers_display)} - ${escapeJs(g.subject)} (${escapeJs(g.students_display)})', '${escapeJs(g.default_blocks || '')}', '${escapeJs(g.subject)}', '${escapeJs(g.students_display)}', '${escapeJs(g.percorso || '')}', '${escapeJs(g.period || '')}', ${g.is_feasible === false ? 'false' : 'true'}, '${escapeJs((g.feasibility_warnings || []).join('\n'))}', '${escapeJs(g.suggested_blocks || '')}')" title="${isEn ? 'Adjust block division (e.g. 2+1 or 1+1+1)' : 'Rimodula la suddivisione blocchi (es. 2+1 o 1+1+1)'}">⏱️ ${isEn ? 'Blocks' : 'Blocchi'}</button>
+                  <button class="btn btn-sm btn-danger" onclick="deleteCattedra('${g.sub_activity_ids.join(',')}', '${escapeJs(g.teachers_display)} - ${escapeJs(g.subject)} (${escapeJs(g.students_display)})')" title="${isEn ? 'Delete assignment' : 'Elimina l\'intera cattedra'}">🗑️</button>
                 </td>
               </tr>
             `;
@@ -6408,10 +6430,10 @@ async function renderActivities() {
             return `
               <tr id="raw-act-${a.id}">
                 <td style="font-family:var(--font-mono);font-size:11.5px;color:var(--text-sub);">
-                  <span class="sub-act-tag-static" title="ID univoco record FET #${a.id}">#${a.id}</span>
+                  <span class="sub-act-tag-static" title="${isEn ? 'Unique FET record ID #' + a.id : 'ID univoco record FET #' + a.id}">#${a.id}</span>
                 </td>
                 <td><b>${escapeHtml((a.students || []).join('+'))}</b></td>
-                <td><b style="color:var(--text-main);cursor:pointer;" onclick="openEditSingleActivityModal('${a.id}')" title="Clicca per modificare l'attività">${escapeHtml(a.subject || '')}</b></td>
+                <td><b style="color:var(--text-main);cursor:pointer;" onclick="openEditSingleActivityModal('${a.id}')" title="${isEn ? 'Click to edit activity' : 'Clicca per modificare l\'attività'}">${escapeHtml(a.subject || '')}</b></td>
                 <td>${escapeHtml((a.teachers || []).join(' + ') || '-')}</td>
                 <td>
                   ${rName ? `
@@ -6422,11 +6444,11 @@ async function renderActivities() {
                 </td>
                 <td style="text-align:center;"><b>${a.duration || 1} h</b></td>
                 <td style="text-align:center;">
-                  <span class="badge ${a.active ? 'badge-ok' : 'badge-err'}">${a.active ? 'Attiva' : 'Disattiva'}</span>
+                  <span class="badge ${a.active ? 'badge-ok' : 'badge-err'}">${a.active ? (isEn ? 'Active' : 'Attiva') : (isEn ? 'Inactive' : 'Disattiva')}</span>
                 </td>
                 <td style="text-align:right;white-space:nowrap;">
-                  <button class="btn btn-sm btn-primary" onclick="openEditSingleActivityModal('${a.id}')" title="Modifica questa singola attività FET">✏️ Modifica</button>
-                  <button class="btn btn-sm btn-danger" onclick="deleteActivity('${a.id}')" title="Elimina attività">🗑️</button>
+                  <button class="btn btn-sm btn-primary" onclick="openEditSingleActivityModal('${a.id}')" title="${isEn ? 'Edit this single FET activity' : 'Modifica questa singola attività FET'}">✏️ ${isEn ? 'Edit' : 'Modifica'}</button>
+                  <button class="btn btn-sm btn-danger" onclick="deleteActivity('${a.id}')" title="${isEn ? 'Delete activity' : 'Elimina attività'}">🗑️</button>
                 </td>
               </tr>
             `;
@@ -6442,6 +6464,7 @@ async function renderActivities() {
 }
 
 async function openAccorpamentiModal() {
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
   const res = await fetch('/api/accorpamenti/candidates');
   const data = await res.json();
   const rules = data.rules || [];
@@ -6450,18 +6473,18 @@ async function openAccorpamentiModal() {
   showModal(`
     <div class="modal-dialog" style="max-width:880px;">
       <div class="modal-header">
-        <div class="modal-title">🔗 Gestione Accorpamenti Macro-Materie (es. Italiano Latino Storia e Geografia)</div>
+        <div class="modal-title">🔗 ${isEn ? 'Macro-Subject Groupings (e.g. Italian, Latin, History & Geography)' : 'Gestione Accorpamenti Macro-Materie (es. Italiano Latino Storia e Geografia)'}</div>
         <button class="modal-close" onclick="closeModal()">×</button>
       </div>
       <div class="modal-body">
         <div class="info-banner" style="margin-top:0;">
-          💡 <b>Ottimizzazione Didattica e Solutore FET:</b><br>
-          Quando lo stesso docente insegna più materie affini sulla stessa classe (ad es. <i>Italiano</i>, <i>Latino</i> e <i>Storia e Geografia</i>), l'accorpamento in una <b>macro-materia composita</b> (7 o 10 ore totali) permette di definire una suddivisione a blocchi equilibrata (es. <code>2+2+2+1</code> o <code>2+2+2+2+2</code>) impedendo a FET di spezzettare l'orario o concentrare troppe ore nello stesso giorno.<br>
-          L'operazione è <b>reversibile al 100%</b>: disaccorpando, le attività atomiche originali vengono ripristinate integralmente.
+          ${isEn
+            ? '💡 <b>Didactic Optimization and FET Solver:</b><br>When the same teacher teaches related subjects to the same class (e.g. <i>Italian</i>, <i>Latin</i>, and <i>History & Geography</i>), grouping into a <b>composite macro-subject</b> (7 or 10 total hours) enables balanced block divisions (e.g. <code>2+2+2+1</code> or <code>2+2+2+2+2</code>), preventing FET from fragmenting lessons or clustering too many hours on the same day.<br>The operation is <b>100% reversible</b>: ungrouping restores original atomic activities.'
+            : '💡 <b>Ottimizzazione Didattica e Solutore FET:</b><br>Quando lo stesso docente insegna più materie affini sulla stessa classe (ad es. <i>Italiano</i>, <i>Latino</i> e <i>Storia e Geografia</i>), l\'accorpamento in una <b>macro-materia composita</b> (7 o 10 ore totali) permette di definire una suddivisione a blocchi equilibrata (es. <code>2+2+2+1</code> o <code>2+2+2+2+2</code>) impedendo a FET di spezzettare l\'orario o concentrare troppe ore nello stesso giorno.<br>L\'operazione è <b>reversibile al 100%</b>: disaccorpando, le attività atomiche originali vengono ripristinate integralmente.'}
         </div>
 
         <div style="margin-bottom:14px;">
-          <b style="font-size:13px;color:var(--text-main);">📋 Regole di Macro-Materia Riconosciute nel Sistema:</b>
+          <b style="font-size:13px;color:var(--text-main);">${isEn ? '📋 Recognized Macro-Subject Rules in the System:' : '📋 Regole di Macro-Materia Riconosciute nel Sistema:'}</b>
           <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;">
             ${rules.map(r => `
               <span class="item-chip primary" style="font-size:11.5px;padding:4px 8px;">
@@ -6473,14 +6496,14 @@ async function openAccorpamentiModal() {
 
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px;">
           <b style="font-size:13px;color:var(--text-main);">
-            🎯 Cattedre Accorpate & Candidati Individuati (${candidates.length} Cattedre nel Progetto):
+            ${isEn ? `🎯 Merged Assignments & Identified Candidates (${candidates.length} Assignments in Project):` : `🎯 Cattedre Accorpate & Candidati Individuati (${candidates.length} Cattedre nel Progetto):`}
           </b>
-          <input type="text" class="search-input" placeholder="🔍 Cerca per docente o classe (es. 1C, Baston)..." oninput="filterAccorpamentiList(this.value)" style="width:280px;">
+          <input type="text" class="search-input" placeholder="${isEn ? '🔍 Search by teacher or class (e.g. 1C, Baston)...' : '🔍 Cerca per docente o classe (es. 1C, Baston)...'}" oninput="filterAccorpamentiList(this.value)" style="width:280px;">
         </div>
 
         ${candidates.length === 0 ? `
           <div style="background:#f8fafc;border:1px dashed var(--border);border-radius:var(--radius-sm);padding:24px;text-align:center;color:var(--text-muted);font-size:13px;">
-            Nessuna cattedra candidata ad accorpamento trovata.
+            ${isEn ? 'No candidate assignments found for grouping.' : 'Nessuna cattedra candidata ad accorpamento trovata.'}
           </div>
         ` : `
           <div id="accorpamentiCardsContainer" style="display:flex;flex-direction:column;gap:10px;max-height:420px;overflow-y:auto;padding-right:4px;">
@@ -6494,34 +6517,34 @@ async function openAccorpamentiModal() {
                 <div>
                   <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
                     <b style="font-size:14px;color:var(--primary);">👨‍🏫 ${escapeHtml(c.teacher)}</b>
-                    <span class="item-chip primary" style="font-weight:700;">🎓 Classe ${escapeHtml(c.class_name)}</span>
+                    <span class="item-chip primary" style="font-weight:700;">🎓 ${isEn ? 'Class' : 'Classe'} ${escapeHtml(c.class_name)}</span>
                     <span class="badge ${isMerged ? 'badge-ok' : 'badge-warn'}">
-                      ${isMerged ? '🟢 Macro-Materia Attiva' : '⚡ Candidata da Accorpare'}
+                      ${isMerged ? (isEn ? '🟢 Active Macro-Subject' : '🟢 Macro-Materia Attiva') : (isEn ? '⚡ Candidate for Grouping' : '⚡ Candidata da Accorpare')}
                     </span>
                   </div>
                   <div style="font-size:12.5px;color:var(--text-main);font-weight:600;">
-                    📚 ${escapeHtml(c.rule_name)} — <span style="color:var(--primary);">${c.total_hours} ore settimanali</span>
+                    📚 ${escapeHtml(c.rule_name)} — <span style="color:var(--primary);">${c.total_hours} ${isEn ? 'weekly hours' : 'ore settimanali'}</span>
                   </div>
                   <div style="font-size:11.5px;color:var(--text-muted);margin-top:3px;display:flex;align-items:center;gap:8px;">
-                    <span>Suddivisione Blocchi FET:</span>
+                    <span>${isEn ? 'FET Block Division:' : 'Suddivisione Blocchi FET:'}</span>
                     <span class="block-badge">${escapeHtml(blocksFormula)}</span>
                     ${c.components && c.components.length > 0 && c.components[0].hours > 0 ? `
-                      <span>(Componenti: ${c.components.map(comp => `${escapeHtml(comp.subject)} ${comp.hours}h`).join(' + ')})</span>
+                      <span>(${isEn ? 'Components:' : 'Componenti:'} ${c.components.map(comp => `${escapeHtml(comp.subject)} ${comp.hours}h`).join(' + ')})</span>
                     ` : ''}
                   </div>
                 </div>
 
                 <div style="display:flex;gap:6px;align-items:center;">
                   ${isMerged ? `
-                    <button class="btn btn-sm btn-sec" onclick="openEditBlocksModal('${subIds}', '${escapeJs(blocksFormula)}', ${c.total_hours}, '${escapeJs(c.teacher)} - ${escapeJs(c.rule_name)} (${escapeJs(c.class_name)})')" title="Modifica la formula di scomposizione blocchi orari per questa macro-materia">
-                      ⏱️ Blocchi
+                    <button class="btn btn-sm btn-sec" onclick="openEditBlocksModal('${subIds}', '${escapeJs(blocksFormula)}', ${c.total_hours}, '${escapeJs(c.teacher)} - ${escapeJs(c.rule_name)} (${escapeJs(c.class_name)})')" title="${isEn ? 'Edit block division formula for this macro-subject' : 'Modifica la formula di scomposizione blocchi orari per questa macro-materia'}">
+                      ⏱️ ${isEn ? 'Blocks' : 'Blocchi'}
                     </button>
-                    <button class="btn btn-sm btn-danger" onclick="revertAccorpamento('${escapeJs(c.teacher)}', '${escapeJs(c.class_name)}', '${escapeJs(c.rule_id)}')" title="Disaccorpa e ripristina le singole attività atomiche">
-                      ↩️ Disaccorpa
+                    <button class="btn btn-sm btn-danger" onclick="revertAccorpamento('${escapeJs(c.teacher)}', '${escapeJs(c.class_name)}', '${escapeJs(c.rule_id)}')" title="${isEn ? 'Ungroup and restore original atomic activities' : 'Disaccorpa e ripristina le singole attività atomiche'}">
+                      ↩️ ${isEn ? 'Ungroup' : 'Disaccorpa'}
                     </button>
                   ` : `
                     <button class="btn btn-sm btn-primary" onclick="applyAccorpamento('${escapeJs(c.teacher)}', '${escapeJs(c.class_name)}', '${escapeJs(c.rule_id)}')">
-                      ⚡ Accorpa in Macro-Materia
+                      ⚡ ${isEn ? 'Group into Macro-Subject' : 'Accorpa in Macro-Materia'}
                     </button>
                   `}
                 </div>
@@ -6575,8 +6598,9 @@ function applyAccorpamentiPageFilters() {
 }
 
 async function renderAccorpamenti() {
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
   const container = document.getElementById('mainContent');
-  container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);">Caricamento accorpamenti in corso...</div>';
+  container.innerHTML = `<div style="text-align:center;padding:40px;color:var(--text-muted);">${isEn ? 'Loading subject groupings...' : 'Caricamento accorpamenti in corso...'}</div>`;
 
   try {
     const res = await fetch('/api/accorpamenti/candidates');
@@ -6595,37 +6619,39 @@ async function renderAccorpamenti() {
         <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;">
           <div>
             <h2 style="font-size:18px;font-weight:700;color:var(--text-main);margin:0 0 6px 0;display:flex;align-items:center;gap:8px;">
-              🔗 Gestione Accorpamenti Macro-Materie
-              <span class="badge badge-ok">${activeCount} Attive</span>
-              ${pendingCount > 0 ? `<span class="badge badge-warn">${pendingCount} Da Accorpare</span>` : ''}
+              🔗 ${isEn ? 'Macro-Subject Groupings Management' : 'Gestione Accorpamenti Macro-Materie'}
+              <span class="badge badge-ok">${activeCount} ${isEn ? 'Active' : 'Attive'}</span>
+              ${pendingCount > 0 ? `<span class="badge badge-warn">${pendingCount} ${isEn ? 'To Group' : 'Da Accorpare'}</span>` : ''}
             </h2>
             <div style="font-size:13px;color:var(--text-muted);max-width:850px;line-height:1.5;">
-              Quando lo stesso docente insegna più materie complementari sulla stessa classe (es. <i>Italiano</i>, <i>Latino</i> e <i>Storia e Geografia</i>), l'accorpamento in una <b>macro-materia aggregata</b> (7 o 10 ore complessive) permette al motore FET di suddividere il carico didattico con formule bilanciate (es. <code>2+2+2+1</code> o <code>2+1+2+1+2+1+1</code>), evitando frammentazioni in singole ore sparse o sovraccarichi giornalieri per gli studenti.
+              ${isEn
+                ? 'When the same teacher teaches multiple complementary subjects to the same class (e.g. <i>Italian</i>, <i>Latin</i>, and <i>History & Geography</i>), grouping them into an <b>aggregated macro-subject</b> (7 or 10 total hours) enables balanced block divisions (e.g. <code>2+2+2+1</code> or <code>2+1+2+1+2+1+1</code>), preventing fragmentation or daily overload for students.'
+                : 'Quando lo stesso docente insegna più materie complementari sulla stessa classe (es. <i>Italiano</i>, <i>Latino</i> e <i>Storia e Geografia</i>), l\'accorpamento in una <b>macro-materia aggregata</b> (7 o 10 ore complessive) permette al motore FET di suddividere il carico didattico con formule bilanciate (es. <code>2+2+2+1</code> o <code>2+1+2+1+2+1+1</code>), evitando frammentazioni in singole ore sparse o sovraccarichi giornalieri per gli studenti.'}
             </div>
           </div>
           <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-            <button class="btn btn-primary" onclick="openAddAccorpamentoRuleModal()" title="Definisci una nuova regola per riconoscere automaticamente macro-materie">
-              ➕ Nuova Regola
+            <button class="btn btn-primary" onclick="openAddAccorpamentoRuleModal()" title="${isEn ? 'Define a new rule to automatically detect macro-subjects' : 'Definisci una nuova regola per riconoscere automaticamente macro-materie'}">
+              ➕ ${isEn ? 'New Rule' : 'Nuova Regola'}
             </button>
-            <button class="btn btn-sec" onclick="openManualAccorpamentoModal()" title="Unisci manualmente due o più materie dello stesso docente in una classe">
-              ⚡ Accorpa Manualmente
+            <button class="btn btn-sec" onclick="openManualAccorpamentoModal()" title="${isEn ? 'Manually merge two or more subjects of the same teacher in a class' : 'Unisci manualmente due o più materie dello stesso docente in una classe'}">
+              ⚡ ${isEn ? 'Group Manually' : 'Accorpa Manualmente'}
             </button>
-            <button class="btn btn-sec" onclick="navigate('activities')" title="Torna a tutte le Attività e Cattedre">
-              📝 Vai a Tutte le Cattedre
+            <button class="btn btn-sec" onclick="navigate('activities')" title="${isEn ? 'Back to all Activities and Assignments' : 'Torna a tutte le Attività e Cattedre'}">
+              📝 ${isEn ? 'Go to All Assignments' : 'Vai a Tutte le Cattedre'}
             </button>
           </div>
         </div>
 
         <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border);">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:8px;">
-            <b style="font-size:12.5px;color:var(--text-main);text-transform:uppercase;letter-spacing:0.5px;">📋 Regole Macro-Materia Riconosciute nel Sistema (${rules.length}):</b>
-            <button class="btn btn-sm btn-sec" onclick="openAddAccorpamentoRuleModal()">+ Aggiungi Regola</button>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:gap;gap:8px;">
+            <b style="font-size:12.5px;color:var(--text-main);text-transform:uppercase;letter-spacing:0.5px;">${isEn ? `📋 Recognized Macro-Subject Rules in System (${rules.length}):` : `📋 Regole Macro-Materia Riconosciute nel Sistema (${rules.length}):`}</b>
+            <button class="btn btn-sm btn-sec" onclick="openAddAccorpamentoRuleModal()">+ ${isEn ? 'Add Rule' : 'Aggiungi Regola'}</button>
           </div>
           <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;">
             ${rules.map(r => `
               <span class="item-chip primary" style="font-size:12px;padding:5px 10px;display:inline-flex;align-items:center;gap:6px;">
                 <span>⚡ <b>${escapeHtml(r.name)}</b>: <span style="color:var(--text-muted);">${r.components.map(c => escapeHtml(c)).join(' + ')}</span></span>
-                <span style="cursor:pointer;color:var(--danger);font-weight:bold;margin-left:4px;font-size:14px;line-height:1;" onclick="deleteAccorpamentoRule('${escapeJs(r.id)}', '${escapeJs(r.name)}')" title="Elimina questa regola">×</span>
+                <span style="cursor:pointer;color:var(--danger);font-weight:bold;margin-left:4px;font-size:14px;line-height:1;" onclick="deleteAccorpamentoRule('${escapeJs(r.id)}', '${escapeJs(r.name)}')" title="${isEn ? 'Delete this rule' : 'Elimina questa regola'}">×</span>
               </span>
             `).join('')}
           </div>
@@ -6635,15 +6661,15 @@ async function renderAccorpamenti() {
       <!-- Barra Filtri e Ricerca -->
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;gap:12px;flex-wrap:wrap;">
         <div style="display:flex;gap:8px;align-items:center;">
-          <input type="text" id="accorpamentiPageSearch" class="search-input" placeholder="🔍 Cerca docente, classe o materia..." oninput="filterAccorpamentiPageView(this.value)" style="width:320px;">
-          <button class="btn btn-sm btn-sec accorpamenti-filter-btn active" id="btnAccFilterAll" onclick="setAccorpamentiFilter('all')">Tutte (${candidates.length})</button>
-          <button class="btn btn-sm btn-sec accorpamenti-filter-btn" id="btnAccFilterActive" onclick="setAccorpamentiFilter('active')">🟢 Solo Attive (${activeCount})</button>
+          <input type="text" id="accorpamentiPageSearch" class="search-input" placeholder="${isEn ? '🔍 Search teacher, class or subject...' : '🔍 Cerca docente, classe o materia...'}" oninput="filterAccorpamentiPageView(this.value)" style="width:320px;">
+          <button class="btn btn-sm btn-sec accorpamenti-filter-btn active" id="btnAccFilterAll" onclick="setAccorpamentiFilter('all')">${isEn ? 'All' : 'Tutte'} (${candidates.length})</button>
+          <button class="btn btn-sm btn-sec accorpamenti-filter-btn" id="btnAccFilterActive" onclick="setAccorpamentiFilter('active')">🟢 ${isEn ? 'Active Only' : 'Solo Attive'} (${activeCount})</button>
           ${pendingCount > 0 ? `
-            <button class="btn btn-sm btn-sec accorpamenti-filter-btn" id="btnAccFilterPending" onclick="setAccorpamentiFilter('pending')">⚡ Da Accorpare (${pendingCount})</button>
+            <button class="btn btn-sm btn-sec accorpamenti-filter-btn" id="btnAccFilterPending" onclick="setAccorpamentiFilter('pending')">⚡ ${isEn ? 'To Group' : 'Da Accorpare'} (${pendingCount})</button>
           ` : ''}
         </div>
         <div style="font-size:12px;color:var(--text-muted);">
-          Tutte le modifiche e disaccorpamenti sono <b>immediati e reversibili al 100%</b>.
+          ${isEn ? 'All modifications and ungroupings are <b>immediate and 100% reversible</b>.' : 'Tutte le modifiche e disaccorpamenti sono <b>immediati e reversibili al 100%</b>.'}
         </div>
       </div>
 
@@ -6653,13 +6679,13 @@ async function renderAccorpamenti() {
           <thead>
             <tr>
               <th style="width:40px;">#</th>
-              <th style="min-width:180px;">👨‍🏫 Docente Titolare</th>
-              <th style="width:110px;">🎓 Classe</th>
-              <th style="min-width:240px;">📚 Macro-Materia / Materia Composta</th>
-              <th style="width:100px;text-align:center;">⏱️ Ore Tot.</th>
-              <th style="width:170px;">🧩 Blocchi Orari FET</th>
-              <th style="width:150px;text-align:center;">Stato</th>
-              <th style="text-align:right;width:170px;">Azioni</th>
+              <th style="min-width:180px;">👨‍🏫 ${isEn ? 'Lead Teacher' : 'Docente Titolare'}</th>
+              <th style="width:110px;">🎓 ${isEn ? 'Class' : 'Classe'}</th>
+              <th style="min-width:240px;">📚 ${isEn ? 'Macro-Subject / Composite Subject' : 'Macro-Materia / Materia Composta'}</th>
+              <th style="width:100px;text-align:center;">⏱️ ${isEn ? 'Total Hrs' : 'Ore Tot.'}</th>
+              <th style="width:170px;">🧩 ${isEn ? 'FET Time Blocks' : 'Blocchi Orari FET'}</th>
+              <th style="width:150px;text-align:center;">${isEn ? 'Status' : 'Stato'}</th>
+              <th style="text-align:right;width:170px;">${isEn ? 'Actions' : 'Azioni'}</th>
             </tr>
           </thead>
           <tbody>
@@ -6673,12 +6699,12 @@ async function renderAccorpamenti() {
                 <tr class="accorpamento-row ${statusClass}" data-search="${escapeHtml((c.teacher + ' ' + c.class_name + ' ' + c.rule_name).toLowerCase())}">
                   <td style="color:var(--text-sub);">${idx + 1}</td>
                   <td>
-                    <b style="color:var(--text-main);font-size:13.5px;cursor:pointer;" onclick="navigate('activities');setTimeout(() => filterActivities('${escapeJs(c.teacher)}'), 100)" title="Filtra tutte le cattedre di ${escapeHtml(c.teacher)}">
+                    <b style="color:var(--text-main);font-size:13.5px;cursor:pointer;" onclick="navigate('activities');setTimeout(() => filterActivities('${escapeJs(c.teacher)}'), 100)" title="${isEn ? 'Filter assignments for ' + escapeHtml(c.teacher) : 'Filtra tutte le cattedre di ' + escapeHtml(c.teacher)}">
                       👨‍🏫 ${escapeHtml(c.teacher)}
                     </b>
                   </td>
                   <td>
-                    <span class="item-chip primary" style="font-weight:700;cursor:pointer;" onclick="navigate('activities');setTimeout(() => filterActivities('${escapeJs(c.class_name)}'), 100)" title="Vedi tutte le cattedre della classe ${escapeHtml(c.class_name)}">
+                    <span class="item-chip primary" style="font-weight:700;cursor:pointer;" onclick="navigate('activities');setTimeout(() => filterActivities('${escapeJs(c.class_name)}'), 100)" title="${isEn ? 'View all assignments for class ' + escapeHtml(c.class_name) : 'Vedi tutte le cattedre della classe ' + escapeHtml(c.class_name)}">
                       🎓 ${escapeHtml(c.class_name)}
                     </span>
                   </td>
@@ -6688,7 +6714,7 @@ async function renderAccorpamenti() {
                     </div>
                     ${c.components && c.components.length > 0 && c.components[0].hours > 0 ? `
                       <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">
-                        Componenti: ${c.components.map(comp => `${escapeHtml(comp.subject)} (${comp.hours}h)`).join(' + ')}
+                        ${isEn ? 'Components:' : 'Componenti:'} ${c.components.map(comp => `${escapeHtml(comp.subject)} (${comp.hours}h)`).join(' + ')}
                       </div>
                     ` : ''}
                   </td>
@@ -6696,26 +6722,26 @@ async function renderAccorpamenti() {
                     <b style="font-size:14px;color:var(--primary);">${c.total_hours} h</b>
                   </td>
                   <td>
-                    <span class="block-badge" style="font-size:12px;cursor:pointer;" onclick="openEditBlocksModal('${subIds}', '${escapeJs(blocksFormula)}', ${c.total_hours}, '${escapeJs(c.teacher)} - ${escapeJs(c.rule_name)} (${escapeJs(c.class_name)})')" title="Clicca per modificare la scomposizione blocchi">
+                    <span class="block-badge" style="font-size:12px;cursor:pointer;" onclick="openEditBlocksModal('${subIds}', '${escapeJs(blocksFormula)}', ${c.total_hours}, '${escapeJs(c.teacher)} - ${escapeJs(c.rule_name)} (${escapeJs(c.class_name)})')" title="${isEn ? 'Click to edit block decomposition' : 'Clicca per modificare la scomposizione blocchi'}">
                       ${escapeHtml(blocksFormula)}
                     </span>
                   </td>
                   <td style="text-align:center;">
                     <span class="badge ${isMerged ? 'badge-ok' : 'badge-warn'}">
-                      ${isMerged ? '🟢 Attiva' : '⚡ Candidata'}
+                      ${isMerged ? (isEn ? '🟢 Active' : '🟢 Attiva') : (isEn ? '⚡ Candidate' : '⚡ Candidata')}
                     </span>
                   </td>
                   <td style="text-align:right;white-space:nowrap;">
                     ${isMerged ? `
-                      <button class="btn btn-sm btn-sec" onclick="openEditBlocksModal('${subIds}', '${escapeJs(blocksFormula)}', ${c.total_hours}, '${escapeJs(c.teacher)} - ${escapeJs(c.rule_name)} (${escapeJs(c.class_name)})')" title="Modifica la scomposizione in blocchi orari per FET">
-                        ⏱️ Blocchi
+                      <button class="btn btn-sm btn-sec" onclick="openEditBlocksModal('${subIds}', '${escapeJs(blocksFormula)}', ${c.total_hours}, '${escapeJs(c.teacher)} - ${escapeJs(c.rule_name)} (${escapeJs(c.class_name)})')" title="${isEn ? 'Edit timetable blocks for FET' : 'Modifica la scomposizione in blocchi orari per FET'}">
+                        ⏱️ ${isEn ? 'Blocks' : 'Blocchi'}
                       </button>
-                      <button class="btn btn-sm btn-danger" onclick="revertAccorpamento('${escapeJs(c.teacher)}', '${escapeJs(c.class_name)}', '${escapeJs(c.rule_id)}')" title="Disaccorpa e ripristina le singole attività atomiche">
-                        ↩️ Disaccorpa
+                      <button class="btn btn-sm btn-danger" onclick="revertAccorpamento('${escapeJs(c.teacher)}', '${escapeJs(c.class_name)}', '${escapeJs(c.rule_id)}')" title="${isEn ? 'Ungroup and restore original atomic activities' : 'Disaccorpa e ripristina le singole attività atomiche'}">
+                        ↩️ ${isEn ? 'Ungroup' : 'Disaccorpa'}
                       </button>
                     ` : `
                       <button class="btn btn-sm btn-primary" onclick="applyAccorpamento('${escapeJs(c.teacher)}', '${escapeJs(c.class_name)}', '${escapeJs(c.rule_id)}')">
-                        ⚡ Accorpa
+                        ⚡ ${isEn ? 'Group' : 'Accorpa'}
                       </button>
                     `}
                   </td>
@@ -7052,8 +7078,9 @@ function openBlockRulesModal() {
 }
 
 async function renderBlockRulesView() {
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
   const container = document.getElementById('mainContent');
-  container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);">Caricamento regole blocchi & sezioni...</div>';
+  container.innerHTML = `<div style="text-align:center;padding:40px;color:var(--text-muted);">${isEn ? 'Loading block rules & sections...' : 'Caricamento regole blocchi & sezioni...'}</div>`;
 
   try {
     const [sectionsData, rulesRes, cattedreRes] = await Promise.all([
@@ -7070,28 +7097,30 @@ async function renderBlockRulesView() {
     const standardCount = totalCattedre - exceptions.length;
 
     container.innerHTML = `
-      ${getNavReturnBarHtml('Regole di default suddivisione blocchi e indirizzi sezioni.')}
+      ${getNavReturnBarHtml(isEn ? 'Default block division rules and section tracks.' : 'Regole di default suddivisione blocchi e indirizzi sezioni.')}
       <div class="card" style="margin-bottom:16px;">
         <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;">
           <div>
             <h2 style="font-size:18px;font-weight:700;color:var(--text-main);margin:0 0 6px 0;display:flex;align-items:center;gap:8px;">
-              📐 Regole Suddivisione Blocchi Orari & Indirizzi Sezioni
+              ${isEn ? '📐 Timetable Block Division Rules & Section Tracks' : '📐 Regole Suddivisione Blocchi Orari & Indirizzi Sezioni'}
               <span class="badge badge-ok">${standardCount} Standard (${Math.round((standardCount/totalCattedre)*100 || 100)}%)</span>
-              ${exceptions.length > 0 ? `<span class="badge badge-warn">${exceptions.length} Eccezioni</span>` : '<span class="badge badge-ok">0 Eccezioni</span>'}
+              ${exceptions.length > 0 ? `<span class="badge badge-warn">${exceptions.length} ${isEn ? 'Exceptions' : 'Eccezioni'}</span>` : `<span class="badge badge-ok">0 ${isEn ? 'Exceptions' : 'Eccezioni'}</span>`}
             </h2>
             <div style="font-size:13px;color:var(--text-muted);max-width:850px;line-height:1.5;">
-              La suddivisione dei blocchi orari (es. <code>2+1</code>, <code>1+1+1</code>, <code>2+2</code>, <code>2</code>) è gestita con il <b>principio delle eccezioni</b>: ciascuna cattedra riceve automaticamente la formula di default prestabilita per la specifica materia, per l'indirizzo (<b>Liceo</b>, <b>Tecnico</b> o <b>Professionale</b>, determinato dalla <i>sezione</i>) e per il ciclo (<b>Biennio</b> 1-2 o <b>Triennio</b> 3-5). La suddivisione si specifica <b>solo ed esclusivamente se diversa</b> dal default.
+              ${isEn
+                ? 'Timetable block division (e.g. <code>2+1</code>, <code>1+1+1</code>, <code>2+2</code>, <code>2</code>) is governed by the <b>exception principle</b>: each teaching assignment automatically inherits the default formula established for its subject, track (<b>High School</b>, <b>Technical</b>, or <b>Vocational</b>, determined by <i>section</i>), and period (<b>Lower</b> 1-2 or <b>Upper</b> 3-5). A custom division is specified <b>only when differing</b> from default.'
+                : 'La suddivisione dei blocchi orari (es. <code>2+1</code>, <code>1+1+1</code>, <code>2+2</code>, <code>2</code>) è gestita con il <b>principio delle eccezioni</b>: ciascuna cattedra riceve automaticamente la formula di default prestabilita per la specifica materia, per l\'indirizzo (<b>Liceo</b>, <b>Tecnico</b> o <b>Professionale</b>, determinato dalla <i>sezione</i>) e per il ciclo (<b>Biennio</b> 1-2 o <b>Triennio</b> 3-5). La suddivisione si specifica <b>solo ed esclusivamente se diversa</b> dal default.'}
             </div>
           </div>
           <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-            <button class="btn btn-primary" onclick="openAddBlockRuleModal()" title="Aggiungi una nuova regola di default per una disciplina">
-              ➕ Nuova Regola di Default
+            <button class="btn btn-primary" onclick="openAddBlockRuleModal()" title="${isEn ? 'Add a new default formula for a subject' : 'Aggiungi una nuova regola di default per una disciplina'}">
+              ${isEn ? '➕ New Default Rule' : '➕ Nuova Regola di Default'}
             </button>
-            <button class="btn btn-sec" onclick="navigate('activities')" title="Vai alla schermata di tutte le Cattedre">
-              👥 Vai a Vista Cattedre
+            <button class="btn btn-sec" onclick="navigate('activities')" title="${isEn ? 'Go to all Teaching Assignments' : 'Vai alla schermata di tutte le Cattedre'}">
+              ${isEn ? '👥 View Assignments' : '👥 Vai a Vista Cattedre'}
             </button>
-            <button class="btn btn-sec" onclick="resetAllCattedreToDefault()" title="Ripristina tutte le cattedre alla suddivisione standard di default didattico (elimina le eccezioni e suddivisioni puntuali)">
-              ↩️ Ripristina Tutte ai Default Didattici ${exceptions.length > 0 ? `(${exceptions.length} eccezioni)` : ''}
+            <button class="btn btn-sec" onclick="resetAllCattedreToDefault()" title="${isEn ? 'Reset all assignments to standard didactic defaults' : 'Ripristina tutte le cattedre alla suddivisione standard di default didattico (elimina le eccezioni e suddivisioni puntuali)'}">
+              ↩️ ${isEn ? 'Reset All to Defaults' : 'Ripristina Tutte ai Default Didattici'} ${exceptions.length > 0 ? `(${exceptions.length} ${isEn ? 'exceptions' : 'eccezioni'})` : ''}
             </button>
           </div>
         </div>
@@ -7101,14 +7130,16 @@ async function renderBlockRulesView() {
       <div class="card" style="margin-bottom:16px;border-left:4px solid var(--primary);">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
           <b style="font-size:14px;color:var(--text-main);">
-            🏷️ 1. Indirizzo di Studio per Sezione (Liceo / Tecnico / Professionale)
+            ${isEn ? '🏷️ 1. Study Track by Section (High School / Technical / Vocational)' : '🏷️ 1. Indirizzo di Studio per Sezione (Liceo / Tecnico / Professionale)'}
           </b>
           <span style="font-size:12px;color:var(--text-muted);">
-            Valido per tutte le classi da 1 a 5 con la stessa lettera di sezione
+            ${isEn ? 'Applies to all classes 1-5 sharing the same section letter' : 'Valido per tutte le classi da 1 a 5 con la stessa lettera di sezione'}
           </span>
         </div>
         <p style="font-size:12.5px;color:var(--text-muted);margin:0 0 12px 0;">
-          L'indirizzo di studio è determinato <b>esclusivamente in base alla sezione</b>. Clicca sui pulsanti sotto per cambiare l'indirizzo assegnato a ciascuna sezione dell'istituto:
+          ${isEn
+            ? 'The study track is determined <b>strictly by section</b>. Click buttons below to update the track assigned to each section:'
+            : 'L\'indirizzo di studio è determinato <b>esclusivamente in base alla sezione</b>. Clicca sui pulsanti sotto per cambiare l\'indirizzo assegnato a ciascuna sezione dell\'istituto:'}
         </p>
 
         <div style="display:flex;flex-wrap:wrap;gap:12px;">
@@ -7117,18 +7148,18 @@ async function renderBlockRulesView() {
             return `
               <div style="background:var(--bg-hover);border:1px solid var(--border);border-radius:6px;padding:8px 12px;display:flex;flex-direction:column;gap:6px;min-width:170px;">
                 <div style="display:flex;justify-content:space-between;align-items:center;">
-                  <b style="font-size:14px;color:var(--primary);">Sezione ${s.section}</b>
-                  <span style="font-size:11.5px;color:var(--text-muted);" title="${(s.classes || []).join(', ')}">${s.classes_count} classi</span>
+                  <b style="font-size:14px;color:var(--primary);">${isEn ? 'Section' : 'Sezione'} ${s.section}</b>
+                  <span style="font-size:11.5px;color:var(--text-muted);" title="${(s.classes || []).join(', ')}">${s.classes_count} ${isEn ? 'classes' : 'classi'}</span>
                 </div>
                 <div class="percorso-btn-group" style="width:100%;justify-content:space-between;">
-                  <button type="button" class="percorso-btn ${p === 'liceo' ? 'active liceo' : ''}" onclick="updateSectionPercorso('${s.section}', 'liceo')" title="Imposta Sezione ${s.section} come Liceo">
-                    🎓 Liceo
+                  <button type="button" class="percorso-btn ${p === 'liceo' ? 'active liceo' : ''}" onclick="updateSectionPercorso('${s.section}', 'liceo')" title="${isEn ? 'Set Section ' + s.section + ' as High School' : 'Imposta Sezione ' + s.section + ' come Liceo'}">
+                    ${isEn ? '🎓 High School' : '🎓 Liceo'}
                   </button>
-                  <button type="button" class="percorso-btn ${p === 'tecnico' ? 'active tecnico' : ''}" onclick="updateSectionPercorso('${s.section}', 'tecnico')" title="Imposta Sezione ${s.section} come Tecnico">
-                    ⚙️ Tecnico
+                  <button type="button" class="percorso-btn ${p === 'tecnico' ? 'active tecnico' : ''}" onclick="updateSectionPercorso('${s.section}', 'tecnico')" title="${isEn ? 'Set Section ' + s.section + ' as Technical' : 'Imposta Sezione ' + s.section + ' come Tecnico'}">
+                    ${isEn ? '⚙️ Technical' : '⚙️ Tecnico'}
                   </button>
-                  <button type="button" class="percorso-btn ${p === 'professionale' ? 'active professionale' : ''}" onclick="updateSectionPercorso('${s.section}', 'professionale')" title="Imposta Sezione ${s.section} come Professionale">
-                    🏥 Prof.
+                  <button type="button" class="percorso-btn ${p === 'professionale' ? 'active professionale' : ''}" onclick="updateSectionPercorso('${s.section}', 'professionale')" title="${isEn ? 'Set Section ' + s.section + ' as Vocational' : 'Imposta Sezione ' + s.section + ' come Professionale'}">
+                    ${isEn ? '🏥 Vocat.' : '🏥 Prof.'}
                   </button>
                 </div>
               </div>
@@ -7142,15 +7173,17 @@ async function renderBlockRulesView() {
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:10px;">
           <div>
             <b style="font-size:14px;color:var(--text-main);">
-              📐 2. Regole di Default del Sistema (${rules.length} Regole Didattiche)
+              ${isEn ? `📐 2. System Default Rules (${rules.length} Didactic Rules)` : `📐 2. Regole di Default del Sistema (${rules.length} Regole Didattiche)`}
             </b>
             <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">
-              Queste formule vengono applicate automaticamente a qualsiasi cattedra in assenza di eccezioni esplicite.
+              ${isEn
+                ? 'These formulas are automatically assigned to assignments unless an explicit exception is set.'
+                : 'Queste formule vengono applicate automaticamente a qualsiasi cattedra in assenza di eccezioni esplicite.'}
             </div>
           </div>
           <div style="display:flex;gap:8px;align-items:center;">
-            <input type="text" id="blockRulesSearchInput" class="search-input" placeholder="🔍 Cerca materia o percorso..." oninput="filterBlockRulesTable(this.value)" style="width:240px;">
-            <button class="btn btn-sm btn-primary" onclick="openAddBlockRuleModal()">+ Nuova Regola</button>
+            <input type="text" id="blockRulesSearchInput" class="search-input" placeholder="${isEn ? '🔍 Search subject or track...' : '🔍 Cerca materia o percorso...'}" oninput="filterBlockRulesTable(this.value)" style="width:240px;">
+            <button class="btn btn-sm btn-primary" onclick="openAddBlockRuleModal()">${isEn ? '+ New Rule' : '+ Nuova Regola'}</button>
           </div>
         </div>
 
@@ -7159,17 +7192,21 @@ async function renderBlockRulesView() {
             <thead>
               <tr>
                 <th style="width:40px;">#</th>
-                <th>Materia / Disciplina</th>
-                <th style="width:130px;text-align:center;">Indirizzo</th>
-                <th style="width:110px;text-align:center;">Periodo</th>
-                <th style="width:85px;text-align:center;">Ore</th>
-                <th style="width:130px;text-align:center;">Formula Default</th>
-                <th style="text-align:right;width:120px;">Azioni</th>
+                <th>${isEn ? 'Subject / Discipline' : 'Materia / Disciplina'}</th>
+                <th style="width:130px;text-align:center;">${isEn ? 'Track' : 'Indirizzo'}</th>
+                <th style="width:110px;text-align:center;">${isEn ? 'Period' : 'Periodo'}</th>
+                <th style="width:85px;text-align:center;">${isEn ? 'Hours' : 'Ore'}</th>
+                <th style="width:130px;text-align:center;">${isEn ? 'Default Formula' : 'Formula Default'}</th>
+                <th style="text-align:right;width:120px;">${isEn ? 'Actions' : 'Azioni'}</th>
               </tr>
             </thead>
             <tbody>
               ${rules.map((r, idx) => {
                 const percBadge = r.percorso === 'liceo' ? 'badge-liceo' : (r.percorso === 'tecnico' ? 'badge-tecnico' : (r.percorso === 'professionale' ? 'badge-professionale' : 'badge-info'));
+                const pLabel = (r.percorso || 'tutti').toLowerCase();
+                const percDisplay = isEn ? (pLabel === 'tutti' ? 'ALL' : pLabel === 'liceo' ? 'HIGH SCHOOL' : pLabel === 'tecnico' ? 'TECHNICAL' : 'VOCATIONAL') : pLabel.toUpperCase();
+                const periodLabel = (r.period || 'tutti').toLowerCase();
+                const periodDisplay = isEn ? (periodLabel === 'tutti' ? 'ALL' : periodLabel === 'biennio' ? 'LOWER (1-2)' : 'UPPER (3-5)') : periodLabel.toUpperCase();
                 return `
                   <tr class="block-rule-row" data-search="${escapeHtml((r.subject + ' ' + (r.percorso || '') + ' ' + (r.period || '') + ' ' + r.blocks).toLowerCase())}">
                     <td style="color:var(--text-sub);">${idx + 1}</td>
@@ -7177,20 +7214,20 @@ async function renderBlockRulesView() {
                       <b style="color:var(--text-main);font-size:13px;">${escapeHtml(r.subject)}</b>
                     </td>
                     <td style="text-align:center;">
-                      <span class="badge ${percBadge}">${escapeHtml(r.percorso || 'tutti').toUpperCase()}</span>
+                      <span class="badge ${percBadge}">${escapeHtml(percDisplay)}</span>
                     </td>
                     <td style="text-align:center;">
-                      <span class="badge badge-info">${escapeHtml(r.period || 'tutti').toUpperCase()}</span>
+                      <span class="badge badge-info">${escapeHtml(periodDisplay)}</span>
                     </td>
                     <td style="text-align:center;">
-                      <b style="color:var(--primary);">${r.total_hours ? r.total_hours + ' h' : 'Qualsiasi'}</b>
+                      <b style="color:var(--primary);">${r.total_hours ? r.total_hours + ' h' : (isEn ? 'Any' : 'Qualsiasi')}</b>
                     </td>
                     <td style="text-align:center;">
                       <span class="block-badge block-default" style="font-weight:700;">${escapeHtml(r.blocks)}</span>
                     </td>
                     <td style="text-align:right;white-space:nowrap;">
-                      <button class="btn btn-sm btn-sec" onclick="openAddBlockRuleModal(${JSON.stringify(r).replace(/"/g, '&quot;')})" title="Modifica regola">✏️</button>
-                      <button class="btn btn-sm btn-danger" onclick="deleteBlockRule('${escapeJs(r.id)}')" title="Elimina regola">🗑️</button>
+                      <button class="btn btn-sm btn-sec" onclick="openAddBlockRuleModal(${JSON.stringify(r).replace(/"/g, '&quot;')})" title="${isEn ? 'Edit rule' : 'Modifica regola'}">✏️</button>
+                      <button class="btn btn-sm btn-danger" onclick="deleteBlockRule('${escapeJs(r.id)}')" title="${isEn ? 'Delete rule' : 'Elimina regola'}">🗑️</button>
                     </td>
                   </tr>
                 `;
@@ -7205,30 +7242,34 @@ async function renderBlockRulesView() {
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
           <div>
             <b style="font-size:14px;color:var(--text-main);display:flex;align-items:center;gap:6px;">
-              ⚡ 3. Riepilogo Eccezioni Attive nel Progetto (${exceptions.length})
+              ${isEn ? `⚡ 3. Active Project Exceptions (${exceptions.length})` : `⚡ 3. Riepilogo Eccezioni Attive nel Progetto (${exceptions.length})`}
             </b>
             <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">
-              Cattedre la cui suddivisione blocchi differisce intenzionalmente dalla formula standard di default stabilita sopra.
+              ${isEn
+                ? 'Assignments whose block division differs intentionally from standard default formulas.'
+                : 'Cattedre la cui suddivisione blocchi differisce intenzionalmente dalla formula standard di default stabilita sopra.'}
             </div>
           </div>
         </div>
 
         ${exceptions.length === 0 ? `
           <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:6px;padding:20px;text-align:center;color:#166534;font-size:13px;">
-            ✅ <b>Nessuna eccezione attiva:</b> tutte le <b>${totalCattedre}</b> cattedre seguono perfettamente le formule standard di default previste per materia, indirizzo e biennio/triennio!
+            ${isEn
+              ? `✅ <b>No active exceptions:</b> all <b>${totalCattedre}</b> assignments follow default didactic formulas for subject, track and period!`
+              : `✅ <b>Nessuna eccezione attiva:</b> tutte le <b>${totalCattedre}</b> cattedre seguono perfettamente le formule standard di default previste per materia, indirizzo e biennio/triennio!`}
           </div>
         ` : `
           <div class="table-container">
             <table class="data-table">
               <thead>
                 <tr>
-                  <th>Classe</th>
-                  <th>Materia</th>
-                  <th>Docenti</th>
-                  <th style="width:85px;text-align:center;">Ore</th>
-                  <th style="width:130px;text-align:center;">Suddivisione Applicata</th>
-                  <th style="width:130px;text-align:center;">Formula Standard</th>
-                  <th style="text-align:right;width:190px;">Azioni</th>
+                  <th>${isEn ? 'Class' : 'Classe'}</th>
+                  <th>${isEn ? 'Subject' : 'Materia'}</th>
+                  <th>${isEn ? 'Teachers' : 'Docenti'}</th>
+                  <th style="width:85px;text-align:center;">${isEn ? 'Hours' : 'Ore'}</th>
+                  <th style="width:130px;text-align:center;">${isEn ? 'Applied Division' : 'Suddivisione Applicata'}</th>
+                  <th style="width:130px;text-align:center;">${isEn ? 'Standard Formula' : 'Formula Standard'}</th>
+                  <th style="text-align:right;width:190px;">${isEn ? 'Actions' : 'Azioni'}</th>
                 </tr>
               </thead>
               <tbody>
@@ -7245,11 +7286,11 @@ async function renderBlockRulesView() {
                       <span class="block-badge block-default">${escapeHtml(e.default_blocks || '')}</span>
                     </td>
                     <td style="text-align:right;white-space:nowrap;">
-                      <button class="btn btn-sm btn-sec" onclick="submitResetBlocksToDefault('${e.sub_activity_ids.join(',')}', ${e.total_hours})" title="Ripristina questa cattedra alla formula di default">
-                        ↩️ Ripristina Default
+                      <button class="btn btn-sm btn-sec" onclick="submitResetBlocksToDefault('${e.sub_activity_ids.join(',')}', ${e.total_hours})" title="${isEn ? 'Reset this assignment to default formula' : 'Ripristina questa cattedra alla formula di default'}">
+                        ↩️ ${isEn ? 'Reset Default' : 'Ripristina Default'}
                       </button>
                       <button class="btn btn-sm btn-primary" onclick="openEditBlocksModal('${e.sub_activity_ids.join(',')}', '${escapeJs(e.blocks)}', ${e.total_hours}, '${escapeJs(e.teachers_display)} - ${escapeJs(e.subject)} (${escapeJs(e.students_display)})', '${escapeJs(e.default_blocks || '')}', '${escapeJs(e.subject)}', '${escapeJs(e.students_display)}', '${escapeJs(e.percorso || '')}', '${escapeJs(e.period || '')}')">
-                        ✏️ Modifica
+                        ✏️ ${isEn ? 'Edit' : 'Modifica'}
                       </button>
                     </td>
                   </tr>
@@ -7275,6 +7316,7 @@ function filterBlockRulesTable(q) {
 }
 
 async function openAddBlockRuleModal(existingRule = null) {
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
   const res = await fetch('/api/subjects');
   const subjects = await res.json();
   const subjNames = subjects.map(s => s.name);
@@ -7285,61 +7327,64 @@ async function openAddBlockRuleModal(existingRule = null) {
   showModal(`
     <div class="modal-dialog">
       <div class="modal-header">
-        <div class="modal-title">${isEdit ? '✏️ Modifica Regola di Default' : '➕ Nuova Regola di Default Suddivisione Blocchi'}</div>
+        <div class="modal-title">${isEdit ? (isEn ? '✏️ Edit Default Rule' : '✏️ Modifica Regola di Default') : (isEn ? '➕ New Default Block Division Rule' : '➕ Nuova Regola di Default Suddivisione Blocchi')}</div>
         <button class="modal-close" onclick="closeModal()">×</button>
       </div>
       <div class="modal-body">
         <div class="form-group">
-          <label class="form-label">Materia / Disciplina</label>
+          <label class="form-label">${isEn ? 'Subject / Discipline' : 'Materia / Disciplina'}</label>
           <select id="ruleSubjectSelect" class="form-select">
             ${subjNames.map(s => `<option value="${escapeHtml(s)}" ${r.subject === s ? 'selected' : ''}>${escapeHtml(s)}</option>`).join('')}
-            <option value="*" ${r.subject === '*' ? 'selected' : ''}>* (Tutte le materie - Fallback Generale)</option>
+            <option value="*" ${r.subject === '*' ? 'selected' : ''}>* (${isEn ? 'All subjects - General Fallback' : 'Tutte le materie - Fallback Generale'})</option>
           </select>
         </div>
 
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
           <div class="form-group">
-            <label class="form-label">Indirizzo di Studio</label>
+            <label class="form-label">${isEn ? 'Study Track' : 'Indirizzo di Studio'}</label>
             <select id="rulePercorsoSelect" class="form-select">
-              <option value="tutti" ${r.percorso === 'tutti' ? 'selected' : ''}>Tutti gli Indirizzi</option>
-              <option value="liceo" ${r.percorso === 'liceo' ? 'selected' : ''}>🎓 Solo Liceo</option>
-              <option value="tecnico" ${r.percorso === 'tecnico' ? 'selected' : ''}>⚙️ Solo Tecnico</option>
-              <option value="professionale" ${r.percorso === 'professionale' ? 'selected' : ''}>🏥 Solo Professionale</option>
+              <option value="tutti" ${r.percorso === 'tutti' ? 'selected' : ''}>${isEn ? 'All Tracks' : 'Tutti gli Indirizzi'}</option>
+              <option value="liceo" ${r.percorso === 'liceo' ? 'selected' : ''}>${isEn ? '🎓 High School Only' : '🎓 Solo Liceo'}</option>
+              <option value="tecnico" ${r.percorso === 'tecnico' ? 'selected' : ''}>${isEn ? '⚙️ Technical Only' : '⚙️ Solo Tecnico'}</option>
+              <option value="professionale" ${r.percorso === 'professionale' ? 'selected' : ''}>${isEn ? '🏥 Vocational Only' : '🏥 Solo Professionale'}</option>
             </select>
           </div>
           <div class="form-group">
-            <label class="form-label">Periodo Scolastico</label>
+            <label class="form-label">${isEn ? 'School Period' : 'Periodo Scolastico'}</label>
             <select id="rulePeriodSelect" class="form-select">
-              <option value="tutti" ${r.period === 'tutti' ? 'selected' : ''}>Tutti (Biennio & Triennio)</option>
-              <option value="biennio" ${r.period === 'biennio' ? 'selected' : ''}>Biennio (Classi 1-2)</option>
-              <option value="triennio" ${r.period === 'triennio' ? 'selected' : ''}>Triennio (Classi 3-5)</option>
+              <option value="tutti" ${r.period === 'tutti' ? 'selected' : ''}>${isEn ? 'All (Lower & Upper Years)' : 'Tutti (Biennio & Triennio)'}</option>
+              <option value="biennio" ${r.period === 'biennio' ? 'selected' : ''}>${isEn ? 'Lower Years (Classes 1-2)' : 'Biennio (Classi 1-2)'}</option>
+              <option value="triennio" ${r.period === 'triennio' ? 'selected' : ''}>${isEn ? 'Upper Years (Classes 3-5)' : 'Triennio (Classi 3-5)'}</option>
             </select>
           </div>
         </div>
 
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
           <div class="form-group">
-            <label class="form-label">Monte Ore Settimanale</label>
+            <label class="form-label">${isEn ? 'Weekly Hours' : 'Monte Ore Settimanale'}</label>
             <input type="number" id="ruleTotalHours" class="form-input" min="1" max="10" value="${r.total_hours || 3}">
           </div>
           <div class="form-group">
-            <label class="form-label">Formula Suddivisione di Default</label>
+            <label class="form-label">${isEn ? 'Default Block Formula' : 'Formula Suddivisione di Default'}</label>
             <input type="text" id="ruleBlocks" class="form-input" value="${escapeHtml(r.blocks || '2+1')}" style="font-weight:700;font-family:var(--font-mono);">
           </div>
         </div>
         <span class="form-hint">
-          Esempio: per 3 ore inserisci <b>2+1</b> (una lezione doppia e una singola in giorni diversi) oppure <b>1+1+1</b>.
+          ${isEn
+            ? 'Example: for 3 hours enter <b>2+1</b> (one double period and one single on different days) or <b>1+1+1</b>.'
+            : 'Esempio: per 3 ore inserisci <b>2+1</b> (una lezione doppia e una singola in giorni diversi) oppure <b>1+1+1</b>.'}
         </span>
       </div>
       <div class="modal-footer">
         <button class="btn btn-sec" onclick="closeModal()" data-i18n="common.cancel">${_t('common.cancel', 'Annulla')}</button>
-        <button class="btn btn-primary" onclick="submitBlockRule('${escapeJs(r.id || '')}')">💾 Salva Regola</button>
+        <button class="btn btn-primary" onclick="submitBlockRule('${escapeJs(r.id || '')}')">💾 ${isEn ? 'Save Rule' : 'Salva Regola'}</button>
       </div>
     </div>
   `);
 }
 
 async function submitBlockRule(existingId) {
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
   const subject = document.getElementById('ruleSubjectSelect').value.trim();
   const percorso = document.getElementById('rulePercorsoSelect').value.trim();
   const period = document.getElementById('rulePeriodSelect').value.trim();
@@ -7347,16 +7392,16 @@ async function submitBlockRule(existingId) {
   const blocks = document.getElementById('ruleBlocks').value.trim();
 
   if (!subject) {
-    alert('Selezionare la materia.');
+    alert(isEn ? 'Please select a subject.' : 'Selezionare la materia.');
     return;
   }
   if (totalHours <= 0) {
-    alert('Inserire un monte ore valido.');
+    alert(isEn ? 'Please enter a valid number of weekly hours.' : 'Inserire un monte ore valido.');
     return;
   }
   const blockSum = blocks.replace(/,/g, '+').split('+').map(x => parseInt(x.trim()) || 0).reduce((a, b) => a + b, 0);
   if (blockSum !== totalHours) {
-    alert(`La somma dei blocchi (${blockSum}) non corrisponde al monte ore settimanale (${totalHours}).`);
+    alert(isEn ? `Block sum (${blockSum}) does not match weekly hours (${totalHours}).` : `La somma dei blocchi (${blockSum}) non corrisponde al monte ore settimanale (${totalHours}).`);
     return;
   }
 
@@ -7466,6 +7511,7 @@ async function deleteActivity(id) {
 let selectedCoTeachers = [];
 
 async function openNewCattedraModal(preset = {}) {
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
   selectedCoTeachers = [];
   const [teachers, classes, groups, subjects, roomsData] = await Promise.all([
     fetch('/api/teachers').then(r => r.json()),
@@ -7485,24 +7531,24 @@ async function openNewCattedraModal(preset = {}) {
     <option value="${escapeHtml(t.name)}" ${preset.teacher === t.name ? 'selected' : ''}>${escapeHtml(t.name)}</option>
   `).join('');
 
-  let targetOpts = `<optgroup label="Classi Intere">` +
+  let targetOpts = `<optgroup label="${isEn ? 'Entire Classes' : 'Classi Intere'}">` +
     classes.map(c => `
       <option value="${escapeHtml(c.name)}" ${preset.className === c.name ? 'selected' : ''}>
-        Classe ${escapeHtml(c.name)} (${c.students || 0} alunni - ${escapeHtml(c.building || 'Centrale')})
+        ${isEn ? 'Class' : 'Classe'} ${escapeHtml(c.name)} (${c.students || 0} ${isEn ? 'students' : 'alunni'} - ${escapeHtml(c.building ? (isEn && c.building === 'Centrale' ? 'Main' : (isEn && c.building.includes('Succ') ? 'Branch' : c.building)) : (isEn ? 'Main' : 'Centrale'))})
       </option>
     `).join('') +
     `</optgroup>`;
   if (groups.length > 0) {
-    targetOpts += `<optgroup label="Gruppi Articolati (Lingue, Religione/Alt, Sottogruppi)">` +
+    targetOpts += `<optgroup label="${isEn ? 'Subgroups (Languages, Ethics/Alt, Subgroups)' : 'Gruppi Articolati (Lingue, Religione/Alt, Sottogruppi)'}">` +
       groups.map(g => `
         <option value="${escapeHtml(g.name)}" ${preset.className === g.name ? 'selected' : ''}>
-          Gruppo ${escapeHtml(g.name)} (${escapeHtml(g.class_name)})
+          ${isEn ? 'Group' : 'Gruppo'} ${escapeHtml(g.name)} (${escapeHtml(g.class_name)})
         </option>
       `).join('') +
       `</optgroup>`;
   }
-  targetOpts += `<optgroup label="Altro">
-    <option value="__CUSTOM__">➕ Classi Parallele / Accorpate (es. 1C+1D)...</option>
+  targetOpts += `<optgroup label="${isEn ? 'Other' : 'Altro'}">
+    <option value="__CUSTOM__">➕ ${isEn ? 'Parallel / Combined Classes (e.g. 1C+1D)...' : 'Classi Parallele / Accorpate (es. 1C+1D)...'}</option>
   </optgroup>`;
 
   const subjOpts = subjects.map(s => `
@@ -7518,72 +7564,72 @@ async function openNewCattedraModal(preset = {}) {
   showModal(`
     <div class="modal-dialog">
       <div class="modal-header">
-        <div class="modal-title">➕ Nuova Cattedra / Attività d'Insegnamento</div>
+        <div class="modal-title">➕ ${isEn ? 'New Teaching Assignment / Activity' : 'Nuova Cattedra / Attività d\'Insegnamento'}</div>
         <button class="modal-close" onclick="closeModal()">×</button>
       </div>
       <div class="modal-body">
         <div class="form-group">
           <label class="form-label">
-            <span>Docente Titolare</span>
-            <span class="form-hint">Ordinati alfabeticamente</span>
+            <span>${isEn ? 'Primary Teacher' : 'Docente Titolare'}</span>
+            <span class="form-hint">${isEn ? 'Sorted alphabetically' : 'Ordinati alfabeticamente'}</span>
           </label>
           <select id="modalTeacher" class="form-select">
-            <option value="">-- Seleziona Docente Titolare --</option>
+            <option value="">-- ${isEn ? 'Select Primary Teacher' : 'Seleziona Docente Titolare'} --</option>
             ${teacherOpts}
           </select>
         </div>
 
         <div class="form-group">
           <div class="form-label">
-            <span>Compresenze / Co-Docenti</span>
-            <span class="form-hint" style="cursor:pointer;color:var(--primary);font-weight:600;" onclick="toggleCoTeacherRow()">+ Aggiungi Docente Compresenza</span>
+            <span>${isEn ? 'Co-Teaching / Co-Teachers' : 'Compresenze / Co-Docenti'}</span>
+            <span class="form-hint" style="cursor:pointer;color:var(--primary);font-weight:600;" onclick="toggleCoTeacherRow()">+ ${isEn ? 'Add Co-Teacher' : 'Aggiungi Docente Compresenza'}</span>
           </div>
           <div id="coTeacherRow" style="display:none;margin-bottom:6px;">
             <div style="display:flex;gap:6px;">
               <select id="modalCoTeacherSelect" class="form-select">
-                <option value="">-- Seleziona Docente per compresenza --</option>
+                <option value="">-- ${isEn ? 'Select Co-Teacher' : 'Seleziona Docente per compresenza'} --</option>
                 ${teachers.map(t => `<option value="${escapeHtml(t.name)}">${escapeHtml(t.name)}</option>`).join('')}
               </select>
-              <button class="btn btn-sm btn-sec" type="button" onclick="addCoTeacherChip()">Aggiungi</button>
+              <button class="btn btn-sm btn-sec" type="button" onclick="addCoTeacherChip()">${isEn ? 'Add' : 'Aggiungi'}</button>
             </div>
           </div>
           <div id="coTeacherChips" class="co-teachers-list"></div>
         </div>
 
         <div class="form-group">
-          <label class="form-label">Destinatari (Classe, Gruppo Articolato o Classi Parallele)</label>
+          <label class="form-label">${isEn ? 'Recipients (Class, Subgroup or Parallel Classes)' : 'Destinatari (Classe, Gruppo Articolato o Classi Parallele)'}</label>
           <select id="modalTargetSelect" class="form-select" onchange="onTargetSelectChange(this.value)">
             ${targetOpts}
           </select>
           <div id="customTargetDiv" style="display:none;margin-top:6px;">
-            <input type="text" id="modalCustomTarget" class="form-input" placeholder="Es. 1C+1D (per Scienze Motorie o accorpamenti)">
-            <span class="form-hint">Separa con "+" o virgola le classi che partecipano insieme alla stessa ora.</span>
+            <input type="text" id="modalCustomTarget" class="form-input" placeholder="${isEn ? 'E.g. 1C+1D (for PE or merged classes)' : 'Es. 1C+1D (per Scienze Motorie o accorpamenti)'}">
+            <span class="form-hint">${isEn ? 'Separate with "+" or comma classes attending together at the same time.' : 'Separa con "+" o virgola le classi che partecipano insieme alla stessa ora.'}</span>
           </div>
         </div>
 
         <div class="form-group">
-          <label class="form-label">Materia / Disciplina</label>
+          <label class="form-label">${isEn ? 'Subject / Discipline' : 'Materia / Disciplina'}</label>
           <select id="modalSubject" class="form-select">
-            <option value="">-- Seleziona Materia --</option>
+            <option value="">-- ${isEn ? 'Select Subject' : 'Seleziona Materia'} --</option>
             ${subjOpts}
           </select>
         </div>
 
         <div class="form-group">
           <label class="form-label">
-            <span>Aula Dedicata / Laboratorio / Palestra</span>
-            <span class="form-hint">Se omesso, usa l'aula base della classe</span>
+            <span>${isEn ? 'Dedicated Room / Lab / Gym' : 'Aula Dedicata / Laboratorio / Palestra'}</span>
+            <span class="form-hint">${isEn ? 'If omitted, uses class resident homeroom' : 'Se omesso, usa l\'aula base della classe'}</span>
           </label>
           <select id="modalRoomSelect" class="form-select" onchange="checkBuildingTransferWarning()">
-            <option value="" data-bld="" data-type="default">-- 🏠 Aula Base Ordinaria della Classe (Nessun trasferimento) --</option>
-            <optgroup label="🧪 Laboratori Didattici (Innescano cambio plesso per classi di altra sede)">
-              ${labs.map(r => `<option value="${escapeHtml(r.name)}" data-bld="${escapeHtml(r.building || 'Centrale')}" data-type="lab">🧪 ${escapeHtml(r.name)} [${escapeHtml(r.building || 'Centrale')} - max ${r.capacity || 30} alunni]</option>`).join('')}
+            <option value="" data-bld="" data-type="default">-- 🏠 ${isEn ? 'Standard Homeroom of Class (No transfer)' : 'Aula Base Ordinaria della Classe (Nessun trasferimento)'} --</option>
+            <optgroup label="${isEn ? '🧪 Teaching Laboratories (Triggers campus transfer for classes from other sites)' : '🧪 Laboratori Didattici (Innescano cambio plesso per classi di altra sede)'}">
+              ${labs.map(r => `<option value="${escapeHtml(r.name)}" data-bld="${escapeHtml(r.building || 'Centrale')}" data-type="lab">🧪 ${escapeHtml(r.name)} [${escapeHtml(r.building || 'Centrale')} - max ${r.capacity || 30} ${isEn ? 'students' : 'alunni'}]</option>`).join('')}
             </optgroup>
-            <optgroup label="🏀 Palestre / Impianti Sportivi">
-              ${gyms.map(r => `<option value="${escapeHtml(r.name)}" data-bld="${escapeHtml(r.building || 'Centrale')}" data-type="gym">🏀 ${escapeHtml(r.name)} [${escapeHtml(r.building || 'Centrale')} - max ${r.capacity || 30} alunni]</option>`).join('')}
+            <optgroup label="${isEn ? '🏀 Gymnasiums / Sports Facilities' : '🏀 Palestre / Impianti Sportivi'}">
+              ${gyms.map(r => `<option value="${escapeHtml(r.name)}" data-bld="${escapeHtml(r.building || 'Centrale')}" data-type="gym">🏀 ${escapeHtml(r.name)} [${escapeHtml(r.building || 'Centrale')} - max ${r.capacity || 30} ${isEn ? 'students' : 'alunni'}]</option>`).join('')}
             </optgroup>
-            <optgroup label="🚪 Aule Speciali / Altri Spazi">
-              ${stdRooms.map(r => `<option value="${escapeHtml(r.name)}" data-bld="${escapeHtml(r.building || 'Centrale')}" data-type="standard">🚪 ${escapeHtml(r.name)} [${escapeHtml(r.building || 'Centrale')} - max ${r.capacity || 30} alunni]</option>`).join('')}
+            <optgroup label="${isEn ? '🚪 Special Rooms / Other Spaces' : '🚪 Aule Speciali / Altri Spazi'}">
+              ${stdRooms.map(r => `<option value="${escapeHtml(r.name)}" data-bld="${escapeHtml(r.building || 'Centrale')}" data-type="standard">🚪 ${escapeHtml(r.name)} [${escapeHtml(r.building || 'Centrale')} - max ${r.capacity || 30} ${isEn ? 'students' : 'alunni'}]</option>`).join('')}
             </optgroup>
           </select>
           <div id="buildingTransferWarning" style="display:none;margin-top:8px;"></div>
@@ -7591,31 +7637,33 @@ async function openNewCattedraModal(preset = {}) {
 
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
           <div class="form-group">
-            <label class="form-label">Monte Ore Settimanale</label>
+            <label class="form-label">${isEn ? 'Weekly Hours' : 'Monte Ore Settimanale'}</label>
             <input type="number" id="modalTotalHours" class="form-input" min="1" max="10" value="3" oninput="onHoursInputChange(this.value)">
           </div>
           <div class="form-group">
-            <label class="form-label">Suddivisione Blocchi</label>
+            <label class="form-label">${isEn ? 'Block Division' : 'Suddivisione Blocchi'}</label>
             <input type="text" id="modalBlocks" class="form-input" value="2+1" style="font-weight:700;font-family:var(--font-mono);">
           </div>
         </div>
 
         <div class="form-group">
-          <span class="form-label">Preset Suddivisione Blocchi:</span>
+          <span class="form-label">${isEn ? 'Block Division Presets:' : 'Preset Suddivisione Blocchi:'}</span>
           <div class="preset-pills" id="modalPresetsContainer"></div>
           <span class="form-hint" style="margin-top:4px;">
-            FET garantisce automaticamente che ciascun blocco (es. 2 ore + 1 ora) sia svolto in <b>giorni diversi</b> tramite il vincolo <i>ConstraintMinDaysBetweenActivities</i>.
+            ${isEn
+              ? 'FET automatically ensures each block (e.g. 2 hrs + 1 hr) takes place on <b>different days</b> via <i>ConstraintMinDaysBetweenActivities</i>.'
+              : 'FET garantisce automaticamente che ciascun blocco (es. 2 ore + 1 ora) sia svolto in <b>giorni diversi</b> tramite il vincolo <i>ConstraintMinDaysBetweenActivities</i>.'}
           </span>
         </div>
 
         <div class="form-group">
-          <label class="form-label">Note / Dettagli Cattedra <span class="form-hint">(opzionale)</span></label>
-          <input type="text" id="modalComments" class="form-input" placeholder="Es. Laboratorio con ITP, cattedra orario esterna...">
+          <label class="form-label">${isEn ? 'Assignment Notes / Details' : 'Note / Dettagli Cattedra'} <span class="form-hint">(${isEn ? 'optional' : 'opzionale'})</span></label>
+          <input type="text" id="modalComments" class="form-input" placeholder="${isEn ? 'E.g. Lab with ITP, external timetable assignment...' : 'Es. Laboratorio con ITP, cattedra orario esterna...'}">
         </div>
       </div>
       <div class="modal-footer">
         <button class="btn btn-sec" onclick="closeModal()" data-i18n="common.cancel">${_t('common.cancel', 'Annulla')}</button>
-        <button class="btn btn-primary" onclick="submitNewCattedra()">💾 Salva Cattedra</button>
+        <button class="btn btn-primary" onclick="submitNewCattedra()">💾 ${isEn ? 'Save Assignment' : 'Salva Cattedra'}</button>
       </div>
     </div>
   `);
@@ -7625,6 +7673,7 @@ async function openNewCattedraModal(preset = {}) {
 }
 
 function checkBuildingTransferWarning() {
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
   const roomSel = document.getElementById('modalRoomSelect');
   const targetSel = document.getElementById('modalTargetSelect');
   const warnDiv = document.getElementById('buildingTransferWarning');
@@ -7657,7 +7706,12 @@ function checkBuildingTransferWarning() {
   if (roomBuilding && classBuilding && roomBuilding.toLowerCase() !== classBuilding.toLowerCase()) {
     warnDiv.className = 'info-banner';
     warnDiv.style.display = 'block';
-    warnDiv.innerHTML = `
+    warnDiv.innerHTML = isEn ? `
+      ⚡ <b>CAMPUS TRANSFER DETECTED:</b><br>
+      Class <b>${escapeHtml(targetVal || 'selected')}</b> resides in <b>${escapeHtml(classBuilding)}</b>,
+      while space <b>${escapeHtml(roomName)}</b> is located in <b>${escapeHtml(roomBuilding)}</b>.<br>
+      FET will automatically enforce campus travel time and transfer constraints.
+    ` : `
       ⚡ <b>CAMBIO DI PLESSO RILEVATO:</b><br>
       La classe <b>${escapeHtml(targetVal || 'selezionata')}</b> risiede in <b>${escapeHtml(classBuilding)}</b>,
       mentre lo spazio <b>${escapeHtml(roomName)}</b> si trova in <b>${escapeHtml(roomBuilding)}</b>.<br>
@@ -7666,7 +7720,9 @@ function checkBuildingTransferWarning() {
   } else if (roomType === 'lab' || roomType === 'gym') {
     warnDiv.className = 'info-banner info-banner-blue';
     warnDiv.style.display = 'block';
-    warnDiv.innerHTML = `
+    warnDiv.innerHTML = isEn ? `
+      ℹ️ <b>Dedicated facility:</b> <b>${escapeHtml(roomName)}</b> is on the same campus (<b>${escapeHtml(roomBuilding || classBuilding)}</b>). No campus transfer needed.
+    ` : `
       ℹ️ <b>Spazio speciale dedicato:</b> <b>${escapeHtml(roomName)}</b> si trova nella stessa sede (<b>${escapeHtml(roomBuilding || classBuilding)}</b>). Non comporta cambio di edificio.
     `;
   } else {
@@ -7845,6 +7901,7 @@ function formatNoteForDisplay(comments) {
 }
 
 async function openEditCattedraModal(idxOrId) {
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
   let g = null;
   if (typeof idxOrId === 'string') {
     g = (stateData.groupedActivities || []).find(item => item.id === idxOrId);
@@ -7881,24 +7938,24 @@ async function openEditCattedraModal(idxOrId) {
   const singleStudent = (g.students && g.students.length === 1) ? g.students[0] : '';
   const isCustomStudent = (g.students && g.students.length > 1) || (!classes.some(c => c.name === singleStudent) && !groups.some(grp => grp.name === singleStudent));
 
-  let targetOpts = `<optgroup label="Classi Intere">` +
+  let targetOpts = `<optgroup label="${isEn ? 'Entire Classes' : 'Classi Intere'}">` +
     classes.map(c => `
       <option value="${escapeHtml(c.name)}" ${(!isCustomStudent && singleStudent === c.name) ? 'selected' : ''}>
-        Classe ${escapeHtml(c.name)} (${c.students || 0} alunni - ${escapeHtml(c.building || 'Centrale')})
+        ${isEn ? 'Class' : 'Classe'} ${escapeHtml(c.name)} (${c.students || 0} ${isEn ? 'students' : 'alunni'} - ${escapeHtml(c.building ? (isEn && c.building === 'Centrale' ? 'Main' : (isEn && c.building.includes('Succ') ? 'Branch' : c.building)) : (isEn ? 'Main' : 'Centrale'))})
       </option>
     `).join('') +
     `</optgroup>`;
   if (groups.length > 0) {
-    targetOpts += `<optgroup label="Gruppi Articolati (Lingue, Religione/Alt, Sottogruppi)">` +
+    targetOpts += `<optgroup label="${isEn ? 'Subgroups (Languages, Ethics/Alt, Subgroups)' : 'Gruppi Articolati (Lingue, Religione/Alt, Sottogruppi)'}">` +
       groups.map(grp => `
         <option value="${escapeHtml(grp.name)}" ${(!isCustomStudent && singleStudent === grp.name) ? 'selected' : ''}>
-          Gruppo ${escapeHtml(grp.name)} (${escapeHtml(grp.class_name)})
+          ${isEn ? 'Group' : 'Gruppo'} ${escapeHtml(grp.name)} (${escapeHtml(grp.class_name)})
         </option>
       `).join('') +
       `</optgroup>`;
   }
-  targetOpts += `<optgroup label="Altro">
-    <option value="__CUSTOM__" ${isCustomStudent ? 'selected' : ''}>➕ Classi Parallele / Accorpate (es. 1C+1D)...</option>
+  targetOpts += `<optgroup label="${isEn ? 'Other' : 'Altro'}">
+    <option value="__CUSTOM__" ${isCustomStudent ? 'selected' : ''}>➕ ${isEn ? 'Parallel / Combined Classes (e.g. 1C+1D)...' : 'Classi Parallele / Accorpate (es. 1C+1D)...'}</option>
   </optgroup>`;
 
   const subjOpts = subjects.map(s => `
@@ -7915,85 +7972,85 @@ async function openEditCattedraModal(idxOrId) {
   showModal(`
     <div class="modal-dialog">
       <div class="modal-header">
-        <div class="modal-title">✏️ Modifica Cattedra / Insegnamento</div>
+        <div class="modal-title">✏️ ${isEn ? 'Edit Teaching Assignment / Activity' : 'Modifica Cattedra / Insegnamento'}</div>
         <button class="modal-close" onclick="closeModal()">×</button>
       </div>
       <div class="modal-body">
         <div style="background:#f8fafc;padding:10px 14px;border-radius:6px;border:1px solid var(--border);margin-bottom:14px;font-size:12.5px;display:flex;justify-content:space-between;align-items:center;">
           <div>
-            <b>Sotto-attività FET collegate:</b>
+            <b>${isEn ? 'Linked FET sub-activities:' : 'Sotto-attività FET collegate:'}</b>
             <span class="sub-acts-tag">
-              ${(g.sub_activity_ids || []).map(id => `<a href="javascript:void(0)" onclick="jumpToSubActivity('${id}')" class="sub-act-pill" title="Salta al record FET #${id}">#${id}</a>`).join('')}
+              ${(g.sub_activity_ids || []).map(id => `<a href="javascript:void(0)" onclick="jumpToSubActivity('${id}')" class="sub-act-pill" title="${isEn ? 'Jump to FET record #' + id : 'Salta al record FET #' + id}">#${id}</a>`).join('')}
             </span>
           </div>
           <label style="display:flex;align-items:center;gap:6px;font-weight:600;cursor:pointer;margin:0;">
             <input type="checkbox" id="editModalActive" ${g.active ? 'checked' : ''} style="width:16px;height:16px;">
-            <span>Attiva nel motore FET</span>
+            <span>${isEn ? 'Active in FET engine' : 'Attiva nel motore FET'}</span>
           </label>
         </div>
 
         <div class="form-group">
           <label class="form-label">
-            <span>Docente Titolare</span>
-            <span class="form-hint">Ordinati alfabeticamente</span>
+            <span>${isEn ? 'Primary Teacher' : 'Docente Titolare'}</span>
+            <span class="form-hint">${isEn ? 'Sorted alphabetically' : 'Ordinati alfabeticamente'}</span>
           </label>
           <select id="editModalTeacher" class="form-select">
-            <option value="">-- Seleziona Docente Titolare --</option>
+            <option value="">-- ${isEn ? 'Select Primary Teacher' : 'Seleziona Docente Titolare'} --</option>
             ${teacherOpts}
           </select>
         </div>
 
         <div class="form-group">
           <div class="form-label">
-            <span>Compresenze / Co-Docenti</span>
-            <span class="form-hint" style="cursor:pointer;color:var(--primary);font-weight:600;" onclick="toggleEditCoTeacherRow()">+ Aggiungi Docente Compresenza</span>
+            <span>${isEn ? 'Co-Teaching / Co-Teachers' : 'Compresenze / Co-Docenti'}</span>
+            <span class="form-hint" style="cursor:pointer;color:var(--primary);font-weight:600;" onclick="toggleEditCoTeacherRow()">+ ${isEn ? 'Add Co-Teacher' : 'Aggiungi Docente Compresenza'}</span>
           </div>
           <div id="editCoTeacherRow" style="display:none;margin-bottom:6px;">
             <div style="display:flex;gap:6px;">
               <select id="editModalCoTeacherSelect" class="form-select">
-                <option value="">-- Seleziona Docente per compresenza --</option>
+                <option value="">-- ${isEn ? 'Select Co-Teacher' : 'Seleziona Docente per compresenza'} --</option>
                 ${teachers.map(t => `<option value="${escapeHtml(t.name)}">${escapeHtml(t.name)}</option>`).join('')}
               </select>
-              <button class="btn btn-sm btn-sec" type="button" onclick="addEditCoTeacherChip()">Aggiungi</button>
+              <button class="btn btn-sm btn-sec" type="button" onclick="addEditCoTeacherChip()">${isEn ? 'Add' : 'Aggiungi'}</button>
             </div>
           </div>
           <div id="editCoTeacherChips" class="co-teachers-list"></div>
         </div>
 
         <div class="form-group">
-          <label class="form-label">Destinatari (Classe, Gruppo Articolato o Classi Parallele)</label>
+          <label class="form-label">${isEn ? 'Recipients (Class, Subgroup or Parallel Classes)' : 'Destinatari (Classe, Gruppo Articolato o Classi Parallele)'}</label>
           <select id="editModalTargetSelect" class="form-select" onchange="onEditTargetSelectChange(this.value)">
             ${targetOpts}
           </select>
           <div id="editCustomTargetDiv" style="display:${isCustomStudent ? 'block' : 'none'};margin-top:6px;">
-            <input type="text" id="editModalCustomTarget" class="form-input" value="${escapeHtml((g.students || []).join('+'))}" placeholder="Es. 1C+1D (per Scienze Motorie o accorpamenti)">
-            <span class="form-hint">Separa con "+" o virgola le classi che partecipano insieme alla stessa ora.</span>
+            <input type="text" id="editModalCustomTarget" class="form-input" value="${escapeHtml((g.students || []).join('+'))}" placeholder="${isEn ? 'E.g. 1C+1D (for PE or merged classes)' : 'Es. 1C+1D (per Scienze Motorie o accorpamenti)'}">
+            <span class="form-hint">${isEn ? 'Separate with "+" or comma classes attending together at the same time.' : 'Separa con "+" o virgola le classi che partecipano insieme alla stessa ora.'}</span>
           </div>
         </div>
 
         <div class="form-group">
-          <label class="form-label">Materia / Disciplina</label>
+          <label class="form-label">${isEn ? 'Subject / Discipline' : 'Materia / Disciplina'}</label>
           <select id="editModalSubject" class="form-select">
-            <option value="">-- Seleziona Materia --</option>
+            <option value="">-- ${isEn ? 'Select Subject' : 'Seleziona Materia'} --</option>
             ${subjOpts}
           </select>
         </div>
 
         <div class="form-group">
           <label class="form-label">
-            <span>Aula Dedicata / Laboratorio / Palestra</span>
-            <span class="form-hint">Se omesso, usa l'aula base della classe</span>
+            <span>${isEn ? 'Dedicated Room / Lab / Gym' : 'Aula Dedicata / Laboratorio / Palestra'}</span>
+            <span class="form-hint">${isEn ? 'If omitted, uses class resident homeroom' : 'Se omesso, usa l\'aula base della classe'}</span>
           </label>
           <select id="editModalRoomSelect" class="form-select" onchange="checkEditBuildingTransferWarning()">
-            <option value="" data-bld="" data-type="default" ${!currentRoom ? 'selected' : ''}>-- 🏠 Aula Base Ordinaria della Classe (Nessun trasferimento) --</option>
-            <optgroup label="🧪 Laboratori Didattici (Innescano cambio plesso per classi di altra sede)">
-              ${labs.map(r => `<option value="${escapeHtml(r.name)}" data-bld="${escapeHtml(r.building || 'Centrale')}" data-type="lab" ${currentRoom === r.name ? 'selected' : ''}>🧪 ${escapeHtml(r.name)} [${escapeHtml(r.building || 'Centrale')} - max ${r.capacity || 30} alunni]</option>`).join('')}
+            <option value="" data-bld="" data-type="default" ${!currentRoom ? 'selected' : ''}>-- 🏠 ${isEn ? 'Standard Homeroom of Class (No transfer)' : 'Aula Base Ordinaria della Classe (Nessun trasferimento)'} --</option>
+            <optgroup label="${isEn ? '🧪 Teaching Laboratories (Triggers campus transfer for classes from other sites)' : '🧪 Laboratori Didattici (Innescano cambio plesso per classi di altra sede)'}">
+              ${labs.map(r => `<option value="${escapeHtml(r.name)}" data-bld="${escapeHtml(r.building || 'Centrale')}" data-type="lab" ${currentRoom === r.name ? 'selected' : ''}>🧪 ${escapeHtml(r.name)} [${escapeHtml(r.building || 'Centrale')} - max ${r.capacity || 30} ${isEn ? 'students' : 'alunni'}]</option>`).join('')}
             </optgroup>
-            <optgroup label="🏀 Palestre / Impianti Sportivi">
-              ${gyms.map(r => `<option value="${escapeHtml(r.name)}" data-bld="${escapeHtml(r.building || 'Centrale')}" data-type="gym" ${currentRoom === r.name ? 'selected' : ''}>🏀 ${escapeHtml(r.name)} [${escapeHtml(r.building || 'Centrale')} - max ${r.capacity || 30} alunni]</option>`).join('')}
+            <optgroup label="${isEn ? '🏀 Gymnasiums / Sports Facilities' : '🏀 Palestre / Impianti Sportivi'}">
+              ${gyms.map(r => `<option value="${escapeHtml(r.name)}" data-bld="${escapeHtml(r.building || 'Centrale')}" data-type="gym" ${currentRoom === r.name ? 'selected' : ''}>🏀 ${escapeHtml(r.name)} [${escapeHtml(r.building || 'Centrale')} - max ${r.capacity || 30} ${isEn ? 'students' : 'alunni'}]</option>`).join('')}
             </optgroup>
-            <optgroup label="🚪 Aule Speciali / Altri Spazi">
-              ${stdRooms.map(r => `<option value="${escapeHtml(r.name)}" data-bld="${escapeHtml(r.building || 'Centrale')}" data-type="standard" ${currentRoom === r.name ? 'selected' : ''}>🚪 ${escapeHtml(r.name)} [${escapeHtml(r.building || 'Centrale')} - max ${r.capacity || 30} alunni]</option>`).join('')}
+            <optgroup label="${isEn ? '🚪 Special Rooms / Other Spaces' : '🚪 Aule Speciali / Altri Spazi'}">
+              ${stdRooms.map(r => `<option value="${escapeHtml(r.name)}" data-bld="${escapeHtml(r.building || 'Centrale')}" data-type="standard" ${currentRoom === r.name ? 'selected' : ''}>🚪 ${escapeHtml(r.name)} [${escapeHtml(r.building || 'Centrale')} - max ${r.capacity || 30} ${isEn ? 'students' : 'alunni'}]</option>`).join('')}
             </optgroup>
           </select>
           <div id="editBuildingTransferWarning" style="display:none;margin-top:8px;"></div>
@@ -8001,22 +8058,22 @@ async function openEditCattedraModal(idxOrId) {
 
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
           <div class="form-group">
-            <label class="form-label">Monte Ore Settimanale</label>
+            <label class="form-label">${isEn ? 'Weekly Hours' : 'Monte Ore Settimanale'}</label>
             <input type="number" id="editModalTotalHours" class="form-input" min="1" max="10" value="${g.total_hours || 3}" oninput="onEditHoursInputChange(this.value)">
           </div>
           <div class="form-group">
             <label class="form-label" style="display:flex;justify-content:space-between;align-items:center;">
-              <span>Suddivisione Blocchi</span>
+              <span>${isEn ? 'Block Division' : 'Suddivisione Blocchi'}</span>
               ${g.default_blocks ? `
                 <span style="font-size:11px;font-weight:normal;color:var(--text-muted);">
-                  Formula standard: <b style="color:var(--primary);">${escapeHtml(g.default_blocks)}</b> (${escapeHtml(g.percorso || '')} ${escapeHtml(g.period || '')})
+                  ${isEn ? 'Standard formula:' : 'Formula standard:'} <b style="color:var(--primary);">${escapeHtml(g.default_blocks)}</b> (${escapeHtml(g.percorso || '')} ${escapeHtml(g.period || '')})
                 </span>
               ` : ''}
             </label>
             <div style="display:flex;gap:6px;">
               <input type="text" id="editModalBlocks" class="form-input" value="${escapeHtml(g.blocks || '2+1')}" style="font-weight:700;font-family:var(--font-mono);">
               ${g.default_blocks ? `
-                <button type="button" class="btn btn-sm btn-sec" onclick="document.getElementById('editModalBlocks').value='${escapeJs(g.default_blocks)}';selectEditBlockPreset('${escapeJs(g.default_blocks)}');" title="Reimposta la formula di default" style="white-space:nowrap;">
+                <button type="button" class="btn btn-sm btn-sec" onclick="document.getElementById('editModalBlocks').value='${escapeJs(g.default_blocks)}';selectEditBlockPreset('${escapeJs(g.default_blocks)}');" title="${isEn ? 'Reset to default formula' : 'Reimposta la formula di default'}" style="white-space:nowrap;">
                   ↩️ Default
                 </button>
               ` : ''}
@@ -8025,23 +8082,25 @@ async function openEditCattedraModal(idxOrId) {
         </div>
 
         <div class="form-group">
-          <span class="form-label">Preset Suddivisione Blocchi:</span>
+          <span class="form-label">${isEn ? 'Block Division Presets:' : 'Preset Suddivisione Blocchi:'}</span>
           <div class="preset-pills" id="editModalPresetsContainer"></div>
           <span class="form-hint" style="margin-top:4px;">
-            FET garantisce automaticamente che ciascun blocco (es. 2 ore + 1 ora) sia svolto in <b>giorni diversi</b> tramite il vincolo <i>ConstraintMinDaysBetweenActivities</i>.
+            ${isEn
+              ? 'FET automatically ensures each block (e.g. 2 hrs + 1 hr) takes place on <b>different days</b> via <i>ConstraintMinDaysBetweenActivities</i>.'
+              : 'FET garantisce automaticamente che ciascun blocco (es. 2 ore + 1 ora) sia svolto in <b>giorni diversi</b> tramite il vincolo <i>ConstraintMinDaysBetweenActivities</i>.'}
           </span>
         </div>
 
         <div class="form-group">
-          <label class="form-label">Note / Dettagli Cattedra <span class="form-hint">(opzionale)</span></label>
-          <input type="text" id="editModalComments" class="form-input" value="${escapeHtml(formatNoteForDisplay(g.comments || ''))}" placeholder="Es. Laboratorio con ITP, cattedra orario esterna...">
+          <label class="form-label">${isEn ? 'Assignment Notes / Details' : 'Note / Dettagli Cattedra'} <span class="form-hint">(${isEn ? 'optional' : 'opzionale'})</span></label>
+          <input type="text" id="editModalComments" class="form-input" value="${escapeHtml(formatNoteForDisplay(g.comments || ''))}" placeholder="${isEn ? 'E.g. Lab with ITP, external timetable assignment...' : 'Es. Laboratorio con ITP, cattedra orario esterna...'}">
         </div>
       </div>
       <div class="modal-footer" style="display:flex;justify-content:space-between;">
-        <button class="btn btn-danger" onclick="deleteCattedra('${g.sub_activity_ids.join(',')}', '${escapeJs(g.teachers_display)} - ${escapeJs(g.subject)} (${escapeJs(g.students_display)})')">🗑️ Elimina</button>
+        <button class="btn btn-danger" onclick="deleteCattedra('${g.sub_activity_ids.join(',')}', '${escapeJs(g.teachers_display)} - ${escapeJs(g.subject)} (${escapeJs(g.students_display)})')">🗑️ ${isEn ? 'Delete' : 'Elimina'}</button>
         <div style="display:flex;gap:8px;">
           <button class="btn btn-sec" onclick="closeModal()" data-i18n="common.cancel">${_t('common.cancel', 'Annulla')}</button>
-          <button class="btn btn-primary" onclick="submitEditCattedra('${g.sub_activity_ids.join(',')}')">💾 Salva Modifiche</button>
+          <button class="btn btn-primary" onclick="submitEditCattedra('${g.sub_activity_ids.join(',')}')">💾 ${isEn ? 'Save Changes' : 'Salva Modifiche'}</button>
         </div>
       </div>
     </div>
@@ -8142,6 +8201,7 @@ function selectEditBlockPreset(p) {
 }
 
 function checkEditBuildingTransferWarning() {
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
   const roomSel = document.getElementById('editModalRoomSelect');
   const targetSel = document.getElementById('editModalTargetSelect');
   const warnDiv = document.getElementById('editBuildingTransferWarning');
@@ -8174,7 +8234,12 @@ function checkEditBuildingTransferWarning() {
   if (roomBuilding && classBuilding && roomBuilding.toLowerCase() !== classBuilding.toLowerCase()) {
     warnDiv.className = 'info-banner';
     warnDiv.style.display = 'block';
-    warnDiv.innerHTML = `
+    warnDiv.innerHTML = isEn ? `
+      ⚡ <b>CAMPUS TRANSFER DETECTED:</b><br>
+      Class <b>${escapeHtml(targetVal || 'selected')}</b> resides in <b>${escapeHtml(classBuilding)}</b>,
+      while <b>${escapeHtml(roomName)}</b> is located in <b>${escapeHtml(roomBuilding)}</b>.<br>
+      FET will automatically enforce campus travel time and transfer constraints.
+    ` : `
       ⚡ <b>CAMBIO DI PLESSO RILEVATO:</b><br>
       La classe <b>${escapeHtml(targetVal || 'selezionata')}</b> risiede in <b>${escapeHtml(classBuilding)}</b>,
       mentre lo spazio <b>${escapeHtml(roomName)}</b> si trova in <b>${escapeHtml(roomBuilding)}</b>.<br>
@@ -8183,7 +8248,9 @@ function checkEditBuildingTransferWarning() {
   } else if (roomType === 'lab' || roomType === 'gym') {
     warnDiv.className = 'info-banner info-banner-blue';
     warnDiv.style.display = 'block';
-    warnDiv.innerHTML = `
+    warnDiv.innerHTML = isEn ? `
+      ℹ️ <b>Dedicated facility:</b> <b>${escapeHtml(roomName)}</b> is on the same campus (<b>${escapeHtml(roomBuilding || classBuilding)}</b>). No campus transfer needed.
+    ` : `
       ℹ️ <b>Spazio speciale dedicato:</b> <b>${escapeHtml(roomName)}</b> si trova nella stessa sede (<b>${escapeHtml(roomBuilding || classBuilding)}</b>). Non comporta cambio di plesso tra edifici.
     `;
   } else {
@@ -8449,6 +8516,7 @@ async function submitEditSingleActivity(actId) {
 
 // --- MODALE: MODIFICA SUDDIVISIONE BLOCCHI ---
 function openEditBlocksModal(subIdsStr, currentBlocks, totalHours, desc, defaultBlocks = '', subject = '', className = '', percorso = '', period = '', isFeasible = true, feasibilityWarning = '', suggestedBlocks = '') {
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
   let presets = [];
   if (totalHours === 1) presets = ['1'];
   else if (totalHours === 2) presets = ['2', '1+1'];
@@ -8476,26 +8544,26 @@ function openEditBlocksModal(subIdsStr, currentBlocks, totalHours, desc, default
   showModal(`
     <div class="modal-dialog">
       <div class="modal-header">
-        <div class="modal-title">⏱️ Modifica Blocchi Orari & Eccezioni</div>
+        <div class="modal-title">⏱️ ${isEn ? 'Edit Timetable Blocks & Exceptions' : 'Modifica Blocchi Orari & Eccezioni'}</div>
         <button class="modal-close" onclick="closeModal()">×</button>
       </div>
       <div class="modal-body">
         <div style="background:#f8fafc;padding:12px;border-radius:6px;border:1px solid var(--border);font-size:13px;margin-bottom:12px;">
-          <b>Cattedra:</b> ${escapeHtml(desc)}<br>
-          <b>Monte ore complessivo:</b> <span style="color:var(--primary);font-weight:700;">${totalHours} h settimanali</span>
-          ${percorso ? `<br><b>Indirizzo & Periodo:</b> <span class="badge ${percorso === 'liceo' ? 'badge-liceo' : (percorso === 'tecnico' ? 'badge-tecnico' : 'badge-professionale')}">${percorso.toUpperCase()} (${period})</span>` : ''}
+          <b>${isEn ? 'Assignment:' : 'Cattedra:'}</b> ${escapeHtml(desc)}<br>
+          <b>${isEn ? 'Total weekly hours:' : 'Monte ore complessivo:'}</b> <span style="color:var(--primary);font-weight:700;">${totalHours} ${isEn ? 'weekly hrs' : 'h settimanali'}</span>
+          ${percorso ? `<br><b>${isEn ? 'Track & Period:' : 'Indirizzo & Periodo:'}</b> <span class="badge ${percorso === 'liceo' ? 'badge-liceo' : (percorso === 'tecnico' ? 'badge-tecnico' : 'badge-professionale')}">${escapeHtml(isEn ? (percorso === 'liceo' ? 'HIGH SCHOOL' : (percorso === 'tecnico' ? 'TECHNICAL' : 'VOCATIONAL')) : percorso.toUpperCase())} (${period})</span>` : ''}
         </div>
 
         ${(!isFeasible && feasibilityWarning) ? `
           <div class="info-banner" style="margin-top:0;margin-bottom:14px;background:#fef2f2;border-color:#fecaca;color:#991b1b;">
             <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;">
               <div>
-                ⚠️ <b>Conflitto con la presenza del docente:</b>
+                ⚠️ <b>${isEn ? 'Conflict with teacher availability:' : 'Conflitto con la presenza del docente:'}</b>
                 <div style="font-size:12px;margin-top:2px;color:#b91c1c;">${escapeHtml(feasibilityWarning)}</div>
               </div>
               ${suggestedBlocks ? `
                 <button class="btn btn-sm btn-danger" type="button" onclick="selectEditBlockPreset('${escapeJs(suggestedBlocks)}', '${escapeJs(defaultBlocks)}')" style="white-space:nowrap;">
-                  💡 Applica ${escapeHtml(suggestedBlocks)}
+                  💡 ${isEn ? 'Apply' : 'Applica'} ${escapeHtml(suggestedBlocks)}
                 </button>
               ` : ''}
             </div>
@@ -8506,13 +8574,15 @@ function openEditBlocksModal(subIdsStr, currentBlocks, totalHours, desc, default
           <div class="info-banner" style="margin-top:0;margin-bottom:14px;background:#f0fdf4;border-color:#bbf7d0;color:#166534;">
             <div style="display:flex;justify-content:space-between;align-items:center;">
               <div>
-                📐 <b>Formula Standard di Default:</b> <span class="block-badge block-default" style="font-size:13px;font-weight:700;">${escapeHtml(defaultBlocks)}</span>
+                📐 <b>${isEn ? 'Standard Default Formula:' : 'Formula Standard di Default:'}</b> <span class="block-badge block-default" style="font-size:13px;font-weight:700;">${escapeHtml(defaultBlocks)}</span>
                 <div style="font-size:11.5px;color:#15803d;margin-top:2px;">
-                  Prevista per <b>${escapeHtml(subject || 'questa materia')}</b> (${escapeHtml(percorso || 'indirizzo')} ${escapeHtml(period || '')}).
+                  ${isEn
+                    ? `Default for <b>${escapeHtml(subject || 'this subject')}</b> (${escapeHtml(percorso || 'track')} ${escapeHtml(period || '')}).`
+                    : `Prevista per <b>${escapeHtml(subject || 'questa materia')}</b> (${escapeHtml(percorso || 'indirizzo')} ${escapeHtml(period || '')}).`}
                 </div>
               </div>
               <button class="btn btn-sm btn-sec" type="button" onclick="selectEditBlockPreset('${escapeJs(defaultBlocks)}', '${escapeJs(defaultBlocks)}')" style="white-space:nowrap;">
-                ↩️ Seleziona Default
+                ↩️ ${isEn ? 'Select Default' : 'Seleziona Default'}
               </button>
             </div>
           </div>
@@ -8520,24 +8590,28 @@ function openEditBlocksModal(subIdsStr, currentBlocks, totalHours, desc, default
 
         <div class="form-group">
           <label class="form-label" style="display:flex;justify-content:space-between;align-items:center;">
-            <span>Suddivisione Blocchi Orari Applicata:</span>
+            <span>${isEn ? 'Applied Timetable Block Division:' : 'Suddivisione Blocchi Orari Applicata:'}</span>
             <span id="blockExceptionBadge">
-              ${isExc ? `<span class="exc-tag">⚡ Eccezione Personalizzata</span>` : `<span class="badge badge-ok">Standard di Default</span>`}
+              ${isExc ? `<span class="exc-tag">⚡ ${isEn ? 'Custom Exception' : 'Eccezione Personalizzata'}</span>` : `<span class="badge badge-ok">${isEn ? 'Default Standard' : 'Standard di Default'}</span>`}
             </span>
           </label>
           <input type="text" id="editBlocksInput" class="form-input" value="${escapeHtml(currentBlocks)}" style="font-weight:700;font-family:var(--font-mono);font-size:15px;" oninput="onEditBlocksInputChange('${escapeJs(defaultBlocks)}')">
           <span class="form-hint" id="blockExceptionHint" style="margin-top:4px;">
-            ${isExc ? `⚡ Questa cattedra differisce dallo standard (<b>${escapeHtml(defaultBlocks)}</b>) ed è registrata come eccezione.` : `Questa cattedra coincide con la formula standard di default.`}
+            ${isExc
+              ? (isEn
+                  ? `⚡ This assignment differs from standard (<b>${escapeHtml(defaultBlocks)}</b>) and is saved as an exception.`
+                  : `⚡ Questa cattedra differisce dallo standard (<b>${escapeHtml(defaultBlocks)}</b>) ed è registrata come eccezione.`)
+              : (isEn ? 'This assignment matches the default standard formula.' : 'Questa cattedra coincide con la formula standard di default.')}
           </span>
         </div>
 
         <div class="form-group">
-          <span class="form-label">Preset suddivisione (totale ${totalHours}h):</span>
+          <span class="form-label">${isEn ? `Block division presets (total ${totalHours}h):` : `Preset suddivisione (totale ${totalHours}h):`}</span>
           <div class="preset-pills">
             ${presets.map(p => {
               const isDef = defaultBlocks === p;
               const isSug = suggestedBlocks === p;
-              const badgeTxt = isSug ? '💡 (Consigliato per giorni docente)' : (isDef ? '⭐ (Default)' : '');
+              const badgeTxt = isSug ? (isEn ? '💡 (Recommended for teacher days)' : '💡 (Consigliato per giorni docente)') : (isDef ? (isEn ? '⭐ (Default)' : '⭐ (Default)') : '');
               return `
                 <button type="button" class="preset-pill ${p === currentBlocks ? 'active' : ''}" onclick="selectEditBlockPreset('${p}', '${escapeJs(defaultBlocks)}')">
                   ${p} ${badgeTxt}
@@ -8546,19 +8620,21 @@ function openEditBlocksModal(subIdsStr, currentBlocks, totalHours, desc, default
             }).join('')}
           </div>
           <span class="form-hint" style="margin-top:6px;">
-            FET garantisce automaticamente che ogni blocco (es. <code>2+1</code>) si svolga in <b>giorni diversi</b>.
+            ${isEn
+              ? 'FET automatically ensures that each block (e.g. <code>2+1</code>) is scheduled on <b>different days</b>.'
+              : 'FET garantisce automaticamente che ogni blocco (es. <code>2+1</code>) si svolga in <b>giorni diversi</b>.'}
           </span>
         </div>
       </div>
       <div class="modal-footer" style="display:flex;justify-content:space-between;">
         ${defaultBlocks ? `
           <button class="btn btn-sec" type="button" onclick="submitResetBlocksToDefault('${subIdsStr}', ${totalHours})">
-            ↩️ Ripristina Default (${escapeHtml(defaultBlocks)})
+            ↩️ ${isEn ? `Reset Default (${escapeHtml(defaultBlocks)})` : `Ripristina Default (${escapeHtml(defaultBlocks)})`}
           </button>
         ` : '<div></div>'}
         <div style="display:flex;gap:8px;">
           <button class="btn btn-sec" onclick="closeModal()" data-i18n="common.cancel">${_t('common.cancel', 'Annulla')}</button>
-          <button class="btn btn-primary" onclick="submitUpdateBlocks('${subIdsStr}', ${totalHours})">💾 Salva Suddivisione</button>
+          <button class="btn btn-primary" onclick="submitUpdateBlocks('${subIdsStr}', ${totalHours})">💾 ${isEn ? 'Save Division' : 'Salva Suddivisione'}</button>
         </div>
       </div>
     </div>
@@ -8698,6 +8774,7 @@ let activeMatrixFilter = 'teachers';   // 'teachers' | 'classes'
 let matrixPendingChanges = {};    // entityKey -> Set of unavail slots
 
 async function renderAvailability() {
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
   const res = await fetch('/api/availability');
   const av = await res.json();
   stateData.availability = av;
@@ -8726,8 +8803,14 @@ async function renderAvailability() {
   const curAvailIdx = currentAvailList.indexOf(activeAvailEntity);
   const totalAvailEntities = currentAvailList.length;
 
+  const returnDesc = activeAvailEntity
+    ? (isEn
+        ? `Unavailability configuration for <b>${escapeHtml(activeAvailEntity)}</b> (${activeAvailMode === 'class' ? 'Class' : 'Teacher'})`
+        : `Configurazione indisponibilità per <b>${escapeHtml(activeAvailEntity)}</b> (${activeAvailMode === 'class' ? 'Classe' : 'Docente'})`)
+    : (isEn ? 'Configure weekly unavailable time slots.' : 'Configura gli slot settimanali non disponibili.');
+
   container.innerHTML = `
-    ${getNavReturnBarHtml(activeAvailEntity ? `Configurazione indisponibilità per <b>${escapeHtml(activeAvailEntity)}</b> (${activeAvailMode === 'class' ? 'Classe' : 'Docente'})` : 'Configura gli slot settimanali non disponibili.')}
+    ${getNavReturnBarHtml(returnDesc)}
 
     <!-- Barra Superiore di Selezione Layout (Singolo vs Matrice Excel) -->
     <div class="card" style="margin-bottom:14px;">
@@ -8735,83 +8818,84 @@ async function renderAvailability() {
         <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
           <div class="segmented-control">
             <button class="segmented-btn ${isSingle ? 'active' : ''}" onclick="switchAvailLayout('single')">
-              👤 Calendario Singolo
+              ${isEn ? '👤 Single Calendar' : '👤 Calendario Singolo'}
             </button>
             <button class="segmented-btn ${!isSingle ? 'active' : ''}" onclick="switchAvailLayout('matrix')">
-              📋 Matrice Completa (Tutti i Record - Stile Excel)
+              ${isEn ? '📋 Full Matrix (All Records - Excel Style)' : '📋 Matrice Completa (Tutti i Record - Stile Excel)'}
             </button>
           </div>
 
           ${isSingle ? `
             <div style="display:flex;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;margin-left:6px;">
-              <button class="btn btn-sm ${activeAvailMode === 'teacher' ? 'btn-primary' : 'btn-sec'}" style="border:none;" onclick="switchAvailMode('teacher')">👨‍🏫 Docenti (${teacherList.length})</button>
-              <button class="btn btn-sm ${activeAvailMode === 'class' ? 'btn-primary' : 'btn-sec'}" style="border:none;" onclick="switchAvailMode('class')">🎓 Classi (${classList.length})</button>
+              <button class="btn btn-sm ${activeAvailMode === 'teacher' ? 'btn-primary' : 'btn-sec'}" style="border:none;" onclick="switchAvailMode('teacher')">👨‍🏫 ${isEn ? 'Teachers' : 'Docenti'} (${teacherList.length})</button>
+              <button class="btn btn-sm ${activeAvailMode === 'class' ? 'btn-primary' : 'btn-sec'}" style="border:none;" onclick="switchAvailMode('class')">🎓 ${isEn ? 'Classes' : 'Classi'} (${classList.length})</button>
             </div>
 
             <select id="availSelect" class="select-input" onchange="switchAvailEntity(this.value)">
               ${currentAvailList.map(name => {
                 const isLic = activeAvailMode === 'class' && liceoSet.has(name);
                 return `<option value="${escapeHtml(name)}" ${name === activeAvailEntity ? 'selected' : ''}>
-                  ${escapeHtml(name)} ${isLic ? '🏛️ (Liceo - max 6h)' : ''}
+                  ${escapeHtml(name)} ${isLic ? (isEn ? '🏛️ (High School - max 6h)' : '🏛️ (Liceo - max 6h)') : ''}
                 </option>`;
               }).join('')}
             </select>
 
             <!-- Cursore e Stepper Rapido di Scorrimento Docenti/Classi (Mouse e Frecce ◀ ▶) -->
-            <div class="timetable-stepper-wrap" title="Scorri velocemente tra i ${activeAvailMode === 'teacher' ? 'docenti' : 'classi'}: trascina il cursore o usa le frecce ◀ ▶ della tastiera">
-              <button type="button" class="btn btn-sm btn-sec" style="padding:2px 7px;font-size:11px;font-weight:700;" onclick="stepAvailEntity(-1)" ${curAvailIdx <= 0 ? 'disabled' : ''} title="Precedente (oppure premi Freccia Sinistra ◀)">◀</button>
-              <input type="range" class="slider-quick-entity" min="0" max="${Math.max(0, totalAvailEntities - 1)}" value="${curAvailIdx >= 0 ? curAvailIdx : 0}" oninput="onAvailSliderChange(this.value)" title="Trascina il cursore per scorrere rapidamente">
-              <button type="button" class="btn btn-sm btn-sec" style="padding:2px 7px;font-size:11px;font-weight:700;" onclick="stepAvailEntity(1)" ${curAvailIdx >= totalAvailEntities - 1 ? 'disabled' : ''} title="Successivo (oppure premi Freccia Destra ▶)">▶</button>
+            <div class="timetable-stepper-wrap" title="${isEn ? `Quickly browse ${activeAvailMode === 'teacher' ? 'teachers' : 'classes'}: drag slider or use ◀ ▶ keys` : `Scorri velocemente tra i ${activeAvailMode === 'teacher' ? 'docenti' : 'classi'}: trascina il cursore o usa le frecce ◀ ▶ della tastiera`}">
+              <button type="button" class="btn btn-sm btn-sec" style="padding:2px 7px;font-size:11px;font-weight:700;" onclick="stepAvailEntity(-1)" ${curAvailIdx <= 0 ? 'disabled' : ''} title="${isEn ? 'Previous (or press Left Arrow ◀)' : 'Precedente (oppure premi Freccia Sinistra ◀)'}">◀</button>
+              <input type="range" class="slider-quick-entity" min="0" max="${Math.max(0, totalAvailEntities - 1)}" value="${curAvailIdx >= 0 ? curAvailIdx : 0}" oninput="onAvailSliderChange(this.value)" title="${isEn ? 'Drag slider to browse quickly' : 'Trascina il cursore per scorrere rapidamente'}">
+              <button type="button" class="btn btn-sm btn-sec" style="padding:2px 7px;font-size:11px;font-weight:700;" onclick="stepAvailEntity(1)" ${curAvailIdx >= totalAvailEntities - 1 ? 'disabled' : ''} title="${isEn ? 'Next (or press Right Arrow ▶)' : 'Successivo (oppure premi Freccia Destra ▶)'}">▶</button>
               <span style="font-size:11px;font-weight:700;color:var(--text-sub);min-width:44px;text-align:center;">${curAvailIdx >= 0 ? curAvailIdx + 1 : 1}/${totalAvailEntities}</span>
-              <span style="font-size:10.5px;color:#94a3b8;" title="Scorciatoia tastiera: premi le frecce ◀ ▶ per scorrere">⌨️ ◀ ▶</span>
+              <span style="font-size:10.5px;color:#94a3b8;" title="${isEn ? 'Keyboard shortcut: press ◀ ▶ arrows to navigate' : 'Scorciatoia tastiera: premi le frecce ◀ ▶ per scorrere'}">⌨️ ◀ ▶</span>
             </div>
 
             ${activeAvailMode === 'class' && liceoSet.has(activeAvailEntity) ? `
               <span class="badge badge-liceo">
-                🏛️ Classe Liceo (6 ore max/giorno: 7ª e 8ª ora bloccate)
+                ${isEn ? '🏛️ High School Class (6 hrs max/day: 7th & 8th periods blocked)' : '🏛️ Classe Liceo (6 ore max/giorno: 7ª e 8ª ora bloccate)'}
               </span>
             ` : ''}
           ` : `
             <div class="segmented-control" style="margin-left:6px;">
               <button class="segmented-btn ${activeMatrixFilter === 'teachers' ? 'active' : ''}" onclick="filterMatrixRows('teachers')">
-                👨‍🏫 Solo Docenti (${teacherList.length})
+                👨‍🏫 ${isEn ? 'Teachers Only' : 'Solo Docenti'} (${teacherList.length})
               </button>
               <button class="segmented-btn ${activeMatrixFilter === 'classes' ? 'active' : ''}" onclick="filterMatrixRows('classes')">
-                🎓 Solo Classi (${classList.length})
+                🎓 ${isEn ? 'Classes Only' : 'Solo Classi'} (${classList.length})
               </button>
             </div>
-            <input type="text" class="search-input" placeholder="🔍 Cerca ${activeMatrixFilter === 'teachers' ? 'docente' : 'classe'}..." oninput="filterMatrixTable(this.value)" style="width:200px;">
+            <input type="text" class="search-input" placeholder="${isEn ? `🔍 Search ${activeMatrixFilter === 'teachers' ? 'teacher' : 'class'}...` : `🔍 Cerca ${activeMatrixFilter === 'teachers' ? 'docente' : 'classe'}...`}" oninput="filterMatrixTable(this.value)" style="width:200px;">
           `}
         </div>
 
         <div style="display:flex;gap:8px;flex-wrap:wrap;">
           ${isSingle ? `
             ${activeAvailMode === 'class' ? `
-              <button class="btn btn-sm btn-sec" onclick="applyLiceoPreset(activeAvailEntity)" title="Imposta 7ª e 8ª ora non disponibili per questa classe">
-                ⚡ Orario Liceo per ${escapeHtml(activeAvailEntity)}
+              <button class="btn btn-sm btn-sec" onclick="applyLiceoPreset(activeAvailEntity)" title="${isEn ? 'Set 7th and 8th periods unavailable for this class' : 'Imposta 7ª e 8ª ora non disponibili per questa classe'}">
+                ⚡ ${isEn ? `High School Schedule for ${escapeHtml(activeAvailEntity)}` : `Orario Liceo per ${escapeHtml(activeAvailEntity)}`}
               </button>
             ` : ''}
-            <button class="btn btn-sm btn-sec" onclick="applyLiceoPresetAll()" title="Applica a tutte le 15 classi del Liceo">
-              ⚡ Applica a Tutto il Liceo
+            <button class="btn btn-sm btn-sec" onclick="applyLiceoPresetAll()" title="${isEn ? 'Apply to all 15 High School classes' : 'Applica a tutte le 15 classi del Liceo'}">
+              ⚡ ${isEn ? 'Apply to All High School' : 'Applica a Tutto il Liceo'}
             </button>
-            <button class="btn btn-primary" onclick="saveAvailability()">💾 Salva Modifiche</button>
+            <button class="btn btn-primary" onclick="saveAvailability()">💾 ${isEn ? 'Save Changes' : 'Salva Modifiche'}</button>
           ` : `
-            <button class="btn btn-sm btn-sec" onclick="applyLiceoPresetAll()" title="Applica a tutte le 15 classi del Liceo">
-              ⚡ Blocca 7ª-8ª Tutto Liceo
+            <button class="btn btn-sm btn-sec" onclick="applyLiceoPresetAll()" title="${isEn ? 'Apply to all 15 High School classes' : 'Applica a tutte le 15 classi del Liceo'}">
+              ⚡ ${isEn ? 'Block 7th-8th All High School' : 'Blocca 7ª-8ª Tutto Liceo'}
             </button>
-            <button class="btn btn-primary" onclick="saveMatrixAvailability()">💾 Salva Modifiche Matrice</button>
+            <button class="btn btn-primary" onclick="saveMatrixAvailability()">💾 ${isEn ? 'Save Matrix Changes' : 'Salva Modifiche Matrice'}</button>
           `}
         </div>
       </div>
 
       <div style="font-size:12px;color:var(--text-muted);margin-top:10px;line-height:1.5;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
         <div>
-          💡 <b>Legenda:</b> Clicca sulle caselle per alternare tra 🟢 <b>Disponibile</b> (✓) e 🔴 <b>Non disponibile</b> (✕).
-          Le caselle grigie (<code>⏸️ PAUSA</code>) sono ore in cui l'intero istituto è chiuso per orario settimanale.
+          ${isEn
+            ? '💡 <b>Legend:</b> Click slots to toggle between 🟢 <b>Available</b> (✓) and 🔴 <b>Unavailable</b> (✕). Gray slots (<code>⏸️ BREAK</code>) indicate institute-wide closed hours.'
+            : '💡 <b>Legenda:</b> Clicca sulle caselle per alternare tra 🟢 <b>Disponibile</b> (✓) e 🔴 <b>Non disponibile</b> (✕). Le caselle grigie (<code>⏸️ PAUSA</code>) sono ore in cui l\'intero istituto è chiuso per orario settimanale.'}
         </div>
         ${!isSingle ? `
           <div style="font-size:11.5px;color:#0284c7;background:#e0f2fe;padding:3px 10px;border-radius:6px;font-weight:600;display:inline-flex;align-items:center;gap:4px;border:1px solid #bae6fd;">
-            ↔️ Scorri orizzontalmente per visualizzare tutti i giorni e le ore (1ª-8ª)
+            ${isEn ? '↔️ Scroll horizontally to view all days and periods (1st-8th)' : '↔️ Scorri orizzontalmente per visualizzare tutti i giorni e le ore (1ª-8ª)'}
           </div>
         ` : ''}
       </div>
@@ -8823,12 +8907,12 @@ async function renderAvailability() {
         <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:10px;">
           <div style="display:flex;align-items:center;gap:8px;">
             <span style="font-size:18px;">🎨</span>
-            <b style="font-size:13px;color:var(--text-main);">Gestione Preferenze & Desiderata: <u>${escapeHtml(activeAvailEntity)}</u></b>
-            <span class="badge badge-info" style="font-size:10.5px;">${curTeacher.cdc || 'Docente'}</span>
+            <b style="font-size:13px;color:var(--text-main);">${isEn ? 'Preferences & Desiderata Management:' : 'Gestione Preferenze & Desiderata:'} <u>${escapeHtml(activeAvailEntity)}</u></b>
+            <span class="badge badge-info" style="font-size:10.5px;">${curTeacher.cdc || (isEn ? 'Teacher' : 'Docente')}</span>
           </div>
           <div style="display:flex;gap:8px;align-items:center;">
-            <span style="font-size:11px;color:var(--text-muted);">💡 Clicca direttamente per modificare le preferenze in tempo reale:</span>
-            <button class="btn btn-sm btn-sec" onclick="openEditTeacherModal('${escapeJs(activeAvailEntity)}')" title="Configurazione limiti buche, span permanenza e 2ª scelta">⚙️ Limiti Avanzati</button>
+            <span style="font-size:11px;color:var(--text-muted);">${isEn ? '💡 Click directly to edit preferences in real time:' : '💡 Clicca direttamente per modificare le preferenze in tempo reale:'}</span>
+            <button class="btn btn-sm btn-sec" onclick="openEditTeacherModal('${escapeJs(activeAvailEntity)}')" title="${isEn ? 'Gaps limit, daily span and 2nd choice configuration' : 'Configurazione limiti buche, span permanenza e 2ª scelta'}">⚙️ ${isEn ? 'Advanced Limits' : 'Limiti Avanzati'}</button>
           </div>
         </div>
 
@@ -8836,34 +8920,37 @@ async function renderAvailability() {
           <!-- Fascia Oraria Desiderata -->
           <div style="background:var(--bg-card);padding:8px 12px;border:1px solid var(--border);border-radius:6px;">
             <div style="font-size:11px;font-weight:700;color:var(--text-sub);margin-bottom:6px;text-transform:uppercase;">
-              ⏰ Fascia Oraria Desiderata
+              ${isEn ? '⏰ Desired Time Slot' : '⏰ Fascia Oraria Desiderata'}
             </div>
             <div style="display:flex;gap:6px;flex-wrap:wrap;">
-              <button type="button" class="btn-pref-pill ${(curTeacher.pref_shift || 'none') === 'prime' ? 'active' : ''}" onclick="quickSetTeacherPref('${escapeJs(activeAvailEntity)}', 'pref_shift', 'prime')" title="Preferisci lezioni nelle prime ore (1ª-4ª)">🌅 Prime Ore (1ª-4ª)</button>
-              <button type="button" class="btn-pref-pill ${(curTeacher.pref_shift || 'none') === 'ultime' ? 'active' : ''}" onclick="quickSetTeacherPref('${escapeJs(activeAvailEntity)}', 'pref_shift', 'ultime')" title="Preferisci lezioni nelle ultime ore (3ª-8ª)">🌇 Ultime Ore (3ª-8ª)</button>
-              <button type="button" class="btn-pref-pill ${(curTeacher.pref_shift || 'none') === 'bilanciato' ? 'active' : ''}" onclick="quickSetTeacherPref('${escapeJs(activeAvailEntity)}', 'pref_shift', 'bilanciato')" title="Distribuzione oraria centrale (2ª-5ª)">⚖️ Bilanciato (2ª-5ª)</button>
-              <button type="button" class="btn-pref-pill ${(curTeacher.pref_shift || 'none') === 'none' ? 'active' : ''}" onclick="quickSetTeacherPref('${escapeJs(activeAvailEntity)}', 'pref_shift', 'none')" title="Nessuna preferenza di fascia oraria (orario flessibile)">⚪ Flessibile</button>
+              <button type="button" class="btn-pref-pill ${(curTeacher.pref_shift || 'none') === 'prime' ? 'active' : ''}" onclick="quickSetTeacherPref('${escapeJs(activeAvailEntity)}', 'pref_shift', 'prime')" title="${isEn ? 'Prefer early hours (1st-4th)' : 'Preferisci lezioni nelle prime ore (1ª-4ª)'}">${isEn ? '🌅 Early Hours (1st-4th)' : '🌅 Prime Ore (1ª-4ª)'}</button>
+              <button type="button" class="btn-pref-pill ${(curTeacher.pref_shift || 'none') === 'ultime' ? 'active' : ''}" onclick="quickSetTeacherPref('${escapeJs(activeAvailEntity)}', 'pref_shift', 'ultime')" title="${isEn ? 'Prefer late hours (3rd-8th)' : 'Preferisci lezioni nelle ultime ore (3ª-8ª)'}">${isEn ? '🌇 Late Hours (3rd-8th)' : '🌇 Ultime Ore (3ª-8ª)'}</button>
+              <button type="button" class="btn-pref-pill ${(curTeacher.pref_shift || 'none') === 'bilanciato' ? 'active' : ''}" onclick="quickSetTeacherPref('${escapeJs(activeAvailEntity)}', 'pref_shift', 'bilanciato')" title="${isEn ? 'Balanced central periods (2nd-5th)' : 'Distribuzione oraria centrale (2ª-5ª)'}">${isEn ? '⚖️ Balanced (2nd-5th)' : '⚖️ Bilanciato (2ª-5ª)'}</button>
+              <button type="button" class="btn-pref-pill ${(curTeacher.pref_shift || 'none') === 'none' ? 'active' : ''}" onclick="quickSetTeacherPref('${escapeJs(activeAvailEntity)}', 'pref_shift', 'none')" title="${isEn ? 'No time slot preference (flexible)' : 'Nessuna preferenza di fascia oraria (orario flessibile)'}">${isEn ? '⚪ Flexible' : '⚪ Flessibile'}</button>
             </div>
           </div>
 
           <!-- Giorno Libero Desiderato -->
           <div style="background:var(--bg-card);padding:8px 12px;border:1px solid var(--border);border-radius:6px;">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
-              <span style="font-size:11px;font-weight:700;color:#475569;text-transform:uppercase;">⭐ Giorno Libero (1ª Scelta)</span>
-              <label style="font-size:11px;color:#0284c7;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:4px;" title="Spunta per rendere il giorno libero un vincolo FET tassativo al 100%">
+              <span style="font-size:11px;font-weight:700;color:#475569;text-transform:uppercase;">${isEn ? '⭐ Free Day (1st Choice)' : '⭐ Giorno Libero (1ª Scelta)'}</span>
+              <label style="font-size:11px;color:#0284c7;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:4px;" title="${isEn ? 'Check to make free day 100% strict in FET' : 'Spunta per rendere il giorno libero un vincolo FET tassativo al 100%'}">
                 <input type="checkbox" ${curTeacher.free_day_strict ? 'checked' : ''} onchange="quickSetTeacherPref('${escapeJs(activeAvailEntity)}', 'free_day_strict', this.checked)">
-                <span>🔒 100% Tassativo</span>
+                <span>${isEn ? '🔒 100% Strict' : '🔒 100% Tassativo'}</span>
               </label>
             </div>
             <div style="display:flex;gap:5px;flex-wrap:wrap;align-items:center;">
-              ${['Lun', 'Mar', 'Mer', 'Gio', 'Ven'].map(d => `
-                <button type="button" class="btn-pref-day ${curTeacher.free_day_1 === d ? 'active' : ''}" onclick="quickSetTeacherPref('${escapeJs(activeAvailEntity)}', 'free_day_1', '${curTeacher.free_day_1 === d ? '' : d}')" title="${curTeacher.free_day_1 === d ? 'Giorno libero attivo (clicca per rimuovere)' : `Imposta ${d} come giorno libero`}">${d}</button>
-              `).join('')}
+              ${['Lun', 'Mar', 'Mer', 'Gio', 'Ven'].map(d => {
+                const dayLbl = formatDayName(d);
+                return `
+                  <button type="button" class="btn-pref-day ${curTeacher.free_day_1 === d ? 'active' : ''}" onclick="quickSetTeacherPref('${escapeJs(activeAvailEntity)}', 'free_day_1', '${curTeacher.free_day_1 === d ? '' : d}')" title="${curTeacher.free_day_1 === d ? (isEn ? 'Active free day (click to remove)' : 'Giorno libero attivo (clicca per rimuovere)') : (isEn ? `Set ${dayLbl} as free day` : `Imposta ${dayLbl} come giorno libero`)}">${dayLbl}</button>
+                `;
+              }).join('')}
               ${curTeacher.free_day_1 ? `
-                <button type="button" class="btn btn-sm btn-sec" style="font-size:10px;padding:2px 6px;" onclick="quickSetTeacherPref('${escapeJs(activeAvailEntity)}', 'free_day_1', '')" title="Rimuovi giorno libero">✕ Rimuovi</button>
+                <button type="button" class="btn btn-sm btn-sec" style="font-size:10px;padding:2px 6px;" onclick="quickSetTeacherPref('${escapeJs(activeAvailEntity)}', 'free_day_1', '')" title="${isEn ? 'Remove free day' : 'Rimuovi giorno libero'}">✕ ${isEn ? 'Remove' : 'Rimuovi'}</button>
               ` : ''}
               ${curTeacher.free_day_2 ? `
-                <span class="badge" style="background:#e0f2fe;color:#0369a1;font-size:10px;padding:2px 6px;margin-left:auto;" title="Seconda scelta alternativa configurata">2ª: ${curTeacher.free_day_2}</span>
+                <span class="badge" style="background:#e0f2fe;color:#0369a1;font-size:10px;padding:2px 6px;margin-left:auto;" title="${isEn ? 'Configured second choice alternative' : 'Seconda scelta alternativa configurata'}">2ª: ${formatDayName(curTeacher.free_day_2)}</span>
               ` : ''}
             </div>
           </div>
@@ -9367,15 +9454,20 @@ async function renderConstraints() {
       ${filteredEntries.map(([key, c]) => {
         const isRigid = c.is_rigid || false;
         const weightVal = c.weight !== undefined ? c.weight : 100;
+        const localizedName = _t(`constraints_dict.${key}.name`, c.name || key);
+        const localizedDesc = _t(`constraints_dict.${key}.desc`, c.desc || '');
+        const catLabel = c.category === 'Docenti' ? _t('constraints.teachers', 'Docenti') :
+                         c.category === 'Classi' ? _t('constraints.classes', 'Classi') :
+                         c.category === 'Spostamenti' ? _t('constraints.changes', 'Spostamenti') : (c.category || 'Generale');
 
         return `
           <div class="constraint-card">
             <div>
               <div class="constraint-header">
-                <span class="constraint-title">${escapeHtml(c.name || key)}</span>
-                <span class="badge ${c.category === 'Docenti' ? 'badge-info' : c.category === 'Classi' ? 'badge-warn' : 'badge-ok'}">${c.category || 'Generale'}</span>
+                <span class="constraint-title">${escapeHtml(localizedName)}</span>
+                <span class="badge ${c.category === 'Docenti' ? 'badge-info' : c.category === 'Classi' ? 'badge-warn' : 'badge-ok'}">${catLabel}</span>
               </div>
-              <div class="constraint-desc">${escapeHtml(c.desc || '')}</div>
+              <div class="constraint-desc">${escapeHtml(localizedDesc)}</div>
             </div>
 
             <div class="constraint-ctrls">
@@ -9397,12 +9489,12 @@ async function renderConstraints() {
 
                 <div style="display:flex;align-items:center;gap:4px;">
                   ${isRigid ? `
-                    <span class="badge badge-info" style="font-size:10.5px;padding:3px 6px;" title="FET richiede obbligatoriamente peso 100% per questo vincolo algebrico">
+                    <span class="badge badge-info" style="font-size:10.5px;padding:3px 6px;" title="${_t('constraints.rigid_title', 'FET richiede obbligatoriamente peso 100% per questo vincolo algebrico')}">
                       ${_t('constraints.rigid_badge', '🔒 100% (Rigido)')}
                     </span>
                   ` : `
-                    <span style="font-size:11px;color:var(--text-muted);" title="Percentuale peso nel solutore FET (0-100%)">${_t('constraints.weight', 'Peso:')}</span>
-                    <input type="number" id="c_weight_${key}" class="num-input" value="${weightVal}" min="0" max="100" style="width:58px;" title="Percentuale peso vincolo FET (Weight_Percentage)" oninput="debounceAutoSaveConstraint('${key}')" onchange="autoSaveConstraintSingle('${key}')">
+                    <span style="font-size:11px;color:var(--text-muted);" title="${_t('constraints.weight_title', 'Percentuale peso nel solutore FET (0-100%)')}">${_t('constraints.weight', 'Peso:')}</span>
+                    <input type="number" id="c_weight_${key}" class="num-input" value="${weightVal}" min="0" max="100" style="width:58px;" title="${_t('constraints.weight_title', 'Percentuale peso nel solutore FET (0-100%)')}" oninput="debounceAutoSaveConstraint('${key}')" onchange="autoSaveConstraintSingle('${key}')">
                     <span style="font-size:11px;color:var(--text-muted);">%</span>
                   `}
                 </div>
@@ -9423,6 +9515,7 @@ function filterConstraints(cat) {
 let constraintAutoSaveTimer = null;
 
 function setConstraintSaveStatus(status) {
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
   const badge = document.getElementById('constraintAutoSaveBadge');
   const dot = document.getElementById('constraintSaveDot');
   const text = document.getElementById('constraintSaveText');
@@ -9433,19 +9526,19 @@ function setConstraintSaveStatus(status) {
     badge.style.borderColor = '#fde68a';
     badge.style.color = '#b45309';
     dot.style.background = '#f59e0b';
-    text.innerText = 'Salvataggio in corso...';
+    text.innerText = isEn ? 'Saving...' : 'Salvataggio in corso...';
   } else if (status === 'saved') {
     badge.style.background = '#f0fdf4';
     badge.style.borderColor = '#bbf7d0';
     badge.style.color = '#16a34a';
     dot.style.background = '#16a34a';
-    text.innerText = 'Salvato in tempo reale';
+    text.innerText = isEn ? 'Saved in real-time' : 'Salvato in tempo reale';
   } else if (status === 'error') {
     badge.style.background = '#fef2f2';
     badge.style.borderColor = '#fecaca';
     badge.style.color = '#dc2626';
     dot.style.background = '#dc2626';
-    text.innerText = 'Errore salvataggio';
+    text.innerText = isEn ? 'Save error' : 'Errore salvataggio';
   }
 }
 

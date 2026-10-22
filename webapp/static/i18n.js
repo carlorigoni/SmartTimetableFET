@@ -252,6 +252,164 @@
         btn_view_cattedre: "📚 Cattedre",
         btn_avail: "📅 Indisponibilità"
       },
+      block_rules: {
+        title: "Regole Suddivisione Blocchi Orari & Indirizzi Sezioni",
+        standard_badge: "Standard",
+        exceptions_badge: "Eccezioni",
+        no_exceptions_badge: "0 Eccezioni",
+        intro_desc: "La suddivisione dei blocchi orari (es. <code>2+1</code>, <code>1+1+1</code>, <code>2+2</code>, <code>2</code>) è gestita con il <b>principio delle eccezioni</b>: ciascuna cattedra riceve automaticamente la formula di default prestabilita per la specifica materia, per l'indirizzo (<b>Liceo</b>, <b>Tecnico</b> o <b>Professionale</b>, determinato dalla <i>sezione</i>) e per il ciclo (<b>Biennio</b> 1-2 o <b>Triennio</b> 3-5). La suddivisione si specifica <b>solo ed esclusivamente se diversa</b> dal default.",
+        add_rule_btn: "➕ Nuova Regola di Default",
+        view_cattedre_btn: "👥 Vai a Vista Cattedre",
+        reset_all_btn: "↩️ Ripristina Tutte ai Default Didattici",
+        sec1_title: "🏷️ 1. Indirizzo di Studio per Sezione (Liceo / Tecnico / Professionale)",
+        sec1_hint: "Valido per tutte le classi da 1 a 5 con la stessa lettera di sezione",
+        sec1_desc: "L'indirizzo di studio è determinato <b>esclusivamente in base alla sezione</b>. Clicca sui pulsanti sotto per cambiare l'indirizzo assegnato a ciascuna sezione dell'istituto:",
+        section_label: "Sezione",
+        classes_count: "{n} classi",
+        track_liceo: "🎓 Liceo",
+        track_tecnico: "⚙️ Tecnico",
+        track_prof: "🏥 Prof.",
+        sec2_title: "📐 2. Regole di Default del Sistema ({n} Regole Didattiche)",
+        sec2_desc: "Queste formule vengono applicate automaticamente a qualsiasi cattedra in assenza di eccezioni esplicite.",
+        search_placeholder: "🔍 Cerca materia o percorso...",
+        new_rule_btn: "+ Nuova Regola",
+        th_subject: "Materia / Disciplina",
+        th_track: "Indirizzo",
+        th_period: "Periodo",
+        th_hours: "Ore",
+        th_default_formula: "Formula Default",
+        th_actions: "Azioni",
+        any: "Qualsiasi",
+        all_tracks: "TUTTI",
+        all_periods: "TUTTI",
+        sec3_title: "⚡ 3. Riepilogo Eccezioni Attive nel Progetto ({n})",
+        sec3_desc: "Cattedre la cui suddivisione blocchi differisce intenzionalmente dalla formula standard di default stabilita sopra.",
+        no_exceptions_msg: "✅ <b>Nessuna eccezione attiva:</b> tutte le <b>{total}</b> cattedre seguono perfettamente le formule standard di default previste per materia, indirizzo e biennio/triennio!",
+        th_class: "Classe",
+        th_teachers: "Docenti",
+        th_applied_blocks: "Suddivisione Applicata",
+        th_std_formula: "Formula Standard",
+        reset_default_btn: "↩️ Ripristina Default",
+        edit_btn: "✏️ Modifica"
+      },
+      accorpamenti: {
+        title: "Gestione Accorpamenti Macro-Materie",
+        active_badge: "{n} Attive",
+        pending_badge: "{n} Da Accorpare",
+        desc: "Quando lo stesso docente insegna più materie complementari sulla stessa classe (es. <i>Italiano</i>, <i>Latino</i> e <i>Storia e Geografia</i>), l'accorpamento in una <b>macro-materia aggregata</b> (7 o 10 ore complessive) permette al motore FET di suddividere il carico didattico con formule bilanciate (es. <code>2+2+2+1</code> o <code>2+1+2+1+2+1+1</code>), evitando frammentazioni in singole ore sparse o sovraccarichi giornalieri per gli studenti.",
+        new_rule_btn: "➕ Nuova Regola",
+        manual_merge_btn: "⚡ Accorpa Manualmente",
+        go_activities_btn: "📝 Vai a Tutte le Cattedre",
+        rules_title: "📋 Regole Macro-Materia Riconosciute nel Sistema ({n}):",
+        search_placeholder: "🔍 Cerca docente, classe o materia...",
+        filter_all: "Tutte",
+        filter_active: "🟢 Solo Attive",
+        filter_pending: "⚡ Da Accorpare",
+        reversible_note: "Tutte le modifiche e disaccorpamenti sono <b>immediati e reversibili al 100%</b>.",
+        th_teacher: "👨‍🏫 Docente Titolare",
+        th_class: "🎓 Classe",
+        th_subject: "📚 Macro-Materia / Materia Composta",
+        th_hours: "⏱️ Ore Tot.",
+        th_blocks: "🧩 Blocchi Orari FET",
+        th_actions: "Azioni"
+      },
+      constraints_dict: {
+        TEACHERS_MAX_GAPS_DAY: {
+          name: "Massimo Ore Buche Giornaliere Docenti",
+          desc: "Numero massimo di ore libere tra le lezioni nella stessa giornata per i docenti.",
+          category: "Docenti"
+        },
+        TEACHERS_MAX_GAPS_WEEK: {
+          name: "Massimo Ore Buche Settimanali Docenti",
+          desc: "Numero massimo totale di ore buche settimanali per ciascun docente.",
+          category: "Docenti"
+        },
+        TEACHERS_MAX_GAPS_DAY_DISP: {
+          name: "Ore Buche Giornaliere con Disposizioni",
+          desc: "Limite ore buche giornaliere per docenti con ore a disposizione teoriche.",
+          category: "Docenti"
+        },
+        TEACHERS_MAX_GAPS_WEEK_DISP: {
+          name: "Ore Buche Settimanali con Disposizioni",
+          desc: "Limite ore buche settimanali per docenti con ore a disposizione teoriche.",
+          category: "Docenti"
+        },
+        TEACHERS_MAX_GAPS_WEEK_ITIN: {
+          name: "Ore Buche Settimanali Docenti Itineranti",
+          desc: "Limite ore buche settimanali per docenti con cattedre su più plessi.",
+          category: "Docenti"
+        },
+        TEACHERS_MAX_RIENTRI: {
+          name: "Massimo Rientri Pomeridiani Docenti",
+          desc: "Massimo numero di pomeriggi (ore 7 e 8) a settimana per docente.",
+          category: "Docenti"
+        },
+        TEACHERS_MAX_HOURS_DAY: {
+          name: "Massimo Ore Giornaliere Docenti",
+          desc: "Carico massimo giornaliero di ore di insegnamento per ciascun docente.",
+          category: "Docenti"
+        },
+        TEACHERS_MIN_HOURS_DAY: {
+          name: "Minimo Ore nei Giorni di Presenza Docenti",
+          desc: "Minimo ore di servizio nei giorni di presenza a scuola (i giorni liberi restano a 0).",
+          category: "Docenti"
+        },
+        CLASSE_DOCENTE_PRIME_ULTIME: {
+          name: "Max Ore Prime/Ultime Classe per Docente",
+          desc: "Al massimo questa % delle ore settimanali alle prime o ultime ore della classe (es. 50 = metà).",
+          category: "Docenti"
+        },
+        DISPOSIZIONE_MIN_PER_ORA: {
+          name: "Copertura Minima Supplenze per Ora",
+          desc: "Garantisce almeno N docenti a disposizione in contemporanea per ogni ora di lezione.",
+          category: "Docenti"
+        },
+        STUDENTS_MAX_GAPS_DAY: {
+          name: "Zero Ore Buche Giornaliere per le Classi",
+          desc: "Le classi non devono avere ore buche tra le lezioni: orario compatto continuo.",
+          category: "Classi"
+        },
+        STUDENTS_MAX_GAPS_WEEK: {
+          name: "Zero Ore Buche Settimanali per le Classi",
+          desc: "Nessuna ora buca nell'intera settimana scolastica per gli studenti.",
+          category: "Classi"
+        },
+        STUDENTS_MAX_RIENTRI: {
+          name: "Massimo Rientri Pomeridiani Classi",
+          desc: "Massimo numero di pomeriggi (ore 7 e 8) a settimana per classe.",
+          category: "Classi"
+        },
+        STUDENTS_EARLY_BEGIN: {
+          name: "Ingresso Obbligatorio alla 1ª Ora",
+          desc: "0 = Tutte le classi entrano sempre alla 1ª ora della mattina (nessun ingresso tardivo).",
+          category: "Classi"
+        },
+        STUDENTS_MAX_HOURS_DAY: {
+          name: "Massimo Ore Giornaliere Studenti",
+          desc: "Limite assoluto al monte ore giornaliero per le classi.",
+          category: "Classi"
+        },
+        STUDENTS_MIN_HOURS_DAY: {
+          name: "Minimo Ore Giornaliere Studenti",
+          desc: "Minimo ore giornaliere di lezione per le classi nei giorni attivi.",
+          category: "Classi"
+        },
+        TEACHERS_MAX_BUILDING_CHANGES_DAY: {
+          name: "Massimo Spostamenti Giornalieri tra Sedi",
+          desc: "Massimo numero di spostamenti tra Centrale e Succursale nello stesso giorno.",
+          category: "Spostamenti"
+        },
+        TEACHERS_MIN_GAPS_BUILDING_CHANGES: {
+          name: "Tempo Minimo di Trasferimento tra Sedi",
+          desc: "Almeno 1 ora libera tra due lezioni in plessi diversi per consentire lo spostamento.",
+          category: "Spostamenti"
+        },
+        TEACHERS_MAX_BUILDING_CHANGES_WEEK: {
+          name: "Massimo Spostamenti Settimanali tra Sedi",
+          desc: "Limite al numero totale di cambi sede nella settimana per docente.",
+          category: "Spostamenti"
+        }
+      },
       classes: {
         title: "Classi & Gruppi Studenti",
         add_btn: "➕ Nuova Classe",
@@ -645,6 +803,164 @@
         btn_add_cattedra: "➕ Assignment",
         btn_view_cattedre: "📚 Assignments",
         btn_avail: "📅 Availability"
+      },
+      block_rules: {
+        title: "Hour Block Distribution & Section Track Rules",
+        standard_badge: "Standard",
+        exceptions_badge: "Exceptions",
+        no_exceptions_badge: "0 Exceptions",
+        intro_desc: "Course hour block distributions (e.g. <code>2+1</code>, <code>1+1+1</code>, <code>2+2</code>, <code>2</code>) follow an <b>exception-based approach</b>: every chair automatically receives the preset default formula for its subject, study track (<b>Academic High School</b>, <b>Technical</b> or <b>Vocational</b>, determined by <i>section</i>) and cycle (<b>Lower Secondary</b> 1-2 or <b>Upper Secondary</b> 3-5). A custom split is only specified if <b>different from the default</b>.",
+        add_rule_btn: "➕ New Default Rule",
+        view_cattedre_btn: "👥 Go to Teaching Assignments",
+        reset_all_btn: "↩️ Reset All to Educational Defaults",
+        sec1_title: "🏷️ 1. Study Track by Section (Academic / Technical / Vocational)",
+        sec1_hint: "Valid for all grades 1 to 5 with the same section letter",
+        sec1_desc: "The curriculum track is determined <b>exclusively by section</b>. Click the buttons below to change the curriculum track assigned to each section of the school:",
+        section_label: "Section",
+        classes_count: "{n} classes",
+        track_liceo: "🎓 Academic",
+        track_tecnico: "⚙️ Technical",
+        track_prof: "🏥 Vocational",
+        sec2_title: "📐 2. System Default Rules ({n} Curriculum Rules)",
+        sec2_desc: "These formulas are automatically applied to any chair in the absence of explicit exceptions.",
+        search_placeholder: "🔍 Search subject or track...",
+        new_rule_btn: "+ New Rule",
+        th_subject: "Subject / Course",
+        th_track: "Study Track",
+        th_period: "Cycle / Period",
+        th_hours: "Hours",
+        th_default_formula: "Default Formula",
+        th_actions: "Actions",
+        any: "Any",
+        all_tracks: "ALL",
+        all_periods: "ALL",
+        sec3_title: "⚡ 3. Active Custom Exceptions in Project ({n})",
+        sec3_desc: "Teaching assignments whose block distribution intentionally differs from the standard default formula above.",
+        no_exceptions_msg: "✅ <b>No active exceptions:</b> all <b>{total}</b> teaching assignments perfectly follow standard default formulas for subject, track, and grade level!",
+        th_class: "Class",
+        th_teachers: "Faculty",
+        th_applied_blocks: "Applied Split",
+        th_std_formula: "Standard Formula",
+        reset_default_btn: "↩️ Reset to Default",
+        edit_btn: "✏️ Edit"
+      },
+      accorpamenti: {
+        title: "Macro-Subject Merges Management",
+        active_badge: "{n} Active",
+        pending_badge: "{n} Pending Merge",
+        desc: "When the same teacher instructs multiple complementary subjects in the same class (e.g. <i>Italian</i>, <i>Latin</i>, and <i>History & Geography</i>), merging them into an <b>aggregated macro-subject</b> (7 or 10 total hours) enables FET to distribute teaching load with balanced formulas (e.g. <code>2+2+2+1</code>), preventing fragmented single periods and student overload.",
+        new_rule_btn: "➕ New Rule",
+        manual_merge_btn: "⚡ Merge Manually",
+        go_activities_btn: "📝 Go to All Chairs",
+        rules_title: "📋 Recognized Macro-Subject Rules in System ({n}):",
+        search_placeholder: "🔍 Search faculty, class or subject...",
+        filter_all: "All",
+        filter_active: "🟢 Active Only",
+        filter_pending: "⚡ Pending Merge",
+        reversible_note: "All mergers and unmergers are <b>instant and 100% reversible</b>.",
+        th_teacher: "👨‍🏫 Faculty Member",
+        th_class: "🎓 Class",
+        th_subject: "📚 Macro-Subject / Merged Course",
+        th_hours: "⏱️ Total Hours",
+        th_blocks: "🧩 FET Hour Blocks",
+        th_actions: "Actions"
+      },
+      constraints_dict: {
+        TEACHERS_MAX_GAPS_DAY: {
+          name: "Teachers Max Daily Gap Hours",
+          desc: "Maximum number of free gap hours between lessons on the same day for teachers.",
+          category: "Teachers"
+        },
+        TEACHERS_MAX_GAPS_WEEK: {
+          name: "Teachers Max Weekly Gap Hours",
+          desc: "Maximum total number of free gap hours per week for each teacher.",
+          category: "Teachers"
+        },
+        TEACHERS_MAX_GAPS_DAY_DISP: {
+          name: "Daily Gaps with On-Duty Hours",
+          desc: "Daily gap hour limit for teachers with theoretical on-duty hours.",
+          category: "Teachers"
+        },
+        TEACHERS_MAX_GAPS_WEEK_DISP: {
+          name: "Weekly Gaps with On-Duty Hours",
+          desc: "Weekly gap hour limit for teachers with theoretical on-duty hours.",
+          category: "Teachers"
+        },
+        TEACHERS_MAX_GAPS_WEEK_ITIN: {
+          name: "Weekly Gaps for Multi-Campus Teachers",
+          desc: "Weekly gap limit for teachers with classes on multiple campuses.",
+          category: "Teachers"
+        },
+        TEACHERS_MAX_RIENTRI: {
+          name: "Teachers Max Afternoon Return Days",
+          desc: "Maximum number of afternoon sessions (periods 7 and 8) per week per teacher.",
+          category: "Teachers"
+        },
+        TEACHERS_MAX_HOURS_DAY: {
+          name: "Teachers Max Daily Teaching Hours",
+          desc: "Maximum daily teaching workload per teacher.",
+          category: "Teachers"
+        },
+        TEACHERS_MIN_HOURS_DAY: {
+          name: "Teachers Min Hours on Working Days",
+          desc: "Minimum duty hours on days present at school (free days remain at 0).",
+          category: "Teachers"
+        },
+        CLASSE_DOCENTE_PRIME_ULTIME: {
+          name: "Max Early/Late Hours in Class per Teacher",
+          desc: "At most this percentage of weekly hours placed in early or late class slots (e.g. 50 = half).",
+          category: "Teachers"
+        },
+        DISPOSIZIONE_MIN_PER_ORA: {
+          name: "Minimum On-Duty Coverage per Period",
+          desc: "Guarantees at least N on-duty teachers available simultaneously each teaching period for substitutions.",
+          category: "Teachers"
+        },
+        STUDENTS_MAX_GAPS_DAY: {
+          name: "Zero Daily Gap Hours for Students",
+          desc: "Classes must have no gaps between lessons: continuous compact timetable.",
+          category: "Classes"
+        },
+        STUDENTS_MAX_GAPS_WEEK: {
+          name: "Zero Weekly Gap Hours for Students",
+          desc: "Zero gap hours during the entire school week for students.",
+          category: "Classes"
+        },
+        STUDENTS_MAX_RIENTRI: {
+          name: "Students Max Afternoon Return Days",
+          desc: "Maximum number of afternoon sessions (periods 7 and 8) per week per class.",
+          category: "Classes"
+        },
+        STUDENTS_EARLY_BEGIN: {
+          name: "Mandatory Entry at Period 1",
+          desc: "0 = All classes enter at period 1 every morning (no late arrivals permitted).",
+          category: "Classes"
+        },
+        STUDENTS_MAX_HOURS_DAY: {
+          name: "Students Max Daily Hours",
+          desc: "Absolute daily hour limit for student classes.",
+          category: "Classes"
+        },
+        STUDENTS_MIN_HOURS_DAY: {
+          name: "Students Min Daily Hours",
+          desc: "Minimum daily class hours for students on active school days.",
+          category: "Classes"
+        },
+        TEACHERS_MAX_BUILDING_CHANGES_DAY: {
+          name: "Max Daily Campus Transfers per Teacher",
+          desc: "Maximum number of campus transfers between Main and Branch on the same day.",
+          category: "Transfers / Campuses"
+        },
+        TEACHERS_MIN_GAPS_BUILDING_CHANGES: {
+          name: "Min Travel Gap Between Campus Transfers",
+          desc: "At least 1 free period between lessons on different campuses to allow travel time.",
+          category: "Transfers / Campuses"
+        },
+        TEACHERS_MAX_BUILDING_CHANGES_WEEK: {
+          name: "Max Weekly Campus Transfers per Teacher",
+          desc: "Weekly cap on total campus transfers per teacher across the entire school week.",
+          category: "Transfers / Campuses"
+        }
       },
       classes: {
         title: "Classes & Student Groups",
