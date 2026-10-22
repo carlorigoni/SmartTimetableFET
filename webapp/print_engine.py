@@ -56,6 +56,58 @@ GIORNI_DEFAULT = [
     {"id": "Ven", "nome": "Venerdì"},
 ]
 
+def get_day_name(d: str, lang: str = "it", full: bool = True) -> str:
+    clean = (d or "").strip().lower()
+    if lang == "en":
+        if clean.startswith("lun") or clean.startswith("mon"):
+            return "Monday" if full else "Mon"
+        if clean.startswith("mar") or clean.startswith("tue"):
+            return "Tuesday" if full else "Tue"
+        if clean.startswith("mer") or clean.startswith("wed"):
+            return "Wednesday" if full else "Wed"
+        if clean.startswith("gio") or clean.startswith("thu"):
+            return "Thursday" if full else "Thu"
+        if clean.startswith("ven") or clean.startswith("fri"):
+            return "Friday" if full else "Fri"
+        if clean.startswith("sab") or clean.startswith("sat"):
+            return "Saturday" if full else "Sat"
+        if clean.startswith("dom") or clean.startswith("sun"):
+            return "Sunday" if full else "Sun"
+        return d
+    else:
+        if clean.startswith("lun") or clean.startswith("mon"):
+            return "Lunedì" if full else "Lun"
+        if clean.startswith("mar") or clean.startswith("tue"):
+            return "Martedì" if full else "Mar"
+        if clean.startswith("mer") or clean.startswith("wed"):
+            return "Mercoledì" if full else "Mer"
+        if clean.startswith("gio") or clean.startswith("thu"):
+            return "Giovedì" if full else "Gio"
+        if clean.startswith("ven") or clean.startswith("fri"):
+            return "Venerdì" if full else "Ven"
+        if clean.startswith("sab") or clean.startswith("sat"):
+            return "Sabato" if full else "Sab"
+        if clean.startswith("dom") or clean.startswith("sun"):
+            return "Domenica" if full else "Dom"
+        return d
+
+def get_intervallo_info(h: int, lang: str = "it") -> dict:
+    info = INTERVALLI_DOPO_ORA.get(h)
+    if not info:
+        return {}
+    res = dict(info)
+    if lang == "en":
+        if h == 2:
+            res["label"] = "1st Recess"
+        elif h == 4:
+            res["label"] = "2nd Recess"
+        elif h == 6:
+            res["label"] = "3rd Recess (Afternoon)"
+        else:
+            res["label"] = f"Recess {h}"
+    return res
+
+
 # Palette storica 32 colori saturi per il bordo delle materie
 PALETTE_COLORI_MATERIE = [
     "C92626", "AD5A28", "C9A026", "9CAD28", "77C926", "39AD28", "26C94F", "28AD7B",
@@ -346,6 +398,7 @@ def generate_classes_print_html(data, options=None):
     show_rooms = bool(options.get("show_rooms", True))
     include_subgroups = bool(options.get("include_subgroups", True))
     selected_classes = options.get("classes") # list or None = all
+    lang = options.get("lang", "it")
 
     institution = data.get("institution", 'Liceo & Tecnico "Pico De Paperis" - Paperopoli')
     subjects_list = [s["name"] for s in data.get("subjects", [])]
@@ -376,9 +429,8 @@ def generate_classes_print_html(data, options=None):
 
     # Giorni completi con etichetta
     giorni_info = []
-    giorni_nomi = {"Lun": "Lunedì", "Mar": "Martedì", "Mer": "Mercoledì", "Gio": "Giovedì", "Ven": "Venerdì"}
     for d in days:
-        giorni_info.append({"id": d, "nome": giorni_nomi.get(d, d)})
+        giorni_info.append({"id": d, "nome": get_day_name(d, lang=lang, full=True)})
 
     # Struttura fissa: SEMPRE 8 ore e 3 intervalli su ogni classe per garantire uniformità perfetta
     FIXED_MAX_HOURS = 8
@@ -386,11 +438,11 @@ def generate_classes_print_html(data, options=None):
     # Inizio generazione HTML
     html_out = []
     html_out.append(f"""<!DOCTYPE html>
-<html lang="it">
+<html lang="{lang}">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Orario per Classe &mdash; {escape(institution)}</title>
+<title>{'Class Timetable' if lang == 'en' else 'Orario per Classe'} &mdash; {escape(institution)}</title>
 <style>
   @page {{
     size: landscape;
@@ -732,10 +784,10 @@ function closePrintView() {{
 <body>
 
 <div class="no-print">
-  <h2>🖨️ Stampa Orario per Classe &mdash; {len(classes_to_print)} Classi (A4 Orizzontale)</h2>
+  <h2>{'🖨️ Print Class Timetable' if lang == 'en' else '🖨️ Stampa Orario per Classe'} &mdash; {len(classes_to_print)} {'Classes (A4 Landscape)' if lang == 'en' else 'Classi (A4 Orizzontale)'}</h2>
   <div>
-    <button class="btn-toolbar btn-toolbar-sec" onclick="closePrintView()">✕ Chiudi</button>
-    <button class="btn-toolbar" onclick="window.print()">🖨️ Stampa / Salva in PDF</button>
+    <button class="btn-toolbar btn-toolbar-sec" onclick="closePrintView()">{'✕ Close' if lang == 'en' else '✕ Chiudi'}</button>
+    <button class="btn-toolbar" onclick="window.print()">{'🖨️ Print / Save as PDF' if lang == 'en' else '🖨️ Stampa / Salva in PDF'}</button>
   </div>
 </div>
 
@@ -750,27 +802,31 @@ function closePrintView() {{
         sub_desc = ""
         if classe in parsed["mothers"]:
             figlie_str = ", ".join(parsed["mothers"][classe])
-            sub_desc = f"(Articolata: {figlie_str})"
+            sub_desc = f"(Articulated: {figlie_str})" if lang == "en" else f"(Articolata: {figlie_str})"
         elif classe in parsed["daughter_to_mother"]:
             madre = parsed["daughter_to_mother"][classe]
-            sub_desc = f"(Sottogruppo di {madre})"
+            sub_desc = f"(Subgroup of {madre})" if lang == "en" else f"(Sottogruppo di {madre})"
+
+        class_title_prefix = 'Class' if lang == 'en' else 'Classe'
+        effective_lbl = 'Effective from:' if lang == 'en' else 'Valido a partire da:'
+        period_lbl = 'Period' if lang == 'en' else 'Ora'
 
         html_out.append(f"""
   <div class="sheet-page">
     <div class="header-box">
       <div class="header-left">
-        <h1>Classe {escape(classe)} <span class="sub-tag">{escape(sub_desc)}</span></h1>
+        <h1>{class_title_prefix} {escape(classe)} <span class="sub-tag">{escape(sub_desc)}</span></h1>
       </div>
       <div class="header-right">
         <div class="inst-name">{escape(institution)}</div>
-        <div class="val-date">Valido a partire da: <b>{escape(validity_date)}</b></div>
+        <div class="val-date">{effective_lbl} <b>{escape(validity_date)}</b></div>
       </div>
     </div>
 
     <table class="grid">
       <thead>
         <tr>
-          <th class="col-ora">Ora</th>
+          <th class="col-ora">{period_lbl}</th>
 """)
         for g in giorni_info:
             html_out.append(f"          <th>{escape(g['nome'])}</th>\n")
@@ -780,10 +836,11 @@ function closePrintView() {{
         for h_int in range(1, FIXED_MAX_HOURS + 1):
             h_str = str(h_int)
             orario = ORARIO_ORE.get(h_int, {"inizio": "", "fine": ""})
+            hour_display = f"Period {h_int}" if lang == "en" else f"{h_int}ª ora"
 
             html_out.append(f"""        <tr>
           <td class="col-ora col-ora-cell">
-            <div class="ora-num">{h_int}ª ora</div>
+            <div class="ora-num">{hour_display}</div>
             <div class="ora-time">{orario['inizio']}-{orario['fine']}</div>
           </td>
 """)
@@ -848,7 +905,7 @@ function closePrintView() {{
 
             # Inserimento intervallo (1°, 2° o 3°)
             if h_int in INTERVALLI_DOPO_ORA and h_int < FIXED_MAX_HOURS:
-                intervallo = INTERVALLI_DOPO_ORA[h_int]
+                intervallo = get_intervallo_info(h_int, lang=lang)
                 html_out.append(f"""        <tr class="intervallo-row">
           <td></td>
           <td colspan="{len(giorni_info)}">
@@ -886,6 +943,7 @@ def generate_teachers_master_print_html(data, options=None):
     paper_size = options.get("paper_size", "A3") # 'A3' | 'A4'
     show_rooms = bool(options.get("show_rooms", False))
     highlight_disp = bool(options.get("highlight_disp", True))
+    lang = options.get("lang", "it")
 
     institution = data.get("institution", 'Liceo & Tecnico "Pico De Paperis" - Paperopoli')
     days = data.get("days", ["Lun", "Mar", "Mer", "Gio", "Ven"])
@@ -903,7 +961,6 @@ def generate_teachers_master_print_html(data, options=None):
     # Determinazione delle ore massime EFFETTIVAMENTE usate per ciascun giorno
     # (Trimming ore di coda vuote, es. Lunedì/Mercoledì/Giovedì max 6, Martedì/Venerdì max 8)
     day_max_hour = {}
-    giorni_nomi = {"Lun": "Lunedì", "Mar": "Martedì", "Mer": "Mercoledì", "Gio": "Giovedì", "Ven": "Venerdì"}
 
     for d in days:
         max_h = 1
@@ -924,7 +981,7 @@ def generate_teachers_master_print_html(data, options=None):
         total_hour_columns += len(active_hours)
         active_days.append({
             "id": d,
-            "nome": giorni_nomi.get(d, d),
+            "nome": get_day_name(d, lang=lang, full=True),
             "hours": active_hours,
             "is_alt": (idx % 2 == 1)
         })
@@ -1260,20 +1317,20 @@ function copyTableForGoogleDocs() {{
 <body>
 
 <div class="no-print">
-  <h2>📄 Tabellone Generale Orario Docenti &mdash; Formato {paper_size} ({len(sorted_teachers)} Docenti)</h2>
+  <h2>{'📄 Faculty Master Timetable' if lang == 'en' else '📄 Tabellone Generale Orario Docenti'} &mdash; {'Format' if lang == 'en' else 'Formato'} {paper_size} ({len(sorted_teachers)} {'Teachers' if lang == 'en' else 'Docenti'})</h2>
   <div style="display:flex;gap:6px;align-items:center;">
-    <button class="btn-toolbar btn-toolbar-sec" onclick="closePrintView()">✕ Chiudi</button>
-    <button class="btn-toolbar btn-toolbar-accent" onclick="copyTableForGoogleDocs()">📋 Copia per Google Docs</button>
-    <button class="btn-toolbar btn-toolbar-sec" onclick="downloadDocx()">📥 Scarica .docx (Google Docs)</button>
-    <button class="btn-toolbar" onclick="window.print()">🖨️ Stampa / Salva in PDF</button>
+    <button class="btn-toolbar btn-toolbar-sec" onclick="closePrintView()">{'✕ Close' if lang == 'en' else '✕ Chiudi'}</button>
+    <button class="btn-toolbar btn-toolbar-accent" onclick="copyTableForGoogleDocs()">{'📋 Copy for Google Docs' if lang == 'en' else '📋 Copia per Google Docs'}</button>
+    <button class="btn-toolbar btn-toolbar-sec" onclick="downloadDocx()">{'📥 Download .docx (Google Docs)' if lang == 'en' else '📥 Scarica .docx (Google Docs)'}</button>
+    <button class="btn-toolbar" onclick="window.print()">{'🖨️ Print / Save as PDF' if lang == 'en' else '🖨️ Stampa / Salva in PDF'}</button>
   </div>
 </div>
 
 <div class="master-wrap">
   <div class="header-banner">
-    <h1>{escape(institution)} &mdash; Tabellone Orario Docenti</h1>
+    <h1>{escape(institution)} &mdash; {'Faculty Master Timetable' if lang == 'en' else 'Tabellone Orario Docenti'}</h1>
     <div class="meta">
-      Valido a partire dal: <b>{escape(validity_date)}</b> &bull; Totale Docenti: <b>{len(sorted_teachers)}</b>
+      {'Effective from:' if lang == 'en' else 'Valido a partire dal:'} <b>{escape(validity_date)}</b> &bull; {'Total Teachers:' if lang == 'en' else 'Totale Docenti:'} <b>{len(sorted_teachers)}</b>
     </div>
   </div>
 
@@ -1290,7 +1347,7 @@ function copyTableForGoogleDocs() {{
     <thead>
       <!-- Riga 1: Nome Giorno Unito -->
       <tr>
-        <th class="th-teacher" rowspan="2">Docente</th>
+        <th class="th-teacher" rowspan="2">{'Teacher' if lang == 'en' else 'Docente'}</th>
 """)
 
     for d in active_days:
@@ -1298,14 +1355,15 @@ function copyTableForGoogleDocs() {{
         alt_class = "day-band-alt" if d["is_alt"] else "day-band-light"
         html_out.append(f'        <th class="th-day {alt_class} day-boundary" colspan="{num_cols}">{escape(d["nome"])}</th>\n')
 
-    html_out.append('        <th class="th-tot" rowspan="2">Ore Tot.</th>\n      </tr>\n      <!-- Riga 2: Numeri Ore -->\n      <tr>\n')
+    html_out.append(f'        <th class="th-tot" rowspan="2">{"Total H." if lang == "en" else "Ore Tot."}</th>\n      </tr>\n      <!-- Riga 2: Numeri Ore -->\n      <tr>\n')
 
     for d in active_days:
         for idx_h, h_str in enumerate(d["hours"]):
             is_last_hour = (idx_h == len(d["hours"]) - 1)
             bdr_class = "day-boundary" if is_last_hour else ""
             alt_class = "day-band-alt" if d["is_alt"] else "day-band-light"
-            html_out.append(f'        <th class="th-hour {alt_class} {bdr_class}">{h_str}ª</th>\n')
+            hour_th = f"P{h_str}" if lang == "en" else f"{h_str}ª"
+            html_out.append(f'        <th class="th-hour {alt_class} {bdr_class}">{hour_th}</th>\n')
 
     html_out.append('      </tr>\n    </thead>\n    <tbody>\n')
 
@@ -1386,6 +1444,7 @@ def generate_teachers_master_docx(data, options=None):
     validity_date = options.get("validity_date") or get_default_validity_date()
     show_rooms = bool(options.get("show_rooms", False))
     highlight_disp = bool(options.get("highlight_disp", True))
+    lang = options.get("lang", "it")
 
     institution = data.get("institution", 'Liceo & Tecnico "Pico De Paperis" - Paperopoli')
     days = data.get("days", ["Lun", "Mar", "Mer", "Gio", "Ven"])
@@ -1398,7 +1457,6 @@ def generate_teachers_master_docx(data, options=None):
     teacher_stats = views["teacher_stats"]
 
     sorted_teachers = sorted(list(by_teacher.keys()))
-    giorni_nomi = {"Lun": "Lunedì", "Mar": "Martedì", "Mer": "Mercoledì", "Gio": "Giovedì", "Ven": "Venerdì"}
 
     # Calcolo ore massime per giorno
     active_days = []
@@ -1411,7 +1469,7 @@ def generate_teachers_master_docx(data, options=None):
         if max_h > 0:
             active_days.append({
                 "id": d,
-                "nome": giorni_nomi.get(d, d),
+                "nome": get_day_name(d, lang=lang, full=True),
                 "hours": [str(i) for i in range(1, max_h + 1)],
                 "is_alt": (idx_d % 2 == 1)
             })
@@ -1425,6 +1483,7 @@ def generate_teachers_master_docx(data, options=None):
     hour_w = int((total_printable - teacher_w - tot_w) / tot_active_hours)
 
     xml_parts = []
+    doc_title = f"{institution} — {'Faculty Master Timetable' if lang == 'en' else 'Tabellone Orario Docenti'} ({'Effective from' if lang == 'en' else 'Valido dal'} {validity_date})"
     xml_parts.append(f"""<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
   <w:body>
@@ -1439,7 +1498,7 @@ def generate_teachers_master_docx(data, options=None):
           <w:sz w:val="22"/>
           <w:color w:val="0F172A"/>
         </w:rPr>
-        <w:t>{xml_escape(institution)} — Tabellone Orario Docenti (Valido dal {xml_escape(validity_date)})</w:t>
+        <w:t>{xml_escape(doc_title)}</w:t>
       </w:r>
     </w:p>
     <w:tbl>
@@ -1473,7 +1532,8 @@ def generate_teachers_master_docx(data, options=None):
 
     # Riga 1 Intestazione (Nomi dei Giorni Uniti con w:gridSpan)
     xml_parts.append("      <w:tr>\n        <w:trPr><w:tblHeader/><w:cantSplit/></w:trPr>\n")
-    xml_parts.append(f'        <w:tc><w:tcPr><w:tcW w:w="{teacher_w}" w:type="dxa"/><w:shd w:val="clear" w:color="auto" w:fill="0F172A"/><w:vAlign w:val="center"/></w:tcPr><w:p><w:pPr><w:jc w:val="left"/><w:spacing w:before="20" w:after="20"/></w:pPr><w:r><w:rPr><w:b/><w:color w:val="FFFFFF"/><w:sz w:val="15"/></w:rPr><w:t>DOCENTE</w:t></w:r></w:p></w:tc>\n')
+    th_teacher_text = "TEACHER" if lang == "en" else "DOCENTE"
+    xml_parts.append(f'        <w:tc><w:tcPr><w:tcW w:w="{teacher_w}" w:type="dxa"/><w:shd w:val="clear" w:color="auto" w:fill="0F172A"/><w:vAlign w:val="center"/></w:tcPr><w:p><w:pPr><w:jc w:val="left"/><w:spacing w:before="20" w:after="20"/></w:pPr><w:r><w:rPr><w:b/><w:color w:val="FFFFFF"/><w:sz w:val="15"/></w:rPr><w:t>{th_teacher_text}</w:t></w:r></w:p></w:tc>\n')
 
     for d in active_days:
         d_span = len(d["hours"])
@@ -1490,9 +1550,11 @@ def generate_teachers_master_docx(data, options=None):
     for d in active_days:
         h_bg = "F1F5F9" if d["is_alt"] else "FFFFFF"
         for h in d["hours"]:
-            xml_parts.append(f'        <w:tc><w:tcPr><w:tcW w:w="{hour_w}" w:type="dxa"/><w:shd w:val="clear" w:color="auto" w:fill="{h_bg}"/><w:vAlign w:val="center"/></w:tcPr><w:p><w:pPr><w:jc w:val="center"/><w:spacing w:before="10" w:after="10"/></w:pPr><w:r><w:rPr><w:b/><w:color w:val="334155"/><w:sz w:val="13"/></w:rPr><w:t>{h}ª</w:t></w:r></w:p></w:tc>\n')
+            hour_th = f"P{h}" if lang == "en" else f"{h}ª"
+            xml_parts.append(f'        <w:tc><w:tcPr><w:tcW w:w="{hour_w}" w:type="dxa"/><w:shd w:val="clear" w:color="auto" w:fill="{h_bg}"/><w:vAlign w:val="center"/></w:tcPr><w:p><w:pPr><w:jc w:val="center"/><w:spacing w:before="10" w:after="10"/></w:pPr><w:r><w:rPr><w:b/><w:color w:val="334155"/><w:sz w:val="13"/></w:rPr><w:t>{hour_th}</w:t></w:r></w:p></w:tc>\n')
 
-    xml_parts.append(f'        <w:tc><w:tcPr><w:tcW w:w="{tot_w}" w:type="dxa"/><w:shd w:val="clear" w:color="auto" w:fill="334155"/><w:vAlign w:val="center"/></w:tcPr><w:p><w:pPr><w:jc w:val="center"/><w:spacing w:before="10" w:after="10"/></w:pPr><w:r><w:rPr><w:color w:val="FFFFFF"/><w:sz w:val="12"/></w:rPr><w:t>Ore</w:t></w:r></w:p></w:tc>\n')
+    th_hours_label = "Hours" if lang == "en" else "Ore"
+    xml_parts.append(f'        <w:tc><w:tcPr><w:tcW w:w="{tot_w}" w:type="dxa"/><w:shd w:val="clear" w:color="auto" w:fill="334155"/><w:vAlign w:val="center"/></w:tcPr><w:p><w:pPr><w:jc w:val="center"/><w:spacing w:before="10" w:after="10"/></w:pPr><w:r><w:rPr><w:color w:val="FFFFFF"/><w:sz w:val="12"/></w:rPr><w:t>{th_hours_label}</w:t></w:r></w:p></w:tc>\n')
     xml_parts.append("      </w:tr>\n")
 
     # Righe Docenti

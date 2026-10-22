@@ -576,7 +576,8 @@ class Database:
                 a.get("duration", 1) for a in d.get("activities", [])
                 if a.get("active", True) and not (a.get("subject") or "").strip().lower().startswith("disposiz")
             )
-            placed = len(d.get("timetable", {})) if d.get("has_timetable") else 0
+            has_tt = bool(d.get("has_timetable")) or (len(d.get("timetable", {})) > 0)
+            placed = len(d.get("timetable", {})) if has_tt else 0
             grouped_acts = get_grouped_activities(d.get("activities", []))
 
             # Statistiche cattedre, ore target e ore a disposizione D
@@ -639,7 +640,7 @@ class Database:
                 "days": d.get("days", []),
                 "hours": d.get("hours", []),
                 "break_times": d.get("break_times", []),
-                "has_timetable": d.get("has_timetable", False),
+                "has_timetable": has_tt,
                 "placed_activities": placed,
                 "locked_activities_count": len(set(d.get("locked_activities", [])) & set(d.get("timetable", {}).keys()))
             }
@@ -689,21 +690,32 @@ class Database:
             self.create_snapshot("Reset: Foglio Bianco", "Progetto azzerato a struttura vuota pronto per una nuova scuola.")
             return True
 
-    def load_demo(self):
-        demo_path = os.path.join(DATA_DIR, "demo_paperopoli.json")
-        demo_fet = os.path.join(DATA_DIR, "demo_solved_timetable.fet")
+    def load_demo(self, lang="it"):
+        if lang == "en":
+            demo_path = os.path.join(DATA_DIR, "demo_duckburg.json")
+            demo_fet = os.path.join(DATA_DIR, "demo_duckburg_solved_timetable.fet")
+            snap_name = "Duckburg Demo (Ludwig Von Drake High School)"
+            snap_desc = "Database dimostrativo Duckburg (8 docenti, 5 classi, orario FET 100% risolto)."
+        else:
+            demo_path = os.path.join(DATA_DIR, "demo_paperopoli.json")
+            demo_fet = os.path.join(DATA_DIR, "demo_solved_timetable.fet")
+            snap_name = "Paperopoli Demo (Liceo Pico De Paperis)"
+            snap_desc = "Database dimostrativo Paperopoli (8 docenti, 5 classi, orario FET 100% risolto)."
+
         if not os.path.exists(demo_path):
-            raise FileNotFoundError("File demo_paperopoli.json non trovato.")
+            raise FileNotFoundError(f"File {demo_path} non trovato.")
         with self.lock:
             with open(demo_path, "r", encoding="utf-8") as f:
                 self.data = json.load(f)
+            if self.data.get("timetable"):
+                self.data["has_timetable"] = True
             self._save_to_disk(self.data)
             if os.path.exists(demo_fet):
                 try:
                     shutil.copyfile(demo_fet, SOLVED_FILE)
                 except Exception as e:
                     print("Could not copy demo solved timetable:", e)
-            self.create_snapshot("Ripristino Demo Paperopoli", "Caricato database dimostrativo Liceo & Tecnico Paperopoli.")
+            self.create_snapshot(snap_name, snap_desc)
             return True
 
     # --- IMPOSTAZIONI & VINCOLI ---

@@ -1789,137 +1789,163 @@
   "locked_activities": [],
   "timetable": {
     "1": {
-      "day": "Ven",
-      "hour": "5"
+      "day": "Lun",
+      "hour": "3",
+      "room": "Aula 1A"
     },
     "2": {
-      "day": "Mer",
-      "hour": "4"
+      "day": "Gio",
+      "hour": "4",
+      "room": "Aula 1A"
     },
     "3": {
-      "day": "Lun",
-      "hour": "5"
+      "day": "Mar",
+      "hour": "2",
+      "room": "Aula 1A"
     },
     "4": {
       "day": "Ven",
-      "hour": "3"
+      "hour": "1",
+      "room": "Aula 2A"
     },
     "5": {
       "day": "Mer",
-      "hour": "1"
+      "hour": "4",
+      "room": "Aula 2A"
     },
     "6": {
-      "day": "Lun",
-      "hour": "2"
+      "day": "Mar",
+      "hour": "1",
+      "room": "Aula 2A"
     },
     "7": {
       "day": "Ven",
-      "hour": "1"
+      "hour": "3",
+      "room": "Aula 3A"
     },
     "8": {
-      "day": "Mar",
-      "hour": "1"
+      "day": "Mer",
+      "hour": "5",
+      "room": "Aula 3A"
     },
     "9": {
-      "day": "Mer",
-      "hour": "2"
+      "day": "Gio",
+      "hour": "2",
+      "room": "Aula 3A"
     },
     "10": {
-      "day": "Gio",
-      "hour": "3"
+      "day": "Lun",
+      "hour": "5",
+      "room": "Aula 4A"
     },
     "11": {
-      "day": "Lun",
-      "hour": "6"
+      "day": "Gio",
+      "hour": "5",
+      "room": "Aula 4A"
     },
     "12": {
       "day": "Lun",
-      "hour": "3"
+      "hour": "1",
+      "room": "Aula 5A"
     },
     "13": {
       "day": "Mer",
-      "hour": "5"
+      "hour": "3",
+      "room": "Aula 5A"
     },
     "14": {
-      "day": "Lun",
-      "hour": "1"
+      "day": "Mar",
+      "hour": "3",
+      "room": "Aula 1A"
     },
     "15": {
-      "day": "Ven",
-      "hour": "4"
+      "day": "Gio",
+      "hour": "2",
+      "room": "Aula 1A"
     },
     "16": {
-      "day": "Mer",
-      "hour": "3"
+      "day": "Lun",
+      "hour": "6",
+      "room": "Aula 1A"
     },
     "17": {
-      "day": "Mar",
-      "hour": "5"
+      "day": "Lun",
+      "hour": "1",
+      "room": "Aula 2A"
     },
     "18": {
-      "day": "Ven",
-      "hour": "2"
+      "day": "Mar",
+      "hour": "5",
+      "room": "Aula 2A"
     },
     "19": {
       "day": "Mer",
-      "hour": "2"
+      "hour": "3",
+      "room": "Aula 2A"
     },
     "20": {
-      "day": "Lun",
-      "hour": "3"
+      "day": "Mer",
+      "hour": "1",
+      "room": "Aula 3A"
     },
     "21": {
       "day": "Gio",
-      "hour": "2"
+      "hour": "1",
+      "room": "Aula 3A"
     },
     "22": {
-      "day": "Mer",
-      "hour": "1"
+      "day": "Mar",
+      "hour": "6",
+      "room": "Aula 3A"
     },
     "23": {
-      "day": "Mar",
-      "hour": "1"
+      "day": "Lun",
+      "hour": "3",
+      "room": "Aula 4A"
     },
     "24": {
       "day": "Gio",
-      "hour": "1"
+      "hour": "3",
+      "room": "Aula 4A"
     },
     "25": {
-      "day": "Mar",
-      "hour": "3"
+      "day": "Ven",
+      "hour": "1",
+      "room": "Aula 5A"
     },
     "26": {
-      "day": "Ven",
-      "hour": "1"
+      "day": "Mer",
+      "hour": "4",
+      "room": "Aula 5A"
     },
     "27": {
-      "day": "Lun",
-      "hour": "3",
+      "day": "Mer",
+      "hour": "1",
       "room": "Laboratorio di Invenzioni"
     },
     "28": {
-      "day": "Gio",
-      "hour": "2",
+      "day": "Lun",
+      "hour": "5",
       "room": "Laboratorio di Invenzioni"
     },
     "29": {
-      "day": "Mar",
-      "hour": "3",
-      "room": "Laboratorio di Invenzioni"
-    },
-    "30": {
       "day": "Gio",
       "hour": "1",
       "room": "Laboratorio di Invenzioni"
     },
+    "30": {
+      "day": "Mer",
+      "hour": "6",
+      "room": "Laboratorio di Invenzioni"
+    },
     "31": {
-      "day": "Gio",
-      "hour": "3",
+      "day": "Mar",
+      "hour": "1",
       "room": "Laboratorio di Invenzioni"
     },
     "32": {
-      "day": "Mar",
-      "hour": "5",
+      "day": "Mer",
+      "hour": "3",
       "room": "Laboratorio di Invenzioni"
     },
     "33": {
@@ -1928,747 +1954,279 @@
       "room": "Laboratorio di Invenzioni"
     },
     "34": {
-      "day": "Mer",
-      "hour": "3",
+      "day": "Ven",
+      "hour": "1",
       "room": "Laboratorio di Invenzioni"
     },
     "35": {
-      "day": "Ven",
-      "hour": "5",
+      "day": "Gio",
+      "hour": "3",
       "room": "Laboratorio di Invenzioni"
     },
     "36": {
-      "day": "Mar",
-      "hour": "1",
+      "day": "Lun",
+      "hour": "3",
       "room": "Laboratorio di Invenzioni"
     },
     "37": {
-      "day": "Gio",
-      "hour": "3"
+      "day": "Mer",
+      "hour": "3",
+      "room": "Aula 1A"
     },
     "38": {
-      "day": "Ven",
-      "hour": "3"
+      "day": "Mar",
+      "hour": "1",
+      "room": "Aula 1A"
     },
     "39": {
-      "day": "Lun",
-      "hour": "6"
+      "day": "Gio",
+      "hour": "3",
+      "room": "Aula 1A"
     },
     "40": {
-      "day": "Mer",
-      "hour": "3"
+      "day": "Ven",
+      "hour": "3",
+      "room": "Aula 2A"
     },
     "41": {
-      "day": "Lun",
-      "hour": "1"
+      "day": "Mer",
+      "hour": "5",
+      "room": "Aula 2A"
     },
     "42": {
-      "day": "Ven",
-      "hour": "1"
+      "day": "Mar",
+      "hour": "2",
+      "room": "Aula 2A"
     },
     "43": {
-      "day": "Mer",
-      "hour": "5"
+      "day": "Lun",
+      "hour": "1",
+      "room": "Aula 3A"
     },
     "44": {
-      "day": "Mar",
-      "hour": "2"
+      "day": "Mer",
+      "hour": "6",
+      "room": "Aula 3A"
     },
     "45": {
-      "day": "Lun",
-      "hour": "5"
+      "day": "Mar",
+      "hour": "5",
+      "room": "Aula 3A"
     },
     "46": {
-      "day": "Lun",
-      "hour": "3"
+      "day": "Mar",
+      "hour": "3",
+      "room": "Aula 4A"
     },
     "47": {
-      "day": "Gio",
-      "hour": "2"
+      "day": "Ven",
+      "hour": "5",
+      "room": "Aula 4A"
     },
     "48": {
-      "day": "Gio",
-      "hour": "5"
+      "day": "Mer",
+      "hour": "1",
+      "room": "Aula 5A"
     },
     "49": {
-      "day": "Ven",
-      "hour": "2"
+      "day": "Gio",
+      "hour": "1",
+      "room": "Aula 5A"
     },
     "50": {
-      "day": "Gio",
-      "hour": "5"
+      "day": "Ven",
+      "hour": "1",
+      "room": "Aula 1A"
     },
     "51": {
-      "day": "Gio",
-      "hour": "3"
+      "day": "Lun",
+      "hour": "3",
+      "room": "Aula 2A"
     },
     "52": {
-      "day": "Ven",
-      "hour": "5"
+      "day": "Lun",
+      "hour": "5",
+      "room": "Aula 3A"
     },
     "53": {
-      "day": "Mer",
-      "hour": "3"
+      "day": "Gio",
+      "hour": "5",
+      "room": "Aula 3A"
     },
     "54": {
-      "day": "Mar",
-      "hour": "3"
+      "day": "Ven",
+      "hour": "3",
+      "room": "Aula 4A"
     },
     "55": {
-      "day": "Ven",
-      "hour": "1"
+      "day": "Mar",
+      "hour": "5",
+      "room": "Aula 4A"
     },
     "56": {
-      "day": "Mer",
-      "hour": "5"
+      "day": "Gio",
+      "hour": "4",
+      "room": "Aula 4A"
     },
     "57": {
-      "day": "Lun",
-      "hour": "1"
+      "day": "Mar",
+      "hour": "3",
+      "room": "Aula 5A"
     },
     "58": {
       "day": "Ven",
-      "hour": "3"
+      "hour": "5",
+      "room": "Aula 5A"
     },
     "59": {
       "day": "Gio",
-      "hour": "1"
+      "hour": "2",
+      "room": "Aula 5A"
     },
     "60": {
       "day": "Ven",
-      "hour": "1"
+      "hour": "3",
+      "room": "Aula 1A"
     },
     "61": {
-      "day": "Gio",
-      "hour": "1"
+      "day": "Mer",
+      "hour": "5",
+      "room": "Aula 1A"
     },
     "62": {
-      "day": "Mar",
-      "hour": "1"
+      "day": "Mer",
+      "hour": "1",
+      "room": "Aula 2A"
     },
     "63": {
-      "day": "Gio",
-      "hour": "2"
+      "day": "Mar",
+      "hour": "3",
+      "room": "Aula 2A"
     },
     "64": {
       "day": "Ven",
-      "hour": "3"
+      "hour": "1",
+      "room": "Aula 3A"
     },
     "65": {
       "day": "Gio",
-      "hour": "5"
+      "hour": "3",
+      "room": "Aula 3A"
     },
     "66": {
-      "day": "Ven",
-      "hour": "5"
+      "day": "Mer",
+      "hour": "3",
+      "room": "Aula 4A"
     },
     "67": {
-      "day": "Mer",
-      "hour": "1"
+      "day": "Gio",
+      "hour": "1",
+      "room": "Aula 4A"
     },
     "68": {
-      "day": "Mer",
-      "hour": "3"
+      "day": "Mar",
+      "hour": "1",
+      "room": "Aula 5A"
     },
     "69": {
       "day": "Gio",
-      "hour": "3"
+      "hour": "5",
+      "room": "Aula 5A"
     },
     "70": {
-      "day": "Mar",
-      "hour": "1",
-      "room": "Palestra"
+      "day": "Ven",
+      "hour": "5",
+      "room": "Palestra Paperopoli"
     },
     "71": {
       "day": "Lun",
       "hour": "5",
-      "room": "Palestra"
+      "room": "Palestra Paperopoli"
     },
     "72": {
       "day": "Mar",
       "hour": "3",
-      "room": "Palestra"
+      "room": "Palestra Paperopoli"
     },
     "73": {
-      "day": "Gio",
-      "hour": "5",
-      "room": "Palestra"
+      "day": "Mar",
+      "hour": "1",
+      "room": "Palestra Paperopoli"
     },
     "74": {
-      "day": "Mer",
-      "hour": "1",
-      "room": "Palestra"
+      "day": "Ven",
+      "hour": "3",
+      "room": "Palestra Paperopoli"
     },
     "75": {
-      "day": "Mer",
-      "hour": "1"
+      "day": "Lun",
+      "hour": "1",
+      "room": "Aula 1A"
     },
     "76": {
-      "day": "Mar",
-      "hour": "3"
+      "day": "Gio",
+      "hour": "1",
+      "room": "Aula 1A"
     },
     "77": {
-      "day": "Lun",
-      "hour": "3"
+      "day": "Gio",
+      "hour": "3",
+      "room": "Aula 2A"
     },
     "78": {
-      "day": "Ven",
-      "hour": "5"
+      "day": "Mar",
+      "hour": "4",
+      "room": "Aula 2A"
     },
     "79": {
       "day": "Lun",
-      "hour": "1"
+      "hour": "3",
+      "room": "Aula 3A"
     },
     "80": {
-      "day": "Gio",
-      "hour": "1"
+      "day": "Ven",
+      "hour": "5",
+      "room": "Aula 3A"
     },
     "81": {
-      "day": "Ven",
-      "hour": "3"
+      "day": "Mer",
+      "hour": "1",
+      "room": "Aula 4A"
     },
     "82": {
-      "day": "Lun",
-      "hour": "5"
+      "day": "Ven",
+      "hour": "6",
+      "room": "Aula 4A"
     },
     "83": {
       "day": "Mar",
-      "hour": "5"
+      "hour": "5",
+      "room": "Aula 5A"
     },
     "84": {
-      "day": "Gio",
-      "hour": "2"
-    },
-    "86": {
-      "day": "Mar",
-      "hour": "4",
-      "room": ""
+      "day": "Lun",
+      "hour": "5",
+      "room": "Aula 5A"
     },
     "85": {
-      "day": "Lun",
-      "hour": "4",
+      "day": "Mar",
+      "hour": "1",
+      "room": ""
+    },
+    "86": {
+      "day": "Ven",
+      "hour": "1",
       "room": ""
     }
   },
-  "block_rules": [
-    {
-      "id": "rule_sm_all",
-      "subject": "Scienze Motorie e Sportive II Grado",
-      "percorso": "tutti",
-      "period": "tutti",
-      "total_hours": 2,
-      "blocks": "2"
-    },
-    {
-      "id": "rule_info_all",
-      "subject": "Scienze e Tecnologie Informatiche",
-      "percorso": "tutti",
-      "period": "tutti",
-      "total_hours": 2,
-      "blocks": "2"
-    },
-    {
-      "id": "rule_rel_all",
-      "subject": "Religione",
-      "percorso": "tutti",
-      "period": "tutti",
-      "total_hours": 1,
-      "blocks": "1"
-    },
-    {
-      "id": "rule_eng_all",
-      "subject": "Lingua e Cultura Straniera (Inglese)",
-      "percorso": "tutti",
-      "period": "tutti",
-      "total_hours": 3,
-      "blocks": "1+1+1"
-    },
-    {
-      "id": "rule_fra_all",
-      "subject": "Lingua e Cultura Straniera (Francese)",
-      "percorso": "tutti",
-      "period": "tutti",
-      "total_hours": 3,
-      "blocks": "1+1+1"
-    },
-    {
-      "id": "rule_ted_all",
-      "subject": "Lingua e Cultura Straniera (Tedesco)",
-      "percorso": "tutti",
-      "period": "tutti",
-      "total_hours": 3,
-      "blocks": "1+1+1"
-    },
-    {
-      "id": "rule_spa_3h",
-      "subject": "Lingua e Cultura Straniera (Spagnolo)",
-      "percorso": "tutti",
-      "period": "tutti",
-      "total_hours": 3,
-      "blocks": "1+1+1"
-    },
-    {
-      "id": "rule_spa_2h",
-      "subject": "Lingua e Cultura Straniera (Spagnolo)",
-      "percorso": "tutti",
-      "period": "tutti",
-      "total_hours": 2,
-      "blocks": "1+1"
-    },
-    {
-      "id": "rule_arte_all",
-      "subject": "Disegno Storia Arte Istituto II Grado",
-      "percorso": "tutti",
-      "period": "tutti",
-      "total_hours": 2,
-      "blocks": "1+1"
-    },
-    {
-      "id": "rule_dir_all",
-      "subject": "Diritto",
-      "percorso": "tutti",
-      "period": "tutti",
-      "total_hours": 2,
-      "blocks": "1+1"
-    },
-    {
-      "id": "rule_lett_6h",
-      "subject": "Discipline Letterarie Istituti II Grado",
-      "percorso": "tutti",
-      "period": "tutti",
-      "total_hours": 6,
-      "blocks": "2+2+1+1"
-    },
-    {
-      "id": "rule_lett_4h",
-      "subject": "Discipline Letterarie Istituti II Grado",
-      "percorso": "tutti",
-      "period": "tutti",
-      "total_hours": 4,
-      "blocks": "2+1+1"
-    },
-    {
-      "id": "rule_matfis_7h",
-      "subject": "Matematica e Fisica",
-      "percorso": "liceo",
-      "period": "triennio",
-      "total_hours": 7,
-      "blocks": "2+2+1+1+1"
-    },
-    {
-      "id": "rule_mat_lic_5h",
-      "subject": "Matematica",
-      "percorso": "liceo",
-      "period": "biennio",
-      "total_hours": 5,
-      "blocks": "2+2+1"
-    },
-    {
-      "id": "rule_mat_lic_4h",
-      "subject": "Matematica",
-      "percorso": "liceo",
-      "period": "biennio",
-      "total_hours": 4,
-      "blocks": "2+1+1"
-    },
-    {
-      "id": "rule_mat_prof_4h",
-      "subject": "Matematica",
-      "percorso": "professionale",
-      "period": "biennio",
-      "total_hours": 4,
-      "blocks": "2+1+1"
-    },
-    {
-      "id": "rule_mat_prof_tri",
-      "subject": "Matematica",
-      "percorso": "professionale",
-      "period": "triennio",
-      "total_hours": 3,
-      "blocks": "2+1"
-    },
-    {
-      "id": "rule_sma_tec_4h",
-      "subject": "Scienze Matematiche Applicate",
-      "percorso": "tecnico",
-      "period": "biennio",
-      "total_hours": 4,
-      "blocks": "2+1+1"
-    },
-    {
-      "id": "rule_sma_tec_3h",
-      "subject": "Scienze Matematiche Applicate",
-      "percorso": "tecnico",
-      "period": "triennio",
-      "total_hours": 3,
-      "blocks": "2+1"
-    },
-    {
-      "id": "rule_scienze_5h",
-      "subject": "Scienze Naturali, Chimica e Biologia",
-      "percorso": "tutti",
-      "period": "tutti",
-      "total_hours": 5,
-      "blocks": "2+2+1"
-    },
-    {
-      "id": "rule_scienze_4h",
-      "subject": "Scienze Naturali, Chimica e Biologia",
-      "percorso": "tutti",
-      "period": "tutti",
-      "total_hours": 4,
-      "blocks": "2+1+1"
-    },
-    {
-      "id": "rule_scienze_3h",
-      "subject": "Scienze Naturali, Chimica e Biologia",
-      "percorso": "tutti",
-      "period": "tutti",
-      "total_hours": 3,
-      "blocks": "2+1"
-    },
-    {
-      "id": "rule_scienze_2h",
-      "subject": "Scienze Naturali, Chimica e Biologia",
-      "percorso": "tutti",
-      "period": "tutti",
-      "total_hours": 2,
-      "blocks": "1+1"
-    },
-    {
-      "id": "rule_scienze_1h",
-      "subject": "Scienze Naturali, Chimica e Biologia",
-      "percorso": "tutti",
-      "period": "tutti",
-      "total_hours": 1,
-      "blocks": "1"
-    },
-    {
-      "id": "rule_geo_3h",
-      "subject": "Geografia",
-      "percorso": "tutti",
-      "period": "tutti",
-      "total_hours": 3,
-      "blocks": "2+1"
-    },
-    {
-      "id": "rule_geo_2h",
-      "subject": "Geografia",
-      "percorso": "tutti",
-      "period": "tutti",
-      "total_hours": 2,
-      "blocks": "1+1"
-    },
-    {
-      "id": "rule_storiageo_3h",
-      "subject": "Storia e Geografia",
-      "percorso": "tutti",
-      "period": "tutti",
-      "total_hours": 3,
-      "blocks": "2+1"
-    },
-    {
-      "id": "rule_filoumane_4h",
-      "subject": "Filosofia e Scienze Umane",
-      "percorso": "tutti",
-      "period": "triennio",
-      "total_hours": 4,
-      "blocks": "2+1+1"
-    },
-    {
-      "id": "rule_filoumane_3h",
-      "subject": "Filosofia e Scienze Umane",
-      "percorso": "tutti",
-      "period": "tutti",
-      "total_hours": 3,
-      "blocks": "2+1"
-    },
-    {
-      "id": "rule_filoumane_2h",
-      "subject": "Filosofia e Scienze Umane",
-      "percorso": "tutti",
-      "period": "tutti",
-      "total_hours": 2,
-      "blocks": "1+1"
-    },
-    {
-      "id": "rule_filoumane_1h",
-      "subject": "Filosofia e Scienze Umane",
-      "percorso": "tutti",
-      "period": "tutti",
-      "total_hours": 1,
-      "blocks": "1"
-    },
-    {
-      "id": "rule_filostoria_5h",
-      "subject": "Filosofia e Storia",
-      "percorso": "liceo",
-      "period": "triennio",
-      "total_hours": 5,
-      "blocks": "2+2+1"
-    },
-    {
-      "id": "rule_filostoria_4h",
-      "subject": "Filosofia e Storia",
-      "percorso": "liceo",
-      "period": "triennio",
-      "total_hours": 4,
-      "blocks": "2+1+1"
-    },
-    {
-      "id": "rule_metop_4h",
-      "subject": "Metodologie Operative",
-      "percorso": "professionale",
-      "period": "tutti",
-      "total_hours": 4,
-      "blocks": "2+2"
-    },
-    {
-      "id": "rule_metop_3h",
-      "subject": "Metodologie Operative",
-      "percorso": "professionale",
-      "period": "tutti",
-      "total_hours": 3,
-      "blocks": "2+1"
-    },
-    {
-      "id": "rule_san_4h",
-      "subject": "Discipline Sanitarie",
-      "percorso": "professionale",
-      "period": "triennio",
-      "total_hours": 4,
-      "blocks": "2+1+1"
-    },
-    {
-      "id": "rule_legsan_4h",
-      "subject": "Legislazione Sanitaria",
-      "percorso": "professionale",
-      "period": "triennio",
-      "total_hours": 4,
-      "blocks": "2+1+1"
-    },
-    {
-      "id": "rule_tecnamm_4h",
-      "subject": "Tecniche Amministrative",
-      "percorso": "professionale",
-      "period": "triennio",
-      "total_hours": 4,
-      "blocks": "2+2"
-    },
-    {
-      "id": "rule_tecnamm_3h",
-      "subject": "Tecniche Amministrative",
-      "percorso": "professionale",
-      "period": "triennio",
-      "total_hours": 3,
-      "blocks": "2+1"
-    },
-    {
-      "id": "rule_dirittopol_6h",
-      "subject": "Diritto ed Economia Politica",
-      "percorso": "tecnico",
-      "period": "triennio",
-      "total_hours": 6,
-      "blocks": "2+2+1+1"
-    },
-    {
-      "id": "rule_dirittopol_5h",
-      "subject": "Diritto ed Economia Politica",
-      "percorso": "tecnico",
-      "period": "triennio",
-      "total_hours": 5,
-      "blocks": "2+2+1"
-    },
-    {
-      "id": "rule_dir_rel_5h",
-      "subject": "Diritto e Relazioni Internazionali",
-      "percorso": "tecnico",
-      "period": "triennio",
-      "total_hours": 5,
-      "blocks": "2+2+1"
-    },
-    {
-      "id": "rule_dir_rel_4h",
-      "subject": "Diritto e Relazioni Internazionali",
-      "percorso": "tecnico",
-      "period": "triennio",
-      "total_hours": 4,
-      "blocks": "2+1+1"
-    },
-    {
-      "id": "rule_az_tec_8h",
-      "subject": "Scienze Economiche - Aziendali",
-      "percorso": "tecnico",
-      "period": "triennio",
-      "total_hours": 8,
-      "blocks": "2+2+2+2"
-    },
-    {
-      "id": "rule_az_tec_7h",
-      "subject": "Scienze Economiche - Aziendali",
-      "percorso": "tecnico",
-      "period": "triennio",
-      "total_hours": 7,
-      "blocks": "2+2+2+1"
-    },
-    {
-      "id": "rule_az_tec_6h",
-      "subject": "Scienze Economiche - Aziendali",
-      "percorso": "tecnico",
-      "period": "triennio",
-      "total_hours": 6,
-      "blocks": "2+2+1+1"
-    },
-    {
-      "id": "rule_az_tec_5h",
-      "subject": "Scienze Economiche - Aziendali",
-      "percorso": "tecnico",
-      "period": "triennio",
-      "total_hours": 5,
-      "blocks": "2+2+1"
-    },
-    {
-      "id": "rule_az_tec_2h",
-      "subject": "Scienze Economiche - Aziendali",
-      "percorso": "tecnico",
-      "period": "biennio",
-      "total_hours": 2,
-      "blocks": "1+1"
-    },
-    {
-      "id": "rule_ita_4h",
-      "subject": "Italiano",
-      "percorso": "tutti",
-      "period": "tutti",
-      "total_hours": 4,
-      "blocks": "2+1+1"
-    },
-    {
-      "id": "rule_fis_2h",
-      "subject": "Fisica",
-      "percorso": "tutti",
-      "period": "tutti",
-      "total_hours": 2,
-      "blocks": "1+1"
-    },
-    {
-      "id": "rule_mac_10h",
-      "subject": "Italiano Latino Storia e Geografia",
-      "percorso": "tutti",
-      "period": "tutti",
-      "total_hours": 10,
-      "blocks": "2+2+2+2+2"
-    },
-    {
-      "id": "rule_mac_7h_a",
-      "subject": "Italiano Storia e Geografia",
-      "percorso": "tutti",
-      "period": "tutti",
-      "total_hours": 7,
-      "blocks": "2+2+2+1"
-    },
-    {
-      "id": "rule_mac_7h_b",
-      "subject": "Italiano e Latino",
-      "percorso": "tutti",
-      "period": "tutti",
-      "total_hours": 7,
-      "blocks": "2+2+2+1"
-    }
-  ],
+  "block_rules": [],
   "buildings": [
     {
-      "name": "Centrale",
-      "short_code": "C",
-      "comments": ""
+      "name": "Centrale"
     },
     {
-      "name": "Succursale",
-      "short_code": "S",
-      "comments": ""
+      "name": "Succursale"
     }
   ],
-  "parameters": {
-    "Nome istituto": "Liceo & Tecnico \"Pico De Paperis\" - Paperopoli",
-    "Commenti": "Orario configurato con SmartTimetable Suite FET",
-    "Nome file .fet": "ParametriOrario",
-    "Versione FET dichiarata": "7.12.0",
-    "Crea aula per classi senza aula (SI/NO)": "SI",
-    "Peso aula classe %": 100,
-    "Nomi ore in FET con orario (SI/NO)": "SI",
-    "Le classi non cambiano plesso durante la giornata (SI/NO)": "SI",
-    "Aule di appoggio automatiche (SI/NO)": "SI",
-    "Intervalli come righe dell'orario FET (SI/NO)": "SI",
-    "Min ore/giorno docenti: conta anche le ore a disposizione (SI/NO)": "NO",
-    "Ore cattedra completa": 18,
-    "Cattedra completa: giorni minimi di presenza": 5,
-    "Aule libere di riserva in ogni ora (Centrale)": 0,
-    "Docenti: ore preferite nel giorno (PRIME/ULTIME/INDIFFERENTE)": "INDIFFERENTE",
-    "Docenti: distribuzione nella settimana (COMPATTA/INDIFFERENTE)": "INDIFFERENTE",
-    "Peso delle preferenze dei docenti %": 60,
-    "Docenti 'con D' per i limiti di ore buche: almeno N ore a disposizione": 3,
-    "Ore a disposizione: tutte dopo FET (SI/NO)": "NO",
-    "Peso delle preferenze delle materie %": 70
-  },
-  "accorpamenti_rules": [
-    {
-      "id": "ita_lat_sto_geo",
-      "name": "Italiano Latino Storia e Geografia",
-      "components": [
-        "Italiano",
-        "Latino",
-        "Storia e Geografia"
-      ],
-      "active": true
-    },
-    {
-      "id": "ita_lat",
-      "name": "Italiano Latino",
-      "components": [
-        "Italiano",
-        "Latino"
-      ],
-      "active": true
-    },
-    {
-      "id": "ita_sto_geo",
-      "name": "Italiano Storia e Geografia",
-      "components": [
-        "Italiano",
-        "Storia e Geografia"
-      ],
-      "active": true
-    },
-    {
-      "id": "dir_econ",
-      "name": "Diritto ed Economia Politica",
-      "components": [
-        "Diritto",
-        "Economia Politica"
-      ],
-      "active": true
-    },
-    {
-      "id": "dir_rel_int",
-      "name": "Diritto e Relazioni Internazionali",
-      "components": [
-        "Diritto",
-        "Relazioni Internazionali"
-      ],
-      "active": true
-    }
-  ],
-  "section_percorsi": {
-    "A": "tecnico",
-    "B": "tecnico",
-    "C": "liceo",
-    "D": "liceo",
-    "E": "tecnico",
-    "F": "tecnico",
-    "G": "professionale",
-    "H": "professionale",
-    "L": "liceo"
-  },
-  "has_timetable": true,
-  "config_name": "Configurazione Corrente"
+  "has_timetable": true
 }

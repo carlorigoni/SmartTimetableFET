@@ -4,6 +4,22 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>SmartTimetable - Web App Configurazione & Solver FET 7.12.0</title>
+  <!-- Prevenzione Flash Bianco (FOUC) & Rilevamento Istantaneo Tema e Lingua -->
+  <script>
+    (function() {
+      try {
+        const theme = localStorage.getItem('app_theme') || 'auto';
+        const isDark = theme === 'dark' || (theme === 'auto' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        if (isDark) document.documentElement.setAttribute('data-theme', 'dark');
+        else document.documentElement.setAttribute('data-theme', 'light');
+        document.documentElement.setAttribute('data-theme-setting', theme);
+
+        const savedLang = localStorage.getItem('app_lang');
+        const lang = savedLang || ((navigator.language || 'it').toLowerCase().startsWith('it') ? 'it' : 'en');
+        document.documentElement.setAttribute('lang', lang);
+      } catch (e) {}
+    })();
+  </script>
   <!-- Favicon per Browser Tab & Mobile (Safari macOS, Chrome, Edge, iOS) -->
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192x192.png">
@@ -11,7 +27,7 @@
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
   <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#1a73e8">
   <link rel="shortcut icon" href="/favicon.ico">
-  <link rel="stylesheet" href="styles.css?v=1.4.10">
+  <link rel="stylesheet" href="styles.css?v=1.5.1">
   <!-- Google Identity Services OAuth -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
@@ -44,19 +60,19 @@
         <!-- Funzioni Principali Sempre Visibili -->
         <a class="nav-item active" onclick="navigate('dashboard')" data-tooltip="Dashboard" title="Dashboard riassuntiva">
           <span class="nav-icon">📊</span>
-          <span class="nav-label">Dashboard</span>
+          <span class="nav-label" data-i18n="nav.dashboard">Dashboard</span>
         </a>
         <a class="nav-item" onclick="navigate('timetable')" data-tooltip="Orario Risolto" title="Orario settimanale risolto">
           <span class="nav-icon">🗓️</span>
-          <span class="nav-label">Orario Risolto</span>
+          <span class="nav-label" data-i18n="nav.timetable">Orario Risolto</span>
         </a>
         <a class="nav-item" onclick="navigate('solver')" data-tooltip="Compilatore FET" title="Compilatore FET 7.12.0 in tempo reale">
           <span class="nav-icon">⚡</span>
-          <span class="nav-label">Compilatore FET</span>
+          <span class="nav-label" data-i18n="nav.solver">Compilatore FET</span>
         </a>
         <a class="nav-item" onclick="navigate('diagnostics')" data-tooltip="Diagnostica & Advisor" title="Pre-Validatore e Advisor Intelligente dei Vincoli">
           <span class="nav-icon">🔍</span>
-          <span class="nav-label">Diagnostica & Advisor</span>
+          <span class="nav-label" data-i18n="nav.diagnostics">Diagnostica & Advisor</span>
           <span id="navHealthBadge" class="badge badge-sm badge-ok" style="margin-left:auto;font-size:10px;padding:1px 6px;">100%</span>
         </a>
 
@@ -77,7 +93,7 @@
                 <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/>
               </svg>
             </span>
-            <span class="nav-group-title">Report & Stampe</span>
+            <span class="nav-group-title" data-i18n="nav.reports_group">Report & Stampe</span>
             <svg class="nav-group-chevron" viewBox="0 0 24 24" width="16" height="16">
               <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" fill="currentColor"/>
             </svg>
@@ -85,11 +101,11 @@
           <div class="nav-group-items">
             <a class="nav-item" onclick="openPrintClassesModal()" data-tooltip="Orario per Classe (PDF)" title="Procedura 9: Orario per classe con articolazioni e intervalli (A4 Orizzontale / PDF)">
               <span class="nav-icon">🖨️</span>
-              <span class="nav-label">Orario per Classe (PDF)</span>
+              <span class="nav-label" data-i18n="nav.print_classes">Orario per Classe (PDF)</span>
             </a>
             <a class="nav-item" onclick="openPrintTeachersModal()" data-tooltip="Tabellone Docenti (A3)" title="Procedura 12: Tabellone completo docenti con bande verticali (A3 Orizzontale / PDF)">
               <span class="nav-icon">📄</span>
-              <span class="nav-label">Tabellone Docenti (A3)</span>
+              <span class="nav-label" data-i18n="nav.print_teachers">Tabellone Docenti (A3)</span>
             </a>
           </div>
         </div>
@@ -108,7 +124,7 @@
                 <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/>
               </svg>
             </span>
-            <span class="nav-group-title">Anagrafiche & Cattedre</span>
+            <span class="nav-group-title" data-i18n="nav.anagrafiche_group">Anagrafiche & Cattedre</span>
             <svg class="nav-group-chevron" viewBox="0 0 24 24" width="16" height="16">
               <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" fill="currentColor"/>
             </svg>
@@ -116,27 +132,27 @@
           <div class="nav-group-items">
             <a class="nav-item" onclick="navigate('teachers')" data-tooltip="Docenti" title="Organico Docenti">
               <span class="nav-icon">👨‍🏫</span>
-              <span class="nav-label">Docenti</span>
+              <span class="nav-label" data-i18n="nav.teachers">Docenti</span>
             </a>
             <a class="nav-item" onclick="navigate('classes')" data-tooltip="Classi & Gruppi" title="Classi e Gruppi">
               <span class="nav-icon">🎓</span>
-              <span class="nav-label">Classi & Gruppi</span>
+              <span class="nav-label" data-i18n="nav.classes">Classi & Gruppi</span>
             </a>
             <a class="nav-item" onclick="navigate('subjects')" data-tooltip="Materie" title="Discipline e Materie">
               <span class="nav-icon">📚</span>
-              <span class="nav-label">Materie</span>
+              <span class="nav-label" data-i18n="nav.subjects">Materie</span>
             </a>
             <a class="nav-item" onclick="navigate('rooms')" data-tooltip="Plessi & Aule" title="Plessi scolastici e Aule">
               <span class="nav-icon">🏫</span>
-              <span class="nav-label">Plessi & Aule</span>
+              <span class="nav-label" data-i18n="nav.rooms">Plessi & Aule</span>
             </a>
             <a class="nav-item" onclick="navigate('activities')" data-tooltip="Attività / Cattedre" title="Attività di insegnamento e Cattedre">
               <span class="nav-icon">📝</span>
-              <span class="nav-label">Attività / Cattedre</span>
+              <span class="nav-label" data-i18n="nav.activities">Attività / Cattedre</span>
             </a>
             <a class="nav-item" onclick="navigate('accorpamenti')" data-tooltip="Accorpamenti" title="Gestione Accorpamenti Macro-Materie (es. Italiano Latino Storia e Geo)">
               <span class="nav-icon">🔗</span>
-              <span class="nav-label">Accorpamenti</span>
+              <span class="nav-label" data-i18n="nav.accorpamenti">Accorpamenti</span>
             </a>
           </div>
         </div>
@@ -155,7 +171,7 @@
                 <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/>
               </svg>
             </span>
-            <span class="nav-group-title">Vincoli & Regole</span>
+            <span class="nav-group-title" data-i18n="nav.vincoli_group">Vincoli & Regole</span>
             <svg class="nav-group-chevron" viewBox="0 0 24 24" width="16" height="16">
               <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" fill="currentColor"/>
             </svg>
@@ -163,15 +179,15 @@
           <div class="nav-group-items">
             <a class="nav-item" onclick="navigate('block_rules')" data-tooltip="Regole Blocchi & Sezioni" title="Regole di Suddivisione Blocchi Orari e Indirizzi Sezioni">
               <span class="nav-icon">📐</span>
-              <span class="nav-label">Regole Blocchi & Sezioni</span>
+              <span class="nav-label" data-i18n="nav.block_rules">Regole Blocchi & Sezioni</span>
             </a>
             <a class="nav-item" onclick="navigate('availability')" data-tooltip="Indisponibilità Griglia" title="Griglia disponibilità docenti e classi">
               <span class="nav-icon">🚫</span>
-              <span class="nav-label">Indisponibilità Griglia</span>
+              <span class="nav-label" data-i18n="nav.availability">Indisponibilità Griglia</span>
             </a>
             <a class="nav-item" onclick="navigate('constraints')" data-tooltip="Vincoli Orario" title="Regole e vincoli di calcolo orario FET">
               <span class="nav-icon">⚖️</span>
-              <span class="nav-label">Vincoli Orario</span>
+              <span class="nav-label" data-i18n="nav.constraints">Vincoli Orario</span>
             </a>
           </div>
         </div>
@@ -193,7 +209,7 @@
                 <path d="M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z"/>
               </svg>
             </span>
-            <span class="nav-group-title">Sistema & Configurazione</span>
+            <span class="nav-group-title" data-i18n="nav.system_group">Sistema & Configurazione</span>
             <svg class="nav-group-chevron" viewBox="0 0 24 24" width="16" height="16">
               <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" fill="currentColor"/>
             </svg>
@@ -201,20 +217,20 @@
           <div class="nav-group-items">
             <a class="nav-item" onclick="navigate('parameters')" data-tooltip="Parametri Istituto" title="Parametri istituto, calendario settimanale, gestione Sabato e pause">
               <span class="nav-icon">⚙️</span>
-              <span class="nav-label">Parametri Istituto</span>
+              <span class="nav-label" data-i18n="nav.parameters">Parametri Istituto</span>
             </a>
             <a class="nav-item" onclick="navigate('snapshots')" data-tooltip="Backup & Snapshot" title="Archivio storico, punti di ripristino, import ed export file FET e JSON">
               <span class="nav-icon">📦</span>
-              <span class="nav-label">Backup & Snapshot</span>
+              <span class="nav-label" data-i18n="nav.snapshots">Backup & Snapshot</span>
             </a>
             <a id="sidebarAccessMgmtItem" class="nav-item" style="display:none;" onclick="openAccessManagementModal()" data-tooltip="Gestione Accessi" title="Gestione accessi, ruoli e approvazione utenti Google OAuth">
               <span class="nav-icon">👥</span>
-              <span class="nav-label">Gestione Accessi</span>
+              <span class="nav-label" data-i18n="nav.access_mgmt">Gestione Accessi</span>
               <span id="sidebarPendingBadge" class="badge-pending-count" style="display:none;margin-left:auto;">0</span>
             </a>
             <a class="nav-item" onclick="openAboutModal()" data-tooltip="Info & Crediti" title="Informazioni sul software, crediti FET e conformità GDPR">
               <span class="nav-icon">ℹ️</span>
-              <span class="nav-label">Info & Crediti</span>
+              <span class="nav-label" data-i18n="nav.about">Info & Crediti</span>
             </a>
           </div>
         </div>
@@ -223,11 +239,11 @@
       <!-- Footer Compatto a Riga Singola di Stato (Altezza: 36px) -->
       <div class="sidebar-footer">
         <div class="sidebar-status-row">
-          <span id="sidebarStatusBadge" class="sidebar-status-badge" onclick="handleFooterBadgeClick()" title="SmartTimetable FET Suite v1.4.10">
+          <span id="sidebarStatusBadge" class="sidebar-status-badge" onclick="handleFooterBadgeClick()" title="SmartTimetable FET Suite v1.5.1">
             <span id="statusIndicatorDot" class="status-indicator-dot dot-green"></span>
             <span id="statusIndicatorText" class="status-indicator-text">FET 7.12</span>
           </span>
-          <span id="sidebarVerTag" class="footer-ver-tag" title="Versione SmartTimetable">v1.4.10</span>
+          <span id="sidebarVerTag" class="footer-ver-tag" title="Versione SmartTimetable">v1.5.1</span>
           <button class="footer-info-btn" onclick="openAboutModal()" title="Crediti, Mentore e Info Legali" aria-label="Informazioni e crediti">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
               <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
@@ -273,6 +289,48 @@
         <span id="instBadge" class="badge badge-info">SmartTimetable</span>
       </div>
       <div class="topbar-right">
+        <!-- Selettore Lingua ITA / ENG -->
+        <div class="lang-selector-dropdown" id="langSelectorDropdown">
+          <button type="button" id="btnLangToggle" class="topbar-btn topbar-pill-btn" onclick="toggleLangMenu(event)" title="Seleziona lingua / Change language" aria-label="Language selector">
+            <span id="currentLangFlag">🇮🇹</span>
+            <span id="currentLangCode" style="font-weight:700;font-size:11.5px;letter-spacing:0.5px;">ITA</span>
+            <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor" style="opacity:0.7;">
+              <path d="M7 10l5 5 5-5z"/>
+            </svg>
+          </button>
+          <div id="langMenuPopup" class="topbar-popup-menu" style="display:none;">
+            <button type="button" class="topbar-popup-item" onclick="setAppLanguage('it')">
+              <span>🇮🇹</span> <span style="font-weight:600;">Italiano</span>
+              <span id="langCheck-it" class="popup-check">✓</span>
+            </button>
+            <button type="button" class="topbar-popup-item" onclick="setAppLanguage('en')">
+              <span>🇬🇧</span> <span style="font-weight:600;">English</span>
+              <span id="langCheck-en" class="popup-check" style="display:none;">✓</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Selettore Tema Chiaro / Scuro / Auto -->
+        <div class="theme-selector-dropdown" id="themeSelectorDropdown">
+          <button type="button" id="btnThemeToggle" class="topbar-btn topbar-icon-btn" onclick="toggleThemeMenu(event)" title="Tema: Chiaro, Scuro, Automatico" aria-label="Seleziona tema">
+            <span id="currentThemeIcon">💻</span>
+          </button>
+          <div id="themeMenuPopup" class="topbar-popup-menu" style="display:none;">
+            <button type="button" class="topbar-popup-item" onclick="setAppTheme('auto')">
+              <span>💻</span> <span data-i18n="theme.auto">Automatico (Sistema)</span>
+              <span id="themeCheck-auto" class="popup-check">✓</span>
+            </button>
+            <button type="button" class="topbar-popup-item" onclick="setAppTheme('light')">
+              <span>☀️</span> <span data-i18n="theme.light">Tema Chiaro</span>
+              <span id="themeCheck-light" class="popup-check" style="display:none;">✓</span>
+            </button>
+            <button type="button" class="topbar-popup-item" onclick="setAppTheme('dark')">
+              <span>🌙</span> <span data-i18n="theme.dark">Tema Scuro</span>
+              <span id="themeCheck-dark" class="popup-check" style="display:none;">✓</span>
+            </button>
+          </div>
+        </div>
+
         <button id="topbarInfoBtn" class="topbar-info-btn" onclick="openAboutModal()" title="Informazioni su SmartTimetable e Crediti" aria-label="Informazioni">
           <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
@@ -293,7 +351,7 @@
 
     <footer class="app-page-footer">
       <div>
-        <b>SmartTimetable FET Suite</b> &mdash; Versione <span class="badge-ver">v1.4.10</span> &bull; Autore: <b>Carlo Rigoni</b> &bull; Mentore: <b>Federico Rettore</b> &bull; Motore: <b>FET 7.12.0</b> &bull; <a href="javascript:void(0)" onclick="openAboutModal()" style="color:var(--primary);text-decoration:none;font-weight:600;">Crediti & Note Legali</a>
+        <b>SmartTimetable FET Suite</b> &mdash; Versione <span class="badge-ver">v1.5.1</span> &bull; Autore: <b>Carlo Rigoni</b> &bull; Mentore: <b>Federico Rettore</b> &bull; Motore: <b>FET 7.12.0</b> &bull; <a href="javascript:void(0)" onclick="openAboutModal()" style="color:var(--primary);text-decoration:none;font-weight:600;">Crediti & Note Legali</a>
       </div>
       <div style="font-size:11.5px;color:var(--text-muted);">
         Algoritmo euristico: <a href="https://lalescu.ro/liviu/fet/" target="_blank" rel="noopener" style="color:var(--primary);text-decoration:none;font-weight:600;">FET Free Timetabling Software</a> &bull; AI Pair Programming: Google DeepMind Antigravity
@@ -507,42 +565,42 @@
     <div class="modal-dialog" style="max-width:680px;">
       <div class="modal-header">
         <div class="modal-title">
-          <span>🖨️</span> <span>Stampa Orario per Classe (Procedura 9)</span>
+          <span>🖨️</span> <span data-i18n="modals.print_classes.title">Stampa Orario per Classe (Procedura 9)</span>
         </div>
         <button class="modal-close" onclick="closePrintClassesModal()">✕</button>
       </div>
       <div class="modal-body" style="gap:14px;">
-        <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:var(--radius-sm);padding:10px 14px;font-size:12.5px;color:#334155;line-height:1.4;">
+        <div class="modal-notice" data-i18n="modals.print_classes.info_box">
           Genera il fascicolo completo o l'orario di singole classi in formato <b>A4 Orizzontale</b> (1 classe per pagina).
           Supporta nativamente la fusione delle classi articolate (es. 3A con 3AM/3AR) e gli intervalli scolastici.
         </div>
 
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
           <div class="form-group">
-            <label class="form-label" style="font-weight:600;">📅 Valido a partire da:</label>
+            <label class="form-label" style="font-weight:600;" data-i18n="modals.print_classes.valid_from">📅 Valido a partire da:</label>
             <input type="text" id="printClassesDate" class="form-input" placeholder="GG/MM/AAAA" />
           </div>
           <div class="form-group">
-            <label class="form-label" style="font-weight:600;">🎨 Modalità Colore:</label>
+            <label class="form-label" style="font-weight:600;" data-i18n="modals.print_classes.color_mode">🎨 Modalità Colore:</label>
             <select id="printClassesColor" class="select-input">
-              <option value="color" selected>🌈 A Colori (Sfondi pastello per materia)</option>
-              <option value="bw">⚫ Bianco e Nero (Toner save / fotocopie)</option>
+              <option value="color" selected data-i18n="modals.print_classes.color_full">🌈 A Colori (Sfondi pastello per materia)</option>
+              <option value="bw" data-i18n="modals.print_classes.color_bw">⚫ Bianco e Nero (Toner save / fotocopie)</option>
             </select>
           </div>
         </div>
 
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
           <div class="form-group">
-            <label class="form-label" style="font-weight:600;">📝 Contenuto delle celle:</label>
+            <label class="form-label" style="font-weight:600;" data-i18n="modals.print_classes.cell_content">📝 Contenuto delle celle:</label>
             <select id="printClassesContent" class="select-input">
-              <option value="materia_docente" selected>Materia e Docente (Consigliato)</option>
-              <option value="materia">Solo Materia</option>
-              <option value="docente">Solo Docente</option>
+              <option value="materia_docente" selected data-i18n="modals.print_classes.content_both">Materia e Docente (Consigliato)</option>
+              <option value="materia" data-i18n="modals.print_classes.content_subject">Solo Materia</option>
+              <option value="docente" data-i18n="modals.print_classes.content_teacher">Solo Docente</option>
             </select>
           </div>
           <div class="form-group" style="justify-content:center;padding-top:16px;">
             <label style="display:flex;align-items:center;gap:8px;font-size:12.5px;cursor:pointer;">
-              <input type="checkbox" id="printClassesIncludeSubgroups" checked /> <b>Includi rami articolati (3AM, 3AR...)</b>
+              <input type="checkbox" id="printClassesIncludeSubgroups" checked /> <b data-i18n="modals.print_classes.include_subgroups">Includi rami articolati (3AM, 3AR...)</b>
             </label>
           </div>
         </div>
@@ -550,19 +608,19 @@
         <!-- Selettore Classi -->
         <div class="form-group" style="margin-top:4px;">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
-            <label class="form-label" style="font-weight:600;margin:0;">🎓 Selezione Classi da Stampare:</label>
-            <span id="printClassesSelectedCount" class="badge badge-info" style="font-size:11px;">Tutte le classi</span>
+            <label class="form-label" style="font-weight:600;margin:0;" data-i18n="modals.print_classes.select_classes">🎓 Selezione Classi da Stampare:</label>
+            <span id="printClassesSelectedCount" class="badge badge-info" style="font-size:11px;" data-i18n="modals.print_classes.all_classes">Tutte le classi</span>
           </div>
 
           <div class="quick-filter-bar">
-            <button class="btn btn-xs btn-sec" onclick="setPrintClassesFilter('all')">Tutte</button>
-            <button class="btn btn-xs btn-sec" onclick="setPrintClassesFilter('1')">Prime</button>
-            <button class="btn btn-xs btn-sec" onclick="setPrintClassesFilter('2')">Seconde</button>
-            <button class="btn btn-xs btn-sec" onclick="setPrintClassesFilter('3')">Terze</button>
-            <button class="btn btn-xs btn-sec" onclick="setPrintClassesFilter('4')">Quarte</button>
-            <button class="btn btn-xs btn-sec" onclick="setPrintClassesFilter('5')">Quinte</button>
-            <button class="btn btn-xs btn-sec" onclick="setPrintClassesFilter('none')">Nessuna</button>
-            <input type="text" id="printClassesSearch" class="form-input" placeholder="🔍 Cerca..." style="max-width:110px;padding:2px 6px;font-size:11px;margin-left:auto;" oninput="filterPrintClassesSearch(this.value)" />
+            <button class="btn btn-xs btn-sec" onclick="setPrintClassesFilter('all')" data-i18n="modals.print_classes.filter_all">Tutte</button>
+            <button class="btn btn-xs btn-sec" onclick="setPrintClassesFilter('1')" data-i18n="modals.print_classes.filter_1">Prime</button>
+            <button class="btn btn-xs btn-sec" onclick="setPrintClassesFilter('2')" data-i18n="modals.print_classes.filter_2">Seconde</button>
+            <button class="btn btn-xs btn-sec" onclick="setPrintClassesFilter('3')" data-i18n="modals.print_classes.filter_3">Terze</button>
+            <button class="btn btn-xs btn-sec" onclick="setPrintClassesFilter('4')" data-i18n="modals.print_classes.filter_4">Quarte</button>
+            <button class="btn btn-xs btn-sec" onclick="setPrintClassesFilter('5')" data-i18n="modals.print_classes.filter_5">Quinte</button>
+            <button class="btn btn-xs btn-sec" onclick="setPrintClassesFilter('none')" data-i18n="modals.print_classes.filter_none">Nessuna</button>
+            <input type="text" id="printClassesSearch" class="form-input" placeholder="🔍 Cerca..." data-i18n-placeholder="modals.print_classes.search_placeholder" style="max-width:110px;padding:2px 6px;font-size:11px;margin-left:auto;" oninput="filterPrintClassesSearch(this.value)" />
           </div>
 
           <div id="printClassesCheckboxesWrap" class="class-chips-container">
@@ -571,8 +629,8 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-sec" onclick="closePrintClassesModal()">Annulla</button>
-        <button class="btn btn-primary" onclick="submitPrintClasses()">🖨️ Apri Anteprima & Stampa PDF</button>
+        <button class="btn btn-sec" onclick="closePrintClassesModal()" data-i18n="common.cancel">Annulla</button>
+        <button class="btn btn-primary" onclick="submitPrintClasses()" data-i18n="modals.print_classes.submit_btn">🖨️ Apri Anteprima & Stampa PDF</button>
       </div>
     </div>
   </div>
@@ -582,49 +640,49 @@
     <div class="modal-dialog" style="max-width:540px;">
       <div class="modal-header">
         <div class="modal-title">
-          <span>📄</span> <span>Tabellone Docenti A3 (Procedura 12)</span>
+          <span>📄</span> <span data-i18n="modals.print_teachers.title">Tabellone Docenti A3 (Procedura 12)</span>
         </div>
         <button class="modal-close" onclick="closePrintTeachersModal()">✕</button>
       </div>
       <div class="modal-body" style="gap:14px;">
-        <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:var(--radius-sm);padding:10px 14px;font-size:12.5px;color:#334155;line-height:1.4;">
+        <div class="modal-notice" data-i18n="modals.print_teachers.info_box">
           Genera il <b>Tabellone Generale Completo</b> di tutti i docenti dell'istituto in formato <b>A3 Orizzontale</b> (o A4 compatto).
           Include bande verticali alternate per giorno ed eliminazione automatica delle ore vuote in coda.
         </div>
 
         <div class="form-group">
-          <label class="form-label" style="font-weight:600;">📅 Valido a partire dal:</label>
+          <label class="form-label" style="font-weight:600;" data-i18n="modals.print_teachers.valid_from">📅 Valido a partire dal:</label>
           <input type="text" id="printTeachersDate" class="form-input" placeholder="GG/MM/AAAA" />
         </div>
 
         <div class="form-group">
-          <label class="form-label" style="font-weight:600;">📐 Formato Carta:</label>
+          <label class="form-label" style="font-weight:600;" data-i18n="modals.print_teachers.paper_size">📐 Formato Carta:</label>
           <select id="printTeachersPaperSize" class="select-input">
-            <option value="A3" selected>📄 A3 Orizzontale (Consigliato per collegio / bacheca)</option>
-            <option value="A4">📑 A4 Orizzontale (Compatto ad alta densità)</option>
+            <option value="A3" selected data-i18n="modals.print_teachers.paper_a3">📄 A3 Orizzontale (Consigliato per collegio / bacheca)</option>
+            <option value="A4" data-i18n="modals.print_teachers.paper_a4">📑 A4 Orizzontale (Compatto ad alta densità)</option>
           </select>
         </div>
 
         <div class="form-group" style="padding-top:4px;">
           <label style="display:flex;align-items:center;gap:8px;font-size:12.5px;cursor:pointer;">
-            <input type="checkbox" id="printTeachersShowRooms" /> <b>Mostra Aula nelle celle di lezione</b> <span style="font-size:11px;color:#64748b;">(lasciare disattivato per far stare perfettamente i dati nelle caselle)</span>
+            <input type="checkbox" id="printTeachersShowRooms" /> <b data-i18n="modals.print_teachers.show_rooms">Mostra Aula nelle celle di lezione</b> <span style="font-size:11px;color:var(--text-muted);" data-i18n="modals.print_teachers.show_rooms_hint">(lasciare disattivato per far stare perfettamente i dati nelle caselle)</span>
           </label>
           <label style="display:flex;align-items:center;gap:8px;font-size:12.5px;cursor:pointer;margin-top:6px;">
-            <input type="checkbox" id="printTeachersHighlightDisp" checked /> <b>Evidenzia Ore a Disposizione ("D" in giallo)</b>
+            <input type="checkbox" id="printTeachersHighlightDisp" checked /> <b data-i18n="modals.print_teachers.highlight_disp">Evidenzia Ore a Disposizione ("D" in giallo)</b>
           </label>
         </div>
 
-        <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:var(--radius-sm);padding:8px 12px;font-size:11.5px;color:#1e40af;line-height:1.4;">
+        <div class="modal-notice-info" data-i18n="modals.print_teachers.optimization_notice">
           ⚡ <b>Ottimizzazione ore in coda attiva:</b> le colonne orarie non utilizzate dall'intero istituto (es. Lun/Mer/Gio a 6 ore) vengono escluse per massimizzare la larghezza delle lezioni senza sprecare spazio.
         </div>
       </div>
       <div class="modal-footer" style="display:flex;justify-content:space-between;align-items:center;">
-        <button class="btn btn-sec" onclick="closePrintTeachersModal()">Annulla</button>
+        <button class="btn btn-sec" onclick="closePrintTeachersModal()" data-i18n="common.cancel">Annulla</button>
         <div style="display:flex;gap:8px;">
-          <button class="btn btn-sec" onclick="submitDownloadTeachersDocx()" style="border:1.5px solid #2563eb;color:#1d4ed8;font-weight:600;">
+          <button class="btn btn-sec btn-outline-primary" onclick="submitDownloadTeachersDocx()" data-i18n="modals.print_teachers.download_docx">
             📥 Scarica Documento (.docx Google Docs)
           </button>
-          <button class="btn btn-primary" onclick="submitPrintTeachers()">
+          <button class="btn btn-primary" onclick="submitPrintTeachers()" data-i18n="modals.print_teachers.submit_btn">
             🖨️ Stampa / Anteprima A3
           </button>
         </div>
@@ -639,24 +697,24 @@
         <div class="modal-title" style="display:flex;align-items:center;gap:12px;">
           <span style="font-size:26px;">🏫</span>
           <div>
-            <div style="font-size:16px;font-weight:700;color:var(--text-main);">SmartTimetable FET Suite</div>
-            <div style="font-size:11.5px;color:var(--text-muted);">Configurazione, Vincoli & Compilatore Orario FET 7.12.0</div>
+            <div style="font-size:16px;font-weight:700;color:var(--text-main);" data-i18n="modals.about.title">SmartTimetable FET Suite</div>
+            <div style="font-size:11.5px;color:var(--text-muted);" data-i18n="modals.about.subtitle">Configurazione, Vincoli & Compilatore Orario FET 7.12.0</div>
           </div>
         </div>
         <button class="modal-close" onclick="closeAboutModal()" title="Chiudi">✕</button>
       </div>
       <div class="modal-body" style="gap:14px;max-height:calc(85vh - 130px);overflow-y:auto;">
         <!-- Banner Versione & Verifica Aggiornamenti -->
-        <div style="display:flex;align-items:center;justify-content:space-between;background:#f8fafc;border:1px solid #e2e8f0;border-radius:var(--radius-sm);padding:10px 14px;flex-wrap:wrap;gap:8px;">
+        <div class="about-banner">
           <div style="display:flex;align-items:center;gap:8px;">
-            <span class="badge badge-info" style="font-size:12px;padding:3px 8px;font-weight:700;">v1.4.10</span>
-            <span id="aboutUpdateStatusText" style="font-size:11.5px;color:#64748b;">Release Stabile</span>
+            <span class="badge badge-info" style="font-size:12px;padding:3px 8px;font-weight:700;">v1.5.1</span>
+            <span id="aboutUpdateStatusText" style="font-size:11.5px;color:var(--text-sub);" data-i18n="modals.about.stable_release">Release Stabile</span>
           </div>
           <div style="display:flex;align-items:center;gap:10px;">
             <button class="btn btn-sm btn-sec" onclick="openUpdateModal()" style="font-size:11px;padding:3px 8px;display:flex;align-items:center;gap:4px;cursor:pointer;">
-              <span>🚀</span> <span>Verifica Aggiornamenti</span>
+              <span>🚀</span> <span data-i18n="modals.about.check_updates">Verifica Aggiornamenti</span>
             </button>
-            <div style="font-size:11.5px;color:#64748b;">
+            <div style="font-size:11.5px;color:var(--text-sub);" data-i18n="modals.about.engine">
               Engine: <b>FET 7.12.0 Nativo</b>
             </div>
           </div>
@@ -664,39 +722,39 @@
 
         <!-- Crediti Autore & Architettura -->
         <div style="display:flex;flex-direction:column;gap:4px;">
-          <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:#64748b;letter-spacing:0.5px;">Ideazione & Architettura</div>
-          <div style="background:#ffffff;border:1px solid var(--border-light);border-radius:var(--radius-sm);padding:12px 14px;display:flex;align-items:flex-start;gap:12px;">
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--text-sub);letter-spacing:0.5px;" data-i18n="modals.about.author_section">Ideazione & Architettura</div>
+          <div class="about-credit-card">
             <div style="font-size:24px;">👨‍💻</div>
             <div style="font-size:12.5px;color:var(--text-main);line-height:1.45;">
-              <div style="font-weight:700;font-size:13.5px;color:var(--primary-dark);">Carlo Rigoni</div>
-              <div>Autore, Architetto del Software e Maintainer del progetto SmartTimetable.</div>
-              <div style="font-size:11.5px;color:#64748b;margin-top:2px;">Progettazione funzionale, adattamento alla scuola italiana, modello vincoli cattedre/disposizioni e integrazione procedurale.</div>
+              <div style="font-weight:700;font-size:13.5px;color:var(--primary);">Carlo Rigoni</div>
+              <div data-i18n="modals.about.author_role">Autore, Architetto del Software e Maintainer del progetto SmartTimetable.</div>
+              <div style="font-size:11.5px;color:var(--text-sub);margin-top:2px;" data-i18n="modals.about.author_sub">Progettazione funzionale, adattamento alla scuola italiana, modello vincoli cattedre/disposizioni e integrazione procedurale.</div>
             </div>
           </div>
         </div>
 
         <!-- Mentore dell'Orario & Guida Metodologica -->
         <div style="display:flex;flex-direction:column;gap:4px;">
-          <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:#64748b;letter-spacing:0.5px;">Mentore dell'Orario & Guida Metodologica</div>
-          <div style="background:#ffffff;border:1px solid var(--border-light);border-radius:var(--radius-sm);padding:12px 14px;display:flex;align-items:flex-start;gap:12px;">
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--text-sub);letter-spacing:0.5px;" data-i18n="modals.about.mentor_section">Mentore dell'Orario & Guida Metodologica</div>
+          <div class="about-credit-card">
             <div style="font-size:24px;">🎓</div>
             <div style="font-size:12.5px;color:var(--text-main);line-height:1.45;">
-              <div style="font-weight:700;font-size:13.5px;color:var(--primary-dark);">Federico Rettore</div>
-              <div>Mentore dell'Orario e guida metodologica per l'equilibratura dei carichi orari docenti, la gestione dei vincoli e delle articolazioni cattedre nella scuola secondaria italiana.</div>
+              <div style="font-weight:700;font-size:13.5px;color:var(--primary);">Federico Rettore</div>
+              <div data-i18n="modals.about.mentor_desc">Mentore dell'Orario e guida metodologica per l'equilibratura dei carichi orari docenti, la gestione dei vincoli e delle articolazioni cattedre nella scuola secondaria italiana.</div>
             </div>
           </div>
         </div>
 
         <!-- Crediti FET & Solutore -->
         <div style="display:flex;flex-direction:column;gap:4px;">
-          <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:#64748b;letter-spacing:0.5px;">Motore Euristico di Calcolo</div>
-          <div style="background:#ffffff;border:1px solid var(--border-light);border-radius:var(--radius-sm);padding:12px 14px;display:flex;align-items:flex-start;gap:12px;">
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--text-sub);letter-spacing:0.5px;" data-i18n="modals.about.engine_section">Motore Euristico di Calcolo</div>
+          <div class="about-credit-card">
             <div style="font-size:24px;">⚡</div>
             <div style="font-size:12.5px;color:var(--text-main);line-height:1.45;">
-              <div style="font-weight:700;font-size:13.5px;color:var(--primary-dark);">FET Free Timetabling Software (v7.12.0)</div>
-              <div>Solutore euristico ad altissima efficienza per orari scolastici complessi, ideato e sviluppato da <b>Liviu Lalescu</b> con il contributo della comunità internazionale FET (licenza GNU GPL v2/v3).</div>
+              <div style="font-weight:700;font-size:13.5px;color:var(--primary);">FET Free Timetabling Software (v7.12.0)</div>
+              <div data-i18n="modals.about.engine_desc">Solutore euristico ad altissima efficienza per orari scolastici complessi, ideato e sviluppato da <b>Liviu Lalescu</b> con il contributo della comunità internazionale FET (licenza GNU GPL v2/v3).</div>
               <div style="margin-top:4px;">
-                <a href="https://lalescu.ro/liviu/fet/" target="_blank" rel="noopener" style="color:var(--primary);text-decoration:none;font-weight:600;font-size:11.5px;">🌐 Sito ufficiale FET Free Software</a>
+                <a href="https://lalescu.ro/liviu/fet/" target="_blank" rel="noopener" style="color:var(--primary);text-decoration:none;font-weight:600;font-size:11.5px;" data-i18n="modals.about.engine_site">🌐 Sito ufficiale FET Free Software</a>
               </div>
             </div>
           </div>
@@ -704,22 +762,22 @@
 
         <!-- AI Pair Programming Antigravity -->
         <div style="display:flex;flex-direction:column;gap:4px;">
-          <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:#64748b;letter-spacing:0.5px;">AI Engineering & Pair Programming</div>
-          <div style="background:#ffffff;border:1px solid var(--border-light);border-radius:var(--radius-sm);padding:12px 14px;display:flex;align-items:flex-start;gap:12px;">
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--text-sub);letter-spacing:0.5px;" data-i18n="modals.about.ai_section">AI Engineering & Pair Programming</div>
+          <div class="about-credit-card">
             <div style="font-size:24px;">🤖</div>
             <div style="font-size:12.5px;color:var(--text-main);line-height:1.45;">
-              <div style="font-weight:700;font-size:13.5px;color:var(--primary-dark);">Google DeepMind Antigravity</div>
-              <div>Advanced Agentic Coding: ingegnerizzazione full-stack, interfaccia Google Classroom Material 3, Relaxation Engine diagnostico per i vincoli, parser Microsoft Word (.docx) e containerizzazione multi-arch.</div>
+              <div style="font-weight:700;font-size:13.5px;color:var(--primary);">Google DeepMind Antigravity</div>
+              <div data-i18n="modals.about.ai_desc">Advanced Agentic Coding: ingegnerizzazione full-stack, interfaccia Google Classroom Material 3, Relaxation Engine diagnostico per i vincoli, parser Microsoft Word (.docx) e containerizzazione multi-arch.</div>
             </div>
           </div>
         </div>
 
         <!-- Trattamento Dati & GDPR -->
-        <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:var(--radius-sm);padding:12px 14px;font-size:12px;color:#1e3a8a;line-height:1.45;">
+        <div class="modal-notice-info">
           <div style="font-weight:700;display:flex;align-items:center;gap:6px;margin-bottom:4px;">
-            <span>🛡️</span> <span>Conformità GDPR (Reg. UE 2016/679) & Privacy by Design</span>
+            <span>🛡️</span> <span data-i18n="modals.about.gdpr_title">Conformità GDPR (Reg. UE 2016/679) & Privacy by Design</span>
           </div>
-          <div>SmartTimetable opera <b>esclusivamente on-premise</b> all'interno della rete locale dell'Istituto, oppure su <b>macchina virtuale (VM) o VPS controllata</b> (a totale carico e gestione dell'installatore). Nessun dato dell'orario o anagrafico viene trasmesso a server cloud terzi. L'Istituto Scolastico o l'Ente che installa e utilizza il software agisce in via esclusiva come <b>Titolare del Trattamento dei Dati Personali</b> (Art. 4, n. 7 GDPR) ai sensi di legge.</div>
+          <div data-i18n="modals.about.gdpr_desc">SmartTimetable opera <b>esclusivamente on-premise</b> all'interno della rete locale dell'Istituto, oppure su <b>macchina virtuale (VM) o VPS controllata</b>. Nessun dato dell'orario o anagrafico viene trasmesso a server cloud terzi. L'Istituto Scolastico o l'Ente che installa e utilizza il software agisce in via esclusiva come <b>Titolare del Trattamento dei Dati Personali</b> (Art. 4, n. 7 GDPR) ai sensi di legge.</div>
         </div>
 
         <!-- Collegamenti esterni -->
@@ -730,7 +788,7 @@
         </div>
       </div>
       <div class="modal-footer" style="justify-content:flex-end;">
-        <button class="btn btn-primary" onclick="closeAboutModal()">Chiudi</button>
+        <button class="btn btn-primary" onclick="closeAboutModal()" data-i18n="common.close">Chiudi</button>
       </div>
     </div>
   </div>
@@ -742,8 +800,8 @@
         <div class="modal-title" style="display:flex;align-items:center;gap:12px;">
           <span style="font-size:26px;">🚀</span>
           <div>
-            <div style="font-size:16px;font-weight:700;color:var(--text-main);">Aggiornamento SmartTimetable</div>
-            <div style="font-size:11.5px;color:var(--text-muted);">Verifica immagini Docker Hub & Release Ufficiali</div>
+            <div style="font-size:16px;font-weight:700;color:var(--text-main);" data-i18n="modals.updates.title">Aggiornamento SmartTimetable</div>
+            <div style="font-size:11.5px;color:var(--text-muted);" data-i18n="modals.updates.subtitle">Verifica immagini Docker Hub & Release Ufficiali</div>
           </div>
         </div>
         <button class="modal-close" onclick="closeUpdateModal()" title="Chiudi">✕</button>
@@ -751,71 +809,72 @@
 
       <div class="modal-body" style="gap:14px;max-height:calc(85vh - 130px);overflow-y:auto;">
         <!-- Banner Stato Aggiornamento -->
-        <div id="updateStatusBanner" style="padding: 12px 14px; border-radius: var(--radius-sm); font-size: 13px; display: flex; align-items: flex-start; gap: 10px; background: #f8fafc; border: 1px solid #e2e8f0;">
+        <div id="updateStatusBanner" class="modal-notice" style="display: flex; align-items: flex-start; gap: 10px;">
           <span id="updateBannerIcon" style="font-size: 20px;">🔍</span>
           <div style="flex: 1;">
-            <div id="updateBannerTitle" style="font-weight: 700; color: var(--text-main);">Verifica aggiornamenti in corso...</div>
-            <div id="updateBannerDesc" style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Confronto tra la versione locale e il repository su Docker Hub.</div>
+            <div id="updateBannerTitle" style="font-weight: 700; color: var(--text-main);" data-i18n="modals.updates.checking_title">Verifica aggiornamenti in corso...</div>
+            <div id="updateBannerDesc" style="font-size: 12px; color: var(--text-muted); margin-top: 2px;" data-i18n="modals.updates.checking_desc">Confronto tra la versione locale e il repository su Docker Hub.</div>
           </div>
         </div>
 
         <!-- Confronto Versioni -->
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: var(--radius-sm); padding: 12px; text-align: center;">
-            <div style="font-size: 11px; text-transform: uppercase; font-weight: 700; color: #64748b; letter-spacing: 0.5px;">Versione Corrente</div>
-            <div id="updateCurrentVer" style="font-size: 18px; font-weight: 800; color: #1e293b; margin-top: 4px;">v1.4.10</div>
-            <div id="updateCurrentTag" style="font-size: 11px; color: #64748b; margin-top: 2px;">In esecuzione sul server</div>
+          <div class="update-stat-card">
+            <div style="font-size: 11px; text-transform: uppercase; font-weight: 700; color: var(--text-sub); letter-spacing: 0.5px;" data-i18n="modals.updates.current_ver">Versione Corrente</div>
+            <div id="updateCurrentVer" style="font-size: 18px; font-weight: 800; color: var(--text-main); margin-top: 4px;">v1.5.1</div>
+            <div id="updateCurrentTag" style="font-size: 11px; color: var(--text-muted); margin-top: 2px;" data-i18n="modals.updates.current_tag">In esecuzione sul server</div>
           </div>
-          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: var(--radius-sm); padding: 12px; text-align: center;">
-            <div style="font-size: 11px; text-transform: uppercase; font-weight: 700; color: #64748b; letter-spacing: 0.5px;">Ultima su Docker Hub</div>
-            <div id="updateRemoteVer" style="font-size: 18px; font-weight: 800; color: #2563eb; margin-top: 4px;">--</div>
-            <div id="updateRemoteDate" style="font-size: 11px; color: #64748b; margin-top: 2px;">Verifica...</div>
+          <div class="update-stat-card">
+            <div style="font-size: 11px; text-transform: uppercase; font-weight: 700; color: var(--text-sub); letter-spacing: 0.5px;" data-i18n="modals.updates.remote_ver">Ultima su Docker Hub</div>
+            <div id="updateRemoteVer" style="font-size: 18px; font-weight: 800; color: var(--primary); margin-top: 4px;">--</div>
+            <div id="updateRemoteDate" style="font-size: 11px; color: var(--text-muted); margin-top: 2px;" data-i18n="modals.updates.remote_checking">Verifica...</div>
           </div>
         </div>
 
         <!-- Guida all'Aggiornamento -->
         <div id="updateGuideSection" style="display: flex; flex-direction: column; gap: 8px;">
-          <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; color: #64748b; letter-spacing: 0.5px;">
+          <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; color: var(--text-sub); letter-spacing: 0.5px;" data-i18n="modals.updates.guide_title">
             🛠️ Come Applicare l'Aggiornamento
           </div>
-          <div style="background: #ffffff; border: 1px solid var(--border-light); border-radius: var(--radius-sm); padding: 14px; display: flex; flex-direction: column; gap: 10px;">
+          <div class="about-credit-card" style="display:flex;flex-direction:column;gap:10px;">
             <div style="font-size: 12.5px; color: var(--text-main); line-height: 1.45;">
-              <strong>1. Aggiornamento Automatico con Watchtower:</strong><br>
-              Se il tuo server Docker ha il container <em>containrrr/watchtower</em> configurato, l'immagine verrà aggiornata automaticamente all'orario impostato senza alcun intervento manuale.
+              <strong data-i18n="modals.updates.guide_watchtower">1. Aggiornamento Automatico con Watchtower:</strong><br>
+              <span data-i18n="modals.updates.guide_watchtower_desc">Se il tuo server Docker ha il container <em>containrrr/watchtower</em> configurato, l'immagine verrà aggiornata automaticamente all'orario impostato senza alcun intervento manuale.</span>
             </div>
             <div style="font-size: 12.5px; color: var(--text-main); line-height: 1.45;">
-              <strong>2. Aggiornamento Manuale Immediato:</strong><br>
-              Per aggiornare subito da terminale sul server o VPS, esegui nella cartella del progetto:
+              <strong data-i18n="modals.updates.guide_manual">2. Aggiornamento Manuale Immediato:</strong><br>
+              <span data-i18n="modals.updates.guide_manual_desc">Per aggiornare subito da terminale sul server o VPS, esegui nella cartella del progetto:</span>
             </div>
-            <div style="position: relative; background: #0f172a; border-radius: 6px; padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+            <div style="position: relative; background: #0f172a; border-radius: 6px; padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%;">
               <code id="dockerUpdateCmdText" style="color: #38bdf8; font-family: var(--font-mono); font-size: 12px; word-break: break-all;">docker compose pull && docker compose up -d</code>
               <button id="btnCopyUpdateCmd" class="btn btn-sm btn-sec" onclick="copyDockerUpdateCmd()" style="background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.25); color: #fff; padding: 4px 10px; font-size: 11.5px; flex-shrink: 0; cursor: pointer;">
-                📋 Copia
+                📋 <span data-i18n="modals.updates.copy_btn">Copia</span>
               </button>
             </div>
-            <div style="font-size: 11.5px; color: #64748b; line-height: 1.4;">
+            <div style="font-size: 11.5px; color: var(--text-muted); line-height: 1.4;" data-i18n="modals.updates.hint_security">
               💡 <strong>Sicurezza Dati:</strong> Tutti i dati, i vincoli e gli orari generati risiedono nei volumi persistenti e non vengono sovrascritti durante gli aggiornamenti dell'immagine.
             </div>
           </div>
         </div>
 
         <!-- Sezione Ultimo Controllo -->
-        <div style="font-size: 11px; color: #94a3b8; text-align: right; padding-top: 4px;">
-          Ultimo controllo: <span id="updateLastCheckedTime">adesso</span>
+        <div style="font-size: 11px; color: var(--text-sub); text-align: right; padding-top: 4px;">
+          <span data-i18n="modals.updates.last_check">Ultimo controllo:</span> <span id="updateLastCheckedTime">adesso</span>
         </div>
       </div>
 
       <div class="modal-footer" style="display:flex;justify-content:space-between;align-items:center;">
-        <button id="btnForceCheckUpdate" class="btn btn-sec" onclick="checkUpdatesManually(true)" style="font-size: 12px;">
+        <button id="btnForceCheckUpdate" class="btn btn-sec" onclick="checkUpdatesManually(true)" style="font-size: 12px;" data-i18n="modals.updates.check_now_btn">
           🔄 Ricontrolla Ora
         </button>
-        <button class="btn btn-primary" onclick="closeUpdateModal()" style="font-size: 12px;">
+        <button class="btn btn-primary" onclick="closeUpdateModal()" style="font-size: 12px;" data-i18n="common.close">
           Chiudi
         </button>
       </div>
     </div>
   </div>
 
-  <script src="app.js?v=1.4.10"></script>
+  <script src="i18n.js?v=1.5.1"></script>
+  <script src="app.js?v=1.5.1"></script>
 </body>
 </html>

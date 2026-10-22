@@ -1,5 +1,5 @@
 """
-SmartTimetable - Modulo Advisor Intelligente e Relaxation Engine (v1.4.10)
+SmartTimetable - Modulo Advisor Intelligente e Relaxation Engine (v1.5.0)
 Analizza sia in FASE PREVENTIVA (prima del lancio) sia in FASE DI COMPILAZIONE (durante/dopo FET)
 i conflitti matematici, i colli di bottiglia, le locked activities e i cicli di deadlock ricorsivo.
 Fornisce diagnosi "Causa Radice" (Root Cause Analysis) e una scala progressiva di raccomandazioni
@@ -30,12 +30,14 @@ class TimetableAdvisor:
         cls,
         data: Dict[str, Any],
         solver_dir: Optional[str] = None,
-        solver_state: Optional[Dict[str, Any]] = None
+        solver_state: Optional[Dict[str, Any]] = None,
+        lang: str = "it"
     ) -> Dict[str, Any]:
         """
         Analizza lo stato del progetto e l'eventuale output del risolutore FET per produrre
         un report diagnostico completo con spiegazione della causa radice e raccomandazioni a 3 livelli.
         """
+        is_en = (lang == "en")
         recommendations: List[Dict[str, Any]] = []
         bottleneck_entities: List[Dict[str, Any]] = []
 
@@ -207,6 +209,10 @@ class TimetableAdvisor:
                 root_cause_type = "LOCKED_ACTIVITY_CLASH"
                 l_act = locked_in_chain[0]
                 root_cause_summary = (
+                    f"The FET deadlock is driven by locked activity #{l_act['id']} "
+                    f"({l_act.get('subject')} with {', '.join(l_act.get('teachers', []))}). "
+                    f"Being locked in a fixed position, it prevents the algorithm from swapping periods to make room for remaining activities."
+                ) if is_en else (
                     f"Lo stallo di FET è alimentato dall'attività fissata #{l_act['id']} "
                     f"({l_act.get('subject')} con {', '.join(l_act.get('teachers', []))}). "
                     f"Essendo bloccata in una specifica posizione, impedisce all'algoritmo di scambiare le ore per far spazio alle attività rimaste."
@@ -214,30 +220,45 @@ class TimetableAdvisor:
             elif pivot_teacher and pivot_class:
                 root_cause_type = "TEACHER_CLASS_BOTTLENECK"
                 root_cause_summary = (
+                    f"Primary bottleneck: timetable intersection between teacher '{pivot_teacher}' "
+                    f"and class '{pivot_class}'. Constraints or unavailabilities leave very few compatible slots."
+                ) if is_en else (
                     f"Collo di bottiglia principale: intersezione oraria tra il docente '{pivot_teacher}' "
                     f"e la classe '{pivot_class}'. I vincoli o le indisponibilità di entrambi lasciano pochissimi slot compatibili."
                 )
             elif pivot_teacher:
                 root_cause_type = "TEACHER_TIGHT_SLOTS"
                 root_cause_summary = (
+                    f"Teacher '{pivot_teacher}' is involved in most swap conflicts. "
+                    f"Their unavailabilities or day off excessively restrict degrees of freedom to complete assignments."
+                ) if is_en else (
                     f"Il docente '{pivot_teacher}' risulta presente nella maggior parte dei conflitti di scambio. "
                     f"Le sue indisponibilità o il giorno libero riducono eccessivamente i gradi di libertà per completare la cattedra."
                 )
             elif pivot_class:
                 root_cause_type = "CLASS_CONGESTION"
                 root_cause_summary = (
+                    f"Class '{pivot_class}' has an overly constrained calendar that cannot accommodate "
+                    f"the combinations of assigned teachers in the remaining slots."
+                ) if is_en else (
                     f"La classe '{pivot_class}' ha un calendario iper-vincolato che non riesce ad accogliere "
                     f"le combinazioni dei docenti assegnati negli slot rimasti."
                 )
-            elif pivot_subject and any(w in pivot_subject.lower() for w in ["motori", "sport", "informatic"]):
+            elif pivot_subject and any(w in pivot_subject.lower() for w in ["motori", "sport", "informatic", "pe", "gym", "lab"]):
                 root_cause_type = "ROOM_CAPACITY"
                 root_cause_summary = (
+                    f"Subject '{pivot_subject}' requires specific limited-capacity spaces (Gym / Lab) "
+                    f"that are saturated or colliding on the required days."
+                ) if is_en else (
                     f"La materia '{pivot_subject}' richiede spazi specifici a capienza limitata (Palestra / Laboratorio) "
                     f"che risultano saturi o in collisione nelle giornate richieste."
                 )
             else:
                 root_cause_type = "GLOBAL_CONSTRAINTS_DEADLOCK"
                 root_cause_summary = (
+                    "The FET algorithm reached a deadlock in recursive relocation cycles. "
+                    "Global constraints on gap hours and building change interval prevent alternative combinations."
+                ) if is_en else (
                     "L'algoritmo FET ha raggiunto un deadlock nei cicli di ricollocamento ricorsivo. "
                     "I vincoli globali su ore buche e intervallo cambio plesso impediscono combinazioni alternative."
                 )
@@ -246,18 +267,28 @@ class TimetableAdvisor:
             if v_report.get("critical_count", 0) > 0:
                 root_cause_type = "PREVENTIVE_CRITICAL_CONFLICTS"
                 root_cause_summary = (
+                    f"Detected {v_report['critical_count']} blocking mathematical conflicts. "
+                    "FET cannot find any valid solution until these constraints are resolved."
+                ) if is_en else (
                     f"Rilevati {v_report['critical_count']} conflitti matematici bloccanti. "
                     "FET non potrà trovare alcuna soluzione valida finché non verranno risolti questi vincoli."
                 )
             elif v_report.get("warning_count", 0) > 0:
                 root_cause_type = "PREVENTIVE_WARNINGS"
                 root_cause_summary = (
+                    f"Detected {v_report['warning_count']} potential bottlenecks (tight margins or strict constraints). "
+                    "Relaxing these upfront ensures immediate 100% completion."
+                ) if is_en else (
                     f"Rilevati {v_report['warning_count']} potenziali colli di bottiglia (margini stretti o vincoli rigidi). "
                     "Rilassare preventivamente questi elementi assicura una compilazione immediata al 100%."
                 )
             else:
                 root_cause_type = "READY"
-                root_cause_summary = "Progetto matematicamente bilanciato. Nessun conflitto o collo di bottiglia rilevato."
+                root_cause_summary = (
+                    "Model mathematically balanced. No conflicts or bottlenecks detected."
+                ) if is_en else (
+                    "Progetto matematicamente bilanciato. Nessun conflitto o collo di bottiglia rilevato."
+                )
 
         # =========================================================================
         # COSTRUZIONE DELLA RELAXATION LADDER (Raccomandazioni a 3 Livelli)
@@ -602,13 +633,15 @@ class TimetableAdvisor:
         cls,
         data: Dict[str, Any],
         action_type: str,
-        payload: Dict[str, Any]
+        payload: Dict[str, Any],
+        lang: str = "it"
     ) -> Tuple[Dict[str, Any], str]:
         """
         Applica la modifica richiesta al dizionario dei dati del progetto e restituisce
         il messaggio descrittivo dell'azione svolta.
         """
-        msg = "Nessuna azione eseguita."
+        is_en = (lang == "en")
+        msg = "No action executed." if is_en else "Nessuna azione eseguita."
 
         if action_type == "relax_teacher_gaps_day":
             new_val = int(payload.get("new_val", 2))
@@ -623,7 +656,9 @@ class TimetableAdvisor:
             else:
                 data["constraints"]["TEACHERS_MAX_GAPS_DAY"]["val"] = new_val
                 data["constraints"]["TEACHERS_MAX_GAPS_DAY"]["active"] = True
-            msg = f"Vincolo Max Ore Buche Giornaliere Docenti impostato con successo a {new_val}."
+            msg = (f"Max Teacher Daily Gaps constraint successfully set to {new_val}."
+                   if is_en else
+                   f"Vincolo Max Ore Buche Giornaliere Docenti impostato con successo a {new_val}.")
 
         elif action_type == "relax_teacher_gaps_week":
             new_val = int(payload.get("new_val", 3))
@@ -638,7 +673,9 @@ class TimetableAdvisor:
             else:
                 data["constraints"]["TEACHERS_MAX_GAPS_WEEK"]["val"] = new_val
                 data["constraints"]["TEACHERS_MAX_GAPS_WEEK"]["active"] = True
-            msg = f"Vincolo Max Ore Buche Settimanali Docenti impostato con successo a {new_val}."
+            msg = (f"Max Teacher Weekly Gaps constraint successfully set to {new_val}."
+                   if is_en else
+                   f"Vincolo Max Ore Buche Settimanali Docenti impostato con successo a {new_val}.")
 
         elif action_type == "relax_building_gaps":
             new_val = int(payload.get("new_val", 0))
@@ -653,7 +690,9 @@ class TimetableAdvisor:
             else:
                 data["constraints"]["TEACHERS_MIN_GAPS_BUILDING_CHANGES"]["val"] = new_val
                 data["constraints"]["TEACHERS_MIN_GAPS_BUILDING_CHANGES"]["active"] = (new_val > 0)
-            msg = f"Vincolo Intervallo Cambio Plesso aggiornato a {new_val} ore (attivo: {new_val > 0})."
+            msg = (f"Building Change Gap constraint updated to {new_val} hours (active: {new_val > 0})."
+                   if is_en else
+                   f"Vincolo Intervallo Cambio Plesso aggiornato a {new_val} ore (attivo: {new_val > 0}).")
 
         elif action_type == "relax_level1_all":
             # Applica in un solo passaggio Buche Giorno + Buche Settimana + Gap Plesso
@@ -674,7 +713,9 @@ class TimetableAdvisor:
                 data["constraints"]["TEACHERS_MIN_GAPS_BUILDING_CHANGES"]["val"] = bld_g
                 data["constraints"]["TEACHERS_MIN_GAPS_BUILDING_CHANGES"]["active"] = (bld_g > 0)
 
-            msg = f"Pacchetto Livello 1 applicato con successo: Buche giorno={gaps_d}, Buche settimana={gaps_w}, Gap plessi={bld_g}."
+            msg = (f"Level 1 Package applied successfully: Daily gaps={gaps_d}, Weekly gaps={gaps_w}, Building gap={bld_g}."
+                   if is_en else
+                   f"Pacchetto Livello 1 applicato con successo: Buche giorno={gaps_d}, Buche settimana={gaps_w}, Gap plessi={bld_g}.")
 
         elif action_type == "relax_teacher_unavailability":
             teacher = payload.get("teacher")
@@ -684,7 +725,9 @@ class TimetableAdvisor:
                 new_list = [s for s in curr if s not in slots_to_remove]
                 data["teacher_availability"][teacher] = new_list
                 removed_count = len(curr) - len(new_list)
-                msg = f"Rimosse con successo {removed_count} ore di indisponibilità per il docente {teacher}."
+                msg = (f"Successfully removed {removed_count} unavailability hours for teacher {teacher}."
+                       if is_en else
+                       f"Rimosse con successo {removed_count} ore di indisponibilità per il docente {teacher}.")
 
         elif action_type == "remove_single_unavailability":
             teacher = payload.get("teacher")
@@ -694,9 +737,13 @@ class TimetableAdvisor:
                 if slot in curr:
                     curr.remove(slot)
                     data["teacher_availability"][teacher] = curr
-                    msg = f"Slot {slot.replace('|', ' ')} rimosso dalle indisponibilità di {teacher}."
+                    msg = (f"Slot {slot.replace('|', ' ')} removed from unavailability for {teacher}."
+                           if is_en else
+                           f"Slot {slot.replace('|', ' ')} rimosso dalle indisponibilità di {teacher}.")
                 else:
-                    msg = f"Slot {slot} non presente nelle indisponibilità di {teacher}."
+                    msg = (f"Slot {slot} was not in unavailability for {teacher}."
+                           if is_en else
+                           f"Slot {slot} non presente nelle indisponibilità di {teacher}.")
 
         elif action_type == "relax_min_days":
             teacher = payload.get("teacher")
@@ -715,7 +762,9 @@ class TimetableAdvisor:
                             f"<Minimum_Days_Per_Week>{new_val}</Minimum_Days_Per_Week>",
                             xml_str
                         )
-            msg = f"Vincolo Min Giorni di Presenza per {teacher} aggiornato a {new_val} giorni."
+            msg = (f"Min Attendance Days constraint for {teacher} updated to {new_val} days."
+                   if is_en else
+                   f"Vincolo Min Giorni di Presenza per {teacher} aggiornato a {new_val} giorni.")
 
         elif action_type == "unlock_activity":
             act_id = str(payload.get("activity_id"))
@@ -723,12 +772,18 @@ class TimetableAdvisor:
             if act_id in locked_list:
                 locked_list.remove(act_id)
                 data["locked_activities"] = locked_list
-                msg = f"Attività #{act_id} sbloccata con successo dalle posizioni fisse."
+                msg = (f"Activity #{act_id} unlocked from fixed positions."
+                       if is_en else
+                       f"Attività #{act_id} sbloccata con successo dalle posizioni fisse.")
 
         elif action_type == "unlock_multiple_activities":
             act_ids = set(str(x) for x in payload.get("activity_ids", []))
             locked_list = [str(x) for x in data.get("locked_activities", []) if str(x) not in act_ids]
             data["locked_activities"] = locked_list
-            msg = f"Sbloccate con successo {len(act_ids)} attività fisse."
+            msg = (f"Successfully unlocked {len(act_ids)} fixed activities."
+                   if is_en else
+                   f"Sbloccate con successo {len(act_ids)} attività fisse.")
+
+        return data, msg
 
         return data, msg

@@ -22,9 +22,74 @@ let pollSolverTimer = null;
 let currentSolverRunning = false;
 
 // --- VERSIONE E IDENTITÀ APPLICATIVA ---
-const APP_VERSION = '1.4.10';
+const APP_VERSION = '1.5.1';
+
+// Helper traduzione i18n universale
+function _t(key, fallback = '') {
+  if (window.I18N && typeof window.I18N.t === 'function') {
+    const val = window.I18N.t(key);
+    if (val && val !== key) return val;
+  }
+  return fallback || key;
+}
 const FET_VERSION = '7.12.0';
 const APP_AUTHOR = 'Carlo Rigoni';
+
+// --- GESTIONE INTERNAZIONALIZZAZIONE (i18n) & TEMI (DARK/LIGHT/AUTO) ---
+function toggleLangMenu(event) {
+  if (event) event.stopPropagation();
+  const menu = document.getElementById('langMenuPopup');
+  const themeMenu = document.getElementById('themeMenuPopup');
+  if (themeMenu) themeMenu.style.display = 'none';
+  if (!menu) return;
+  menu.style.display = menu.style.display === 'none' ? 'flex' : 'none';
+}
+
+function setAppLanguage(lang) {
+  if (window.I18N) {
+    window.I18N.setLanguage(lang, (newLang) => {
+      const menu = document.getElementById('langMenuPopup');
+      if (menu) menu.style.display = 'none';
+      if (document.getElementById('pageTitle') && currentView) {
+        document.getElementById('pageTitle').innerText = window.I18N.t('nav.' + currentView + '_title', document.getElementById('pageTitle').innerText);
+      }
+      navigate(currentView, false);
+      showToast(newLang === 'en' ? 'Language switched to English' : 'Lingua impostata su Italiano');
+    });
+  }
+}
+
+function toggleThemeMenu(event) {
+  if (event) event.stopPropagation();
+  const menu = document.getElementById('themeMenuPopup');
+  const langMenu = document.getElementById('langMenuPopup');
+  if (langMenu) langMenu.style.display = 'none';
+  if (!menu) return;
+  menu.style.display = menu.style.display === 'none' ? 'flex' : 'none';
+}
+
+function setAppTheme(theme) {
+  if (window.I18N) {
+    window.I18N.applyTheme(theme, true);
+    const menu = document.getElementById('themeMenuPopup');
+    if (menu) menu.style.display = 'none';
+    const msg = theme === 'auto' ? window.I18N.t('theme.auto') : (theme === 'dark' ? window.I18N.t('theme.dark') : window.I18N.t('theme.light'));
+    showToast(msg);
+  }
+}
+
+document.addEventListener('click', (e) => {
+  const langDropdown = document.getElementById('langSelectorDropdown');
+  const themeDropdown = document.getElementById('themeSelectorDropdown');
+  if (langDropdown && !langDropdown.contains(e.target)) {
+    const m = document.getElementById('langMenuPopup');
+    if (m) m.style.display = 'none';
+  }
+  if (themeDropdown && !themeDropdown.contains(e.target)) {
+    const m = document.getElementById('themeMenuPopup');
+    if (m) m.style.display = 'none';
+  }
+});
 
 // --- AUTENTICAZIONE & CONTROLLO ACCESSI (GOOGLE OAUTH & WHITELIST APPROVAL) ---
 let currentUser = null;
@@ -32,6 +97,11 @@ let authPollInterval = null;
 let googleClientId = '';
 
 document.addEventListener('DOMContentLoaded', () => {
+  if (window.I18N) {
+    window.I18N.updateLangUI();
+    window.I18N.applyTheme(window.I18N.detectTheme(), false);
+    window.I18N.applyStaticTranslations();
+  }
   initNavGroups();
   initAuth();
   checkSoftwareUpdates();
@@ -933,12 +1003,14 @@ const FLYOUT_GROUP_ITEMS = {
     {
       icon: '🖨️',
       title: 'Orario per Classe (PDF)',
+      key: 'print_classes',
       desc: 'Stampa A4 orizzontale con articolazioni e intervalli',
       action: 'openPrintClassesModal()'
     },
     {
       icon: '📄',
       title: 'Tabellone Docenti (A3)',
+      key: 'print_teachers',
       desc: 'Tabellone orizzontale completo con bande verticali (A3/PDF)',
       action: 'openPrintTeachersModal()'
     }
@@ -947,36 +1019,42 @@ const FLYOUT_GROUP_ITEMS = {
     {
       icon: '👨‍🏫',
       title: 'Docenti',
+      key: 'teachers',
       desc: 'Organico docenti, cattedre e ore di insegnamento',
       view: 'teachers'
     },
     {
       icon: '🎓',
       title: 'Classi & Gruppi',
+      key: 'classes',
       desc: 'Sezioni, articolazioni orarie e gruppi studenti',
       view: 'classes'
     },
     {
       icon: '📚',
       title: 'Materie',
+      key: 'subjects',
       desc: 'Discipline scolastiche, codici e carichi orari',
       view: 'subjects'
     },
     {
       icon: '🏫',
       title: 'Plessi & Aule',
+      key: 'rooms',
       desc: 'Sedi dell\'istituto, aule ordinarie e laboratori',
       view: 'rooms'
     },
     {
       icon: '📝',
       title: 'Attività / Cattedre',
+      key: 'activities',
       desc: 'Insegnamenti, compresenze e cattedre FET',
       view: 'activities'
     },
     {
       icon: '🔗',
       title: 'Accorpamenti',
+      key: 'accorpamenti',
       desc: 'Macro-materie (es. Italiano, Latino, Storia e Geo)',
       view: 'accorpamenti'
     }
@@ -985,18 +1063,21 @@ const FLYOUT_GROUP_ITEMS = {
     {
       icon: '📐',
       title: 'Regole Blocchi & Sezioni',
+      key: 'block_rules',
       desc: 'Suddivisione blocchi orari e indirizzi sezioni',
       view: 'block_rules'
     },
     {
       icon: '🚫',
       title: 'Indisponibilità Griglia',
+      key: 'availability',
       desc: 'Desiderata docenti, palestre e giorni liberi',
       view: 'availability'
     },
     {
       icon: '⚖️',
       title: 'Vincoli Orario',
+      key: 'constraints',
       desc: 'Pesi percentuali, buchi e ore buche FET',
       view: 'constraints'
     }
@@ -1005,18 +1086,21 @@ const FLYOUT_GROUP_ITEMS = {
     {
       icon: '⚙️',
       title: 'Parametri Istituto',
+      key: 'parameters',
       desc: 'Campanelle, sabati, pause e calendario scolastico',
       view: 'parameters'
     },
     {
       icon: '📦',
       title: 'Backup & Snapshot',
+      key: 'snapshots',
       desc: 'Punti di ripristino, import/export FET e JSON',
       view: 'snapshots'
     },
     {
       icon: '👥',
       title: 'Gestione Accessi',
+      key: 'access_mgmt',
       desc: 'Ruoli, permessi e approvazione utenti Google OAuth',
       action: 'openAccessManagementModal()',
       adminOnly: true
@@ -1024,6 +1108,7 @@ const FLYOUT_GROUP_ITEMS = {
     {
       icon: 'ℹ️',
       title: 'Info & Crediti',
+      key: 'about',
       desc: 'Versione FET 7.12, crediti e conformità GDPR',
       action: 'openAboutModal()'
     }
@@ -1047,7 +1132,8 @@ function openRailFlyout(groupId, triggerEl, isPersistent) {
   const flyoutItemsContainer = document.getElementById('flyoutItemsContainer');
   const pinBadge = document.getElementById('flyoutPinBadge');
 
-  if (flyoutTitle && titleEl) flyoutTitle.innerText = titleEl.innerText;
+  const groupLabel = window.I18N ? window.I18N.t('nav.' + groupId + '_group', titleEl ? titleEl.innerText : groupId) : (titleEl ? titleEl.innerText : groupId);
+  if (flyoutTitle) flyoutTitle.innerText = groupLabel;
   if (flyoutIcon && iconEl) flyoutIcon.innerText = iconEl.innerText;
   if (pinBadge) pinBadge.style.display = isPersistent ? 'inline-block' : 'none';
 
@@ -1055,13 +1141,14 @@ function openRailFlyout(groupId, triggerEl, isPersistent) {
   if (flyoutItemsContainer) {
     const items = FLYOUT_GROUP_ITEMS[groupId] || [];
     let html = '';
-    const currentView = (typeof stateData !== 'undefined' && stateData.currentView) ? stateData.currentView : '';
+    const activeView = (typeof currentView !== 'undefined') ? currentView : '';
+    const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
 
     items.forEach(it => {
       if (it.adminOnly && (!currentUser || currentUser.role !== 'admin')) {
         return;
       }
-      const isActive = it.view && it.view === currentView;
+      const isActive = Boolean(it.view && it.view === activeView);
       const clickHandler = it.view ? `navigate('${it.view}'); closeRailFlyout(true);` : `${it.action}; closeRailFlyout(true);`;
 
       let badgeHtml = '';
@@ -1071,16 +1158,23 @@ function openRailFlyout(groupId, triggerEl, isPersistent) {
           badgeHtml = `<span id="flyoutPendingBadge" class="badge-pending-count" style="display:inline-block;margin-left:auto;">${pCount}</span>`;
         }
       }
+      if (isActive) {
+        badgeHtml += `<span class="flyout-active-badge">✓ ${isEn ? 'Active' : 'Attiva'}</span>`;
+      }
+
+      const itemKey = it.key || it.view;
+      const displayTitle = (itemKey && window.I18N) ? window.I18N.t('nav.' + itemKey, it.title) : it.title;
+      const displayDesc = (itemKey && window.I18N) ? window.I18N.t('nav.' + itemKey + '_desc', it.desc) : it.desc;
 
       html += `
-        <div class="flyout-item ${isActive ? 'active' : ''}" onclick="${clickHandler}" tabindex="0" role="button" aria-label="${it.title}">
+        <div class="flyout-item ${isActive ? 'active' : ''}" onclick="${clickHandler}" tabindex="0" role="button" aria-label="${escapeHtml(displayTitle)}">
           <span class="flyout-item-icon">${it.icon}</span>
           <div class="flyout-item-content">
             <div class="flyout-item-title-row">
-              <span class="flyout-item-title">${it.title}</span>
+              <span class="flyout-item-title">${escapeHtml(displayTitle)}</span>
               ${badgeHtml}
             </div>
-            <div class="flyout-item-desc">${it.desc}</div>
+            <div class="flyout-item-desc">${escapeHtml(displayDesc)}</div>
           </div>
           <svg class="flyout-item-chevron" viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
             <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/>
@@ -1255,20 +1349,24 @@ function handleSidebarResize() {
   }
 }
 
-async function loadInitialData() {
-  initSidebarResponsive();
-  window.addEventListener('resize', handleSidebarResize);
-
+async function refreshAppState() {
   try {
     const res = await fetch('/api/summary');
     stateData.summary = await res.json();
-    if (stateData.summary.institution) {
-      document.getElementById('instBadge').innerText = stateData.summary.institution;
+    if (stateData.summary && stateData.summary.institution) {
+      const b = document.getElementById('instBadge');
+      if (b) b.innerText = stateData.summary.institution;
     }
     refreshDiagnosticsBadge();
   } catch (e) {
-    console.error('Errore caricamento summary:', e);
+    console.error('Errore aggiornamento summary:', e);
   }
+}
+
+async function loadInitialData() {
+  initSidebarResponsive();
+  window.addEventListener('resize', handleSidebarResize);
+  await refreshAppState();
   checkSoftwareUpdates();
   navigate('dashboard');
 }
@@ -1361,7 +1459,7 @@ function renderUpdateStatus(data) {
   const verTag = document.getElementById('sidebarVerTag');
   const aboutVerStatus = document.getElementById('aboutUpdateStatusText');
 
-  const curVer = data.current_version || APP_VERSION;
+  const curVer = APP_VERSION;
   if (verTag) verTag.innerText = `v${curVer}`;
 
   if (data.update_available) {
@@ -1578,6 +1676,30 @@ const VIEW_SHORT_LABELS = {
   import_export: 'Backup & Snapshot'
 };
 
+function getViewShortLabel(view) {
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
+  if (!isEn) return VIEW_SHORT_LABELS[view] || view;
+  const enShort = {
+    dashboard: 'Dashboard',
+    timetable: 'Timetable',
+    solver: 'FET Solver',
+    diagnostics: 'Diagnostics & Advisor',
+    teachers: 'Teachers',
+    classes: 'Classes & Groups',
+    subjects: 'Subjects',
+    rooms: 'Rooms & Labs',
+    activities: 'Activities / Teaching',
+    availability: 'Availability',
+    constraints: 'Constraints',
+    accorpamenti: 'Macro-Subjects',
+    block_rules: 'Block Rules',
+    parameters: 'Parameters',
+    snapshots: 'Snapshots & Backup',
+    import_export: 'Snapshots & Backup'
+  };
+  return enShort[view] || VIEW_SHORT_LABELS[view] || view;
+}
+
 function updateNavBackButton() {
   const btn = document.getElementById('navBackBtn');
   const txt = document.getElementById('navBackText');
@@ -1585,8 +1707,11 @@ function updateNavBackButton() {
   if (navigationHistory.length > 0) {
     const prev = navigationHistory[navigationHistory.length - 1];
     btn.style.display = 'inline-flex';
-    if (txt) txt.innerText = `Indietro (${prev.label || 'Precedente'})`;
-    btn.title = `Torna a ${prev.label || 'schermata precedente'}`;
+    const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
+    const backWord = isEn ? 'Back' : 'Indietro';
+    const localizedLabel = getViewShortLabel(prev.view) || prev.label || (isEn ? 'Previous' : 'Precedente');
+    if (txt) txt.innerText = `${backWord} (${localizedLabel})`;
+    btn.title = isEn ? `Back to ${localizedLabel}` : `Torna a ${localizedLabel}`;
   } else {
     btn.style.display = 'none';
   }
@@ -1616,16 +1741,20 @@ function navigateBack() {
 function getNavReturnBarHtml(contextDesc = '') {
   if (!navigationHistory || navigationHistory.length === 0) return '';
   const prev = navigationHistory[navigationHistory.length - 1];
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
+  const prevLabel = getViewShortLabel(prev.view) || prev.label || (isEn ? 'Previous' : 'Precedente');
+  const backLabel = isEn ? `Back to ${escapeHtml(prevLabel)}` : `Torna a ${escapeHtml(prevLabel)}`;
+  const hintLabel = isEn ? 'Contextual navigation &bull; Click to return' : 'Navigazione rapida contestuale &bull; Clicca per tornare al punto di partenza';
   return `
     <div class="nav-return-bar">
       <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
         <button type="button" class="btn btn-sm btn-sec" onclick="navigateBack()" style="font-weight:700;display:inline-flex;align-items:center;gap:6px;">
-          <span>◀</span> Torna a ${escapeHtml(prev.label || 'Precedente')}
+          <span>◀</span> ${backLabel}
         </button>
         ${contextDesc ? `<span style="font-size:13px;color:var(--text-sub);">${contextDesc}</span>` : ''}
       </div>
       <span style="font-size:11.5px;color:var(--text-muted);">
-        Navigazione rapida contestuale &bull; Clicca per tornare al punto di partenza
+        ${hintLabel}
       </span>
     </div>
   `;
@@ -1633,9 +1762,10 @@ function getNavReturnBarHtml(contextDesc = '') {
 
 function navigate(view, pushHistory = true, customLabel = null) {
   if (pushHistory && currentView && currentView !== view) {
-    let lbl = customLabel || VIEW_SHORT_LABELS[currentView] || currentView;
+    const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
+    let lbl = customLabel || getViewShortLabel(currentView);
     if (currentView === 'classes' && typeof activeClassSubView !== 'undefined' && activeClassSubView === 'groups') {
-      lbl = 'Gruppi Articolati';
+      lbl = isEn ? 'Articulated Groups' : 'Gruppi Articolati';
     }
     navigationHistory.push({
       view: currentView,
@@ -1681,7 +1811,9 @@ function navigate(view, pushHistory = true, customLabel = null) {
   // Aggiorna evidenziazione categoria attiva sul rail
   updateRailActiveCategories();
 
-  document.getElementById('pageTitle').innerText = VIEW_TITLES[view] || 'SmartTimetable';
+  const titleKey = 'nav.' + view + '_title';
+  const translatedTitle = window.I18N ? window.I18N.t(titleKey, VIEW_TITLES[view] || 'SmartTimetable') : (VIEW_TITLES[view] || 'SmartTimetable');
+  document.getElementById('pageTitle').innerText = translatedTitle;
 
   const container = document.getElementById('mainContent');
   container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);">Caricamento dati in corso...</div>';
@@ -1743,6 +1875,8 @@ function naturalClassCompare(a, b) {
 // 1. DASHBOARD
 // ============================================================================
 async function renderDashboard() {
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
+  const _t = (k, fb) => window.I18N ? window.I18N.t(k, fb) : fb;
   const res = await fetch('/api/summary');
   const s = await res.json();
   stateData.summary = s;
@@ -1750,65 +1884,65 @@ async function renderDashboard() {
   const container = document.getElementById('mainContent');
   container.innerHTML = `
     <div class="stat-grid">
-      <div class="stat-box clickable" onclick="navigate('teachers')" title="Clicca per gestire i docenti">
-        <div class="stat-lbl">Docenti in Organico</div>
+      <div class="stat-box clickable" onclick="navigate('teachers')" title="${isEn ? 'Click to manage teachers' : 'Clicca per gestire i docenti'}">
+        <div class="stat-lbl">${isEn ? 'Faculty Staff' : 'Docenti in Organico'}</div>
         <div class="stat-val">👨‍🏫 ${s.teachers_count}</div>
-        <div class="stat-box-link"><span>${s.disp_teachers_count ? `${s.disp_teachers_count} con Disposizione D` : 'Gestione Docenti'}</span> <span>→</span></div>
+        <div class="stat-box-link"><span>${s.disp_teachers_count ? `${s.disp_teachers_count} ${isEn ? 'with On-Duty (D)' : 'con Disposizione D'}` : (isEn ? 'Faculty Management' : 'Gestione Docenti')}</span> <span>→</span></div>
       </div>
-      <div class="stat-box clickable" onclick="navigate('classes')" title="Clicca per gestire classi e gruppi">
-        <div class="stat-lbl">Classi Istituite</div>
+      <div class="stat-box clickable" onclick="navigate('classes')" title="${isEn ? 'Click to manage classes and groups' : 'Clicca per gestire classi e gruppi'}">
+        <div class="stat-lbl">${isEn ? 'Classes & Groups' : 'Classi Istituite'}</div>
         <div class="stat-val">🎓 ${s.classes_count}</div>
-        <div class="stat-box-link"><span>Gestione Classi</span> <span>→</span></div>
+        <div class="stat-box-link"><span>${isEn ? 'Class Management' : 'Gestione Classi'}</span> <span>→</span></div>
       </div>
-      <div class="stat-box clickable" onclick="navigate('rooms')" title="Clicca per gestire aule, laboratori e plessi">
-        <div class="stat-lbl">Aule e Laboratori</div>
+      <div class="stat-box clickable" onclick="navigate('rooms')" title="${isEn ? 'Click to manage rooms and labs' : 'Clicca per gestire aule, laboratori e plessi'}">
+        <div class="stat-lbl">${isEn ? 'Rooms & Labs' : 'Aule e Laboratori'}</div>
         <div class="stat-val">🏢 ${s.rooms_count}</div>
-        <div class="stat-box-link"><span>Plessi & Aule</span> <span>→</span></div>
+        <div class="stat-box-link"><span>${isEn ? 'Campuses & Rooms' : 'Plessi & Aule'}</span> <span>→</span></div>
       </div>
-      <div class="stat-box clickable" onclick="navigate('activities')" title="Clicca per gestire cattedre e attività">
-        <div class="stat-lbl">Attività / Lezioni</div>
+      <div class="stat-box clickable" onclick="navigate('activities')" title="${isEn ? 'Click to manage teaching activities' : 'Clicca per gestire cattedre e attività'}">
+        <div class="stat-lbl">${isEn ? 'Activities / Lessons' : 'Attività / Lezioni'}</div>
         <div class="stat-val">📋 ${s.activities_count}</div>
-        <div class="stat-box-link"><span>Cattedre & Blocchi</span> <span>→</span></div>
+        <div class="stat-box-link"><span>${isEn ? 'Chairs & Blocks' : 'Cattedre & Blocchi'}</span> <span>→</span></div>
       </div>
-      <div class="stat-box clickable" onclick="navigate('constraints')" title="Clicca per configurare vincoli e ore buche">
-        <div class="stat-lbl">Monte Ore Settimanale</div>
+      <div class="stat-box clickable" onclick="navigate('constraints')" title="${isEn ? 'Click to configure constraints' : 'Clicca per configurare vincoli e ore buche'}">
+        <div class="stat-lbl">${isEn ? 'Weekly Hours' : 'Monte Ore Settimanale'}</div>
         <div class="stat-val">⏱️ ${s.total_weekly_hours} h</div>
-        <div class="stat-box-link"><span>${s.total_disp_hours ? `+${s.total_disp_hours}h Disposizioni D (${s.total_target_hours || (s.total_weekly_hours + s.total_disp_hours)}h tot)` : 'Regole & Vincoli FET'}</span> <span>→</span></div>
+        <div class="stat-box-link"><span>${s.total_disp_hours ? `+${s.total_disp_hours}h ${isEn ? 'On-duty D' : 'Disposizioni D'} (${s.total_target_hours || (s.total_weekly_hours + s.total_disp_hours)}h tot)` : (isEn ? 'FET Constraints' : 'Regole & Vincoli FET')}</span> <span>→</span></div>
       </div>
-      <div class="stat-box clickable" onclick="navigate('timetable')" title="Clicca per visualizzare l'orario settimanale">
-        <div class="stat-lbl">Stato Orario</div>
+      <div class="stat-box clickable" onclick="navigate('timetable')" title="${isEn ? 'Click to view solved timetable' : 'Clicca per visualizzare l\'orario settimanale'}">
+        <div class="stat-lbl">${isEn ? 'Timetable Status' : 'Stato Orario'}</div>
         <div class="stat-val" style="font-size: 19px; color: ${s.has_timetable ? 'var(--success)' : 'var(--warn)'};">
-          ${s.has_timetable ? '✅ Risolto (100%)' : '⚠️ Non Risolto'}
+          ${s.has_timetable ? (isEn ? '✅ Solved (100%)' : '✅ Risolto (100%)') : (isEn ? '⚠️ Not Solved' : '⚠️ Non Risolto')}
         </div>
-        <div class="stat-box-link"><span>Vedi Orario</span> <span>→</span></div>
+        <div class="stat-box-link"><span>${isEn ? 'View Timetable' : 'Vedi Orario'}</span> <span>→</span></div>
       </div>
     </div>
 
     <div class="card">
       <div class="card-title">
-        <span>Azioni Rapide</span>
+        <span>${isEn ? 'Quick Actions' : 'Azioni Rapide'}</span>
         <span class="badge ${s.has_timetable ? 'badge-ok' : 'badge-warn'}">
-          ${s.has_timetable ? 'Orario completo disponibile' : 'In attesa di risoluzione'}
+          ${s.has_timetable ? (isEn ? 'Complete schedule available' : 'Orario completo disponibile') : (isEn ? 'Awaiting solve' : 'In attesa di risoluzione')}
         </span>
       </div>
       <div style="display:flex;gap:12px;flex-wrap:wrap;">
-        <button class="btn btn-primary" onclick="navigate('solver')">⚡ Compilatore FET</button>
-        <button class="btn btn-sec" onclick="navigate('timetable')">🗓️ Orario Risolto</button>
-        <button class="btn btn-sec" onclick="navigate('diagnostics')">🔍 Diagnostica & Advisor</button>
-        <button class="btn btn-sec" onclick="navigate('snapshots')">📦 Backup & Snapshot</button>
+        <button class="btn btn-primary" onclick="navigate('solver')">⚡ ${_t('nav.solver', 'Compilatore FET')}</button>
+        <button class="btn btn-sec" onclick="navigate('timetable')">🗓️ ${_t('nav.timetable', 'Orario Risolto')}</button>
+        <button class="btn btn-sec" onclick="navigate('diagnostics')">🔍 ${_t('nav.diagnostics', 'Diagnostica & Advisor')}</button>
+        <button class="btn btn-sec" onclick="navigate('snapshots')">📦 ${_t('nav.snapshots', 'Backup & Snapshot')}</button>
       </div>
     </div>
 
     <div class="card">
-      <div class="card-title">Parametri di Struttura dell'Istituto</div>
+      <div class="card-title">${isEn ? 'Institution Structure Parameters' : 'Parametri di Struttura dell\'Istituto'}</div>
       <div style="display:grid;grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));gap:16px;">
         <div>
-          <b>Nome Istituto:</b> ${escapeHtml(s.institution)}<br>
-          <b>Plessi attivi:</b> ${s.buildings_count} (${escapeHtml((s.buildings || ['Centrale', 'Succursale']).join(', '))})
+          <b>${isEn ? 'Institution Name:' : 'Nome Istituto:'}</b> ${escapeHtml(s.institution)}<br>
+          <b>${isEn ? 'Active Campuses:' : 'Plessi attivi:'}</b> ${s.buildings_count} (${escapeHtml((s.buildings || ['Centrale', 'Succursale']).join(', '))})
         </div>
         <div>
-          <b>Giorni di Lezione:</b> ${(s.days || []).join(', ')} (${(s.days || []).length} giorni)<br>
-          <b>Ore Giornaliere:</b> ${(s.hours || []).join(', ')} (${(s.hours || []).length} fasce)
+          <b>${isEn ? 'Teaching Days:' : 'Giorni di Lezione:'}</b> ${(s.days || []).join(', ')} (${(s.days || []).length} ${isEn ? 'days' : 'giorni'})<br>
+          <b>${isEn ? 'Daily Periods:' : 'Ore Giornaliere:'}</b> ${(s.hours || []).join(', ')} (${(s.hours || []).length} ${isEn ? 'periods' : 'fasce'})
         </div>
       </div>
     </div>
@@ -1827,40 +1961,40 @@ async function renderTimetable() {
   const views = await res.json();
   stateData.timetableViews = views;
 
-  if (!stateData.summary.has_timetable) {
+  // Rileva se ci sono attività orarie collocate (da views o summary)
+  const hasPlacements = views.has_timetable || (views.total_placed > 0) || (stateData.summary && stateData.summary.has_timetable) || (Object.keys(views.by_teacher || {}).some(t => Object.values(views.by_teacher[t] || {}).some(d => Object.values(d || {}).some(slots => slots && slots.length > 0))));
+
+  if (!hasPlacements) {
+    const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
     container.innerHTML = `
       <div class="card" style="text-align:center;padding:40px;">
         <div style="font-size:36px;margin-bottom:10px;">📅</div>
-        <h3>Nessun orario risolto ancora disponibile</h3>
-        <p style="color:var(--text-muted);margin:8px 0 20px;">Compila l'orario con FET CLI per visualizzare le griglie complete di docenti, classi e aule.</p>
-        <button class="btn btn-primary" onclick="navigate('solver')">⚡ Vai al Compilatore FET</button>
+        <h3>${isEn ? 'No solved timetable available yet' : 'Nessun orario risolto ancora disponibile'}</h3>
+        <p style="color:var(--text-muted);margin:8px 0 20px;">${isEn ? 'Compile the timetable with FET CLI to view full grids for teachers, classes and rooms.' : "Compila l'orario con FET CLI per visualizzare le griglie complete di docenti, classi e aule."}</p>
+        <button class="btn btn-primary" onclick="navigate('solver')">⚡ ${isEn ? 'Go to FET Solver' : 'Vai al Compilatore FET'}</button>
       </div>
     `;
     return;
   }
 
-  // Pre-seleziona prima entità se non impostata
+  // Pre-seleziona prima entità se non impostata o non valida per la vista corrente
   const teachers = Object.keys(views.by_teacher || {}).sort();
   const classes = Object.keys(views.by_class || {}).sort(naturalClassCompare);
   const rooms = Object.keys(views.by_room || {}).sort();
-
-  if (!activeEntity) {
-    if (activeTimetableView === 'teacher' && teachers.length) activeEntity = teachers[0];
-    else if (activeTimetableView === 'class' && classes.length) activeEntity = classes[0];
-    else if (activeTimetableView === 'room' && rooms.length) activeEntity = rooms[0];
-  }
 
   let listOptions = [];
   if (activeTimetableView === 'teacher') listOptions = teachers;
   else if (activeTimetableView === 'class') listOptions = classes;
   else if (activeTimetableView === 'room') listOptions = rooms;
 
-  if (!listOptions.includes(activeEntity) && listOptions.length) {
-    activeEntity = listOptions[0];
+  if (!activeEntity || !listOptions.includes(activeEntity)) {
+    activeEntity = listOptions.length ? listOptions[0] : '';
   }
 
   const curEntityIdx = listOptions.indexOf(activeEntity);
   const totalEntities = listOptions.length;
+
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
 
   // Statistiche docente se in vista docente
   let statsHtml = '';
@@ -1868,9 +2002,9 @@ async function renderTimetable() {
     const st = views.teacher_stats[activeEntity];
     statsHtml = `
       <div style="display:flex;gap:10px;align-items:center;">
-        <span class="badge badge-info">Ore lezione: <b>${st.total_lessons}</b></span>
-        <span class="badge ${st.total_gaps > 0 ? 'badge-warn' : 'badge-ok'}">Ore buche: <b>${st.total_gaps}</b></span>
-        <span class="badge ${st.total_transfers > 0 ? 'badge-warn' : 'badge-ok'}">Cambi plesso: <b>${st.total_transfers}</b></span>
+        <span class="badge badge-info">${isEn ? 'Lesson hours:' : 'Ore lezione:'} <b>${st.total_lessons}</b></span>
+        <span class="badge ${st.total_gaps > 0 ? 'badge-warn' : 'badge-ok'}">${isEn ? 'Gap hours:' : 'Ore buche:'} <b>${st.total_gaps}</b></span>
+        <span class="badge ${st.total_transfers > 0 ? 'badge-warn' : 'badge-ok'}">${isEn ? 'Building changes:' : 'Cambi plesso:'} <b>${st.total_transfers}</b></span>
       </div>
     `;
   }
@@ -1878,17 +2012,17 @@ async function renderTimetable() {
   let classLockButtons = '';
   if (activeTimetableView === 'class' && activeEntity) {
     classLockButtons = `
-      <button class="btn btn-sec btn-sm" onclick="lockCurrentClass(true)" title="Blocca tutte le ore della classe ${escapeHtml(activeEntity)} per preservarle nel prossimo calcolo FET">🔒 Blocca Classe</button>
-      <button class="btn btn-sec btn-sm" onclick="lockCurrentClass(false)" title="Sblocca tutte le ore della classe ${escapeHtml(activeEntity)}">🔓 Sblocca Classe</button>
+      <button class="btn btn-sec btn-sm" onclick="lockCurrentClass(true)" title="${isEn ? `Lock all periods for class ${escapeHtml(activeEntity)} to preserve them in next FET calculation` : `Blocca tutte le ore della classe ${escapeHtml(activeEntity)} per preservarle nel prossimo calcolo FET`}">${isEn ? '🔒 Lock Class' : '🔒 Blocca Classe'}</button>
+      <button class="btn btn-sec btn-sm" onclick="lockCurrentClass(false)" title="${isEn ? `Unlock all periods for class ${escapeHtml(activeEntity)}` : `Sblocca tutte le ore della classe ${escapeHtml(activeEntity)}`}">${isEn ? '🔓 Unlock Class' : '🔓 Sblocca Classe'}</button>
     `;
   }
 
   let lockedBadgeHtml = '';
   if (views.locked_count > 0) {
     lockedBadgeHtml = `
-      <span class="badge badge-info" title="Numero totale di lezioni bloccate (fissate) che verranno preservate nel calcolo FET" style="display:inline-flex;align-items:center;gap:4px;">
-        🔒 <b>${views.locked_count}</b> ore fissate
-        <a href="javascript:void(0)" onclick="unlockAllActivities()" title="Sblocca tutte le ore bloccate dell'istituto" style="color:inherit;margin-left:4px;text-decoration:none;font-weight:bold;">&times;</a>
+      <span class="badge badge-info" title="${isEn ? 'Total locked periods that will be preserved in FET run' : 'Numero totale di lezioni bloccate (fissate) che verranno preservate nel calcolo FET'}" style="display:inline-flex;align-items:center;gap:4px;">
+        🔒 <b>${views.locked_count}</b> ${isEn ? (views.locked_count === 1 ? 'locked hour' : 'locked hours') : 'ore fissate'}
+        <a href="javascript:void(0)" onclick="unlockAllActivities()" title="${isEn ? 'Unlock all locked hours across the school' : 'Sblocca tutte le ore bloccate dell\'istituto'}" style="color:inherit;margin-left:4px;text-decoration:none;font-weight:bold;">&times;</a>
       </span>
     `;
   }
@@ -1896,22 +2030,22 @@ async function renderTimetable() {
   container.innerHTML = `
     <div class="toolbar">
       <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-        <div style="display:flex;background:#fff;border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;">
-          <button class="btn btn-sm ${activeTimetableView === 'teacher' ? 'btn-primary' : 'btn-sec'}" style="border:none;" onclick="switchTimetableMode('teacher')">👨‍🏫 Docenti</button>
-          <button class="btn btn-sm ${activeTimetableView === 'class' ? 'btn-primary' : 'btn-sec'}" style="border:none;" onclick="switchTimetableMode('class')">🎓 Classi</button>
-          <button class="btn btn-sm ${activeTimetableView === 'room' ? 'btn-primary' : 'btn-sec'}" style="border:none;" onclick="switchTimetableMode('room')">🏫 Aule & Palestre</button>
+        <div style="display:flex;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;">
+          <button class="btn btn-sm ${activeTimetableView === 'teacher' ? 'btn-primary' : 'btn-sec'}" style="border:none;" onclick="switchTimetableMode('teacher')">👨‍🏫 ${isEn ? 'Teachers' : 'Docenti'}</button>
+          <button class="btn btn-sm ${activeTimetableView === 'class' ? 'btn-primary' : 'btn-sec'}" style="border:none;" onclick="switchTimetableMode('class')">🎓 ${isEn ? 'Classes' : 'Classi'}</button>
+          <button class="btn btn-sm ${activeTimetableView === 'room' ? 'btn-primary' : 'btn-sec'}" style="border:none;" onclick="switchTimetableMode('room')">🏫 ${isEn ? 'Rooms & Labs' : 'Aule & Palestre'}</button>
         </div>
         <select id="entitySelect" class="select-input" onchange="switchEntity(this.value)">
           ${listOptions.map(opt => `<option value="${escapeHtml(opt)}" ${opt === activeEntity ? 'selected' : ''}>${escapeHtml(opt)}</option>`).join('')}
         </select>
 
         <!-- Cursore e Stepper Rapido di Scorrimento Docenti (Mouse e Frecce ◀ ▶) -->
-        <div class="timetable-stepper-wrap" title="Scorri velocemente tra i docenti: trascina il cursore o usa le frecce ◀ ▶ della tastiera">
-          <button type="button" class="btn btn-sm btn-sec" style="padding:2px 7px;font-size:11px;font-weight:700;" onclick="stepEntity(-1)" ${curEntityIdx <= 0 ? 'disabled' : ''} title="Docente precedente (oppure premi Freccia Sinistra ◀)">◀</button>
-          <input type="range" class="slider-quick-entity" min="0" max="${Math.max(0, totalEntities - 1)}" value="${curEntityIdx >= 0 ? curEntityIdx : 0}" oninput="onEntitySliderChange(this.value)" title="Trascina il cursore per scorrere rapidamente tutti i docenti">
-          <button type="button" class="btn btn-sm btn-sec" style="padding:2px 7px;font-size:11px;font-weight:700;" onclick="stepEntity(1)" ${curEntityIdx >= totalEntities - 1 ? 'disabled' : ''} title="Docente successivo (oppure premi Freccia Destra ▶)">▶</button>
+        <div class="timetable-stepper-wrap" title="${isEn ? 'Quickly browse entities: drag slider or use ◀ ▶ keyboard arrows' : 'Scorri velocemente: trascina il cursore o usa le frecce ◀ ▶ della tastiera'}">
+          <button type="button" class="btn btn-sm btn-sec" style="padding:2px 7px;font-size:11px;font-weight:700;" onclick="stepEntity(-1)" ${curEntityIdx <= 0 ? 'disabled' : ''} title="${isEn ? 'Previous (or Left arrow ◀)' : 'Precedente (oppure premi Freccia Sinistra ◀)'}">◀</button>
+          <input type="range" class="slider-quick-entity" min="0" max="${Math.max(0, totalEntities - 1)}" value="${curEntityIdx >= 0 ? curEntityIdx : 0}" oninput="onEntitySliderChange(this.value)" title="${isEn ? 'Drag to browse quickly' : 'Trascina il cursore per scorrere rapidamente'}">
+          <button type="button" class="btn btn-sm btn-sec" style="padding:2px 7px;font-size:11px;font-weight:700;" onclick="stepEntity(1)" ${curEntityIdx >= totalEntities - 1 ? 'disabled' : ''} title="${isEn ? 'Next (or Right arrow ▶)' : 'Successivo (oppure premi Freccia Destra ▶)'}">▶</button>
           <span style="font-size:11px;font-weight:700;color:var(--text-sub);min-width:44px;text-align:center;">${curEntityIdx >= 0 ? curEntityIdx + 1 : 1}/${totalEntities}</span>
-          <span style="font-size:10.5px;color:#94a3b8;" title="Scorciatoia tastiera: premi le frecce ◀ ▶ per cambiare docente">⌨️ ◀ ▶</span>
+          <span style="font-size:10.5px;color:var(--text-sub);" title="${isEn ? 'Keyboard shortcut: press ◀ ▶ arrows' : 'Scorciatoia tastiera: premi le frecce ◀ ▶'}">⌨️ ◀ ▶</span>
         </div>
 
         ${classLockButtons}
@@ -1919,12 +2053,9 @@ async function renderTimetable() {
       <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
         ${statsHtml}
         ${lockedBadgeHtml}
-        <button class="btn btn-sec btn-sm" onclick="recalcDisposizioni()" title="Colloca o ricalcola le ore a disposizione post-calcolo FET (copre buchi orari, preferisce 1ª ora)">📍 Ricalcola Disposizioni</button>
-        <button class="btn btn-primary btn-sm" onclick="openPrintClassesModal()" title="Procedura 9: Stampa orario settimanale per classe in A4 Landscape con classi articolate">🖨️ Stampa Classi (PDF)</button>
-        <button class="btn btn-sec btn-sm" onclick="openPrintTeachersModal()" title="Procedura 12: Genera tabellone generale docenti in A3 Landscape con bande verticali">📄 Tabellone Docenti (A3)</button>
-      </div>
-    </div>
-        <button class="btn btn-sec btn-sm" onclick="openPrintTeachersModal()" title="Procedura 12: Genera tabellone generale docenti in A3 Landscape con bande verticali">📄 Tabellone Docenti (A3)</button>
+        <button class="btn btn-sec btn-sm" onclick="recalcDisposizioni()" title="${isEn ? 'Recalculate and place on-duty periods post-FET' : 'Colloca o ricalcola le ore a disposizione post-calcolo FET (copre buchi orari, preferisce 1ª ora)'}">📍 ${isEn ? 'Recalculate On-Duty' : 'Ricalcola Disposizioni'}</button>
+        <button class="btn btn-primary btn-sm" onclick="openPrintClassesModal()" title="${isEn ? 'Procedure 9: Print weekly timetable per class in A4 Landscape with articulated classes' : 'Procedura 9: Stampa orario settimanale per classe in A4 Landscape con classi articolate'}">🖨️ ${isEn ? 'Print Classes (PDF)' : 'Stampa Classi (PDF)'}</button>
+        <button class="btn btn-sec btn-sm" onclick="openPrintTeachersModal()" title="${isEn ? 'Procedure 12: Generate faculty master board in A3 Landscape' : 'Procedura 12: Genera tabellone generale docenti in A3 Landscape con bande verticali'}">📄 ${isEn ? 'Faculty Board (A3)' : 'Tabellone Docenti (A3)'}</button>
       </div>
     </div>
 
@@ -1983,16 +2114,17 @@ async function lockCurrentClass(lockState) {
 }
 
 async function unlockAllActivities() {
-  if (!confirm("Sbloccare tutte le ore precedentemente fissate in tutto l'orario?")) return;
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
+  if (!confirm(isEn ? "Unlock all previously locked periods across the entire timetable?" : "Sbloccare tutte le ore precedentemente fissate in tutto l'orario?")) return;
   try {
     const res = await fetch('/api/timetable/unlock_all', { method: 'POST' });
     const data = await res.json();
     if (res.ok && data.success) {
-      showToast(`Tutte le ore sono state sbloccate (${data.unlocked_count} ore).`, 'info');
+      showToast(isEn ? `All periods unlocked (${data.unlocked_count} periods).` : `Tutte le ore sono state sbloccate (${data.unlocked_count} ore).`, 'info');
       await renderTimetable();
     }
   } catch (e) {
-    alert("Errore: " + e.message);
+    alert((isEn ? 'Error: ' : 'Errore: ') + e.message);
   }
 }
 
@@ -2127,16 +2259,47 @@ async function openEditDispModal(aid, curDesc) {
   }
 }
 
+function formatDayName(d, isShort = true) {
+  if (!d) return '';
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
+  const clean = String(d).trim().toLowerCase();
+  
+  if (clean.startsWith('lun') || clean.startsWith('mon')) {
+    return isEn ? (isShort ? 'Mon' : 'Monday') : (isShort ? 'Lun' : 'Lunedì');
+  }
+  if (clean.startsWith('mar') || clean.startsWith('tue')) {
+    return isEn ? (isShort ? 'Tue' : 'Tuesday') : (isShort ? 'Mar' : 'Martedì');
+  }
+  if (clean.startsWith('mer') || clean.startsWith('wed')) {
+    return isEn ? (isShort ? 'Wed' : 'Wednesday') : (isShort ? 'Mer' : 'Mercoledì');
+  }
+  if (clean.startsWith('gio') || clean.startsWith('thu')) {
+    return isEn ? (isShort ? 'Thu' : 'Thursday') : (isShort ? 'Gio' : 'Giovedì');
+  }
+  if (clean.startsWith('ven') || clean.startsWith('fri')) {
+    return isEn ? (isShort ? 'Fri' : 'Friday') : (isShort ? 'Ven' : 'Venerdì');
+  }
+  if (clean.startsWith('sab') || clean.startsWith('sat')) {
+    return isEn ? (isShort ? 'Sat' : 'Saturday') : (isShort ? 'Sab' : 'Sabato');
+  }
+  if (clean.startsWith('dom') || clean.startsWith('sun')) {
+    return isEn ? (isShort ? 'Sun' : 'Sunday') : (isShort ? 'Dom' : 'Domenica');
+  }
+  return d;
+}
+
 function renderTimetableGridHtml(views, mode, entity) {
-  const days = stateData.summary.days || [];
-  const hours = stateData.summary.hours || [];
+  const days = (views && views.days && views.days.length) ? views.days : (stateData.summary?.days || []);
+  const hours = (views && views.hours && views.hours.length) ? views.hours : (stateData.summary?.hours || []);
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
   let matrix = {};
 
   if (mode === 'teacher') matrix = (views.by_teacher || {})[entity] || {};
   else if (mode === 'class') matrix = (views.by_class || {})[entity] || {};
   else if (mode === 'room') matrix = (views.by_room || {})[entity] || {};
 
-  let headerHtml = `<div class="tt-header" style="background:#153d61;">Ora</div>` + days.map(d => `<div class="tt-header">${d}</div>`).join('');
+  const hourHeaderLbl = isEn ? 'Period' : 'Ora';
+  let headerHtml = `<div class="tt-header" style="background:#153d61;">${hourHeaderLbl}</div>` + days.map(d => `<div class="tt-header">${escapeHtml(formatDayName(d, true))}</div>`).join('');
   let gridCols = `60px repeat(${days.length}, 1fr)`;
 
   let rowsHtml = '';
@@ -2146,7 +2309,7 @@ function renderTimetableGridHtml(views, mode, entity) {
 
     for (const d of days) {
       if (isBreakHour) {
-        rowsHtml += `<div class="tt-cell is-break">INTERVALLO</div>`;
+        rowsHtml += `<div class="tt-cell is-break">${isEn ? 'RECESS' : 'INTERVALLO'}</div>`;
         continue;
       }
 
@@ -2159,8 +2322,10 @@ function renderTimetableGridHtml(views, mode, entity) {
           const cardClass = isDisp ? 'disposizione' : (isSucc ? 'succursale' : 'centrale');
           const isLocked = !isDisp && !!l.locked;
           const customDesc = (l.custom_desc || '').trim();
-          const displaySubj = isDisp ? (customDesc ? `🟡 ${escapeHtml(customDesc)}` : '🟡 Disposizione') : escapeHtml(l.subject);
-          const dispMeta = customDesc ? `A disposizione (${escapeHtml(customDesc)})` : 'A disposizione';
+          const dispFallback = isEn ? '🟡 On-Duty / Substitute' : '🟡 Disposizione';
+          const displaySubj = isDisp ? (customDesc ? `🟡 ${escapeHtml(customDesc)}` : dispFallback) : escapeHtml(l.subject);
+          const dispMetaFallback = isEn ? 'On-duty hour' : 'A disposizione';
+          const dispMeta = customDesc ? `${dispMetaFallback} (${escapeHtml(customDesc)})` : dispMetaFallback;
 
           cellInner += `
             <div class="lesson-card ${cardClass} ${isLocked ? 'is-locked' : ''}" 
@@ -2169,7 +2334,7 @@ function renderTimetableGridHtml(views, mode, entity) {
                    draggable="true" 
                    ondragstart="onDragStartDisposizione(event, '${l.activity_id}')"
                    ondragend="onDragEndDisposizione(event)"
-                   title="Trascina quest'ora a disposizione in un altro slot vuoto, oppure clicca ✏️ per rinominarla (es. Lab, Biblioteca)"
+                   title="${isEn ? 'Drag this on-duty hour to another slot, or click ✏️ to customize note' : 'Trascina quest\'ora a disposizione in un altro slot vuoto, oppure clicca ✏️ per rinominarla (es. Lab, Biblioteca)'}"
                  ` : ''}>
               <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:4px;">
                 <div class="lesson-subj" style="${isDisp ? 'font-weight:700;color:#92400e;' : ''}">
@@ -2177,9 +2342,9 @@ function renderTimetableGridHtml(views, mode, entity) {
                 </div>
                 <div style="display:flex;align-items:center;gap:2px;">
                   ${isDisp ? `
-                    <button type="button" class="btn-lock" style="font-size:9.5px;padding:1px 4px;color:#92400e;background:rgba(217,119,6,0.15);border:none;border-radius:3px;cursor:pointer;" onclick="openEditDispModal('${l.activity_id}', '${escapeJs(customDesc)}')" title="Personalizza descrizione da stampare (es. Lab, Sportello, Ricevimento)">✏️</button>
+                    <button type="button" class="btn-lock" style="font-size:9.5px;padding:1px 4px;color:#92400e;background:rgba(217,119,6,0.15);border:none;border-radius:3px;cursor:pointer;" onclick="openEditDispModal('${l.activity_id}', '${escapeJs(customDesc)}')" title="${isEn ? 'Edit custom label' : 'Personalizza descrizione da stampare (es. Lab, Sportello, Ricevimento)'}">✏️</button>
                   ` : `
-                    <button type="button" class="btn-lock ${isLocked ? 'locked' : ''}" onclick="toggleActivityLock('${l.activity_id}')" title="${isLocked ? 'Ora bloccata: preservata nel prossimo calcolo FET. Clicca per sbloccare.' : 'Clicca per bloccare quest\'ora nel prossimo calcolo FET'}">${isLocked ? '🔒' : '🔓'}</button>
+                    <button type="button" class="btn-lock ${isLocked ? 'locked' : ''}" onclick="toggleActivityLock('${l.activity_id}')" title="${isLocked ? (isEn ? 'Locked slot: preserved during solve' : 'Ora bloccata: preservata nel prossimo calcolo FET. Clicca per sbloccare.') : (isEn ? 'Click to lock this slot' : 'Clicca per bloccare quest\'ora nel prossimo calcolo FET')}">${isLocked ? '🔒' : '🔓'}</button>
                   `}
                 </div>
               </div>
@@ -2201,7 +2366,7 @@ function renderTimetableGridHtml(views, mode, entity) {
       } else {
         const isBreak = (stateData.summary?.break_times || []).includes(`${d}|${h}`);
         if (isBreak) {
-          const lbl = d === 'Sab' ? 'SABATO CHIUSO' : 'PAUSA';
+          const lbl = d === 'Sab' ? (isEn ? 'SATURDAY CLOSED' : 'SABATO CHIUSO') : (isEn ? 'BREAK' : 'PAUSA');
           rowsHtml += `<div class="tt-cell is-institute-break">${lbl}</div>`;
         } else {
           rowsHtml += `
@@ -2256,29 +2421,31 @@ let solverAutoScroll = true;
 let cachedSolverStatus = null;
 
 function renderSolver() {
+  const _t = (k, fb) => window.I18N ? window.I18N.t(k, fb) : fb;
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
   const container = document.getElementById('mainContent');
   container.innerHTML = `
     <div class="card">
       <div class="card-title">
-        <span>${escapeHtml(stateData.summary?.fet_title || 'Solver FET CLI 7.12.0')}</span>
+        <span>${escapeHtml(stateData.summary?.fet_title || (isEn ? 'FET Heuristic Compiler 7.12.0' : 'Solver FET CLI 7.12.0'))}</span>
         <div style="display:flex;gap:6px;align-items:center;">
-          <span id="solverStatusBadge" class="badge badge-ok">● Solver Pronto</span>
-          ${(stateData.summary?.locked_activities_count > 0) ? `<span class="badge badge-info" title="Ore fissate che non verranno spostate dal calcolo">🔒 <b>${stateData.summary.locked_activities_count}</b> ${stateData.summary.locked_activities_count === 1 ? 'ora fissata' : 'ore fissate'}</span>` : ''}
+          <span id="solverStatusBadge" class="badge badge-ok">● ${isEn ? 'Solver Ready' : 'Solver Pronto'}</span>
+          ${(stateData.summary?.locked_activities_count > 0) ? `<span class="badge badge-info" title="${isEn ? 'Locked lessons that will not be moved' : 'Ore fissate che non verranno spostate dal calcolo'}">🔒 <b>${stateData.summary.locked_activities_count}</b> ${stateData.summary.locked_activities_count === 1 ? (isEn ? 'locked lesson' : 'ora fissata') : (isEn ? 'locked lessons' : 'ore fissate')}</span>` : ''}
         </div>
       </div>
       <p style="color:var(--text-muted);margin-bottom:14px;">
-        Compilazione dell'orario basata sull'euristica a scambio ricorsivo (Recursive Swapping) di FET.
+        ${_t('solver.desc', 'Compilazione dell\'orario basata sull\'euristica a scambio ricorsivo (Recursive Swapping) di FET.')}
       </p>
 
       ${(stateData.summary?.locked_activities_count > 0) ? `
-      <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:var(--radius-sm);padding:8px 14px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:12px;color:#1e40af;">
+      <div class="modal-notice-info" style="margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:12px;">
         <div style="display:flex;align-items:center;gap:8px;">
           <span style="font-size:15px;">🔒</span>
-          <span><b>Ore fissate attive:</b> ${stateData.summary.locked_activities_count} ${stateData.summary.locked_activities_count === 1 ? 'lezione è bloccata' : 'lezioni sono bloccate'}. All'avvio della compilazione, FET la manterrà rigorosamente nella posizione prefissata.</span>
+          <span><b>${isEn ? 'Locked lessons active:' : 'Ore fissate attive:'}</b> ${stateData.summary.locked_activities_count} ${stateData.summary.locked_activities_count === 1 ? (isEn ? 'lesson is locked' : 'lezione è bloccata') : (isEn ? 'lessons are locked' : 'lezioni sono bloccate')}. ${isEn ? 'FET will strictly preserve their predetermined position during compilation.' : 'All\'avvio della compilazione, FET la manterrà rigorosamente nella posizione prefissata.'}</span>
         </div>
         <div style="display:flex;gap:6px;">
-          <button class="btn btn-sec btn-sm" style="font-size:11px;padding:2px 8px;" onclick="switchTimetableMode('class')">Visualizza in Orario</button>
-          <button class="btn btn-sec btn-sm" style="font-size:11px;padding:2px 8px;" onclick="unlockAllActivities()">Sblocca tutte</button>
+          <button class="btn btn-sec btn-sm" style="font-size:11px;padding:2px 8px;" onclick="switchTimetableMode('class')">${isEn ? 'View in Timetable' : 'Visualizza in Orario'}</button>
+          <button class="btn btn-sec btn-sm" style="font-size:11px;padding:2px 8px;" onclick="unlockAllActivities()">${isEn ? 'Unlock all' : 'Sblocca tutte'}</button>
         </div>
       </div>
       ` : ''}
@@ -2288,25 +2455,25 @@ function renderSolver() {
 
       <div style="display:flex;gap:12px;align-items:center;margin-bottom:14px;flex-wrap:wrap;">
         <label style="font-size:12px;color:var(--text-muted);">
-          Tempo massimo (secondi):
+          ${isEn ? 'Max time (seconds):' : 'Tempo massimo (secondi):'}
           <input type="number" id="timelimitInput" value="3600" class="search-input" style="width:90px;margin-left:6px;">
         </label>
-        <label style="font-size:12px;display:flex;align-items:center;gap:6px;cursor:pointer;background:#f1f5f9;padding:6px 10px;border-radius:var(--radius-sm);border:1px solid var(--border);">
+        <label style="font-size:12px;display:flex;align-items:center;gap:6px;cursor:pointer;background:var(--bg-hover);padding:6px 10px;border-radius:var(--radius-sm);border:1px solid var(--border);">
           <input type="checkbox" id="verboseLogInput" checked style="accent-color:var(--primary);">
-          <span><b>Messaggi Verbosi (Stile Desktop App FET)</b></span>
+          <span><b>${isEn ? 'Verbose Log (FET Desktop Style)' : 'Messaggi Verbosi (Stile Desktop App FET)'}</b></span>
         </label>
-        <button id="btnStartSolve" class="btn btn-primary" onclick="startSolver()">▶ Avvia Compilazione Orario</button>
-        <button id="btnStopSolve" class="btn btn-danger" onclick="stopSolver()" disabled>⏹ Interrompi Calcolo</button>
+        <button id="btnStartSolve" class="btn btn-primary" onclick="startSolver()">${_t('solver.start_btn', '⚡ Avvia Compilazione Orario')}</button>
+        <button id="btnStopSolve" class="btn btn-danger" onclick="stopSolver()" disabled>${_t('solver.stop_btn', '🛑 Interrompi Compilazione')}</button>
       </div>
 
       <!-- Live Activity Card (attiva durante l'elaborazione) -->
-      <div id="liveActivityCard" style="display:none;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:12px;">
+      <div id="liveActivityCard" style="display:none;background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.3);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:12px;">
         <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
           <div style="display:flex;align-items:center;gap:8px;">
             <span style="font-size:16px;">🔄</span>
             <div>
-              <div style="font-size:11px;text-transform:uppercase;color:#166534;font-weight:700;">Attività in collocamento (Scambio Ricorsivo):</div>
-              <div id="liveActivityDesc" style="font-size:13px;font-weight:600;color:#14532d;">-</div>
+              <div style="font-size:11px;text-transform:uppercase;color:var(--success);font-weight:700;">${isEn ? 'Placing activity (Recursive Swapping):' : 'Attività in collocamento (Scambio Ricorsivo):'}</div>
+              <div id="liveActivityDesc" style="font-size:13px;font-weight:600;color:var(--text-main);">-</div>
             </div>
           </div>
           <div style="display:flex;gap:6px;" id="liveActivityBadges"></div>
@@ -2315,22 +2482,22 @@ function renderSolver() {
 
       <div class="bar-bg"><div id="solverFill" class="fill"></div></div>
       <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text-muted);margin-top:6px;">
-        <span id="solverLabel">0 / 0 attività collocate (0%)</span>
-        <span id="solverTimer">Tempo trascorso: 00:00</span>
+        <span id="solverLabel">0 / 0 ${isEn ? 'activities placed (0%)' : 'attività collocate (0%)'}</span>
+        <span id="solverTimer">${_t('solver.current_time', 'Tempo trascorso:')} 00:00</span>
       </div>
     </div>
 
     <!-- Bottleneck Alert Card (visibile se il calcolo si arresta su attività critica) -->
-    <div id="bottleneckCard" style="display:none;background:#fffbeb;border:1px solid #fde68a;border-radius:var(--radius-md);padding:14px 16px;margin-bottom:16px;">
+    <div id="bottleneckCard" style="display:none;background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.3);border-radius:var(--radius-md);padding:14px 16px;margin-bottom:16px;">
       <div style="display:flex;gap:10px;align-items:flex-start;">
         <span style="font-size:20px;">⚠️</span>
         <div style="flex:1;">
-          <h4 style="margin:0 0 4px;color:#92400e;font-size:14px;">Diagnostica Collo di Bottiglia FET (Stile Desktop App)</h4>
-          <p id="bottleneckText" style="margin:0 0 8px;font-size:12.5px;color:#78350f;"></p>
+          <h4 style="margin:0 0 4px;color:var(--warn);font-size:14px;">${isEn ? 'FET Bottleneck Diagnostic (Desktop Style)' : 'Diagnostica Collo di Bottiglia FET (Stile Desktop App)'}</h4>
+          <p id="bottleneckText" style="margin:0 0 8px;font-size:12.5px;color:var(--text-main);"></p>
           <div style="display:flex;gap:8px;flex-wrap:wrap;">
-            <button class="btn btn-sm btn-primary" onclick="navigate('activities')" style="background:#b45309;border-color:#b45309;">📝 Vai ad Attività / Cattedre</button>
-            <button class="btn btn-sm btn-sec" onclick="navigate('availability')">📅 Controlla Indisponibilità</button>
-            <button class="btn btn-sm btn-sec" onclick="navigate('constraints')">⚡ Riduci Peso Vincoli</button>
+            <button class="btn btn-sm btn-primary" onclick="navigate('activities')">${isEn ? '📝 Go to Activities' : '📝 Vai ad Attività / Cattedre'}</button>
+            <button class="btn btn-sm btn-sec" onclick="navigate('availability')">${isEn ? '📅 Check Availability' : '📅 Controlla Indisponibilità'}</button>
+            <button class="btn btn-sm btn-sec" onclick="navigate('constraints')">${isEn ? '⚡ Relax Constraints' : '⚡ Riduci Peso Vincoli'}</button>
           </div>
         </div>
       </div>
@@ -2341,20 +2508,20 @@ function renderSolver() {
 
     <div class="card">
       <div class="card-title" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
-        <span>Log in tempo reale di FET CLI</span>
+        <span>${isEn ? 'FET CLI Real-Time Log' : 'Log in tempo reale di FET CLI'}</span>
         <div style="display:flex;gap:8px;align-items:center;font-size:12px;flex-wrap:wrap;">
-          <div style="display:flex;background:#fff;border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;">
-            <button id="btnLogModeDesktop" class="btn btn-sm ${currentSolverLogMode === 'formatted' ? 'btn-primary' : 'btn-sec'}" style="border:none;" onclick="switchLogMode('formatted')">🖥️ Stile Desktop</button>
+          <div style="display:flex;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;">
+            <button id="btnLogModeDesktop" class="btn btn-sm ${currentSolverLogMode === 'formatted' ? 'btn-primary' : 'btn-sec'}" style="border:none;" onclick="switchLogMode('formatted')">🖥️ ${isEn ? 'Desktop Style' : 'Stile Desktop'}</button>
             <button id="btnLogModeRaw" class="btn btn-sm ${currentSolverLogMode === 'raw' ? 'btn-primary' : 'btn-sec'}" style="border:none;" onclick="switchLogMode('raw')">⚙️ Raw CLI Debug</button>
           </div>
           <label style="display:flex;align-items:center;gap:4px;cursor:pointer;color:var(--text-muted);font-size:11.5px;">
             <input type="checkbox" id="autoScrollLog" ${solverAutoScroll ? 'checked' : ''} onchange="solverAutoScroll = this.checked"> Auto-scroll
           </label>
-          <button class="btn btn-sm btn-sec" onclick="copySolverLog()" title="Copia log negli appunti">📋 Copia</button>
-          <button class="btn btn-sm btn-sec" onclick="clearSolverConsole()" title="Svuota console">🧹 Pulisci</button>
+          <button class="btn btn-sm btn-sec" onclick="copySolverLog()" title="${isEn ? 'Copy log to clipboard' : 'Copia log negli appunti'}">📋 ${isEn ? 'Copy' : 'Copia'}</button>
+          <button class="btn btn-sm btn-sec" onclick="clearSolverConsole()" title="${isEn ? 'Clear console' : 'Svuota console'}">🧹 ${isEn ? 'Clear' : 'Pulisci'}</button>
         </div>
       </div>
-      <div id="solverConsole" class="console" style="height:380px;">In attesa dell'avvio di fet-cl...</div>
+      <div id="solverConsole" class="console" style="height:380px;">${isEn ? 'Waiting for fet-cl execution...' : 'In attesa dell\'avvio di fet-cl...'}</div>
     </div>
   `;
 
@@ -2400,12 +2567,13 @@ function copySolverLog() {
 }
 
 async function startSolver() {
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
   const tl = parseInt(document.getElementById('timelimitInput').value || '3600');
   const verbose = document.getElementById('verboseLogInput') ? document.getElementById('verboseLogInput').checked : true;
   document.getElementById('btnStartSolve').disabled = true;
   document.getElementById('btnStopSolve').disabled = false;
   document.getElementById('solverStatusBadge').className = 'badge badge-warn';
-  document.getElementById('solverStatusBadge').innerText = '● Compilazione in corso...';
+  document.getElementById('solverStatusBadge').innerText = isEn ? '● Compiling...' : '● Compilazione in corso...';
 
   // Nascondi eventuale bottleneck card o advisor card precedente
   const bCard = document.getElementById('bottleneckCard');
@@ -2421,19 +2589,20 @@ async function startSolver() {
     });
     const data = await res.json();
     if (data.status !== 'started') {
-      alert('Errore avvio: ' + (data.error || JSON.stringify(data)));
+      alert((isEn ? 'Launch error: ' : 'Errore avvio: ') + (data.error || JSON.stringify(data)));
       document.getElementById('btnStartSolve').disabled = false;
       document.getElementById('btnStopSolve').disabled = true;
     }
   } catch (e) {
-    alert('Errore chiamata solver: ' + e.message);
+    alert((isEn ? 'Solver error: ' : 'Errore chiamata solver: ') + e.message);
     document.getElementById('btnStartSolve').disabled = false;
     document.getElementById('btnStopSolve').disabled = true;
   }
 }
 
 async function stopSolver() {
-  if (confirm("Vuoi interrompere il calcolo di FET CLI? L'orario e lo stadio massimo raggiunto verranno preservati.")) {
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
+  if (confirm(isEn ? 'Do you want to stop FET CLI execution? The timetable and highest reached stage will be preserved.' : "Vuoi interrompere il calcolo di FET CLI? L'orario e lo stadio massimo raggiunto verranno preservati.")) {
     document.getElementById('btnStopSolve').disabled = true;
     await fetch('/api/solve/stop', { method: 'POST' });
   }
@@ -2441,6 +2610,7 @@ async function stopSolver() {
 
 async function pollSolverStatus() {
   if (currentView !== 'solver') return;
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
   try {
     const res = await fetch('/api/solve/status');
     const s = await res.json();
@@ -2463,7 +2633,7 @@ async function pollSolverStatus() {
     const pct = s.percent || 0;
     fill.style.width = pct + '%';
     const highestMsg = s.highest_placed && s.highest_placed > s.placed ? ` (Record: ${s.highest_placed})` : '';
-    lbl.innerText = `${s.placed} / ${s.total} attività collocate (${pct}%)${highestMsg}`;
+    lbl.innerText = `${s.placed} / ${s.total} ${isEn ? 'activities placed' : 'attività collocate'} (${pct}%)${highestMsg}`;
 
     if (s.running) {
       currentSolverRunning = true;
@@ -2472,18 +2642,18 @@ async function pollSolverStatus() {
       if (btnStop) btnStop.disabled = false;
       if (badge) {
         badge.className = 'badge badge-warn';
-        badge.innerText = '● Compilazione in corso...';
+        badge.innerText = isEn ? '● Compiling...' : '● Compilazione in corso...';
       }
 
       // Aggiorna banner live attività corrente
       if (s.current_activity && liveCard && liveDesc) {
         liveCard.style.display = 'block';
         const ca = s.current_activity;
-        liveDesc.innerText = `Attività #${ca.id}: ${ca.subject} — ${ca.teachers}`;
+        liveDesc.innerText = `${isEn ? 'Activity' : 'Attività'} #${ca.id}: ${ca.subject} — ${ca.teachers}`;
         if (liveBadges) {
           liveBadges.innerHTML = `
             <span class="badge badge-info">${escapeHtml(ca.classes)}</span>
-            <span class="badge badge-ok">Stadio ${ca.stage}/${s.total}</span>
+            <span class="badge badge-ok">${isEn ? 'Stage' : 'Stadio'} ${ca.stage}/${s.total}</span>
           `;
         }
       } else if (liveCard) {
@@ -2502,6 +2672,10 @@ async function pollSolverStatus() {
       }
 
     } else if (s.completed) {
+      if (pollSolverTimer) {
+        clearInterval(pollSolverTimer);
+        pollSolverTimer = null;
+      }
       if (btnStop) btnStop.disabled = true;
       if (btnStart) btnStart.disabled = false;
       if (liveCard) liveCard.style.display = 'none';
@@ -2510,27 +2684,54 @@ async function pollSolverStatus() {
         fill.className = 'fill ok';
         if (badge) {
           badge.className = 'badge badge-ok';
-          badge.innerText = '✅ Risolto al 100%';
+          badge.innerText = isEn ? '✅ 100% Solved' : '✅ Risolto al 100%';
         }
         if (bCard) bCard.style.display = 'none';
+        if (stateData.summary) {
+          stateData.summary.has_timetable = true;
+          stateData.summary.placed_activities = s.placed;
+        }
+        await refreshAppState();
+
+        const bannerSlot = document.getElementById('preflightSolverBanner');
+        if (bannerSlot) {
+          bannerSlot.innerHTML = `
+            <div style="background:rgba(34,197,94,0.15);border:1.5px solid rgba(34,197,94,0.4);border-radius:var(--radius-md);padding:14px 18px;display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:10px;">
+              <div style="display:flex;align-items:center;gap:10px;">
+                <span style="font-size:24px;">🎉</span>
+                <div>
+                  <div style="font-weight:700;font-size:14px;color:var(--success);">${isEn ? 'Timetable calculation completed at 100%!' : 'Compilazione orario completata al 100%!'}</div>
+                  <div style="font-size:12px;color:var(--text-muted);">${isEn ? 'All activities placed. You can now explore the full interactive timetable.' : 'Tutte le attività didattiche sono state collocate. Puoi ora esplorare l\'orario completo.'}</div>
+                </div>
+              </div>
+              <button class="btn btn-primary" onclick="navigate('timetable')" style="font-weight:700;">
+                🗓️ ${isEn ? 'View Timetable →' : 'Vai all\'Orario Risolto →'}
+              </button>
+            </div>
+          `;
+        }
       } else if (s.stopped) {
         fill.className = 'fill warn';
         if (badge) {
           badge.className = 'badge badge-warn';
-          badge.innerText = '⚠️ Interrotto';
+          badge.innerText = isEn ? '⚠️ Stopped' : '⚠️ Interrotto';
         }
       } else {
         fill.className = 'fill err';
         if (badge) {
           badge.className = 'badge badge-err';
-          badge.innerText = '❌ Nessuna soluzione (Timeout)';
+          badge.innerText = isEn ? '❌ No Solution (Timeout)' : '❌ Nessuna soluzione (Timeout)';
         }
       }
 
       // Mostra collo di bottiglia se presente
       if (s.bottleneck && bCard && bText) {
         bCard.style.display = 'block';
-        bText.innerHTML = `
+        bText.innerHTML = isEn ? `
+          FET placed up to <b>${s.highest_placed || s.placed} activities out of ${s.total}</b>.<br>
+          The activity causing the generation block is:<br>
+          <b>Activity #${escapeHtml(s.bottleneck.id)}</b>: <span style="font-family:var(--font-mono);">${escapeHtml(s.bottleneck.description)}</span>
+        ` : `
           FET ha posizionato fino a <b>${s.highest_placed || s.placed} attività su ${s.total}</b>.<br>
           L'attività che causa il blocco della generazione è:<br>
           <b>Attività #${escapeHtml(s.bottleneck.id)}</b>: <span style="font-family:var(--font-mono);">${escapeHtml(s.bottleneck.description)}</span>
@@ -2556,7 +2757,7 @@ async function pollSolverStatus() {
       const sec = Math.floor(s.elapsed);
       const m = Math.floor(sec / 60);
       const remSec = sec % 60;
-      timer.innerText = `Tempo trascorso: ${m < 10 ? '0' + m : m}:${remSec < 10 ? '0' + remSec : remSec}`;
+      timer.innerText = `${isEn ? 'Elapsed time:' : 'Tempo trascorso:'} ${m < 10 ? '0' + m : m}:${remSec < 10 ? '0' + remSec : remSec}`;
     }
   } catch (e) {}
 }
@@ -2640,6 +2841,7 @@ async function refreshDiagnosticsBadge() {
 async function loadPreflightSolverBanner() {
   const banner = document.getElementById('preflightSolverBanner');
   if (!banner) return;
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
   try {
     const res = await fetch('/api/validator/report');
     if (!res.ok) return;
@@ -2650,11 +2852,11 @@ async function loadPreflightSolverBanner() {
         <div style="display:flex;align-items:center;gap:10px;">
           <span style="font-size:22px;">⛔</span>
           <div>
-            <b>Rilevati ${r.critical_count} Conflitti Matematici Bloccanti!</b>
-            <div style="font-size:12px;margin-top:2px;">Sono presenti vincoli impossibili (cattedre sovraccariche, slot orari insufficienti o aule in sovrapposizione). FET fallirà la risoluzione.</div>
+            <b>${isEn ? `Detected ${r.critical_count} Blocking Mathematical Conflicts!` : `Rilevati ${r.critical_count} Conflitti Matematici Bloccanti!`}</b>
+            <div style="font-size:12px;margin-top:2px;">${isEn ? 'Impossible constraints detected (overloaded teaching posts, insufficient time slots or overlapping rooms). FET will fail.' : 'Sono presenti vincoli impossibili (cattedre sovraccariche, slot orari insufficienti o aule in sovrapposizione). FET fallirà la risoluzione.'}</div>
           </div>
         </div>
-        <button class="btn btn-sm btn-danger" onclick="navigate('diagnostics')" style="white-space:nowrap;font-weight:700;">🔍 Risolvi nella Diagnostica</button>
+        <button class="btn btn-sm btn-danger" onclick="navigate('diagnostics')" style="white-space:nowrap;font-weight:700;">🔍 ${isEn ? 'Fix in Diagnostics' : 'Risolvi nella Diagnostica'}</button>
       `;
     } else if (r.warning_count > 0) {
       banner.className = 'preflight-solver-banner warn';
@@ -2662,11 +2864,11 @@ async function loadPreflightSolverBanner() {
         <div style="display:flex;align-items:center;gap:10px;">
           <span style="font-size:20px;">⚠️</span>
           <div>
-            <b>Pre-Validazione: ${r.warning_count} Potenziali Colli di Bottiglia (Salute: ${r.health_score}%)</b>
-            <div style="font-size:12px;margin-top:2px;">Il progetto è risolvibile, ma alcuni docenti o spazi hanno margini ristretti che potrebbero allungare i tempi di compilazione.</div>
+            <b>${isEn ? `Pre-Flight: ${r.warning_count} Potential Bottlenecks (Health: ${r.health_score}%)` : `Pre-Validazione: ${r.warning_count} Potenziali Colli di Bottiglia (Salute: ${r.health_score}%)`}</b>
+            <div style="font-size:12px;margin-top:2px;">${isEn ? 'The model is solvable, but tight teacher or space margins may increase compilation times.' : 'Il progetto è risolvibile, ma alcuni docenti o spazi hanno margini ristretti che potrebbero allungare i tempi di compilazione.'}</div>
           </div>
         </div>
-        <button class="btn btn-sm btn-sec" onclick="navigate('diagnostics')" style="white-space:nowrap;">Visualizza Dettagli</button>
+        <button class="btn btn-sm btn-sec" onclick="navigate('diagnostics')" style="white-space:nowrap;">${isEn ? 'View Details' : 'Visualizza Dettagli'}</button>
       `;
     } else {
       banner.className = 'preflight-solver-banner ok';
@@ -2674,11 +2876,11 @@ async function loadPreflightSolverBanner() {
         <div style="display:flex;align-items:center;gap:10px;">
           <span style="font-size:20px;">✅</span>
           <div>
-            <b>Pre-Validazione Superata con Successo (Salute: ${r.health_score}%)</b>
-            <div style="font-size:12px;margin-top:2px;">Nessun conflitto statico o matematico rilevato. Il progetto è pronto per la compilazione FET 7.12.0.</div>
+            <b>${isEn ? `Pre-Flight Passed Successfully (Health: ${r.health_score}%)` : `Pre-Validazione Superata con Successo (Salute: ${r.health_score}%)`}</b>
+            <div style="font-size:12px;margin-top:2px;">${isEn ? 'No static or mathematical conflicts detected. Model is ready for FET compilation.' : 'Nessun conflitto statico o matematico rilevato. Il progetto è pronto per la compilazione FET 7.12.0.'}</div>
           </div>
         </div>
-        <button class="btn btn-sm btn-sec" onclick="navigate('diagnostics')" style="white-space:nowrap;">Report Completo</button>
+        <button class="btn btn-sm btn-sec" onclick="navigate('diagnostics')" style="white-space:nowrap;">${isEn ? 'Full Report' : 'Report Completo'}</button>
       `;
     }
   } catch (e) {}
@@ -2686,31 +2888,59 @@ async function loadPreflightSolverBanner() {
 
 function renderAdvisorCardHtml(recommendations, isSolverView = false, advisorReport = null) {
   if (!recommendations || recommendations.length === 0) return '';
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
 
   const rep = advisorReport || {};
   const rootCause = rep.root_cause_summary;
   const isErr = rep.root_cause_type && (rep.root_cause_type.includes('CRITICAL') || rep.root_cause_type.includes('CLASH'));
+
+  let displayRootCause = rootCause || '';
+  if (isEn && rootCause) {
+    if (rep.root_cause_type === 'PREVENTIVE_WARNINGS' || rootCause.includes('potenziali colli di bottiglia')) {
+      const match = rootCause.match(/Rilevati\s+(\d+)\s+potenziali/i);
+      const count = match ? match[1] : '1';
+      displayRootCause = `Detected ${count} potential bottleneck(s) (tight margins or strict constraints). Relaxing these upfront ensures immediate 100% completion.`;
+    } else if (rep.root_cause_type === 'PREVENTIVE_CRITICAL_CONFLICTS' || rootCause.includes('conflitti matematici bloccanti')) {
+      const match = rootCause.match(/Rilevati\s+(\d+)\s+conflitti/i);
+      const count = match ? match[1] : 'multiple';
+      displayRootCause = `Detected ${count} blocking mathematical conflict(s). FET cannot find any valid solution until these constraints are resolved.`;
+    } else if (rep.root_cause_type === 'LOCKED_ACTIVITY_CLASH' || rootCause.includes('Lo stallo di FET è alimentato')) {
+      displayRootCause = 'The FET deadlock is driven by a locked activity. Being locked in a fixed position, it prevents the algorithm from swapping periods to make room for remaining activities.';
+    } else if (rep.root_cause_type === 'TEACHER_CLASS_BOTTLENECK' || rootCause.includes('intersezione oraria tra il docente')) {
+      displayRootCause = `Primary bottleneck: timetable intersection between teacher '${rep.pivot_teacher || ''}' and class '${rep.pivot_class || ''}'. Constraints or unavailabilities leave very few compatible slots.`;
+    } else if (rep.root_cause_type === 'TEACHER_TIGHT_SLOTS' || rootCause.includes('risulta presente nella maggior parte dei conflitti')) {
+      displayRootCause = `Teacher '${rep.pivot_teacher || ''}' is involved in most swap conflicts. Their unavailabilities or day off excessively restrict degrees of freedom.`;
+    } else if (rep.root_cause_type === 'CLASS_CONGESTION' || rootCause.includes('ha un calendario iper-vincolato')) {
+      displayRootCause = `Class '${rep.pivot_class || ''}' has an overly constrained calendar that cannot fit assigned teachers into remaining slots.`;
+    } else if (rep.root_cause_type === 'ROOM_CAPACITY' || rootCause.includes('spazi specifici a capienza limitata')) {
+      displayRootCause = `Subject '${rep.pivot_subject || ''}' requires specific limited-capacity spaces (Gym / Lab) that are saturated or colliding on the required days.`;
+    } else if (rep.root_cause_type === 'GLOBAL_CONSTRAINTS_DEADLOCK' || rootCause.includes('deadlock nei cicli di ricollocamento')) {
+      displayRootCause = 'The FET algorithm reached a deadlock in recursive relocation cycles. Global constraints on gap hours and building change interval prevent alternative combinations.';
+    } else if (rep.root_cause_type === 'READY' || rootCause.includes('Progetto matematicamente')) {
+      displayRootCause = 'Model is mathematically balanced. No conflicts or bottlenecks detected.';
+    }
+  }
 
   return `
     <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px;flex-wrap:wrap;">
       <div style="display:flex;align-items:center;gap:8px;">
         <span style="font-size:24px;">💡</span>
         <div>
-          <h4 style="margin:0;color:#065f46;font-size:15px;font-weight:800;">Advisor Intelligente — Diagnosi & Relaxation Engine</h4>
-          <div style="font-size:12px;color:#047857;">Algoritmo euristico per l'eliminazione dei colli di bottiglia e deadlock FET:</div>
+          <h4 class="advisor-main-title" style="margin:0;font-size:15px;font-weight:800;">${isEn ? 'Intelligent Advisor — Diagnosis & Relaxation Engine' : 'Advisor Intelligente — Diagnosi & Relaxation Engine'}</h4>
+          <div class="advisor-main-subtitle" style="font-size:12px;">${isEn ? 'Heuristic algorithm to eliminate bottlenecks and FET deadlocks:' : 'Algoritmo euristico per l\'eliminazione dei colli di bottiglia e deadlock FET:'}</div>
         </div>
       </div>
-      ${isSolverView ? `<button class="btn btn-sm btn-sec" style="font-size:11.5px;" onclick="navigate('diagnostics')">🔍 Apri Diagnostica Completa</button>` : ''}
+      ${isSolverView ? `<button class="btn btn-sm btn-sec" style="font-size:11.5px;" onclick="navigate('diagnostics')">🔍 ${isEn ? 'Open Full Diagnostics' : 'Apri Diagnostica Completa'}</button>` : ''}
     </div>
 
-    ${rootCause ? `
+    ${displayRootCause ? `
       <div class="advisor-root-cause-box ${isErr ? 'err' : 'warn'}">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
           <span style="font-size:18px;">🎯</span>
-          <b style="font-size:13px;color:#0f172a;text-transform:uppercase;letter-spacing:0.5px;">Causa Radice Identificata:</b>
+          <b style="font-size:13px;text-transform:uppercase;letter-spacing:0.5px;">${isEn ? 'Identified Root Cause:' : 'Causa Radice Identificata:'}</b>
         </div>
-        <p style="margin:0;font-size:13px;line-height:1.45;color:#1e293b;">
-          ${escapeHtml(rootCause)}
+        <p style="margin:0;font-size:13px;line-height:1.45;">
+          ${escapeHtml(displayRootCause)}
         </p>
       </div>
     ` : ''}
@@ -2720,34 +2950,104 @@ function renderAdvisorCardHtml(recommendations, isSolverView = false, advisorRep
       const lvlClass = `badge-level-${lvl}`;
       const isCombo = Boolean(r.is_combo);
 
+      let title = r.title || '';
+      let desc = r.description || '';
+      let badge = r.badge || r.impact || '';
+      let levelLabel = r.level_label || '';
+      let btnText = r.button_text || (isEn ? 'Apply' : 'Applica');
+
+      if (isEn) {
+        levelLabel = lvl === 1 ? 'Level 1: Soft Relaxation' : (lvl === 2 ? 'Level 2: Targeted Flexibility' : 'Level 3: Unlock Fixed Constraints');
+        if (r.id === 'relax_combo_level1') {
+          title = '⚡ Apply Soft Relaxation Package (Gaps + Buildings)';
+          desc = 'Increases daily gap tolerance (to 2h) and weekly gaps (to 3h) and removes mandatory building change gap. Instantly unlocks dozens of timetable combinations without altering teaching assignments or teacher preferences.';
+          badge = 'Recommended Now';
+          btnText = 'Apply All Level 1';
+        } else if (r.id === 'relax_teacher_gaps_day') {
+          const nv = r.action_payload?.new_val || 2;
+          title = `Increase Max Daily Gaps for Teachers (from ${nv - 1} to ${nv})`;
+          desc = `The constraint enforces max ${nv - 1} gap hour per day. Increasing tolerance to ${nv} gap hours increases FET exchange combinations by 400%.`;
+          badge = 'Soft';
+          btnText = `Relax to ${nv} gap hours`;
+        } else if (r.id === 'relax_teacher_gaps_week') {
+          const nv = r.action_payload?.new_val || 3;
+          title = `Increase Max Weekly Gaps for Teachers (from ${nv - 1} to ${nv})`;
+          desc = `The limit is set to only ${nv - 1} weekly gaps. A slight relaxation allows spreading lessons without infinite swap cycles.`;
+          badge = 'Soft';
+          btnText = `Relax to ${nv} hours/week`;
+        } else if (r.id === 'relax_building_gaps') {
+          title = 'Temporarily Remove Building Change Gap (from 1 to 0 hours)';
+          desc = 'Currently requires 1 mandatory free period between Main and Branch buildings. Removing the gap allows FET to place consecutive periods for traveling teachers.';
+          badge = 'Buildings';
+          btnText = 'Remove Building Change Gap';
+        } else if (r.id && r.id.startsWith('relax_unavail_')) {
+          const tch = r.action_payload?.teacher || '';
+          title = `Open 2 Available Hours for: ${tch}`;
+          desc = `Teacher ${tch} has a high critical score with many unavailability hours set. Unlocking 2 slots allows the algorithm to place their schedule without chain conflicts.`;
+          badge = 'Pivot Teacher';
+          btnText = `Open 2 hours for ${tch.split(' ')[0]}`;
+        } else if (r.id && r.id.startsWith('fix_locked_unavail_')) {
+          const tch = r.action_payload?.teacher || '';
+          title = `Remove Conflicting Unavailability: ${tch}`;
+          desc = 'The locked activity conflicts with teacher unavailability at this time. Removing the unavailability instantly resolves the blocking mathematical conflict.';
+          badge = 'Direct Conflict';
+          btnText = `Unlock slot for ${tch.split(' ')[0]}`;
+        } else if (r.id && r.id.startsWith('relax_min_days_')) {
+          const tch = r.action_payload?.teacher || '';
+          const nv = r.action_payload?.new_val || 4;
+          title = `Reduce Minimum Attendance Days for: ${tch}`;
+          desc = 'The minimum attendance days constraint is incompatible with allocated hours. Setting a compatible value resolves the deadlock.';
+          badge = 'Min Days';
+          btnText = `Reduce Min Days (${nv})`;
+        } else if (r.id && r.id.startsWith('unlock_critical_act_')) {
+          const aid = r.action_payload?.activity_id || '';
+          title = `Unlock Locked Activity #${aid} (FET Deadlock Pivot)`;
+          desc = 'This activity is locked in a fixed position by the user and was identified as the pivot of the deadlock. Unlocking it allows the algorithm to freely reallocate it and complete the timetable.';
+          badge = 'Locked Period';
+          btnText = `Unlock Activity #${aid}`;
+        } else if (r.id && r.id.startsWith('unlock_chain_act_')) {
+          const aid = r.action_payload?.activity_id || '';
+          title = `Unlock Activity #${aid}`;
+          desc = 'This activity is locked and part of the recursive swap cycle hindering convergence.';
+          badge = 'Locked Period';
+          btnText = `Unlock #${aid}`;
+        } else if (r.id && r.id.startsWith('resolve_clash_')) {
+          const aid = r.action_payload?.activity_id || '';
+          title = `Resolve Overlap Conflict for #${aid}`;
+          desc = 'Two locked activities were placed at the exact same time for the same entity. Unlocking one removes the block.';
+          badge = 'Double Assignment';
+          btnText = `Unlock #${aid}`;
+        }
+      }
+
       return `
-        <div class="advisor-rec-card" style="${isCombo ? 'border: 2px solid #10b981; background: #f0fdf4;' : ''}">
+        <div class="advisor-rec-card" style="${isCombo ? 'border: 2px solid #10b981; background: var(--bg-hover);' : ''}">
           <div class="advisor-rec-header">
             <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
               <span class="${lvlClass}">L${lvl}</span>
-              <b style="font-size:14px;color:#0f172a;">${escapeHtml(r.title)}</b>
-              <span class="badge badge-${r.badge_color || 'info'}">${escapeHtml(r.badge || r.impact)}</span>
+              <b style="font-size:14px;color:var(--text-main);">${escapeHtml(title)}</b>
+              <span class="badge badge-${r.badge_color || 'info'}">${escapeHtml(badge)}</span>
             </div>
-            ${r.level_label ? `<span style="font-size:11px;color:#64748b;font-weight:600;">${escapeHtml(r.level_label)}</span>` : ''}
+            ${levelLabel ? `<span style="font-size:11px;color:#64748b;font-weight:600;">${escapeHtml(levelLabel)}</span>` : ''}
           </div>
-          <p class="advisor-rec-desc">${escapeHtml(r.description)}</p>
+          <p class="advisor-rec-desc">${escapeHtml(desc)}</p>
           <div class="advisor-rec-actions">
             ${isSolverView ? `
               <button class="btn btn-sm ${isCombo ? 'btn-primary' : 'btn-primary'}" 
                       style="font-size:12.5px;white-space:nowrap;font-weight:700;display:inline-flex;align-items:center;gap:6px;${isCombo ? 'background: linear-gradient(135deg, #059669 0%, #10b981 100%);box-shadow: 0 2px 6px rgba(16,185,129,0.3);' : ''}" 
                       onclick="applyAdvisorRelaxation('${r.action_type}', ${JSON.stringify(r.action_payload).replace(/"/g, '&quot;')}, true, this)">
-                ⚡ ${escapeHtml(r.button_text || 'Applica')} e Riavvia Solutore
+                ⚡ ${escapeHtml(btnText)} ${isEn ? '& Restart Solver' : 'e Riavvia Solutore'}
               </button>
             ` : `
               <button class="btn btn-sm btn-primary" 
                       style="font-size:12px;white-space:nowrap;font-weight:700;display:inline-flex;align-items:center;gap:6px;" 
                       onclick="applyAdvisorRelaxation('${r.action_type}', ${JSON.stringify(r.action_payload).replace(/"/g, '&quot;')}, false, this)">
-                ⚡ ${escapeHtml(r.button_text || 'Applica Rilassamento')}
+                ⚡ ${escapeHtml(btnText)}
               </button>
               <button class="btn btn-sm btn-sec" 
                       style="font-size:12px;white-space:nowrap;font-weight:600;display:inline-flex;align-items:center;gap:6px;" 
                       onclick="applyAdvisorRelaxation('${r.action_type}', ${JSON.stringify(r.action_payload).replace(/"/g, '&quot;')}, true, this)">
-                🚀 Applica & Avvia FET
+                🚀 ${isEn ? 'Apply & Start FET' : 'Applica & Avvia FET'}
               </button>
             `}
           </div>
@@ -2758,10 +3058,11 @@ function renderAdvisorCardHtml(recommendations, isSolverView = false, advisorRep
 }
 
 async function applyAdvisorRelaxation(actionType, payload, restartSolver = false, callerBtn = null) {
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
   const btn = callerBtn || (window.event && window.event.currentTarget) || null;
   if (btn) {
     btn.disabled = true;
-    btn.innerText = 'Applicazione in corso...';
+    btn.innerText = isEn ? 'Applying...' : 'Applicazione in corso...';
   }
   try {
     const res = await fetch('/api/advisor/apply_relax', {
@@ -2770,43 +3071,55 @@ async function applyAdvisorRelaxation(actionType, payload, restartSolver = false
       body: JSON.stringify({
         action_type: actionType,
         payload: payload,
-        restart_solver: restartSolver
+        restart_solver: false,
+        lang: isEn ? 'en' : 'it'
       })
     });
     const data = await res.json();
     if (data.status === 'ok') {
-      showToast(data.message || 'Vincolo aggiornato con successo!', 'ok');
+      showToast(data.message || (isEn ? 'Constraint updated successfully!' : 'Vincolo aggiornato con successo!'), 'ok');
       await refreshDiagnosticsBadge();
       if (restartSolver) {
         navigate('solver');
+        try {
+          await fetch('/api/solve/stop', { method: 'POST' });
+        } catch (_) {}
+        setTimeout(() => {
+          startSolver();
+        }, 500);
       } else {
         renderDiagnostics(currentDiagTab);
       }
     } else {
-      alert('Errore: ' + (data.error || 'Operazione fallita'));
+      alert((isEn ? 'Error: ' : 'Errore: ') + (data.error || (isEn ? 'Operation failed' : 'Operazione fallita')));
       if (btn) {
         btn.disabled = false;
-        btn.innerText = 'Riprova';
+        btn.innerText = isEn ? 'Retry' : 'Riprova';
       }
     }
   } catch (e) {
-    alert('Errore chiamata: ' + e.message);
+    alert((isEn ? 'Error: ' : 'Errore chiamata: ') + e.message);
     if (btn) {
       btn.disabled = false;
-      btn.innerText = 'Riprova';
+      btn.innerText = isEn ? 'Retry' : 'Riprova';
     }
   }
 }
 
 async function renderDiagnostics(tab = 'all') {
   currentDiagTab = tab;
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
   const container = document.getElementById('mainContent');
-  container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);">Esecuzione scansione algebrica e verifica vincoli in corso...</div>';
+  container.innerHTML = `<div style="text-align:center;padding:40px;color:var(--text-muted);">${isEn ? 'Running algebraic scan and verifying constraints...' : 'Esecuzione scansione algebrica e verifica vincoli in corso...'}</div>`;
 
   try {
     const [valRes, advRes] = await Promise.all([
       fetch('/api/validator/report'),
-      fetch('/api/advisor/analyze', { method: 'POST' })
+      fetch('/api/advisor/analyze', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ lang: isEn ? 'en' : 'it' })
+      })
     ]);
     currentDiagReport = await valRes.json();
     currentAdvReport = await advRes.json();
@@ -2814,7 +3127,7 @@ async function renderDiagnostics(tab = 'all') {
     refreshDiagnosticsBadge();
     renderDiagnosticsContent();
   } catch (e) {
-    container.innerHTML = `<div class="card" style="padding:24px;color:var(--danger);">Errore durante il caricamento della diagnostica: ${escapeHtml(e.message)}</div>`;
+    container.innerHTML = `<div class="card" style="padding:24px;color:var(--danger);">${isEn ? 'Error loading diagnostics:' : 'Errore durante il caricamento della diagnostica:'} ${escapeHtml(e.message)}</div>`;
   }
 }
 
@@ -2826,21 +3139,22 @@ function setDiagnosticsTab(tab) {
 function renderDiagnosticsContent() {
   const container = document.getElementById('mainContent');
   if (!currentDiagReport) return;
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
   const rep = currentDiagReport;
   const adv = currentAdvReport || { recommendations: [] };
 
   const score = rep.health_score || 0;
   let scoreClass = 'ok';
   let scoreBadge = 'badge-ok';
-  let scoreTitle = '✅ Progetto Pronto per la Risoluzione FET';
+  let scoreTitle = isEn ? '✅ Project Ready for FET Solving' : '✅ Progetto Pronto per la Risoluzione FET';
   if (rep.critical_count > 0) {
     scoreClass = 'err';
     scoreBadge = 'badge-err';
-    scoreTitle = '⛔ Rilevati Conflitti Matematici Bloccanti';
+    scoreTitle = isEn ? '⛔ Blocking Mathematical Conflicts Detected' : '⛔ Rilevati Conflitti Matematici Bloccanti';
   } else if (rep.warning_count > 0 || score < 85) {
     scoreClass = 'warn';
     scoreBadge = 'badge-warn';
-    scoreTitle = '⚠️ Rilevati Potenziali Colli di Bottiglia';
+    scoreTitle = isEn ? '⚠️ Potential Bottlenecks Detected' : '⚠️ Rilevati Potenziali Colli di Bottiglia';
   }
 
   // Filtraggio issues
@@ -2854,12 +3168,12 @@ function renderDiagnosticsContent() {
   }
 
   const categoryLabels = {
-    teachers: '👨‍🏫 Docenti & Cattedre',
-    classes: '🎓 Classi & Monte Ore',
-    rooms: '🏢 Spazi & Palestre',
-    coteaching: '👥 Co-docenze',
-    locks: '🔒 Ore Fissate',
-    buildings: '🏫 Plessi & Sedi'
+    teachers: isEn ? '👨‍🏫 Teachers & Assignments' : '👨‍🏫 Docenti & Cattedre',
+    classes: isEn ? '🎓 Classes & Weekly Hours' : '🎓 Classi & Monte Ore',
+    rooms: isEn ? '🏢 Rooms & Gyms' : '🏢 Spazi & Palestre',
+    coteaching: isEn ? '👥 Co-teaching' : '👥 Co-docenze',
+    locks: isEn ? '🔒 Locked Hours' : '🔒 Ore Fissate',
+    buildings: isEn ? '🏫 Buildings & Branches' : '🏫 Plessi & Sedi'
   };
 
   container.innerHTML = `
@@ -2869,50 +3183,51 @@ function renderDiagnosticsContent() {
         <div class="health-gauge-score ${scoreClass}">${score}%</div>
         <div>
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;flex-wrap:wrap;">
-            <h2 style="margin:0;font-size:18px;font-weight:800;color:#0f172a;">${scoreTitle}</h2>
+            <h2 style="margin:0;font-size:18px;font-weight:800;color:var(--text-main);">${scoreTitle}</h2>
             <span class="badge ${scoreBadge}">${rep.status}</span>
           </div>
           <p style="margin:0;font-size:13px;color:var(--text-muted);">
-            Pre-flight check algebrico & piccionaia: ${rep.summary_metrics.total_institute_slots} slot settimanali, 
-            ${rep.summary_metrics.total_teachers} docenti, ${rep.summary_metrics.total_classes} classi.
+            ${isEn 
+              ? `Algebraic pre-flight & pigeonhole check: ${rep.summary_metrics.total_institute_slots} weekly slots, ${rep.summary_metrics.total_teachers} teachers, ${rep.summary_metrics.total_classes} classes.`
+              : `Pre-flight check algebrico & piccionaia: ${rep.summary_metrics.total_institute_slots} slot settimanali, ${rep.summary_metrics.total_teachers} docenti, ${rep.summary_metrics.total_classes} classi.`}
           </p>
         </div>
       </div>
       <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
-        <button class="btn btn-sec" onclick="renderDiagnostics(currentDiagTab)">🔄 Riesegui Scansione</button>
-        <button class="btn btn-primary" onclick="navigate('solver')">⚡ Apri Compilatore FET</button>
+        <button class="btn btn-sec" onclick="renderDiagnostics(currentDiagTab)">🔄 ${isEn ? 'Rescan Project' : 'Riesegui Scansione'}</button>
+        <button class="btn btn-primary" onclick="navigate('solver')">⚡ ${isEn ? 'Open FET Solver' : 'Apri Compilatore FET'}</button>
       </div>
     </div>
 
     <!-- 4 Metric Stat Boxes -->
     <div class="stat-grid" style="margin-bottom:20px;">
       <div class="stat-box">
-        <div class="stat-lbl">Indice di Fattibilità</div>
+        <div class="stat-lbl">${isEn ? 'Feasibility Index' : 'Indice di Fattibilità'}</div>
         <div class="stat-val" style="color: ${scoreClass === 'ok' ? '#10b981' : (scoreClass === 'warn' ? '#f59e0b' : '#ef4444')};">
           ${score} / 100
         </div>
-        <div class="stat-box-link"><span>Stato: <b>${rep.status}</b></span></div>
+        <div class="stat-box-link"><span>${isEn ? 'Status:' : 'Stato:'} <b>${rep.status}</b></span></div>
       </div>
       <div class="stat-box">
-        <div class="stat-lbl">Conflitti Bloccanti</div>
+        <div class="stat-lbl">${isEn ? 'Blocking Conflicts' : 'Conflitti Bloccanti'}</div>
         <div class="stat-val" style="color: ${rep.critical_count > 0 ? '#ef4444' : '#10b981'};">
           ${rep.critical_count}
         </div>
-        <div class="stat-box-link"><span>${rep.critical_count === 0 ? 'Nessun blocco matematico' : 'Impediscono la soluzione'}</span></div>
+        <div class="stat-box-link"><span>${rep.critical_count === 0 ? (isEn ? 'No mathematical blocks' : 'Nessun blocco matematico') : (isEn ? 'Prevents solution' : 'Impediscono la soluzione')}</span></div>
       </div>
       <div class="stat-box">
-        <div class="stat-lbl">Colli di Bottiglia & Avvisi</div>
+        <div class="stat-lbl">${isEn ? 'Bottlenecks & Warnings' : 'Colli di Bottiglia & Avvisi'}</div>
         <div class="stat-val" style="color: ${rep.warning_count > 0 ? '#f59e0b' : '#64748b'};">
           ${rep.warning_count}
         </div>
-        <div class="stat-box-link"><span>Rischio swap o stalli</span></div>
+        <div class="stat-box-link"><span>${isEn ? 'Risk of stalls or swaps' : 'Rischio swap o stalli'}</span></div>
       </div>
       <div class="stat-box">
-        <div class="stat-lbl">Spazi & Laboratori</div>
+        <div class="stat-lbl">${isEn ? 'Rooms & Labs' : 'Spazi & Laboratori'}</div>
         <div class="stat-val" style="font-size:18px;">
-          ${(rep.summary_metrics.room_saturations || []).map(r => `${r.type === 'palestra' ? 'Palestre' : 'Lab'}: <b>${r.pct}%</b>`).join(' | ')}
+          ${(rep.summary_metrics.room_saturations || []).map(r => `${r.type === 'palestra' ? (isEn ? 'Gym' : 'Palestre') : 'Lab'}: <b>${r.pct}%</b>`).join(' | ')}
         </div>
-        <div class="stat-box-link"><span>Capienza settimanale</span></div>
+        <div class="stat-box-link"><span>${isEn ? 'Weekly capacity' : 'Capienza settimanale'}</span></div>
       </div>
     </div>
 
@@ -2926,45 +3241,49 @@ function renderDiagnosticsContent() {
     <!-- Tab Bar per Filtro Categorie Issues -->
     <div class="diag-tabs">
       <button class="diag-tab-btn ${currentDiagTab === 'all' ? 'active' : ''}" onclick="setDiagnosticsTab('all')">
-        📋 Tutte le Diagnosi (${rep.total_issues})
+        📋 ${isEn ? 'All Diagnostics' : 'Tutte le Diagnosi'} (${rep.total_issues})
       </button>
       <button class="diag-tab-btn ${currentDiagTab === 'critical' ? 'active' : ''}" onclick="setDiagnosticsTab('critical')">
-        ⛔ Bloccanti (${rep.critical_count})
+        ⛔ ${isEn ? 'Blocking' : 'Bloccanti'} (${rep.critical_count})
       </button>
       <button class="diag-tab-btn ${currentDiagTab === 'warning' ? 'active' : ''}" onclick="setDiagnosticsTab('warning')">
-        ⚠️ Colli di Bottiglia (${rep.warning_count})
+        ⚠️ ${isEn ? 'Bottlenecks' : 'Colli di Bottiglia'} (${rep.warning_count})
       </button>
       <button class="diag-tab-btn ${currentDiagTab === 'info' ? 'active' : ''}" onclick="setDiagnosticsTab('info')">
-        💡 Suggerimenti & Cattedre (${rep.info_count})
+        💡 ${isEn ? 'Suggestions & Teaching' : 'Suggerimenti & Cattedre'} (${rep.info_count})
       </button>
       <button class="diag-tab-btn ${currentDiagTab === 'rooms' ? 'active' : ''}" onclick="setDiagnosticsTab('rooms')">
-        🏢 Saturazione Palestre & Lab (${(rep.summary_metrics.room_saturations || []).length})
+        🏢 ${isEn ? 'Gyms & Labs Saturation' : 'Saturazione Palestre & Lab'} (${(rep.summary_metrics.room_saturations || []).length})
       </button>
     </div>
 
     <!-- Contenuto Tab: Saturazione Palestre e Lab -->
     ${currentDiagTab === 'rooms' ? `
       <div class="card">
-        <div class="card-title">Analisi di Saturazione Spazi Didattici (Capienza Oraria Settimanale)</div>
+        <div class="card-title">${isEn ? 'Classroom & Space Saturation Analysis (Weekly Capacity)' : 'Analisi di Saturazione Spazi Didattici (Capienza Oraria Settimanale)'}</div>
         <p style="font-size:12.5px;color:var(--text-muted);margin-bottom:14px;">
-          Valuta il carico di ore richieste su strutture a disponibilità limitata (Palestre, Laboratori di Informatica) 
-          rispetto agli slot totali d'istituto (${rep.summary_metrics.total_institute_slots} ore settimanali).
+          ${isEn 
+            ? `Assesses required hours on limited facilities (Gyms, Computer Labs) against total school slots (${rep.summary_metrics.total_institute_slots} weekly hours).` 
+            : `Valuta il carico di ore richieste su strutture a disponibilità limitata (Palestre, Laboratori di Informatica) rispetto agli slot totali d'istituto (${rep.summary_metrics.total_institute_slots} ore settimanali).`}
         </p>
         <div class="table-container">
           <table class="data-table">
             <thead>
               <tr>
-                <th>Struttura / Tipologia</th>
-                <th>Ore Richieste</th>
-                <th>Capienza Massima</th>
-                <th style="min-width:200px;">Percentuale di Saturazione</th>
-                <th>Stato di Rischio</th>
-                <th>Azione</th>
+                <th>${isEn ? 'Facility / Room Type' : 'Struttura / Tipologia'}</th>
+                <th>${isEn ? 'Required Hours' : 'Ore Richieste'}</th>
+                <th>${isEn ? 'Max Capacity' : 'Capienza Massima'}</th>
+                <th style="min-width:200px;">${isEn ? 'Saturation Percentage' : 'Percentuale di Saturazione'}</th>
+                <th>${isEn ? 'Risk Status' : 'Stato di Rischio'}</th>
+                <th>${isEn ? 'Action' : 'Azione'}</th>
               </tr>
             </thead>
             <tbody>
               ${(rep.summary_metrics.room_saturations || []).map(r => {
                 const barColor = r.status === 'danger' ? '#ef4444' : (r.status === 'warn' ? '#f59e0b' : '#10b981');
+                const riskBadge = r.status === 'danger' 
+                  ? (isEn ? 'OVERLOADED (>100%)' : 'SOVRACCARICO (>100%)')
+                  : (r.status === 'warn' ? (isEn ? 'HIGH SATURATION' : 'ELEVATA SATURAZIONE') : (isEn ? 'NORMAL' : 'NORMALE'));
                 return `
                   <tr>
                     <td><b>${escapeHtml(r.room)}</b></td>
@@ -2980,11 +3299,11 @@ function renderDiagnosticsContent() {
                     </td>
                     <td>
                       <span class="badge badge-${r.status === 'danger' ? 'err' : (r.status === 'warn' ? 'warn' : 'ok')}">
-                        ${r.status === 'danger' ? 'SOVRACCARICO (>100%)' : (r.status === 'warn' ? 'ELEVATA SATURAZIONE' : 'NORMALE')}
+                        ${riskBadge}
                       </span>
                     </td>
                     <td>
-                      <button class="btn btn-sm btn-sec" onclick="navigate('rooms')">Gestisci Aule</button>
+                      <button class="btn btn-sm btn-sec" onclick="navigate('rooms')">${isEn ? 'Manage Rooms' : 'Gestisci Aule'}</button>
                     </td>
                   </tr>
                 `;
@@ -2999,14 +3318,23 @@ function renderDiagnosticsContent() {
         ${filteredIssues.length === 0 ? `
           <div class="card" style="text-align:center;padding:40px;color:var(--text-muted);">
             <div style="font-size:32px;margin-bottom:8px;">🎉</div>
-            <div style="font-size:15px;font-weight:700;color:#0f172a;">Nessun problema rilevato in questa categoria!</div>
-            <div style="font-size:13px;margin-top:4px;">Il modello rispetta tutti i vincoli matematici e algebrici analizzati.</div>
+            <div style="font-size:15px;font-weight:700;color:var(--text-main);">${isEn ? 'No issues detected in this category!' : 'Nessun problema rilevato in questa categoria!'}</div>
+            <div style="font-size:13px;margin-top:4px;">${isEn ? 'The model complies with all analyzed mathematical and algebraic constraints.' : 'Il modello rispetta tutti i vincoli matematici e algebrici analizzati.'}</div>
           </div>
         ` : filteredIssues.map(iss => {
           const catLabel = categoryLabels[iss.category] || iss.category;
           const sevBadge = iss.severity === 'critical'
-            ? '<span class="badge badge-err">⛔ BLOCCANTE</span>'
-            : (iss.severity === 'warning' ? '<span class="badge badge-warn">⚠️ AVVISO</span>' : '<span class="badge badge-info">💡 SUGGERIMENTO</span>');
+            ? `<span class="badge badge-err">${isEn ? '⛔ BLOCKING' : '⛔ BLOCCANTE'}</span>`
+            : (iss.severity === 'warning' ? `<span class="badge badge-warn">${isEn ? '⚠️ WARNING' : '⚠️ AVVISO'}</span>` : `<span class="badge badge-info">${isEn ? '💡 SUGGESTION' : '💡 SUGGERIMENTO'}</span>`);
+
+          let quickBtnLbl = '';
+          if (iss.quick_action) {
+            if (iss.quick_action.target === 'availability') quickBtnLbl = isEn ? '📅 Go to Availability' : '📅 Vai a Disponibilità';
+            else if (iss.quick_action.target === 'teachers') quickBtnLbl = isEn ? '👨‍🏫 Manage Teachers' : '👨‍🏫 Gestione Docente';
+            else if (iss.quick_action.target === 'classes') quickBtnLbl = isEn ? '🎓 Manage Classes' : '🎓 Gestione Classe';
+            else if (iss.quick_action.target === 'timetable') quickBtnLbl = isEn ? '🗓️ View in Timetable' : '🗓️ Vedi in Orario';
+            else quickBtnLbl = isEn ? '⚡ Go to Constraints' : '⚡ Vai a Vincoli';
+          }
 
           return `
             <div class="diag-issue-card ${iss.severity}">
@@ -3014,20 +3342,20 @@ function renderDiagnosticsContent() {
                 <div style="display:flex;align-items:center;gap:8px;">
                   ${sevBadge}
                   <span class="badge badge-sec" style="font-size:11px;">${catLabel}</span>
-                  <b style="font-size:14px;color:#0f172a;">${escapeHtml(iss.title)}</b>
+                  <b style="font-size:14px;color:var(--text-main);">${escapeHtml(iss.title)}</b>
                 </div>
                 ${iss.quick_action ? `
                   <button class="btn btn-sm btn-sec" onclick="navigate('${iss.quick_action.target}')" style="font-size:11.5px;">
-                    ${iss.quick_action.target === 'availability' ? '📅 Vai a Disponibilità' : (iss.quick_action.target === 'teachers' ? '👨‍🏫 Gestione Docente' : (iss.quick_action.target === 'classes' ? '🎓 Gestione Classe' : (iss.quick_action.target === 'timetable' ? '🗓️ Vedi in Orario' : '⚡ Vai a Vincoli')))}
+                    ${quickBtnLbl}
                   </button>
                 ` : ''}
               </div>
-              <div style="font-size:13px;color:#334155;line-height:1.45;margin-bottom:8px;">
+              <div style="font-size:13px;color:var(--text-muted);line-height:1.45;margin-bottom:8px;">
                 ${escapeHtml(iss.description)}
               </div>
               ${iss.entities && iss.entities.length > 0 ? `
                 <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;flex-wrap:wrap;">
-                  <span style="font-size:11px;color:var(--text-sub);font-weight:600;">Elementi coinvolti:</span>
+                  <span style="font-size:11px;color:var(--text-sub);font-weight:600;">${isEn ? 'Involved entities:' : 'Elementi coinvolti:'}</span>
                   ${iss.entities.map(e => `
                     <span class="badge badge-info" style="font-size:11px;cursor:pointer;" onclick="navigate('${e.type === 'teacher' ? 'availability' : (e.type === 'class' ? 'classes' : (e.type === 'room' ? 'rooms' : 'activities'))}')">
                       ${e.type === 'teacher' ? '👨‍🏫' : (e.type === 'class' ? '🎓' : (e.type === 'room' ? '🏢' : '📋'))} ${escapeHtml(e.name)}
@@ -3036,9 +3364,9 @@ function renderDiagnosticsContent() {
                 </div>
               ` : ''}
               ${iss.recommendation ? `
-                <div style="background:rgba(255,255,255,0.7);border-radius:var(--radius-sm);padding:6px 10px;font-size:12px;color:#0f172a;border:1px dashed #cbd5e1;display:flex;align-items:center;gap:6px;">
+                <div style="background:var(--bg-card);border-radius:var(--radius-sm);padding:6px 10px;font-size:12px;color:var(--text-main);border:1px dashed var(--border);display:flex;align-items:center;gap:6px;">
                   <span>💡</span>
-                  <span><b>Consiglio di risoluzione:</b> ${escapeHtml(iss.recommendation)}</span>
+                  <span><b>${isEn ? 'Resolution tip:' : 'Consiglio di risoluzione:'}</b> ${escapeHtml(iss.recommendation)}</span>
                 </div>
               ` : ''}
             </div>
@@ -3142,29 +3470,30 @@ async function renderTeachers() {
   const ptTeachers = teachers.filter(t => t.contract_type === 'part_time').length;
   const fullTeachers = teachers.filter(t => (t.total_hours || 0) >= (t.target_hours !== undefined ? t.target_hours : 18)).length;
 
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
   const container = document.getElementById('mainContent');
   container.innerHTML = `
-    ${getNavReturnBarHtml('Organico docenti e gestione cattedre.')}
+    ${getNavReturnBarHtml(isEn ? 'Faculty roster and teaching assignments.' : 'Organico docenti e gestione cattedre.')}
     <!-- Barra Filtri e Azioni -->
     <div class="toolbar" style="margin-bottom:10px;">
       <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;flex:1;">
-        <input type="text" id="teacherSearch" class="search-input" placeholder="🔍 Cerca docente, nome breve, CDC, materia o classe..." oninput="applyTeacherFilters()" style="flex:1;min-width:240px;">
-        <button class="btn btn-outline" onclick="openAggiornaOrganicoModal()" title="Aggiorna l'organico docenti confrontandolo con un file Word (.docx) o Google Doc" style="font-weight:700;border:1.5px solid var(--primary);color:var(--primary);background:var(--bg-main);white-space:nowrap;padding:7px 14px;">
-          🔄 Aggiorna Organico (Docx / Google Doc)
+        <input type="text" id="teacherSearch" class="search-input" placeholder="${isEn ? '🔍 Search teacher, short name, CDC, subject or class...' : '🔍 Cerca docente, nome breve, CDC, materia o classe...'}" oninput="applyTeacherFilters()" style="flex:1;min-width:240px;">
+        <button class="btn btn-outline" onclick="openAggiornaOrganicoModal()" title="${isEn ? 'Update faculty roster by comparing with a Word (.docx) or Google Doc' : 'Aggiorna l\'organico docenti confrontandolo con un file Word (.docx) o Google Doc'}" style="font-weight:700;border:1.5px solid var(--primary);color:var(--primary);background:var(--bg-main);white-space:nowrap;padding:7px 14px;">
+          🔄 ${isEn ? 'Update Faculty (Docx / Google Doc)' : 'Aggiorna Organico (Docx / Google Doc)'}
         </button>
       </div>
       <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
-        <input type="text" id="newTeacherName" class="search-input" placeholder="Nome docente (es. Rossi Mario)" style="width:175px;" oninput="onNewTeacherNameChange(this.value)">
-        <input type="text" id="newTeacherShortName" class="search-input" placeholder="Nome Breve (ROSSI M.)" style="width:140px;font-family:var(--font-mono);font-weight:700;text-transform:uppercase;" title="Nome Breve per le stampe (COGNOME N.)">
+        <input type="text" id="newTeacherName" class="search-input" placeholder="${isEn ? 'Teacher name (e.g. John Doe)' : 'Nome docente (es. Rossi Mario)'}" style="width:175px;" oninput="onNewTeacherNameChange(this.value)">
+        <input type="text" id="newTeacherShortName" class="search-input" placeholder="${isEn ? 'Short Name (DOE J.)' : 'Nome Breve (ROSSI M.)'}" style="width:140px;font-family:var(--font-mono);font-weight:700;text-transform:uppercase;" title="${isEn ? 'Short Name for printouts (SURNAME I.)' : 'Nome Breve per le stampe (COGNOME N.)'}">
         <input type="text" id="newTeacherCdc" class="search-input" placeholder="CDC" style="width:70px;">
-        <select id="newTeacherContractType" class="table-select" style="width:130px;" title="Tipologia di cattedra/contratto: Intera, COE, Spezzone, Part-Time">
-          <option value="intera">🏛️ Intera (18h)</option>
-          <option value="coe">🏫 COE</option>
-          <option value="spezzone">🧩 Spezzone</option>
-          <option value="part_time">⏳ Part-Time</option>
+        <select id="newTeacherContractType" class="table-select" style="width:130px;" title="${isEn ? 'Assignment contract type: Full-Time, External COE, Part-Hours, Part-Time' : 'Tipologia di cattedra/contratto: Intera, COE, Spezzone, Part-Time'}">
+          <option value="intera">🏛️ ${isEn ? 'Full-Time (18h)' : 'Intera (18h)'}</option>
+          <option value="coe">🏫 ${isEn ? 'External (COE)' : 'COE'}</option>
+          <option value="spezzone">🧩 ${isEn ? 'Part-Hours' : 'Spezzone'}</option>
+          <option value="part_time">⏳ ${isEn ? 'Part-Time' : 'Part-Time'}</option>
         </select>
-        <input type="number" id="newTeacherTarget" class="search-input" placeholder="Ore" value="18" style="width:55px;" title="Ore Cattedra Contrattuali">
-        <button class="btn btn-primary" onclick="addTeacher()">+ Aggiungi Docente</button>
+        <input type="number" id="newTeacherTarget" class="search-input" placeholder="${isEn ? 'Hours' : 'Ore'}" value="18" style="width:55px;" title="${isEn ? 'Contractual Assignment Hours' : 'Ore Cattedra Contrattuali'}">
+        <button class="btn btn-primary" onclick="addTeacher()">+ ${isEn ? 'Add Teacher' : 'Aggiungi Docente'}</button>
       </div>
     </div>
 
@@ -3172,29 +3501,29 @@ async function renderTeachers() {
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;gap:8px;flex-wrap:wrap;">
       <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
         <button class="btn btn-sm btn-sec teacher-filter-btn ${currentTeacherFilterMode === 'all' ? 'active' : ''}" id="btnTeachAll" onclick="setTeacherFilter('all')">
-          Tutti (${totalTeachers})
+          ${isEn ? 'All' : 'Tutti'} (${totalTeachers})
         </button>
-        <button class="btn btn-sm btn-sec teacher-filter-btn ${currentTeacherFilterMode === 'intera' ? 'active' : ''}" id="btnTeachIntera" onclick="setTeacherFilter('intera')" title="Docenti con Cattedra Ordinaria Intera (18 ore)">
-          🏛️ Intere (${interaTeachers})
+        <button class="btn btn-sm btn-sec teacher-filter-btn ${currentTeacherFilterMode === 'intera' ? 'active' : ''}" id="btnTeachIntera" onclick="setTeacherFilter('intera')" title="${isEn ? 'Teachers with standard full-time post (18 hours)' : 'Docenti con Cattedra Ordinaria Intera (18 ore)'}">
+          🏛️ ${isEn ? 'Full-Time' : 'Intere'} (${interaTeachers})
         </button>
-        <button class="btn btn-sm btn-sec teacher-filter-btn ${currentTeacherFilterMode === 'coe' ? 'active' : ''}" id="btnTeachCoe" onclick="setTeacherFilter('coe')" title="Docenti con Cattedra Orario Esterna (COE)">
-          🏫 COE (${coeTeachers})
+        <button class="btn btn-sm btn-sec teacher-filter-btn ${currentTeacherFilterMode === 'coe' ? 'active' : ''}" id="btnTeachCoe" onclick="setTeacherFilter('coe')" title="${isEn ? 'Teachers with external completion post (COE)' : 'Docenti con Cattedra Orario Esterna (COE)'}">
+          🏫 ${isEn ? 'External COE' : 'COE'} (${coeTeachers})
         </button>
-        <button class="btn btn-sm btn-sec teacher-filter-btn ${currentTeacherFilterMode === 'spezzone' ? 'active' : ''}" id="btnTeachSpezzone" onclick="setTeacherFilter('spezzone')" title="Docenti su Spezzone Orario (cattedre ridotte/residue)">
-          🧩 Spezzoni (${spezzoneTeachers})
+        <button class="btn btn-sm btn-sec teacher-filter-btn ${currentTeacherFilterMode === 'spezzone' ? 'active' : ''}" id="btnTeachSpezzone" onclick="setTeacherFilter('spezzone')" title="${isEn ? 'Teachers with reduced / residual hours post' : 'Docenti su Spezzone Orario (cattedre ridotte/residue)'}">
+          🧩 ${isEn ? 'Part-Hours' : 'Spezzoni'} (${spezzoneTeachers})
         </button>
-        <button class="btn btn-sm btn-sec teacher-filter-btn ${currentTeacherFilterMode === 'pt' ? 'active' : ''}" id="btnTeachPt" onclick="setTeacherFilter('pt')" title="Docenti con contratto Part-Time">
-          ⏳ Part-Time (${ptTeachers})
+        <button class="btn btn-sm btn-sec teacher-filter-btn ${currentTeacherFilterMode === 'pt' ? 'active' : ''}" id="btnTeachPt" onclick="setTeacherFilter('pt')" title="${isEn ? 'Teachers with part-time contract' : 'Docenti con contratto Part-Time'}">
+          ⏳ ${isEn ? 'Part-Time' : 'Part-Time'} (${ptTeachers})
         </button>
-        <button class="btn btn-sm btn-sec teacher-filter-btn ${currentTeacherFilterMode === 'disp' ? 'active' : ''}" id="btnTeachDisp" onclick="setTeacherFilter('disp')" title="Docenti con ore cattedra non coperte da lezioni: assegnate a Disposizione">
-          📌 Con Disposizione D (${dispTeachers} docenti — ${totalDispHours}h D tot.)
+        <button class="btn btn-sm btn-sec teacher-filter-btn ${currentTeacherFilterMode === 'disp' ? 'active' : ''}" id="btnTeachDisp" onclick="setTeacherFilter('disp')" title="${isEn ? 'Teachers with unassigned hours designated as On-Duty D' : 'Docenti con ore cattedra non coperte da lezioni: assegnate a Disposizione'}">
+          📌 ${isEn ? 'With On-Duty D' : 'Con Disposizione D'} (${dispTeachers} ${isEn ? 'teachers' : 'docenti'} — ${totalDispHours}h D tot.)
         </button>
-        <button class="btn btn-sm btn-sec teacher-filter-btn ${currentTeacherFilterMode === 'full' ? 'active' : ''}" id="btnTeachFull" onclick="setTeacherFilter('full')" title="Docenti con cattedra completamente coperta">
-          ✓ Cattedre Piene (${fullTeachers})
+        <button class="btn btn-sm btn-sec teacher-filter-btn ${currentTeacherFilterMode === 'full' ? 'active' : ''}" id="btnTeachFull" onclick="setTeacherFilter('full')" title="${isEn ? 'Teachers with fully covered assignment hours' : 'Docenti con cattedra completamente coperta'}">
+          ✓ ${isEn ? 'Complete Assignments' : 'Cattedre Piene'} (${fullTeachers})
         </button>
       </div>
       <div style="font-size:12px;color:var(--text-muted);">
-        🏷️ <b>Nome Breve</b> (es. <code>ROSSI M.</code>): utilizzato nelle stampe compatte e orari classi
+        🏷️ <b>${isEn ? 'Short Name' : 'Nome Breve'}</b> (${isEn ? 'e.g.' : 'es.'} <code>ROSSI M.</code>): ${isEn ? 'used in compact printouts and class timetables' : 'utilizzato nelle stampe compatte e orari classi'}
       </div>
     </div>
 
@@ -3203,15 +3532,15 @@ async function renderTeachers() {
         <thead>
           <tr>
             <th style="width:35px;">#</th>
-            <th style="min-width:180px;">Docente (Nome Completo)</th>
-            <th style="width:150px;">Nome Breve (Stampa)</th>
-            <th style="width:85px;text-align:center;">CDC</th>
-            <th style="width:165px;text-align:center;">Cattedra & Ore</th>
-            <th style="width:105px;text-align:center;">Giorni Min-Max</th>
-            <th style="min-width:160px;">Discipline Insegnate</th>
-            <th style="min-width:140px;">Classi Assegnate</th>
-            <th>Note</th>
-            <th style="text-align:right;min-width:280px;">Azioni Rapide</th>
+            <th style="min-width:180px;">${_t('teachers.th_name', 'Docente (Nome Completo)')}</th>
+            <th style="width:150px;">${_t('teachers.th_short', 'Nome Breve (Stampa)')}</th>
+            <th style="width:85px;text-align:center;">${_t('teachers.th_cdc', 'CDC')}</th>
+            <th style="width:165px;text-align:center;">${_t('teachers.th_hours', 'Cattedra & Ore')}</th>
+            <th style="width:105px;text-align:center;">${_t('teachers.th_days', 'Giorni Min-Max')}</th>
+            <th style="min-width:160px;">${_t('teachers.th_subjects', 'Discipline Insegnate')}</th>
+            <th style="min-width:140px;">${_t('teachers.th_classes', 'Classi Assegnate')}</th>
+            <th>${_t('teachers.th_notes', 'Note')}</th>
+            <th style="text-align:right;min-width:280px;">${_t('teachers.th_actions', 'Azioni Rapide')}</th>
           </tr>
         </thead>
         <tbody>
@@ -3595,7 +3924,7 @@ function openEditTeacherModal(name) {
         </div>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-sec" onclick="closeModal()">Annulla</button>
+        <button class="btn btn-sec" onclick="closeModal()" data-i18n="common.cancel">${_t('common.cancel', 'Annulla')}</button>
         <button class="btn btn-primary" onclick="submitEditTeacher('${escapeJs(name)}')">💾 Salva Parametri</button>
       </div>
     </div>
@@ -3775,9 +4104,10 @@ async function addTeacher() {
 }
 
 async function deleteTeacher(name) {
-  if (confirm(`Sei sicuro di voler eliminare il docente "${name}"?`)) {
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
+  if (confirm(isEn ? `Are you sure you want to delete teacher "${name}"?` : `Sei sicuro di voler eliminare il docente "${name}"?`)) {
     await fetch(`/api/teachers/${encodeURIComponent(name)}`, { method: 'DELETE' });
-    showToast(`Docente "${name}" eliminato.`, 'warn');
+    showToast(isEn ? `Teacher "${name}" deleted.` : `Docente "${name}" eliminato.`, 'warn');
     renderTeachers();
   }
 }
@@ -3874,7 +4204,7 @@ function openAggiornaOrganicoModal() {
         <div id="organicoDiffContainer" style="display:none;"></div>
       </div>
       <div class="modal-footer" style="padding:12px 20px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;background:#f8fafc;">
-        <button class="btn btn-sec" onclick="closeModal()">Chiudi</button>
+        <button class="btn btn-sec" onclick="closeModal()" data-i18n="common.close">${_t('common.close', 'Chiudi')}</button>
         <div id="organicoFooterActions" style="display:none;gap:10px;">
           <button class="btn btn-primary" onclick="submitApplyOrganico()" style="padding:8px 18px;font-weight:700;">
             ✅ Conferma e Applica Modifiche Organico
@@ -4694,7 +5024,7 @@ function openEditClassModal(className) {
         </div>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-sec" onclick="closeModal()">Annulla</button>
+        <button class="btn btn-sec" onclick="closeModal()" data-i18n="common.cancel">${_t('common.cancel', 'Annulla')}</button>
         <button class="btn btn-primary" onclick="saveClassDetails('${escapeJs(className)}')">💾 Salva Modifiche</button>
       </div>
     </div>
@@ -4720,9 +5050,10 @@ async function saveClassDetails(className) {
 }
 
 async function deleteClass(name) {
-  if (confirm(`Eliminare la classe "${name}" e tutti i suoi gruppi?`)) {
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
+  if (confirm(isEn ? `Delete class "${name}" and all its groups?` : `Eliminare la classe "${name}" e tutti i suoi gruppi?`)) {
     await fetch(`/api/classes/${encodeURIComponent(name)}`, { method: 'DELETE' });
-    showToast(`Classe "${name}" eliminata.`, 'warn');
+    showToast(isEn ? `Class "${name}" deleted.` : `Classe "${name}" eliminata.`, 'warn');
     renderClasses();
   }
 }
@@ -4757,7 +5088,7 @@ function openAddGroupModal(className = '') {
         </div>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-sec" onclick="closeModal()">Annulla</button>
+        <button class="btn btn-sec" onclick="closeModal()" data-i18n="common.cancel">${_t('common.cancel', 'Annulla')}</button>
         <button class="btn btn-primary" onclick="saveNewGroup()">💾 Aggiungi Gruppo</button>
       </div>
     </div>
@@ -4831,7 +5162,7 @@ function openEditGroupModal(groupName) {
         </div>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-sec" onclick="closeModal()">Annulla</button>
+        <button class="btn btn-sec" onclick="closeModal()" data-i18n="common.cancel">${_t('common.cancel', 'Annulla')}</button>
         <button class="btn btn-primary" onclick="submitEditGroup('${escapeJs(groupName)}')">💾 Salva Modifiche</button>
       </div>
     </div>
@@ -4890,9 +5221,10 @@ async function quickEditGroupStudents(groupName, curStudents) {
 }
 
 async function deleteGroup(groupName) {
-  if (confirm(`Eliminare il gruppo articolato "${groupName}"?`)) {
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
+  if (confirm(isEn ? `Delete group "${groupName}"?` : `Eliminare il gruppo articolato "${groupName}"?`)) {
     await fetch(`/api/groups/${encodeURIComponent(groupName)}`, { method: 'DELETE' });
-    showToast(`Gruppo "${groupName}" eliminato.`, 'warn');
+    showToast(isEn ? `Group "${groupName}" deleted.` : `Gruppo "${groupName}" eliminato.`, 'warn');
     renderClasses();
   }
 }
@@ -4988,7 +5320,7 @@ function openImportStudentsModal() {
         </details>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-sec" onclick="closeModal()">Chiudi</button>
+        <button class="btn btn-sec" onclick="closeModal()" data-i18n="common.close">${_t('common.close', 'Chiudi')}</button>
       </div>
     </div>
   `);
@@ -5081,15 +5413,15 @@ async function renderSubjects() {
         <thead>
           <tr>
             <th style="width:40px;">#</th>
-            <th style="min-width:180px;">Materia / Disciplina</th>
-            <th style="width:145px;text-align:center;">Classe di Concorso (CDC)</th>
+            <th style="min-width:180px;">${_t('subjects.th_name', 'Materia / Disciplina')}</th>
+            <th style="width:145px;text-align:center;">${_t('teachers.th_cdc', 'Classe di Concorso (CDC)')}</th>
             <th style="width:145px;text-align:center;">Rientri Pomeridiani</th>
             <th style="width:145px;text-align:center;">Fascia Preferita</th>
-            <th style="width:110px;text-align:center;">Ore Totali</th>
+            <th style="width:110px;text-align:center;">${_t('subjects.th_hours', 'Ore Totali')}</th>
             <th style="min-width:180px;">Docenti che la Insegnano</th>
             <th style="min-width:160px;">Classi Destinatarie</th>
-            <th>Note</th>
-            <th style="text-align:right;min-width:260px;">Azioni Rapide</th>
+            <th>${_t('teachers.th_notes', 'Note')}</th>
+            <th style="text-align:right;min-width:260px;">${_t('teachers.th_actions', 'Azioni Rapide')}</th>
           </tr>
         </thead>
         <tbody>
@@ -5235,7 +5567,7 @@ function openEditSubjectModal(subjectName) {
         </div>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-sec" onclick="closeModal()">Annulla</button>
+        <button class="btn btn-sec" onclick="closeModal()" data-i18n="common.cancel">${_t('common.cancel', 'Annulla')}</button>
         <button class="btn btn-primary" onclick="submitEditSubject('${escapeJs(subjectName)}')">💾 Salva Parametri</button>
       </div>
     </div>
@@ -5291,9 +5623,10 @@ async function addSubject() {
 }
 
 async function deleteSubject(name) {
-  if (confirm(`Eliminare la materia "${name}"?`)) {
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
+  if (confirm(isEn ? `Delete subject "${name}"?` : `Eliminare la materia "${name}"?`)) {
     await fetch(`/api/subjects/${encodeURIComponent(name)}`, { method: 'DELETE' });
-    showToast(`Materia "${name}" eliminata.`, 'warn');
+    showToast(isEn ? `Subject "${name}" deleted.` : `Materia "${name}" eliminata.`, 'warn');
     renderSubjects();
   }
 }
@@ -5435,13 +5768,13 @@ async function renderRooms() {
         <thead>
           <tr>
             <th style="width:40px;">#</th>
-            <th style="min-width:170px;">Nome Aula / Spazio</th>
-            <th style="width:150px;">Plesso (Disposizione)</th>
-            <th style="min-width:180px;">Tipologia & Architettura Spazio</th>
+            <th style="min-width:170px;">${_t('rooms.th_room', 'Nome Aula / Spazio')}</th>
+            <th style="width:150px;">${_t('rooms.th_building', 'Plesso (Disposizione)')}</th>
+            <th style="min-width:180px;">${_t('rooms.th_lab', 'Tipologia & Architettura Spazio')}</th>
             <th style="width:160px;text-align:center;">Flag Cambio Plesso</th>
-            <th style="width:125px;text-align:center;">Capienza Max</th>
+            <th style="width:125px;text-align:center;">${_t('rooms.th_capacity', 'Capienza Max')}</th>
             <th style="min-width:180px;">Classe Base Residente</th>
-            <th style="text-align:right;width:110px;">Azioni</th>
+            <th style="text-align:right;width:110px;">${_t('rooms.th_actions', 'Azioni')}</th>
           </tr>
         </thead>
         <tbody>
@@ -5629,7 +5962,7 @@ function openEditRoomModal(roomName) {
         </div>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-sec" onclick="closeModal()">Annulla</button>
+        <button class="btn btn-sec" onclick="closeModal()" data-i18n="common.cancel">${_t('common.cancel', 'Annulla')}</button>
         <button class="btn btn-primary" onclick="saveRoomDetails('${escapeJs(roomName)}')">💾 Salva Modifiche</button>
       </div>
     </div>
@@ -5693,7 +6026,7 @@ function openAddBuildingModal() {
         </div>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-sec" onclick="closeModal()">Annulla</button>
+        <button class="btn btn-sec" onclick="closeModal()" data-i18n="common.cancel">${_t('common.cancel', 'Annulla')}</button>
         <button class="btn btn-primary" onclick="submitAddBuilding()">💾 Crea Plesso</button>
       </div>
     </div>
@@ -5744,7 +6077,7 @@ function openEditBuildingModal(bldName, shortCode, comments) {
         </div>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-sec" onclick="closeModal()">Annulla</button>
+        <button class="btn btn-sec" onclick="closeModal()" data-i18n="common.cancel">${_t('common.cancel', 'Annulla')}</button>
         <button class="btn btn-primary" onclick="submitEditBuilding('${escapeJs(bldName)}')">💾 Salva Modifiche</button>
       </div>
     </div>
@@ -5779,13 +6112,14 @@ async function submitEditBuilding(origName) {
 }
 
 async function deleteBuilding(name) {
-  if (confirm(`Sei sicuro di voler eliminare il plesso "${name}"? Tutte le aule e classi associate dovranno essere riassegnate.`)) {
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
+  if (confirm(isEn ? `Are you sure you want to delete building "${name}"? All associated rooms and classes must be reassigned.` : `Sei sicuro di voler eliminare il plesso "${name}"? Tutte le aule e classi associate dovranno essere riassegnate.`)) {
     const res = await fetch(`/api/buildings/${encodeURIComponent(name)}`, { method: 'DELETE' });
     if (res.ok) {
-      showToast(`Plesso "${name}" eliminato.`, 'warn');
+      showToast(isEn ? `Building "${name}" deleted.` : `Plesso "${name}" eliminato.`, 'warn');
       renderRooms();
     } else {
-      alert('Impossibile eliminare il plesso.');
+      alert(isEn ? 'Cannot delete building.' : 'Impossibile eliminare il plesso.');
     }
   }
 }
@@ -5817,9 +6151,10 @@ async function addRoom() {
 }
 
 async function deleteRoom(name) {
-  if (confirm(`Eliminare l'aula/spazio "${name}"?`)) {
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
+  if (confirm(isEn ? `Delete room/space "${name}"?` : `Eliminare l'aula/spazio "${name}"?`)) {
     await fetch(`/api/rooms/${encodeURIComponent(name)}`, { method: 'DELETE' });
-    showToast(`Aula "${name}" eliminata.`, 'warn');
+    showToast(isEn ? `Room "${name}" deleted.` : `Aula "${name}" eliminata.`, 'warn');
     renderRooms();
   }
 }
@@ -5987,26 +6322,26 @@ async function renderActivities() {
         <thead>
           ${isGrouped ? `
             <tr>
-              <th style="width:110px;">Classe / Gruppo</th>
-              <th>Materia / Disciplina</th>
-              <th>Docenti (Compresenze)</th>
-              <th style="min-width:140px;">Spazio / Aula</th>
-              <th style="width:85px;text-align:center;">Ore/Sett.</th>
-              <th style="width:125px;text-align:center;">Suddivisione</th>
-              <th>Sotto-attività FET</th>
-              <th style="width:85px;text-align:center;">Stato</th>
-              <th style="width:140px;text-align:right;">Azioni</th>
+              <th style="width:110px;">${_t('activities.th_class_group', 'Classe / Gruppo')}</th>
+              <th>${_t('activities.th_subject', 'Materia / Disciplina')}</th>
+              <th>${_t('activities.th_teachers', 'Docenti (Compresenze)')}</th>
+              <th style="min-width:140px;">${_t('activities.th_room', 'Spazio / Aula')}</th>
+              <th style="width:85px;text-align:center;">${_t('activities.th_hours_week', 'Ore/Sett.')}</th>
+              <th style="width:125px;text-align:center;">${_t('activities.th_blocks', 'Suddivisione')}</th>
+              <th>${_t('activities.th_sub_activities', 'Sotto-attività FET')}</th>
+              <th style="width:85px;text-align:center;">${_t('activities.th_status', 'Stato')}</th>
+              <th style="width:140px;text-align:right;">${_t('activities.th_actions', 'Azioni')}</th>
             </tr>
           ` : `
             <tr>
               <th style="width:75px;">ID</th>
-              <th>Classe / Gruppo</th>
-              <th>Materia</th>
-              <th>Docenti (Compresenze)</th>
-              <th style="min-width:130px;">Spazio / Aula</th>
-              <th style="width:80px;text-align:center;">Ore</th>
-              <th style="width:80px;text-align:center;">Stato</th>
-              <th style="text-align:right;">Azioni</th>
+              <th>${_t('activities.th_class_group', 'Classe / Gruppo')}</th>
+              <th>${_t('activities.th_subject', 'Materia')}</th>
+              <th>${_t('activities.th_teachers', 'Docenti (Compresenze)')}</th>
+              <th style="min-width:130px;">${_t('activities.th_room', 'Spazio / Aula')}</th>
+              <th style="width:80px;text-align:center;">${_t('activities.th_hours_week', 'Ore')}</th>
+              <th style="width:80px;text-align:center;">${_t('activities.th_status', 'Stato')}</th>
+              <th style="text-align:right;">${_t('activities.th_actions', 'Azioni')}</th>
             </tr>
           `}
         </thead>
@@ -6197,7 +6532,7 @@ async function openAccorpamentiModal() {
         `}
       </div>
       <div class="modal-footer">
-        <button class="btn btn-sec" onclick="closeModal()">Chiudi</button>
+        <button class="btn btn-sec" onclick="closeModal()" data-i18n="common.close">${_t('common.close', 'Chiudi')}</button>
       </div>
     </div>
   `);
@@ -6475,7 +6810,7 @@ async function openAddAccorpamentoRuleModal() {
         </div>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-sec" onclick="closeModal()">Annulla</button>
+        <button class="btn btn-sec" onclick="closeModal()" data-i18n="common.cancel">${_t('common.cancel', 'Annulla')}</button>
         <button class="btn btn-primary" onclick="submitAddAccorpamentoRule()">💾 Salva Regola</button>
       </div>
     </div>
@@ -6594,7 +6929,7 @@ async function openManualAccorpamentoModal() {
         </div>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-sec" onclick="closeModal()">Annulla</button>
+        <button class="btn btn-sec" onclick="closeModal()" data-i18n="common.cancel">${_t('common.cancel', 'Annulla')}</button>
         <button class="btn btn-primary" onclick="submitManualAccorpamento()">⚡ Unisci in Macro-Materia</button>
       </div>
     </div>
@@ -6780,7 +7115,7 @@ async function renderBlockRulesView() {
           ${(sectionsData.sections || []).map(s => {
             const p = s.percorso || 'tecnico';
             return `
-              <div style="background:#f8fafc;border:1px solid var(--border);border-radius:6px;padding:8px 12px;display:flex;flex-direction:column;gap:6px;min-width:170px;">
+              <div style="background:var(--bg-hover);border:1px solid var(--border);border-radius:6px;padding:8px 12px;display:flex;flex-direction:column;gap:6px;min-width:170px;">
                 <div style="display:flex;justify-content:space-between;align-items:center;">
                   <b style="font-size:14px;color:var(--primary);">Sezione ${s.section}</b>
                   <span style="font-size:11.5px;color:var(--text-muted);" title="${(s.classes || []).join(', ')}">${s.classes_count} classi</span>
@@ -6997,7 +7332,7 @@ async function openAddBlockRuleModal(existingRule = null) {
         </span>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-sec" onclick="closeModal()">Annulla</button>
+        <button class="btn btn-sec" onclick="closeModal()" data-i18n="common.cancel">${_t('common.cancel', 'Annulla')}</button>
         <button class="btn btn-primary" onclick="submitBlockRule('${escapeJs(r.id || '')}')">💾 Salva Regola</button>
       </div>
     </div>
@@ -7050,23 +7385,28 @@ async function submitBlockRule(existingId) {
 }
 
 async function deleteBlockRule(ruleId) {
-  if (confirm(`Eliminare questa regola di default?`)) {
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
+  if (confirm(isEn ? 'Delete this default rule?' : 'Eliminare questa regola di default?')) {
     const res = await fetch('/api/blocks/rules/delete', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id: ruleId })
     });
     if (res.ok) {
-      showToast('Regola eliminata con successo.', 'warn');
+      showToast(isEn ? 'Rule deleted successfully.' : 'Regola eliminata con successo.', 'warn');
       renderBlockRulesView();
     } else {
-      alert('Errore eliminazione regola.');
+      alert(isEn ? 'Error deleting rule.' : 'Errore eliminazione regola.');
     }
   }
 }
 
 async function resetAllCattedreToDefault() {
-  if (!confirm("Reimpostare TUTTE le cattedre alla suddivisione standard di default didattica per materia, percorso e periodo?\n\nTutte le suddivisioni puntuali verranno azzerate e le sotto-attività FET rigenerate secondo i default didattici (es. 10h -> 2+2+2+2+2, 7h -> 2+2+2+1 o 2+2+1+1+1, 6h -> 2+2+1+1, 4h -> 2+1+1 o 2+2, 3h lingue -> 1+1+1, 2h motorie/lab -> 2, ecc.).")) {
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
+  const msg = isEn
+    ? "Reset ALL teaching assignments to standard curriculum default blocks by subject, track, and period?\n\nAll custom splits will be reset and FET sub-activities regenerated according to educational defaults (e.g. 10h -> 2+2+2+2+2, 7h -> 2+2+2+1, 6h -> 2+2+1+1, 4h -> 2+2, 3h -> 1+1+1, 2h -> 2, etc.)."
+    : "Reimpostare TUTTE le cattedre alla suddivisione standard di default didattica per materia, percorso e periodo?\n\nTutte le suddivisioni puntuali verranno azzerate e le sotto-attività FET rigenerate secondo i default didattici (es. 10h -> 2+2+2+2+2, 7h -> 2+2+2+1 o 2+2+1+1+1, 6h -> 2+2+1+1, 4h -> 2+1+1 o 2+2, 3h lingue -> 1+1+1, 2h motorie/lab -> 2, ecc.).";
+  if (!confirm(msg)) {
     return;
   }
   try {
@@ -7075,16 +7415,16 @@ async function resetAllCattedreToDefault() {
     });
     if (res.ok) {
       const data = await res.json();
-      showToast(`Tutte le ${data.cattedre_count} cattedre sono state ripristinate ai default didattici (${data.activities_count} sotto-attività FET)!`, 'success');
+      showToast(isEn ? `All ${data.cattedre_count} teaching assignments have been reset to curriculum defaults (${data.activities_count} FET sub-activities)!` : `Tutte le ${data.cattedre_count} cattedre sono state ripristinate ai default didattici (${data.activities_count} sotto-attività FET)!`, 'success');
       if (currentView === 'block_rules') renderBlockRulesView();
       else if (currentView === 'activities') renderActivities();
       else if (currentView === 'accorpamenti') renderAccorpamenti();
     } else {
       const err = await res.json().catch(() => ({}));
-      alert('Errore durante il reset delle cattedre: ' + (err.error || 'Operazione fallita'));
+      alert((isEn ? 'Error resetting assignments: ' : 'Errore durante il reset delle cattedre: ') + (err.error || (isEn ? 'Operation failed' : 'Operazione fallita')));
     }
   } catch (e) {
-    alert('Errore durante il reset: ' + e.message);
+    alert((isEn ? 'Error during reset: ' : 'Errore durante il reset: ') + e.message);
   }
 }
 
@@ -7114,9 +7454,10 @@ function filterActivities(query) {
 }
 
 async function deleteActivity(id) {
-  if (confirm(`Eliminare l'attività #${id}?`)) {
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
+  if (confirm(isEn ? `Delete activity #${id}?` : `Eliminare l'attività #${id}?`)) {
     await fetch(`/api/activities/${id}`, { method: 'DELETE' });
-    showToast(`Attività #${id} eliminata.`, 'warn');
+    showToast(isEn ? `Activity #${id} deleted.` : `Attività #${id} eliminata.`, 'warn');
     renderActivities();
   }
 }
@@ -7273,7 +7614,7 @@ async function openNewCattedraModal(preset = {}) {
         </div>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-sec" onclick="closeModal()">Annulla</button>
+        <button class="btn btn-sec" onclick="closeModal()" data-i18n="common.cancel">${_t('common.cancel', 'Annulla')}</button>
         <button class="btn btn-primary" onclick="submitNewCattedra()">💾 Salva Cattedra</button>
       </div>
     </div>
@@ -7699,7 +8040,7 @@ async function openEditCattedraModal(idxOrId) {
       <div class="modal-footer" style="display:flex;justify-content:space-between;">
         <button class="btn btn-danger" onclick="deleteCattedra('${g.sub_activity_ids.join(',')}', '${escapeJs(g.teachers_display)} - ${escapeJs(g.subject)} (${escapeJs(g.students_display)})')">🗑️ Elimina</button>
         <div style="display:flex;gap:8px;">
-          <button class="btn btn-sec" onclick="closeModal()">Annulla</button>
+          <button class="btn btn-sec" onclick="closeModal()" data-i18n="common.cancel">${_t('common.cancel', 'Annulla')}</button>
           <button class="btn btn-primary" onclick="submitEditCattedra('${g.sub_activity_ids.join(',')}')">💾 Salva Modifiche</button>
         </div>
       </div>
@@ -8054,7 +8395,7 @@ async function openEditSingleActivityModal(actId) {
       <div class="modal-footer" style="display:flex;justify-content:space-between;">
         <button class="btn btn-danger" onclick="deleteActivity('${act.id}')">🗑️ Elimina</button>
         <div style="display:flex;gap:8px;">
-          <button class="btn btn-sec" onclick="closeModal()">Annulla</button>
+          <button class="btn btn-sec" onclick="closeModal()" data-i18n="common.cancel">${_t('common.cancel', 'Annulla')}</button>
           <button class="btn btn-primary" onclick="submitEditSingleActivity('${act.id}')">💾 Salva Modifiche</button>
         </div>
       </div>
@@ -8216,7 +8557,7 @@ function openEditBlocksModal(subIdsStr, currentBlocks, totalHours, desc, default
           </button>
         ` : '<div></div>'}
         <div style="display:flex;gap:8px;">
-          <button class="btn btn-sec" onclick="closeModal()">Annulla</button>
+          <button class="btn btn-sec" onclick="closeModal()" data-i18n="common.cancel">${_t('common.cancel', 'Annulla')}</button>
           <button class="btn btn-primary" onclick="submitUpdateBlocks('${subIdsStr}', ${totalHours})">💾 Salva Suddivisione</button>
         </div>
       </div>
@@ -8304,8 +8645,12 @@ async function submitUpdateBlocks(subIdsStr, totalHours) {
 }
 
 async function deleteCattedra(subIdsStr, desc) {
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
   const ids = subIdsStr.split(',');
-  if (confirm(`Sei sicuro di voler eliminare la cattedra:\n"${desc}"\ne tutte le sue ${ids.length} sotto-attività FET collegate?`)) {
+  const confirmMsg = isEn 
+    ? `Are you sure you want to delete teaching assignment:\n"${desc}"\nand all its ${ids.length} linked FET sub-activities?` 
+    : `Sei sicuro di voler eliminare la cattedra:\n"${desc}"\ne tutte le sue ${ids.length} sotto-attività FET collegate?`;
+  if (confirm(confirmMsg)) {
     const res = await fetch('/api/cattedre/delete', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -8314,7 +8659,7 @@ async function deleteCattedra(subIdsStr, desc) {
     if (res.ok) {
       renderActivities();
     } else {
-      alert("Errore durante l'eliminazione della cattedra.");
+      alert(isEn ? 'Error deleting teaching assignment.' : "Errore durante l'eliminazione della cattedra.");
     }
   }
 }
@@ -8330,6 +8675,9 @@ function showModal(html) {
     if (e.target === modalDiv) closeModal();
   });
   document.body.appendChild(modalDiv);
+  if (window.I18N) {
+    window.I18N.applyStaticTranslations(modalDiv);
+  }
 }
 
 function closeModal() {
@@ -8395,7 +8743,7 @@ async function renderAvailability() {
           </div>
 
           ${isSingle ? `
-            <div style="display:flex;background:#fff;border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;margin-left:6px;">
+            <div style="display:flex;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;margin-left:6px;">
               <button class="btn btn-sm ${activeAvailMode === 'teacher' ? 'btn-primary' : 'btn-sec'}" style="border:none;" onclick="switchAvailMode('teacher')">👨‍🏫 Docenti (${teacherList.length})</button>
               <button class="btn btn-sm ${activeAvailMode === 'class' ? 'btn-primary' : 'btn-sec'}" style="border:none;" onclick="switchAvailMode('class')">🎓 Classi (${classList.length})</button>
             </div>
@@ -8471,11 +8819,11 @@ async function renderAvailability() {
 
     <!-- Pannello Interattivo Gestione Preferenze & Desiderata Docente -->
     ${isSingle && activeAvailMode === 'teacher' && curTeacher ? `
-      <div class="card" style="padding:12px 16px;margin-bottom:12px;background:#f8fafc;border:1.5px solid #cbd5e1;border-radius:var(--radius-md);">
+      <div class="card" style="padding:12px 16px;margin-bottom:12px;background:var(--bg-hover);border:1.5px solid var(--border);border-radius:var(--radius-md);">
         <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:10px;">
           <div style="display:flex;align-items:center;gap:8px;">
             <span style="font-size:18px;">🎨</span>
-            <b style="font-size:13px;color:#0f172a;">Gestione Preferenze & Desiderata: <u>${escapeHtml(activeAvailEntity)}</u></b>
+            <b style="font-size:13px;color:var(--text-main);">Gestione Preferenze & Desiderata: <u>${escapeHtml(activeAvailEntity)}</u></b>
             <span class="badge badge-info" style="font-size:10.5px;">${curTeacher.cdc || 'Docente'}</span>
           </div>
           <div style="display:flex;gap:8px;align-items:center;">
@@ -8486,8 +8834,8 @@ async function renderAvailability() {
 
         <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:10px;">
           <!-- Fascia Oraria Desiderata -->
-          <div style="background:#fff;padding:8px 12px;border:1px solid #e2e8f0;border-radius:6px;">
-            <div style="font-size:11px;font-weight:700;color:#475569;margin-bottom:6px;text-transform:uppercase;">
+          <div style="background:var(--bg-card);padding:8px 12px;border:1px solid var(--border);border-radius:6px;">
+            <div style="font-size:11px;font-weight:700;color:var(--text-sub);margin-bottom:6px;text-transform:uppercase;">
               ⏰ Fascia Oraria Desiderata
             </div>
             <div style="display:flex;gap:6px;flex-wrap:wrap;">
@@ -8499,7 +8847,7 @@ async function renderAvailability() {
           </div>
 
           <!-- Giorno Libero Desiderato -->
-          <div style="background:#fff;padding:8px 12px;border:1px solid #e2e8f0;border-radius:6px;">
+          <div style="background:var(--bg-card);padding:8px 12px;border:1px solid var(--border);border-radius:6px;">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
               <span style="font-size:11px;font-weight:700;color:#475569;text-transform:uppercase;">⭐ Giorno Libero (1ª Scelta)</span>
               <label style="font-size:11px;color:#0284c7;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:4px;" title="Spunta per rendere il giorno libero un vincolo FET tassativo al 100%">
@@ -8621,6 +8969,7 @@ function filterMatrixTable(query) {
 }
 
 function renderAvailabilityGridHtml(days, hours, slots, breakTimes, teacherPref = null) {
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
   const slotsSet = new Set(slots);
   const breakSet = new Set(breakTimes || []);
 
@@ -8628,8 +8977,10 @@ function renderAvailabilityGridHtml(days, hours, slots, breakTimes, teacherPref 
   const freeDay1 = teacherPref?.free_day_1 || '';
   const freeDayStrict = teacherPref?.free_day_strict || false;
 
-  let headerHtml = `<div class="tt-header" style="background:#153d61;">Ora</div>` + days.map(d => {
-    let dayLabel = d;
+  const hourHeaderLbl = isEn ? 'Period' : 'Ora';
+  let headerHtml = `<div class="tt-header" style="background:#153d61;">${hourHeaderLbl}</div>` + days.map(d => {
+    const formattedDay = formatDayName(d, true);
+    let dayLabel = formattedDay;
     const isFree = (d === freeDay1);
     const starBtn = (activeAvailMode === 'teacher' && teacherPref) ? `
       <span style="color:${isFree ? '#fde047' : 'rgba(255,255,255,0.6)'};font-size:12px;margin-left:3px;vertical-align:middle;">
@@ -8637,12 +8988,13 @@ function renderAvailabilityGridHtml(days, hours, slots, breakTimes, teacherPref 
       </span>
     ` : '';
     if (isFree) {
-      dayLabel = `${d} <span style="font-size:9.5px;background:rgba(255,255,255,0.25);padding:1px 4px;border-radius:3px;margin-left:2px;" title="${freeDayStrict ? 'Giorno libero obbligatorio 100%' : 'Giorno libero desiderato (Soft 85%)'}">⭐ Libero</span>`;
+      const freeTag = isEn ? '⭐ Free Day' : '⭐ Libero';
+      dayLabel = `${formattedDay} <span style="font-size:9.5px;background:rgba(255,255,255,0.25);padding:1px 4px;border-radius:3px;margin-left:2px;" title="${freeDayStrict ? (isEn ? 'Strict Free Day 100%' : 'Giorno libero obbligatorio 100%') : (isEn ? 'Preferred Free Day (Soft 85%)' : 'Giorno libero desiderato (Soft 85%)')}">${freeTag}</span>`;
     }
     const clickAttr = (activeAvailMode === 'teacher' && teacherPref) ? `
       onclick="quickSetTeacherPref('${escapeJs(activeAvailEntity)}', 'free_day_1', '${isFree ? '' : d}')" 
       style="cursor:pointer;user-select:none;" 
-      title="${isFree ? 'Clicca per rimuovere giorno libero (' + d + ')' : 'Clicca per impostare ' + d + ' come Giorno Libero'}"
+      title="${isFree ? (isEn ? 'Click to remove free day (' + formattedDay + ')' : 'Clicca per rimuovere giorno libero (' + formattedDay + ')') : (isEn ? 'Click to set ' + formattedDay + ' as Free Day' : 'Clicca per impostare ' + formattedDay + ' come Giorno Libero')}"
     ` : '';
     return `<div class="tt-header" ${clickAttr}>${dayLabel} ${starBtn}</div>`;
   }).join('');
@@ -8655,7 +9007,7 @@ function renderAvailabilityGridHtml(days, hours, slots, breakTimes, teacherPref 
 
     for (const d of days) {
       if (isIntervallo) {
-        rowsHtml += `<div class="tt-cell is-break">INTERVALLO</div>`;
+        rowsHtml += `<div class="tt-cell is-break">${isEn ? 'RECESS' : 'INTERVALLO'}</div>`;
         continue;
       }
       const key = `${d}|${h}`;
@@ -8663,9 +9015,9 @@ function renderAvailabilityGridHtml(days, hours, slots, breakTimes, teacherPref 
       const isUnavail = slotsSet.has(key);
 
       if (isBreak) {
-        const breakLabel = d === 'Sab' ? 'SABATO CHIUSO' : '⏸️ PAUSA';
+        const breakLabel = d === 'Sab' ? (isEn ? 'SATURDAY CLOSED' : 'SABATO CHIUSO') : (isEn ? '⏸️ BREAK' : '⏸️ PAUSA');
         rowsHtml += `
-          <div class="tt-cell is-institute-break" title="${d === 'Sab' ? 'Sabato chiuso (0 ore di default - settimana corta)' : 'Pausa orario d\'istituto (lezioni non ammesse in questa fascia)'}">
+          <div class="tt-cell is-institute-break" title="${d === 'Sab' ? (isEn ? 'Saturday closed (0 periods - short week)' : 'Sabato chiuso (0 ore di default - settimana corta)') : (isEn ? 'Institute break slot' : 'Pausa orario d\'istituto (lezioni non ammesse in questa fascia)')}">
             <span>${breakLabel}</span>
           </div>
         `;
@@ -8678,12 +9030,15 @@ function renderAvailabilityGridHtml(days, hours, slots, breakTimes, teacherPref 
           else if (prefShift === 'bilanciato' && hNum >= 2 && hNum <= 5) isPref = true;
         }
 
+        const availBadge = isEn ? '🟢 AVAIL' : '🟢 DISP';
+        const unavailBadge = isEn ? '🔴 UNAVAIL' : '🔴 NON DISP';
+
         rowsHtml += `
           <div class="tt-cell ${isUnavail ? 'is-unavailable' : 'is-available'} ${isPref ? 'is-preferred' : ''}" 
                data-slot="${key}" 
                onclick="toggleSlot(this)"
-               title="${isPref ? `Fascia preferita (${teacherPref.pref_shift_weight || 85}%)` : (isUnavail ? 'Non disponibile' : 'Disponibile')}">
-            <span style="font-weight:600;">${isUnavail ? '🔴 NON DISP' : '🟢 DISP'}</span>
+               title="${isPref ? (isEn ? `Preferred slot (${teacherPref.pref_shift_weight || 85}%)` : `Fascia preferita (${teacherPref.pref_shift_weight || 85}%)`) : (isUnavail ? (isEn ? 'Unavailable' : 'Non disponibile') : (isEn ? 'Available' : 'Disponibile'))}">
+            <span style="font-weight:600;">${isUnavail ? unavailBadge : availBadge}</span>
             ${isPref ? '<span style="font-size:9.5px;color:#1d4ed8;font-weight:700;display:block;margin-top:2px;">⭐ PREF</span>' : ''}
           </div>
         `;
@@ -8700,15 +9055,16 @@ function renderAvailabilityGridHtml(days, hours, slots, breakTimes, teacherPref 
 }
 
 function toggleSlot(el) {
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
   const isUnavail = el.classList.contains('is-unavailable');
   if (isUnavail) {
     el.classList.remove('is-unavailable');
     el.classList.add('is-available');
-    el.innerHTML = '<span style="font-weight:600;">🟢 DISP</span>';
+    el.innerHTML = `<span style="font-weight:600;">${isEn ? '🟢 AVAIL' : '🟢 DISP'}</span>`;
   } else {
     el.classList.remove('is-available');
     el.classList.add('is-unavailable');
-    el.innerHTML = '<span style="font-weight:600;">🔴 NON DISP</span>';
+    el.innerHTML = `<span style="font-weight:600;">${isEn ? '🔴 UNAVAIL' : '🔴 NON DISP'}</span>`;
   }
 }
 
@@ -8739,6 +9095,7 @@ async function saveAvailability() {
 
 // --- VISTA MATRICE COMPLETA (RECORD PER RIGA COME EXCEL) ---
 function renderAvailabilityMatrixHtml(av, teacherList, classList, liceoSet) {
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
   const days = av.days || ['Lun', 'Mar', 'Mer', 'Gio', 'Ven'];
   const breakSet = new Set(av.break_times || []);
 
@@ -8774,9 +9131,10 @@ function renderAvailabilityMatrixHtml(av, teacherList, classList, liceoSet) {
     });
   }
 
-  let tableHeaderDays = `<th class="sticky-col" rowspan="2" style="width:200px;">${activeMatrixFilter === 'teachers' ? '👨‍🏫 Docente' : '🎓 Classe'}</th>`;
+  const entityHeaderLbl = activeMatrixFilter === 'teachers' ? (isEn ? '👨‍🏫 Teacher' : '👨‍🏫 Docente') : (isEn ? '🎓 Class' : '🎓 Classe');
+  let tableHeaderDays = `<th class="sticky-col" rowspan="2" style="width:200px;">${entityHeaderLbl}</th>`;
   days.forEach(d => {
-    tableHeaderDays += `<th colspan="${numericHours.length}" class="matrix-day-header">${d}</th>`;
+    tableHeaderDays += `<th colspan="${numericHours.length}" class="matrix-day-header">${escapeHtml(formatDayName(d, false))}</th>`;
   });
 
   let tableHeaderHours = '';
@@ -8796,7 +9154,7 @@ function renderAvailabilityMatrixHtml(av, teacherList, classList, liceoSet) {
       const isUnavail = row.slots.has(slot.key);
 
       if (isBreak) {
-        cellsHtml += `<td class="matrix-slot-cell is-break" title="Pausa d'istituto (${slot.key})">⏸️</td>`;
+        cellsHtml += `<td class="matrix-slot-cell is-break" title="${isEn ? 'Institute break slot' : 'Pausa d\'istituto'} (${slot.key})">⏸️</td>`;
       } else {
         cellsHtml += `
           <td class="matrix-slot-cell ${isUnavail ? 'is-unavail' : 'is-avail'}"
@@ -8804,7 +9162,7 @@ function renderAvailabilityMatrixHtml(av, teacherList, classList, liceoSet) {
               data-entity="${escapeHtml(row.name)}"
               data-slot="${slot.key}"
               onclick="toggleMatrixCell(this)"
-              title="${escapeHtml(row.name)} - ${slot.key}: ${isUnavail ? 'Non Disponibile' : 'Disponibile'}">
+              title="${escapeHtml(row.name)} - ${slot.key}: ${isUnavail ? (isEn ? 'Unavailable' : 'Non Disponibile') : (isEn ? 'Available' : 'Disponibile')}">
             ${isUnavail ? '✕' : '✓'}
           </td>
         `;
@@ -8895,32 +9253,40 @@ async function saveMatrixAvailability() {
 }
 
 async function applyLiceoPreset(className) {
-  if (!confirm(`Applicare il vincolo orario Liceo alla classe "${className}"?\n(Ore 7 e 8 non disponibili in tutti i giorni di rientro)`)) return;
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
+  const msg = isEn 
+    ? `Apply High School timetable constraint to class "${className}"?\n(Periods 7 and 8 unavailable on all return days)` 
+    : `Applicare il vincolo orario Liceo alla classe "${className}"?\n(Ore 7 e 8 non disponibili in tutti i giorni di rientro)`;
+  if (!confirm(msg)) return;
   const res = await fetch('/api/availability/preset_liceo', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ class_name: className })
   });
   if (res.ok) {
-    showToast(`Vincolo orario Liceo applicato a ${className}!`);
+    showToast(isEn ? `High School constraint applied to ${className}!` : `Vincolo orario Liceo applicato a ${className}!`);
     renderAvailability();
   } else {
-    alert('Errore applicazione vincolo.');
+    alert(isEn ? 'Error applying constraint.' : 'Errore applicazione vincolo.');
   }
 }
 
 async function applyLiceoPresetAll() {
-  if (!confirm('Applicare il vincolo orario Liceo a TUTTE le 15 classi del Liceo (sezioni C, D, L)?\n(Ore 7 e 8 bloccate al 100%)')) return;
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
+  const msg = isEn 
+    ? 'Apply High School timetable constraint to ALL 15 High School classes (sections C, D, L)?\n(Periods 7 and 8 100% blocked)' 
+    : 'Applicare il vincolo orario Liceo a TUTTE le 15 classi del Liceo (sezioni C, D, L)?\n(Ore 7 e 8 bloccate al 100%)';
+  if (!confirm(msg)) return;
   const res = await fetch('/api/availability/preset_liceo', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({})
   });
   if (res.ok) {
-    showToast('Vincolo orario applicato con successo a tutte le classi del Liceo!');
+    showToast(isEn ? 'Timetable constraint applied successfully to all High School classes!' : 'Vincolo orario applicato con successo a tutte le classi del Liceo!');
     renderAvailability();
   } else {
-    alert('Errore applicazione vincolo.');
+    alert(isEn ? 'Error applying constraint.' : 'Errore applicazione vincolo.');
   }
 }
 
@@ -8944,6 +9310,7 @@ function openClassAvailability(name) {
 let activeConstraintCategory = 'all'; // 'all' | 'Docenti' | 'Classi' | 'Spostamenti'
 
 async function renderConstraints() {
+  const _t = (k, fb) => window.I18N ? window.I18N.t(k, fb) : fb;
   const res = await fetch('/api/settings');
   const cfg = await res.json();
   stateData.settings = cfg;
@@ -8966,14 +9333,14 @@ async function renderConstraints() {
     <div class="card" style="margin-bottom:16px;">
       <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
         <div>
-          <div class="card-title">⚡ Regole e Vincoli Rigidi di Calcolo FET</div>
+          <div class="card-title">${_t('constraints.header_title', '⚡ Regole e Vincoli Rigidi di Calcolo FET')}</div>
           <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">
-            Regole matematiche applicate al solutore FET per compattare l'orario, azzerare le ore buche e gestire i trasferimenti tra plessi (<span id="constraintSubtitleCount">${activeCount} vincoli attivi su ${Object.keys(cons).length}</span>).
+            ${_t('constraints.subtitle_desc', 'Regole matematiche applicate al solutore FET per compattare l\'orario, azzerare le ore buche e gestire i trasferimenti tra plessi')} (<span id="constraintSubtitleCount">${activeCount} ${_t('constraints.active', 'attivi')} / ${Object.keys(cons).length}</span>).
           </div>
         </div>
         <div id="constraintAutoSaveBadge" style="display:inline-flex;align-items:center;gap:7px;background:#f0fdf4;border:1px solid #bbf7d0;padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;color:#16a34a;box-shadow:0 1px 2px rgba(0,0,0,0.04);transition:all 0.2s ease;">
           <span id="constraintSaveDot" style="width:8px;height:8px;border-radius:50%;background:#16a34a;display:inline-block;"></span>
-          <span id="constraintSaveText">Salvato in tempo reale</span>
+          <span id="constraintSaveText">${_t('constraints.saved_status', 'Salvato in tempo reale')}</span>
         </div>
       </div>
     </div>
@@ -8982,16 +9349,16 @@ async function renderConstraints() {
     <div class="toolbar" style="margin-bottom:16px;">
       <div class="segmented-control">
         <button class="segmented-btn ${activeConstraintCategory === 'all' ? 'active' : ''}" onclick="filterConstraints('all')">
-          Tutti i Vincoli (${Object.keys(cons).length})
+          ${_t('constraints.all', 'Tutti i Vincoli')} (${Object.keys(cons).length})
         </button>
         <button class="segmented-btn ${activeConstraintCategory === 'Docenti' ? 'active' : ''}" onclick="filterConstraints('Docenti')">
-          👨‍🏫 Vincoli Docenti (${docentiCons.length})
+          ${_t('constraints.teachers', '👨‍🏫 Vincoli Docenti')} (${docentiCons.length})
         </button>
         <button class="segmented-btn ${activeConstraintCategory === 'Classi' ? 'active' : ''}" onclick="filterConstraints('Classi')">
-          🎓 Vincoli Classi & Studenti (${classiCons.length})
+          ${_t('constraints.classes', '🎓 Vincoli Classi & Studenti')} (${classiCons.length})
         </button>
         <button class="segmented-btn ${activeConstraintCategory === 'Spostamenti' ? 'active' : ''}" onclick="filterConstraints('Spostamenti')">
-          🏢 Spostamenti & Plessi (${spostamentiCons.length})
+          ${_t('constraints.changes', '🏢 Spostamenti & Plessi')} (${spostamentiCons.length})
         </button>
       </div>
     </div>
@@ -9018,23 +9385,23 @@ async function renderConstraints() {
                   <span class="slider"></span>
                 </label>
                 <span id="c_active_label_${key}" style="font-size:12px;font-weight:600;color:${c.active ? 'var(--primary)' : 'var(--text-muted)'};">
-                  ${c.active ? 'Attivo' : 'Disattivo'}
+                  ${c.active ? _t('constraints.active', 'Attivo') : _t('constraints.inactive', 'Disattivo')}
                 </span>
               </div>
 
               <div style="display:flex;align-items:center;gap:12px;">
                 <div style="display:flex;align-items:center;gap:4px;">
-                  <span style="font-size:11px;color:var(--text-muted);">Parametro:</span>
+                  <span style="font-size:11px;color:var(--text-muted);">${_t('constraints.param', 'Parametro:')}</span>
                   <input type="number" id="c_val_${key}" class="num-input" value="${c.val !== undefined ? c.val : 0}" min="0" max="100" oninput="debounceAutoSaveConstraint('${key}')" onchange="autoSaveConstraintSingle('${key}')">
                 </div>
 
                 <div style="display:flex;align-items:center;gap:4px;">
                   ${isRigid ? `
                     <span class="badge badge-info" style="font-size:10.5px;padding:3px 6px;" title="FET richiede obbligatoriamente peso 100% per questo vincolo algebrico">
-                      🔒 100% (Rigido)
+                      ${_t('constraints.rigid_badge', '🔒 100% (Rigido)')}
                     </span>
                   ` : `
-                    <span style="font-size:11px;color:var(--text-muted);" title="Percentuale peso nel solutore FET (0-100%)">Peso:</span>
+                    <span style="font-size:11px;color:var(--text-muted);" title="Percentuale peso nel solutore FET (0-100%)">${_t('constraints.weight', 'Peso:')}</span>
                     <input type="number" id="c_weight_${key}" class="num-input" value="${weightVal}" min="0" max="100" style="width:58px;" title="Percentuale peso vincolo FET (Weight_Percentage)" oninput="debounceAutoSaveConstraint('${key}')" onchange="autoSaveConstraintSingle('${key}')">
                     <span style="font-size:11px;color:var(--text-muted);">%</span>
                   `}
@@ -9173,6 +9540,7 @@ async function saveConstraintsSettings() {
 // 11. PARAMETRI ISTITUZIONALI COMPLETI (Anagrafica, Calendario, Regole Excel)
 // ============================================================================
 async function renderParameters() {
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
   const res = await fetch('/api/settings');
   const cfg = await res.json();
   stateData.settings = cfg;
@@ -9185,15 +9553,15 @@ async function renderParameters() {
   container.innerHTML = `
     <!-- Sezione 1: Anagrafica Istituto -->
     <div class="card" style="margin-bottom:16px;">
-      <div class="card-title">🏛️ Anagrafica Istituto & File FET</div>
+      <div class="card-title">${isEn ? '🏛️ School / Institution Details & FET File' : '🏛️ Anagrafica Istituto & File FET'}</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:12px;">
         <div class="form-group">
-          <label class="form-label">Nome dell'Istituto Scolastico</label>
-          <input type="text" id="cfgInstName" class="form-input" value="${escapeHtml(cfg.institution || '')}" placeholder="es. Liceo & Tecnico Pico De Paperis">
+          <label class="form-label">${isEn ? 'School / Institution Name' : "Nome dell'Istituto Scolastico"}</label>
+          <input type="text" id="cfgInstName" class="form-input" value="${escapeHtml(cfg.institution || '')}" placeholder="${isEn ? 'e.g. Ludwig Von Drake High School' : 'es. Liceo & Tecnico Pico De Paperis'}">
         </div>
         <div class="form-group">
-          <label class="form-label">Note / Anno Scolastico</label>
-          <input type="text" id="cfgComments" class="form-input" value="${escapeHtml(cfg.comments || '')}" placeholder="es. A.S. 2026/2027">
+          <label class="form-label">${isEn ? 'Notes / School Year' : 'Note / Anno Scolastico'}</label>
+          <input type="text" id="cfgComments" class="form-input" value="${escapeHtml(cfg.comments || '')}" placeholder="${isEn ? 'e.g. S.Y. 2026/2027' : 'es. A.S. 2026/2027'}">
         </div>
       </div>
     </div>
@@ -9202,22 +9570,22 @@ async function renderParameters() {
     <div class="card" style="margin-bottom:16px;">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;">
         <div>
-          <div class="card-title">📅 Calendario Settimanale & Monte Ore Giornaliero</div>
+          <div class="card-title">${isEn ? '📅 Weekly Calendar & Daily Period Limits' : '📅 Calendario Settimanale & Monte Ore Giornaliero'}</div>
           <p style="font-size:12px;color:var(--text-muted);margin:6px 0 10px;max-width:750px;line-height:1.5;">
-            Configura le ore massime di lezione per ciascun giorno della settimana.
-            Il <b>Sabato</b> è gestito nativamente: con <b>0 ore</b> l'istituto è su <i>settimana corta</i> (chiuso); 
-            impostando ad es. <b>4 o 5 ore</b> il Sabato viene aperto automaticamente alle lezioni.
+            ${isEn 
+              ? 'Configure the maximum teaching periods for each day of the week. <b>Saturday</b> is handled natively: with <b>0 periods</b> the school is on a <i>5-day week</i> (closed); setting e.g. <b>4 or 5 periods</b> automatically opens Saturday to classes.' 
+              : 'Configura le ore massime di lezione per ciascun giorno della settimana. Il <b>Sabato</b> è gestito nativamente: con <b>0 ore</b> l\'istituto è su <i>settimana corta</i> (chiuso); impostando ad es. <b>4 o 5 ore</b> il Sabato viene aperto automaticamente alle lezioni.'}
           </p>
         </div>
         <div style="display:flex;gap:6px;flex-wrap:wrap;">
-          <button class="btn btn-sm btn-sec" onclick="applyDayHoursPreset('corta')" title="Lun-Ven aperti, Sabato chiuso a 0 ore">
-            ⚡ Settimana Corta (Sabato 0h)
+          <button class="btn btn-sm btn-sec" onclick="applyDayHoursPreset('corta')" title="${isEn ? 'Mon-Fri open, Saturday closed at 0h' : 'Lun-Ven aperti, Sabato chiuso a 0 ore'}">
+            ⚡ ${isEn ? '5-Day Week (Sat 0h)' : 'Settimana Corta (Sabato 0h)'}
           </button>
-          <button class="btn btn-sm btn-sec" onclick="applyDayHoursPreset('lunga_5h')" title="Settimana su 6 giorni con Sabato da 5 ore">
-            ⚡ Settimana Lunga (Sabato 5h)
+          <button class="btn btn-sm btn-sec" onclick="applyDayHoursPreset('lunga_5h')" title="${isEn ? '6-day week with 5-period Saturday' : 'Settimana su 6 giorni con Sabato da 5 ore'}">
+            ⚡ ${isEn ? '6-Day Week (Sat 5h)' : 'Settimana Lunga (Sabato 5h)'}
           </button>
-          <button class="btn btn-sm btn-sec" onclick="applyDayHoursPreset('lunga_4h')" title="Settimana su 6 giorni con Sabato da 4 ore">
-            ⚡ Settimana Lunga (Sabato 4h)
+          <button class="btn btn-sm btn-sec" onclick="applyDayHoursPreset('lunga_4h')" title="${isEn ? '6-day week with 4-period Saturday' : 'Settimana su 6 giorni con Sabato da 4 ore'}">
+            ⚡ ${isEn ? '6-Day Week (Sat 4h)' : 'Settimana Lunga (Sabato 4h)'}
           </button>
         </div>
       </div>
@@ -9226,9 +9594,10 @@ async function renderParameters() {
         ${daysList.map(d => {
           const val = dayLimits[d] !== undefined ? dayLimits[d] : (d === 'Sab' ? 0 : 6);
           const isSab = d === 'Sab';
+          const dayLabel = formatDayName(d, true);
           return `
             <div class="day-hours-box" style="${isSab ? 'border: 2px solid #cbd5e1; background: #f8fafc;' : ''}">
-              <div class="day-hours-box-name" style="${isSab ? 'color:#475569;' : ''}">${d} ${isSab ? '🗓️' : ''}</div>
+              <div class="day-hours-box-name" style="${isSab ? 'color:#475569;' : ''}">${escapeHtml(dayLabel)} ${isSab ? '🗓️' : ''}</div>
               <input type="number" 
                      id="day_limit_${d}" 
                      class="num-input" 
@@ -9237,11 +9606,11 @@ async function renderParameters() {
                      value="${val}" 
                      ${isSab ? 'oninput="updateSabatoBadge(this.value)"' : ''}
                      style="${isSab ? 'border-color:#94a3b8; font-size:15px;' : ''}">
-              <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">ore max</div>
+              <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">${isEn ? 'max periods' : 'ore max'}</div>
               ${isSab ? `
                 <div style="margin-top:6px;">
                   <span id="sabStatusBadge" class="badge ${val === 0 ? 'badge-warn' : 'badge-ok'}" style="font-size:10.5px;">
-                    ${val === 0 ? '● Chiuso (0h)' : `● Attivo (${val}h)`}
+                    ${isEn ? (val === 0 ? '● Closed (0h)' : `● Active (${val}h)`) : (val === 0 ? '● Chiuso (0h)' : `● Attivo (${val}h)`)}
                   </span>
                 </div>
               ` : ''}
@@ -9253,26 +9622,28 @@ async function renderParameters() {
 
     <!-- Sezione 3: Parametri Istituzionali Avanzati (Foglio Excel "Parametri") -->
     <div class="card" style="margin-bottom:16px;">
-      <div class="card-title">📋 Parametri Didattici & Istituzionali Completi (Tab Parametri Excel)</div>
+      <div class="card-title">${isEn ? '📋 Comprehensive Educational & Institutional Parameters (Excel Parameters Tab)' : '📋 Parametri Didattici & Istituzionali Completi (Tab Parametri Excel)'}</div>
       <p style="font-size:12px;color:var(--text-muted);margin:6px 0 16px;line-height:1.5;">
-        Parametri d'istituto integrati nella procedura automatica di generazione FET. Passa con il mouse sull'icona <span class="param-help-icon">i</span> per consultare la documentazione didattica del parametro.
+        ${isEn 
+          ? 'Institutional parameters integrated into the automatic FET timetable generation. Hover over <span class="param-help-icon">i</span> to view parameter documentation.' 
+          : 'Parametri d\'istituto integrati nella procedura automatica di generazione FET. Passa con il mouse sull\'icona <span class="param-help-icon">i</span> per consultare la documentazione didattica del parametro.'}
       </p>
 
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
         <!-- Blocco A: Sedi & Orari -->
         <div style="background:#f8fafc;border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px;">
-          <b style="font-size:13px;color:var(--primary);display:block;margin-bottom:10px;">🏢 Sedi, Orari & Trasferimenti</b>
+          <b style="font-size:13px;color:var(--primary);display:block;margin-bottom:10px;">🏢 ${isEn ? 'Buildings, Timetables & Travel' : 'Sedi, Orari & Trasferimenti'}</b>
 
           <div class="form-group">
             <label class="form-label">
-              ORARIO_SEDE_CENTRALE <span class="param-help-icon" title="Orario d'inizio e fine lezioni per la Sede Centrale">i</span>
+              ORARIO_SEDE_CENTRALE <span class="param-help-icon" title="${isEn ? 'Class start and end times for the Main Building' : 'Orario d\'inizio e fine lezioni per la Sede Centrale'}">i</span>
             </label>
             <input type="text" id="param_ORARIO_SEDE_CENTRALE" class="form-input" value="${escapeHtml(params.ORARIO_SEDE_CENTRALE || '8:00 - 13:00 / 14:00 - 16:00')}">
           </div>
 
           <div class="form-group">
             <label class="form-label">
-              ORARIO_SEDE_SUCCURSALE <span class="param-help-icon" title="Orario d'inizio e fine lezioni per la Sede Succursale">i</span>
+              ORARIO_SEDE_SUCCURSALE <span class="param-help-icon" title="${isEn ? 'Class start and end times for the Branch Building' : 'Orario d\'inizio e fine lezioni per la Sede Succursale'}">i</span>
             </label>
             <input type="text" id="param_ORARIO_SEDE_SUCCURSALE" class="form-input" value="${escapeHtml(params.ORARIO_SEDE_SUCCURSALE || '8:05 - 13:05 / 14:05 - 16:05')}">
           </div>
@@ -9280,13 +9651,13 @@ async function renderParameters() {
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
             <div class="form-group">
               <label class="form-label">
-                ORE_MATTINO <span class="param-help-icon" title="Numero massimo di ore previste al mattino">i</span>
+                ${isEn ? 'MORNING_PERIODS' : 'ORE_MATTINO'} <span class="param-help-icon" title="${isEn ? 'Maximum number of periods scheduled in the morning' : 'Numero massimo di ore previste al mattino'}">i</span>
               </label>
               <input type="number" id="param_ORE_MATTINO" class="form-input" value="${params.ORE_MATTINO || 6}">
             </div>
             <div class="form-group">
               <label class="form-label">
-                ORE_POMERIGGIO <span class="param-help-icon" title="Numero massimo di ore previste nei pomeriggi">i</span>
+                ${isEn ? 'AFTERNOON_PERIODS' : 'ORE_POMERIGGIO'} <span class="param-help-icon" title="${isEn ? 'Maximum number of periods scheduled in the afternoon' : 'Numero massimo di ore previste nei pomeriggi'}">i</span>
               </label>
               <input type="number" id="param_ORE_POMERIGGIO" class="form-input" value="${params.ORE_POMERIGGIO || 2}">
             </div>
@@ -9295,13 +9666,13 @@ async function renderParameters() {
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
             <div class="form-group">
               <label class="form-label">
-                TEMPO_SPOSTAMENTO_SEDI (min) <span class="param-help-icon" title="Minuti minimi di percorrenza tra Centrale e Succursale">i</span>
+                ${isEn ? 'TRAVEL_TIME_BETWEEN_BUILDINGS (min)' : 'TEMPO_SPOSTAMENTO_SEDI (min)'} <span class="param-help-icon" title="${isEn ? 'Minimum travel time between Main and Branch in minutes' : 'Minuti minimi di percorrenza tra Centrale e Succursale'}">i</span>
               </label>
               <input type="number" id="param_TEMPO_SPOSTAMENTO_SEDI_MINUTI" class="form-input" value="${params.TEMPO_SPOSTAMENTO_SEDI_MINUTI || 10}">
             </div>
             <div class="form-group">
               <label class="form-label">
-                MIN_INTERVALLO_PALESTRA (min) <span class="param-help-icon" title="Minuti di intervallo per raggiungere la palestra">i</span>
+                ${isEn ? 'GYM_TRAVEL_BUFFER (min)' : 'MIN_INTERVALLO_PALESTRA (min)'} <span class="param-help-icon" title="${isEn ? 'Buffer time in minutes to reach the gym' : 'Minuti di intervallo per raggiungere la palestra'}">i</span>
               </label>
               <input type="number" id="param_MIN_INTERVALLO_PALESTRA_MINUTI" class="form-input" value="${params.MIN_INTERVALLO_PALESTRA_MINUTI || 15}">
             </div>
@@ -9310,24 +9681,24 @@ async function renderParameters() {
 
         <!-- Blocco B: Didattica Pomeridiana & Regole FET -->
         <div style="background:#f8fafc;border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px;">
-          <b style="font-size:13px;color:var(--primary);display:block;margin-bottom:10px;">🧠 Didattica Pomeridiana & Regole Docenti</b>
+          <b style="font-size:13px;color:var(--primary);display:block;margin-bottom:10px;">🧠 ${isEn ? 'Afternoon Teaching & Teacher Rules' : 'Didattica Pomeridiana & Regole Docenti'}</b>
 
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
             <div class="form-group">
               <label class="form-label">
-                BLOCCO NO MATEMATICA POM. <span class="param-help-icon" title="Esclude matematica dai rientri pomeridiani">i</span>
+                ${isEn ? 'BLOCK AFTERNOON MATH' : 'BLOCCO NO MATEMATICA POM.'} <span class="param-help-icon" title="${isEn ? 'Excludes mathematics from afternoon periods' : 'Esclude matematica dai rientri pomeridiani'}">i</span>
               </label>
               <select id="param_BLOCCO_POMERIDIANO_NO_MAT" class="form-select">
-                <option value="SI" ${params.BLOCCO_POMERIDIANO_NO_MAT !== 'NO' ? 'selected' : ''}>SI (Consigliato)</option>
+                <option value="SI" ${params.BLOCCO_POMERIDIANO_NO_MAT !== 'NO' ? 'selected' : ''}>${isEn ? 'YES (Recommended)' : 'SI (Consigliato)'}</option>
                 <option value="NO" ${params.BLOCCO_POMERIDIANO_NO_MAT === 'NO' ? 'selected' : ''}>NO</option>
               </select>
             </div>
             <div class="form-group">
               <label class="form-label">
-                BLOCCO NO ITALIANO POM. <span class="param-help-icon" title="Esclude italiano dai rientri pomeridiani">i</span>
+                ${isEn ? 'BLOCK AFTERNOON HUMANITIES' : 'BLOCCO NO ITALIANO POM.'} <span class="param-help-icon" title="${isEn ? 'Excludes Italian/humanities from afternoon periods' : 'Esclude italiano dai rientri pomeridiani'}">i</span>
               </label>
               <select id="param_BLOCCO_POMERIDIANO_NO_ITA" class="form-select">
-                <option value="SI" ${params.BLOCCO_POMERIDIANO_NO_ITA === 'SI' ? 'selected' : ''}>SI</option>
+                <option value="SI" ${params.BLOCCO_POMERIDIANO_NO_ITA === 'SI' ? 'selected' : ''}>${isEn ? 'YES' : 'SI'}</option>
                 <option value="NO" ${params.BLOCCO_POMERIDIANO_NO_ITA !== 'SI' ? 'selected' : ''}>NO</option>
               </select>
             </div>
@@ -9336,19 +9707,19 @@ async function renderParameters() {
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
             <div class="form-group">
               <label class="form-label">
-                PREFERENZA PALESTRA POM. <span class="param-help-icon" title="Favorisce scienze motorie nelle ore pomeridiane">i</span>
+                ${isEn ? 'PREFER AFTERNOON PE / GYM' : 'PREFERENZA PALESTRA POM.'} <span class="param-help-icon" title="${isEn ? 'Prioritizes physical education in afternoon periods' : 'Favorisce scienze motorie nelle ore pomeridiane'}">i</span>
               </label>
               <select id="param_PREFERENZA_PALESTRA_POMERIGGIO" class="form-select">
-                <option value="SI" ${params.PREFERENZA_PALESTRA_POMERIGGIO === 'SI' ? 'selected' : ''}>SI</option>
+                <option value="SI" ${params.PREFERENZA_PALESTRA_POMERIGGIO === 'SI' ? 'selected' : ''}>${isEn ? 'YES' : 'SI'}</option>
                 <option value="NO" ${params.PREFERENZA_PALESTRA_POMERIGGIO !== 'SI' ? 'selected' : ''}>NO</option>
               </select>
             </div>
             <div class="form-group">
               <label class="form-label">
-                COMPATTA ORARIO DOCENTI <span class="param-help-icon" title="Minimizza le ore buche e compatta le giornate">i</span>
+                ${isEn ? 'COMPACT TEACHER SCHEDULES' : 'COMPATTA ORARIO DOCENTI'} <span class="param-help-icon" title="${isEn ? 'Minimizes gaps and compacts schedules' : 'Minimizza le ore buche e compatta le giornate'}">i</span>
               </label>
               <select id="param_COMPATTA_ORARIO_DOCENTI" class="form-select">
-                <option value="SI" ${params.COMPATTA_ORARIO_DOCENTI !== 'NO' ? 'selected' : ''}>SI</option>
+                <option value="SI" ${params.COMPATTA_ORARIO_DOCENTI !== 'NO' ? 'selected' : ''}>${isEn ? 'YES' : 'SI'}</option>
                 <option value="NO" ${params.COMPATTA_ORARIO_DOCENTI === 'NO' ? 'selected' : ''}>NO</option>
               </select>
             </div>
@@ -9357,13 +9728,13 @@ async function renderParameters() {
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
             <div class="form-group">
               <label class="form-label">
-                MAX BUCHE DOCENTI / SETT. <span class="param-help-icon" title="Numero massimo consentito di ore buche settimanali per docente">i</span>
+                ${isEn ? 'MAX TEACHER GAPS / WEEK' : 'MAX BUCHE DOCENTI / SETT.'} <span class="param-help-icon" title="${isEn ? 'Maximum allowed weekly gap hours per teacher' : 'Numero massimo consentito di ore buche settimanali per docente'}">i</span>
               </label>
               <input type="number" id="param_MAX_ORE_BUCHE_DOCENTI_SETTIMANA" class="form-input" value="${params.MAX_ORE_BUCHE_DOCENTI_SETTIMANA || 2}">
             </div>
             <div class="form-group">
               <label class="form-label">
-                MAX GIORNI DOCENTI COE <span class="param-help-icon" title="Massimo numero di giorni di presenza per docenti su cattedra orario esterna">i</span>
+                ${isEn ? 'MAX ATTENDANCE DAYS SHARED TEACHERS' : 'MAX GIORNI DOCENTI COE'} <span class="param-help-icon" title="${isEn ? 'Maximum presence days for teachers shared across multiple schools' : 'Massimo numero di giorni di presenza per docenti su cattedra orario esterna'}">i</span>
               </label>
               <input type="number" id="param_MAX_GIORNI_DOCENTI_COE" class="form-input" value="${params.MAX_GIORNI_DOCENTI_COE || 4}">
             </div>
@@ -9373,21 +9744,22 @@ async function renderParameters() {
     </div>
 
     <div style="display:flex;justify-content:flex-end;">
-      <button class="btn btn-primary" onclick="saveParametersSettings()">💾 Salva Tutti i Parametri Istituto</button>
+      <button class="btn btn-primary" onclick="saveParametersSettings()">💾 ${isEn ? 'Save All Institution Parameters' : 'Salva Tutti i Parametri Istituto'}</button>
     </div>
   `;
 }
 
 function updateSabatoBadge(val) {
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
   const badge = document.getElementById('sabStatusBadge');
   if (!badge) return;
   const num = parseInt(val, 10) || 0;
   if (num === 0) {
     badge.className = 'badge badge-warn';
-    badge.innerText = '● Chiuso (0h)';
+    badge.innerText = isEn ? '● Closed (0h)' : '● Chiuso (0h)';
   } else {
     badge.className = 'badge badge-ok';
-    badge.innerText = `● Attivo (${num}h)`;
+    badge.innerText = isEn ? `● Active (${num}h)` : `● Attivo (${num}h)`;
   }
 }
 
@@ -9429,6 +9801,7 @@ function applyDayHoursPreset(type) {
 }
 
 async function saveParametersSettings() {
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
   const instName = document.getElementById('cfgInstName').value.trim();
   const comments = document.getElementById('cfgComments').value.trim();
   const dayLimits = {};
@@ -9483,12 +9856,12 @@ async function saveParametersSettings() {
   });
 
   if (res.ok) {
-    showToast('Parametri istituto e calendario salvati con successo!');
+    showToast(isEn ? 'Institution parameters and calendar saved successfully!' : 'Parametri istituto e calendario salvati con successo!');
     const badge = document.getElementById('instBadge');
     if (badge) badge.innerText = instName;
     renderParameters();
   } else {
-    alert('Errore durante il salvataggio dei parametri.');
+    alert(isEn ? 'Error saving parameters.' : 'Errore durante il salvataggio dei parametri.');
   }
 }
 
@@ -9596,7 +9969,11 @@ function uploadFetFile(file) {
     });
     if (res.ok) {
       showToast(`File "${file.name}" importato con successo!`);
-      loadInitialData();
+      activeEntity = '';
+      activeTimetableView = 'teacher';
+      stateData.timetableViews = null;
+      await refreshAppState();
+      navigate('timetable');
     } else {
       alert('Errore durante l\'importazione del file .fet.');
     }
@@ -9608,47 +9985,50 @@ function uploadFetFile(file) {
 // 11. ARCHIVIO VERSIONI, SNAPSHOT & STORICO ESECUZIONI
 // ============================================================================
 async function renderSnapshots() {
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
   const container = document.getElementById('mainContent');
-  container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);">Caricamento archivio snapshot...</div>';
+  container.innerHTML = `<div style="text-align:center;padding:40px;color:var(--text-muted);">${isEn ? 'Loading snapshot archive...' : 'Caricamento archivio snapshot...'}</div>`;
 
   try {
     const res = await fetch('/api/snapshots');
     const data = await res.json();
-    const currentName = data.current_config_name || 'Configurazione Corrente';
+    const currentName = data.current_config_name || (isEn ? 'Current Configuration' : 'Configurazione Corrente');
     const snapshots = data.snapshots || [];
 
     container.innerHTML = `
       <div class="info-banner-blue">
-        📦 <b>Archivio Storico & Sistema Snapshot:</b><br>
-        Tutte le modifiche a vincoli, docenti, materie e parametri rimangono sempre salvate automaticamente nel database dell'applicazione.
-        Crea uno <b>Snapshot / Punto di Ripristino</b> prima di apportare modifiche radicali per poter effettuare il <b>Rollback</b> immediato a una versione funzionante in qualsiasi momento.
+        ${isEn 
+          ? '📦 <b>Snapshot System & Version History:</b><br>All changes to constraints, teachers, subjects, and parameters are always saved automatically in the application database. Create a <b>Snapshot / Restore Point</b> before making major edits to enable immediate <b>Rollback</b> to a working configuration at any time.'
+          : '📦 <b>Archivio Storico & Sistema Snapshot:</b><br>Tutte le modifiche a vincoli, docenti, materie e parametri rimangono sempre salvate automaticamente nel database dell\'applicazione. Crea uno <b>Snapshot / Punto di Ripristino</b> prima di apportare modifiche radicali per poter effettuare il <b>Rollback</b> immediato a una versione funzionante in qualsiasi momento.'}
       </div>
 
       <!-- Card Stato Configurazione Corrente -->
       <div class="card" style="margin-bottom:20px;">
         <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:14px;">
           <div>
-            <div style="font-size:11px;font-weight:700;color:var(--primary);text-transform:uppercase;letter-spacing:0.5px;">Configurazione Attiva nel Sistema</div>
+            <div style="font-size:11px;font-weight:700;color:var(--primary);text-transform:uppercase;letter-spacing:0.5px;">${isEn ? 'System Active Configuration' : 'Configurazione Attiva nel Sistema'}</div>
             <div style="font-size:18px;font-weight:800;color:var(--text-main);margin-top:2px;display:flex;align-items:center;gap:8px;">
               <span>⚡</span> <span id="currentConfigTitle">${escapeHtml(currentName)}</span>
-              <button class="btn btn-sm btn-sec" onclick="openRenameCurrentModal('${escapeJs(currentName)}')" title="Rinomina la configurazione attiva">✏️ Rinomina</button>
+              <button class="btn btn-sm btn-sec" onclick="openRenameCurrentModal('${escapeJs(currentName)}')" title="${isEn ? 'Rename active configuration' : 'Rinomina la configurazione attiva'}">✏️ ${isEn ? 'Rename' : 'Rinomina'}</button>
             </div>
             <div style="font-size:12px;color:var(--text-muted);margin-top:4px;">
-              Stato corrente sempre salvato e persistente. Tutte le modifiche applicate nelle altre schermate agiscono su questa configurazione.
+              ${isEn 
+                ? 'Current state is permanently persistent. All edits applied across other views modify this configuration.' 
+                : 'Stato corrente sempre salvato e persistente. Tutte le modifiche applicate nelle altre schermate agiscono su questa configurazione.'}
             </div>
           </div>
           <div style="display:flex;gap:8px;flex-wrap:wrap;">
-            <button class="btn btn-primary" onclick="openSaveSnapshotModal()" title="Salva un punto di ripristino istantaneo nel database">
-              📸 Salva Nuovo Snapshot
+            <button class="btn btn-primary" onclick="openSaveSnapshotModal()" title="${isEn ? 'Save an instant restore point in the database' : 'Salva un punto di ripristino istantaneo nel database'}">
+              📸 ${isEn ? 'Save New Snapshot' : 'Salva Nuovo Snapshot'}
             </button>
-            <button class="btn btn-sec" onclick="exportFetFile()" title="Scarica il file ParametriOrario.fet pronto per l'applicazione ufficiale FET Desktop">
-              📥 Esporta Parametri (.fet)
+            <button class="btn btn-sec" onclick="exportFetFile()" title="${isEn ? 'Download ParametriOrario.fet ready for official FET Desktop application' : 'Scarica il file ParametriOrario.fet pronto per l\'applicazione ufficiale FET Desktop'}">
+              📥 ${isEn ? 'Export Parameters (.fet)' : 'Esporta Parametri (.fet)'}
             </button>
-            <button class="btn btn-sec" onclick="exportSolvedTimetable()" title="Scarica il file .fet con l'orario completo generato">
-              🗓️ Esporta Orario Risolto (.fet)
+            <button class="btn btn-sec" onclick="exportSolvedTimetable()" title="${isEn ? 'Download .fet file with complete generated timetable' : 'Scarica il file .fet con l\'orario completo generato'}">
+              🗓️ ${isEn ? 'Export Solved Timetable (.fet)' : 'Esporta Orario Risolto (.fet)'}
             </button>
-            <button class="btn btn-sec" onclick="downloadCurrentConfigJson()" title="Scarica la configurazione completa e l'intero database in formato .json">
-              💾 Scarica Backup (.json)
+            <button class="btn btn-sec" onclick="downloadCurrentConfigJson()" title="${isEn ? 'Download complete configuration and database in .json format' : 'Scarica la configurazione completa e l\'intero database in formato .json'}">
+              💾 ${isEn ? 'Download Backup (.json)' : 'Scarica Backup (.json)'}
             </button>
           </div>
         </div>
@@ -9659,18 +10039,20 @@ async function renderSnapshots() {
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;">
           <div>
             <div class="card-title" style="margin-bottom:3px;display:flex;align-items:center;gap:6px;">
-              <span>🏰</span> <b>Orario Demo Paperopoli & Inizializzazione Progetto</b>
+              <span>🏰</span> <b>${isEn ? 'Sample Timetables (Duckburg & Paperopoli) & Project Reset' : 'Database Demo Didattici (Paperopoli & Duckburg) & Reset'}</b>
             </div>
             <div style="font-size:12px;color:var(--text-muted);max-width:680px;line-height:1.4;">
-              Ricarica in qualsiasi momento l'orario didattico dimostrativo completo di <b>Paperopoli</b> (8 docenti, 5 classi, orario risolto al 100%) oppure <b>azzera l'applicazione a foglio bianco</b> per iniziare una nuova scuola da zero.
+              ${isEn 
+                ? 'Reload a complete sample school timetable at any time (choose between <b>Duckburg</b> in English or <b>Paperopoli</b> in Italian, both with 100% pre-solved timetable) or <b>reset to a clean blank sheet</b> to start a new school from scratch.' 
+                : 'Ricarica in qualsiasi momento un orario didattico dimostrativo completo (scegli tra <b>Paperopoli</b> in Italiano oppure <b>Duckburg</b> in Inglese, entrambi con orario risolto al 100%) oppure <b>azzera l\'applicazione a foglio bianco</b> per iniziare una nuova scuola da zero.'}
             </div>
           </div>
           <div style="display:flex;gap:10px;flex-wrap:wrap;">
-            <button class="btn btn-outline" onclick="confirmRestoreDemo()" title="Ripristina l'orario didattico dimostrativo completo di Paperopoli" style="font-weight:700;border:1.5px solid var(--primary);color:var(--primary);background:var(--bg-main);">
-              🏰 Ripristina Demo Paperopoli
+            <button class="btn btn-outline" onclick="confirmRestoreDemo()" title="${isEn ? 'Restore sample demonstration timetable (Duckburg or Paperopoli)' : 'Ripristina un orario didattico dimostrativo (Paperopoli o Duckburg)'}" style="font-weight:700;border:1.5px solid var(--primary);color:var(--primary);background:var(--bg-main);">
+              🏰 ${isEn ? 'Restore Sample Data (Duckburg / Paperopoli)' : 'Ripristina Demo (Paperopoli / Duckburg)'}
             </button>
-            <button class="btn btn-danger" onclick="confirmResetEmpty()" title="Svuota completamente il database e crea un nuovo istituto pulito" style="font-weight:700;">
-              🧹 Azzera Tutto (Foglio Bianco)
+            <button class="btn btn-danger" onclick="confirmResetEmpty()" title="${isEn ? 'Empty database completely and start with a clean school' : 'Svuota completamente il database e crea un nuovo istituto pulito'}" style="font-weight:700;">
+              🧹 ${isEn ? 'Reset All (Blank Sheet)' : 'Azzera Tutto (Foglio Bianco)'}
             </button>
           </div>
         </div>
@@ -9678,16 +10060,18 @@ async function renderSnapshots() {
 
       <!-- Card Upload / Import da Computer -->
       <div class="card" style="margin-bottom:20px;">
-        <div class="card-title">📤 Importa File da Computer (FET o JSON)</div>
+        <div class="card-title">${isEn ? '📤 Import Files from Computer (FET or JSON)' : '📤 Importa File da Computer (FET o JSON)'}</div>
         <p style="color:var(--text-muted);margin-bottom:12px;font-size:12.5px;">
-          Puoi caricare un file <b>.fet</b> o <b>.xml</b> generato da FET Desktop, oppure un file di backup <b>.json</b>: verrà importato e registrato come punto di ripristino nell'archivio.
+          ${isEn 
+            ? 'You can upload a <b>.fet</b> or <b>.xml</b> file generated by FET Desktop, or a <b>.json</b> backup file: it will be imported and registered as a restore point in the archive.' 
+            : 'Puoi caricare un file <b>.fet</b> o <b>.xml</b> generato da FET Desktop, oppure un file di backup <b>.json</b>: verrà importato e registrato come punto di ripristino nell\'archivio.'}
         </p>
         <div style="border: 2px dashed var(--border); border-radius: var(--radius-md); padding: 24px 20px; text-align: center; cursor: pointer; transition: background 0.15s;"
-             onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='transparent'"
+             onmouseover="this.style.background='var(--bg-hover)'" onmouseout="this.style.background='transparent'"
              onclick="document.getElementById('snapshotUploadInput').click()">
           <div style="font-size:28px;margin-bottom:6px;">📂</div>
-          <div style="font-size:13.5px;font-weight:600;color:var(--text-main);margin-bottom:4px;">Clicca per selezionare un file .fet, .xml o .json dal computer</div>
-          <div style="font-size:11.5px;color:var(--text-muted);">Trascina o seleziona un file per importarlo direttamente nel sistema</div>
+          <div style="font-size:13.5px;font-weight:600;color:var(--text-main);margin-bottom:4px;">${isEn ? 'Click to select a .fet, .xml or .json file from computer' : 'Clicca per selezionare un file .fet, .xml o .json dal computer'}</div>
+          <div style="font-size:11.5px;color:var(--text-muted);">${isEn ? 'Drag and drop or select a file to import directly into the system' : 'Trascina o seleziona un file per importarlo direttamente nel sistema'}</div>
           <input type="file" id="snapshotUploadInput" accept=".json,.fet,.xml" style="display:none;" onchange="uploadSnapshotFile(this.files[0])">
         </div>
       </div>
@@ -9696,14 +10080,14 @@ async function renderSnapshots() {
       <div class="card">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px;">
           <div class="card-title" style="margin-bottom:0;">
-            📚 Versioni Salvate & Punti di Ripristino (${snapshots.length})
+            ${isEn ? `📚 Saved Versions & Restore Points (${snapshots.length})` : `📚 Versioni Salvate & Punti di Ripristino (${snapshots.length})`}
           </div>
-          <input type="text" class="search-input" placeholder="🔍 Cerca snapshot..." oninput="filterSnapshotsTable(this.value)" style="width:240px;">
+          <input type="text" class="search-input" placeholder="${isEn ? '🔍 Search snapshots...' : '🔍 Cerca snapshot...'}" oninput="filterSnapshotsTable(this.value)" style="width:240px;">
         </div>
 
         ${snapshots.length === 0 ? `
           <div style="text-align:center;padding:36px;color:var(--text-muted);border:1px dashed var(--border);border-radius:var(--radius-md);">
-            Nessuno snapshot salvato finora. Clicca su <b>📸 Salva Nuovo Snapshot</b> per creare il primo punto di ripristino!
+            ${isEn ? 'No snapshots saved yet. Click <b>📸 Save New Snapshot</b> to create your first restore point!' : 'Nessuno snapshot salvato finora. Clicca su <b>📸 Salva Nuovo Snapshot</b> per creare il primo punto di ripristino!'}
           </div>
         ` : `
           <div class="table-container">
@@ -9711,11 +10095,11 @@ async function renderSnapshots() {
               <thead>
                 <tr>
                   <th style="width:40px;">#</th>
-                  <th style="width:145px;">Data & Ora</th>
-                  <th style="min-width:200px;">Nome Versione / Snapshot</th>
-                  <th style="min-width:180px;">Descrizione / Note</th>
-                  <th style="width:190px;">Dati & Orario</th>
-                  <th style="text-align:right;min-width:260px;">Azioni & Rollback</th>
+                  <th style="width:145px;">${isEn ? 'Date & Time' : 'Data & Ora'}</th>
+                  <th style="min-width:200px;">${isEn ? 'Version / Snapshot Name' : 'Nome Versione / Snapshot'}</th>
+                  <th style="min-width:180px;">${isEn ? 'Description / Notes' : 'Descrizione / Note'}</th>
+                  <th style="width:190px;">${isEn ? 'Data & Timetable' : 'Dati & Orario'}</th>
+                  <th style="text-align:right;min-width:260px;">${isEn ? 'Actions & Rollback' : 'Azioni & Rollback'}</th>
                 </tr>
               </thead>
               <tbody>
@@ -9732,32 +10116,32 @@ async function renderSnapshots() {
                         <div style="font-size:10.5px;font-family:var(--font-mono);color:var(--text-muted);">${escapeHtml(s.id)}</div>
                       </td>
                       <td style="font-size:12px;color:var(--text-main);">
-                        ${s.description ? escapeHtml(s.description) : '<span style="color:var(--text-muted);font-style:italic;">Nessuna descrizione</span>'}
+                        ${s.description ? escapeHtml(s.description) : `<span style="color:var(--text-muted);font-style:italic;">${isEn ? 'No description' : 'Nessuna descrizione'}</span>`}
                       </td>
                       <td>
                         <div style="display:flex;flex-wrap:wrap;gap:4px;">
-                          ${st.teachers_count !== undefined ? `<span class="item-chip" title="Numero docenti">👨‍🏫 ${st.teachers_count}</span>` : ''}
-                          ${st.classes_count !== undefined ? `<span class="item-chip" title="Numero classi">🎓 ${st.classes_count}</span>` : ''}
-                          ${st.activities_count !== undefined ? `<span class="item-chip" title="Numero attività">📚 ${st.activities_count}</span>` : ''}
-                          ${s.has_timetable ? `<span class="badge badge-ok" title="Include orario risolto completo">✅ Orario FET</span>` : `<span class="badge badge-warn" title="Solo configurazione parametri/vincoli">⚙️ Solo Dati</span>`}
+                          ${st.teachers_count !== undefined ? `<span class="item-chip" title="${isEn ? 'Teachers count' : 'Numero docenti'}">👨‍🏫 ${st.teachers_count}</span>` : ''}
+                          ${st.classes_count !== undefined ? `<span class="item-chip" title="${isEn ? 'Classes count' : 'Numero classi'}">🎓 ${st.classes_count}</span>` : ''}
+                          ${st.activities_count !== undefined ? `<span class="item-chip" title="${isEn ? 'Activities count' : 'Numero attività'}">📚 ${st.activities_count}</span>` : ''}
+                          ${s.has_timetable ? `<span class="badge badge-ok" title="${isEn ? 'Includes complete solved timetable' : 'Include orario risolto completo'}">✅ ${isEn ? 'FET Timetable' : 'Orario FET'}</span>` : `<span class="badge badge-warn" title="${isEn ? 'Parameters and constraints configuration only' : 'Solo configurazione parametri/vincoli'}">⚙️ ${isEn ? 'Data Only' : 'Solo Dati'}</span>`}
                         </div>
                       </td>
                       <td style="text-align:right;white-space:nowrap;">
-                        <button class="btn btn-sm btn-primary" onclick="restoreSnapshot('${escapeJs(s.id)}', '${escapeJs(s.name)}')" title="Esegui il Rollback: ripristina questa configurazione come attiva">
+                        <button class="btn btn-sm btn-primary" onclick="restoreSnapshot('${escapeJs(s.id)}', '${escapeJs(s.name)}')" title="${isEn ? 'Rollback: restore this configuration as active' : 'Esegui il Rollback: ripristina questa configurazione come attiva'}">
                           🔄 Rollback
                         </button>
-                        <button class="btn btn-sm btn-sec" onclick="downloadSnapshotJson('${escapeJs(s.id)}')" title="Scarica il file JSON di questo snapshot">
+                        <button class="btn btn-sm btn-sec" onclick="downloadSnapshotJson('${escapeJs(s.id)}')" title="${isEn ? 'Download JSON file for this snapshot' : 'Scarica il file JSON di questo snapshot'}">
                           📥 JSON
                         </button>
                         ${s.has_timetable ? `
-                          <button class="btn btn-sm btn-sec" onclick="downloadSnapshotFet('${escapeJs(s.id)}')" title="Scarica il file FET associato a questo orario">
+                          <button class="btn btn-sm btn-sec" onclick="downloadSnapshotFet('${escapeJs(s.id)}')" title="${isEn ? 'Download FET file associated with this timetable' : 'Scarica il file FET associato a questo orario'}">
                             📥 FET
                           </button>
                         ` : ''}
-                        <button class="btn btn-sm btn-sec" onclick="openRenameSnapshotModal('${escapeJs(s.id)}', '${escapeJs(s.name)}', '${escapeJs(s.description || '')}')" title="Modifica nome e note dello snapshot">
+                        <button class="btn btn-sm btn-sec" onclick="openRenameSnapshotModal('${escapeJs(s.id)}', '${escapeJs(s.name)}', '${escapeJs(s.description || '')}')" title="${isEn ? 'Edit snapshot name and notes' : 'Modifica nome e note dello snapshot'}">
                           ✏️
                         </button>
-                        <button class="btn btn-sm btn-danger" onclick="deleteSnapshot('${escapeJs(s.id)}', '${escapeJs(s.name)}')" title="Elimina definitivamente questo snapshot dall'archivio">
+                        <button class="btn btn-sm btn-danger" onclick="deleteSnapshot('${escapeJs(s.id)}', '${escapeJs(s.name)}')" title="${isEn ? 'Permanently delete this snapshot from archive' : 'Elimina definitivamente questo snapshot dall\'archivio'}">
                           🗑️
                         </button>
                       </td>
@@ -9771,7 +10155,7 @@ async function renderSnapshots() {
       </div>
     `;
   } catch (err) {
-    container.innerHTML = `<div class="card" style="color:var(--danger);padding:24px;">Errore caricamento snapshot: ${escapeHtml(err.message)}</div>`;
+    container.innerHTML = `<div class="card" style="color:var(--danger);padding:24px;">${isEn ? 'Error loading snapshots: ' : 'Errore caricamento snapshot: '}${escapeHtml(err.message)}</div>`;
   }
 }
 
@@ -9785,40 +10169,78 @@ function filterSnapshotsTable(query) {
 
 // --- GESTIONE DEMO & RESET PROGETTO ---
 function confirmRestoreDemo() {
+  const isEn = window.I18N && window.I18N.getLanguage() === 'en';
   showModal(`
-    <div class="modal-dialog" style="max-width:540px;">
+    <div class="modal-dialog" style="max-width:560px;">
       <div class="modal-header">
-        <div class="modal-title">🏰 Ripristina Demo Paperopoli</div>
+        <div class="modal-title">🏰 ${isEn ? 'Restore Sample Timetable (Duckburg / Paperopoli)' : 'Ripristina Demo Didattica (Paperopoli / Duckburg)'}</div>
         <button class="modal-close" onclick="closeModal()">×</button>
       </div>
-      <div class="modal-body" style="padding:18px 22px;">
-        <p style="font-size:13.5px;color:var(--text-main);line-height:1.5;margin-bottom:12px;">
-          Vuoi caricare l'orario didattico dimostrativo completo del <b>Liceo & Tecnico "Pico De Paperis" - Paperopoli</b>?
+      <div class="modal-body" style="padding:18px 22px;display:flex;flex-direction:column;gap:14px;">
+        <p style="font-size:13.5px;color:var(--text-main);line-height:1.5;">
+          ${isEn 
+            ? 'Choose which demonstration database you would like to load. Both include a complete school with 8 faculty members, 5 grade sections, specialized labs, gym and a <b>100% pre-solved timetable</b>.' 
+            : 'Scegli quale database dimostrativo desideri caricare. Entrambi includono un istituto completo con 8 docenti Disney, 5 classi, laboratori, palestra e un <b>orario già risolto al 100%</b>.'}
         </p>
-        <div class="info-banner-blue" style="font-size:12px;margin-bottom:14px;line-height:1.4;">
-          ✨ Include 8 docenti Disney (Archimede, Paperone, Paperino, Nonna Papera, Gastone...), 5 classi (1A-5A), laboratori, palestra e <b>orario già risolto al 100%</b>.<br>
-          Verrà creato automaticamente uno Snapshot di backup dei dati attuali.
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div style="background:var(--bg-app);border:1.5px solid var(--border);border-radius:10px;padding:14px;display:flex;flex-direction:column;justify-content:space-between;gap:10px;">
+            <div>
+              <div style="font-size:14px;font-weight:700;color:var(--primary);display:flex;align-items:center;gap:6px;">
+                <span>🇮🇹</span> <span>Paperopoli (ITA)</span>
+              </div>
+              <div style="font-size:11.5px;color:var(--text-muted);margin-top:6px;line-height:1.4;">
+                Liceo & Tecnico "Pico De Paperis" con Archimede, Paperino, Paperone, Nonna Papera e Gastone.
+              </div>
+            </div>
+            <button class="btn btn-sm btn-primary" onclick="executeLoadDemo('it')" style="width:100%;font-weight:600;">
+              🇮🇹 Carica Demo ITA
+            </button>
+          </div>
+
+          <div style="background:var(--bg-app);border:1.5px solid var(--border);border-radius:10px;padding:14px;display:flex;flex-direction:column;justify-content:space-between;gap:10px;">
+            <div>
+              <div style="font-size:14px;font-weight:700;color:var(--primary);display:flex;align-items:center;gap:6px;">
+                <span>🇬🇧</span> <span>Duckburg (ENG)</span>
+              </div>
+              <div style="font-size:11.5px;color:var(--text-muted);margin-top:6px;line-height:1.4;">
+                Ludwig Von Drake High School with Donald Duck, Gyro Gearloose, Scrooge McDuck & Grandma Duck.
+              </div>
+            </div>
+            <button class="btn btn-sm btn-primary" onclick="executeLoadDemo('en')" style="width:100%;font-weight:600;">
+              🇬🇧 Load ENG Demo
+            </button>
+          </div>
+        </div>
+
+        <div class="info-banner-blue" style="font-size:11.5px;line-height:1.4;">
+          💡 ${isEn ? 'A security backup snapshot of your current data will be created automatically before loading.' : 'Verrà creato automaticamente uno Snapshot di sicurezza dei dati attuali prima del caricamento.'}
         </div>
       </div>
-      <div class="modal-footer" style="padding:12px 20px;display:flex;justify-content:flex-end;gap:10px;">
-        <button class="btn btn-sec" onclick="closeModal()">Annulla</button>
-        <button class="btn btn-primary" onclick="executeLoadDemo()" style="font-weight:700;">
-          🏰 Conferma e Carica Demo
-        </button>
+      <div class="modal-footer" style="padding:12px 20px;display:flex;justify-content:flex-end;">
+        <button class="btn btn-sec" onclick="closeModal()" data-i18n="common.cancel">${_t('common.cancel', 'Annulla')}</button>
       </div>
     </div>
   `);
 }
 
-async function executeLoadDemo() {
+async function executeLoadDemo(lang = 'it') {
   closeModal();
-  showToast('Caricamento demo Paperopoli in corso...');
+  const isEn = lang === 'en';
+  showToast(isEn ? 'Loading Duckburg demo dataset...' : 'Caricamento demo Paperopoli in corso...');
   try {
-    const res = await fetch('/api/project/load_demo', { method: 'POST' });
+    const res = await fetch('/api/project/load_demo', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ lang: lang })
+    });
     const data = await res.json();
     if (res.ok && data.success) {
-      showToast('🎉 Demo Paperopoli caricata con successo!');
-      await loadInitialData();
+      showToast(isEn ? '🎉 Duckburg Demo loaded successfully!' : '🎉 Demo Paperopoli caricata con successo!');
+      activeEntity = '';
+      activeTimetableView = 'teacher';
+      stateData.timetableViews = null;
+      await refreshAppState();
       renderSnapshots();
     } else {
       showToast('Errore nel caricamento demo: ' + (data.error || 'Errore sconosciuto'), 'err');
@@ -9829,26 +10251,28 @@ async function executeLoadDemo() {
 }
 
 function confirmResetEmpty() {
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
   showModal(`
     <div class="modal-dialog" style="max-width:540px;">
       <div class="modal-header">
-        <div class="modal-title">🧹 Azzera Tutto (Nuovo Istituto a Foglio Bianco)</div>
+        <div class="modal-title">🧹 ${isEn ? 'Reset All (New School from Scratch)' : 'Azzera Tutto (Nuovo Istituto a Foglio Bianco)'}</div>
         <button class="modal-close" onclick="closeModal()">×</button>
       </div>
       <div class="modal-body" style="padding:18px 22px;">
         <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:var(--radius-sm);padding:12px 14px;color:#991b1b;font-size:12.5px;margin-bottom:16px;line-height:1.4;">
-          ⚠️ <b>Attenzione:</b> Questa operazione svuota docenti, classi, materie, aule e orario risolto per preparare una nuova scuola da zero.<br>
-          Verrà salvato uno Snapshot automatico prima della cancellazione.
+          ⚠️ <b>${isEn ? 'Warning:' : 'Attenzione:'}</b> ${isEn 
+            ? 'This operation clears teachers, classes, subjects, rooms and solved timetables to set up a new school from scratch.<br>An automatic Snapshot will be created before deletion.' 
+            : 'Questa operazione svuota docenti, classi, materie, aule e orario risolto per preparare una nuova scuola da zero.<br>Verrà salvato uno Snapshot automatico prima della cancellazione.'}
         </div>
         <div class="form-group" style="margin-bottom:12px;">
-          <label class="form-label" style="font-weight:700;">Nome del Nuovo Istituto Scolastico</label>
-          <input type="text" id="resetInstNameInput" class="form-input" placeholder="es. Liceo Scientifico Statale Galileo" value="Nuovo Istituto Scolastico">
+          <label class="form-label" style="font-weight:700;">${isEn ? 'Name of New Educational Institution' : "Nome del Nuovo Istituto Scolastico"}</label>
+          <input type="text" id="resetInstNameInput" class="form-input" placeholder="${isEn ? 'e.g. Duckburg High School' : 'es. Liceo Scientifico Statale Galileo'}" value="${isEn ? 'New Educational Institution' : 'Nuovo Istituto Scolastico'}">
         </div>
       </div>
       <div class="modal-footer" style="padding:12px 20px;display:flex;justify-content:flex-end;gap:10px;">
-        <button class="btn btn-sec" onclick="closeModal()">Annulla</button>
+        <button class="btn btn-sec" onclick="closeModal()" data-i18n="common.cancel">${_t('common.cancel', isEn ? 'Cancel' : 'Annulla')}</button>
         <button class="btn btn-danger" onclick="executeResetEmpty()" style="font-weight:700;">
-          🧹 Conferma Svuotamento
+          🧹 ${isEn ? 'Confirm Reset' : 'Conferma Svuotamento'}
         </button>
       </div>
     </div>
@@ -9856,9 +10280,10 @@ function confirmResetEmpty() {
 }
 
 async function executeResetEmpty() {
-  const instName = document.getElementById('resetInstNameInput')?.value?.trim() || 'Nuovo Istituto Scolastico';
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
+  const instName = document.getElementById('resetInstNameInput')?.value?.trim() || (isEn ? 'New Educational Institution' : 'Nuovo Istituto Scolastico');
   closeModal();
-  showToast('Azzeramento progetto in corso...');
+  showToast(isEn ? 'Resetting project to blank canvas...' : 'Azzeramento progetto in corso...');
   try {
     const res = await fetch('/api/project/reset_empty', {
       method: 'POST',
@@ -9867,55 +10292,64 @@ async function executeResetEmpty() {
     });
     const data = await res.json();
     if (res.ok && data.success) {
-      showToast('🧹 Progetto azzerato a foglio bianco con successo!');
-      await loadInitialData();
+      showToast(isEn ? '🧹 Project reset to blank canvas successfully!' : '🧹 Progetto azzerato a foglio bianco con successo!');
+      activeEntity = '';
+      activeTimetableView = 'teacher';
+      stateData.timetableViews = null;
+      await refreshAppState();
       renderSnapshots();
     } else {
-      showToast('Errore durante l\'azzeramento: ' + (data.error || 'Errore sconosciuto'), 'err');
+      showToast((isEn ? 'Error during reset: ' : 'Errore durante l\'azzeramento: ') + (data.error || (isEn ? 'Unknown error' : 'Errore sconosciuto')), 'err');
     }
   } catch (e) {
-    showToast('Errore di connessione: ' + e.message, 'err');
+    showToast((isEn ? 'Connection error: ' : 'Errore di connessione: ') + e.message, 'err');
   }
 }
 
 // --- MODALI & AZIONI SNAPSHOT ---
 function openSaveSnapshotModal() {
-  const defName = `Snapshot ${new Date().toLocaleDateString('it-IT')} ${new Date().toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })}`;
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
+  const defName = isEn 
+    ? `Snapshot ${new Date().toLocaleDateString('en-US')} ${new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}`
+    : `Snapshot ${new Date().toLocaleDateString('it-IT')} ${new Date().toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })}`;
   showModal(`
     <div class="modal-dialog">
       <div class="modal-header">
-        <div class="modal-title">📸 Salva Nuovo Snapshot / Versione</div>
+        <div class="modal-title">📸 ${isEn ? 'Save New Snapshot / Version' : 'Salva Nuovo Snapshot / Versione'}</div>
         <button class="modal-close" onclick="closeModal()">×</button>
       </div>
       <div class="modal-body">
         <p style="font-size:13px;color:var(--text-muted);margin-bottom:12px;">
-          Verrà creata un'istantanea completa dello stato attuale: docenti, classi, disponibilità, vincoli, blocchi orari e l'eventuale orario risolto corrente.
+          ${isEn 
+            ? 'A complete snapshot of current state will be created: teachers, classes, availabilities, constraints, time blocks and current solved timetable.' 
+            : 'Verrà creata un\'istantanea completa dello stato attuale: docenti, classi, disponibilità, vincoli, blocchi orari e l\'eventuale orario risolto corrente.'}
         </p>
         <div class="form-group">
-          <label class="form-label">Nome Snapshot / Versione</label>
-          <input type="text" id="newSnapName" class="form-input" value="${escapeHtml(defName)}" placeholder="Es. Versione con vincolo 4 ore max">
+          <label class="form-label">${isEn ? 'Snapshot / Version Name' : 'Nome Snapshot / Versione'}</label>
+          <input type="text" id="newSnapName" class="form-input" value="${escapeHtml(defName)}" placeholder="${isEn ? 'e.g. Version with 4-hour max constraint' : 'Es. Versione con vincolo 4 ore max'}">
         </div>
         <div class="form-group">
-          <label class="form-label">Note / Descrizione (opzionale)</label>
-          <textarea id="newSnapDesc" class="form-textarea" rows="3" placeholder="Es. Provato a rilassare vincolo buchi docenti per testare compilazione"></textarea>
+          <label class="form-label">${isEn ? 'Notes / Description (optional)' : 'Note / Descrizione (opzionale)'}</label>
+          <textarea id="newSnapDesc" class="form-textarea" rows="3" placeholder="${isEn ? 'e.g. Tested relaxing teacher gap constraints' : 'Es. Provato a rilassare vincolo buchi docenti per testare compilazione'}"></textarea>
         </div>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-sec" onclick="closeModal()">Annulla</button>
-        <button class="btn btn-primary" onclick="submitSaveSnapshot()">💾 Salva Snapshot</button>
+        <button class="btn btn-sec" onclick="closeModal()" data-i18n="common.cancel">${_t('common.cancel', isEn ? 'Cancel' : 'Annulla')}</button>
+        <button class="btn btn-primary" onclick="submitSaveSnapshot()">💾 ${isEn ? 'Save Snapshot' : 'Salva Snapshot'}</button>
       </div>
     </div>
   `);
 }
 
 async function submitSaveSnapshot() {
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
   const name = document.getElementById('newSnapName')?.value.trim();
   const desc = document.getElementById('newSnapDesc')?.value.trim();
   if (!name) {
-    alert('Inserisci un nome per lo snapshot.');
+    alert(isEn ? 'Please enter a name for the snapshot.' : 'Inserisci un nome per lo snapshot.');
     return;
   }
-  showToast('Salvataggio snapshot in corso...');
+  showToast(isEn ? 'Saving snapshot...' : 'Salvataggio snapshot in corso...');
   const res = await fetch('/api/snapshots', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -9923,38 +10357,40 @@ async function submitSaveSnapshot() {
   });
   if (res.ok) {
     closeModal();
-    showToast(`Snapshot "${name}" salvato con successo!`);
+    showToast(isEn ? `Snapshot "${name}" saved successfully!` : `Snapshot "${name}" salvato con successo!`);
     renderSnapshots();
   } else {
-    alert('Errore durante il salvataggio dello snapshot.');
+    alert(isEn ? 'Error saving snapshot.' : 'Errore durante il salvataggio dello snapshot.');
   }
 }
 
 function openRenameCurrentModal(currentName) {
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
   showModal(`
     <div class="modal-dialog">
       <div class="modal-header">
-        <div class="modal-title">✏️ Rinomina Configurazione Attiva</div>
+        <div class="modal-title">✏️ ${isEn ? 'Rename Active Configuration' : 'Rinomina Configurazione Attiva'}</div>
         <button class="modal-close" onclick="closeModal()">×</button>
       </div>
       <div class="modal-body">
         <div class="form-group">
-          <label class="form-label">Nuovo Nome per la Configurazione Attiva</label>
-          <input type="text" id="renameCurrentInput" class="form-input" value="${escapeHtml(currentName)}" placeholder="Es. Orario Definitivo A.S. 2024/25">
+          <label class="form-label">${isEn ? 'New Name for Active Configuration' : 'Nuovo Nome per la Configurazione Attiva'}</label>
+          <input type="text" id="renameCurrentInput" class="form-input" value="${escapeHtml(currentName)}" placeholder="${isEn ? 'e.g. Final Timetable 2026/27' : 'Es. Orario Definitivo A.S. 2024/25'}">
         </div>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-sec" onclick="closeModal()">Annulla</button>
-        <button class="btn btn-primary" onclick="submitRenameCurrent()">💾 Salva Nome</button>
+        <button class="btn btn-sec" onclick="closeModal()" data-i18n="common.cancel">${_t('common.cancel', isEn ? 'Cancel' : 'Annulla')}</button>
+        <button class="btn btn-primary" onclick="submitRenameCurrent()">💾 ${isEn ? 'Save Name' : 'Salva Nome'}</button>
       </div>
     </div>
   `);
 }
 
 async function submitRenameCurrent() {
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
   const name = document.getElementById('renameCurrentInput')?.value.trim();
   if (!name) {
-    alert('Inserisci un nome valido.');
+    alert(isEn ? 'Please enter a valid name.' : 'Inserisci un nome valido.');
     return;
   }
   const res = await fetch('/api/snapshots/rename_current', {
@@ -9964,43 +10400,45 @@ async function submitRenameCurrent() {
   });
   if (res.ok) {
     closeModal();
-    showToast(`Configurazione rinominata in "${name}"!`);
+    showToast(isEn ? `Configuration renamed to "${name}"!` : `Configurazione rinominata in "${name}"!`);
     renderSnapshots();
   } else {
-    alert('Errore durante la rinomina della configurazione.');
+    alert(isEn ? 'Error renaming configuration.' : 'Errore durante la rinomina della configurazione.');
   }
 }
 
 function openRenameSnapshotModal(sid, currentName, currentDesc) {
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
   showModal(`
     <div class="modal-dialog">
       <div class="modal-header">
-        <div class="modal-title">✏️ Modifica Snapshot</div>
+        <div class="modal-title">✏️ ${isEn ? 'Edit Snapshot' : 'Modifica Snapshot'}</div>
         <button class="modal-close" onclick="closeModal()">×</button>
       </div>
       <div class="modal-body">
         <div class="form-group">
-          <label class="form-label">Nome Snapshot</label>
+          <label class="form-label">${isEn ? 'Snapshot Name' : 'Nome Snapshot'}</label>
           <input type="text" id="renameSnapName" class="form-input" value="${escapeHtml(currentName)}">
         </div>
         <div class="form-group">
-          <label class="form-label">Descrizione / Note</label>
+          <label class="form-label">${isEn ? 'Description / Notes' : 'Descrizione / Note'}</label>
           <textarea id="renameSnapDesc" class="form-textarea" rows="3">${escapeHtml(currentDesc || '')}</textarea>
         </div>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-sec" onclick="closeModal()">Annulla</button>
-        <button class="btn btn-primary" onclick="submitRenameSnapshot('${escapeJs(sid)}')">💾 Salva Modifiche</button>
+        <button class="btn btn-sec" onclick="closeModal()" data-i18n="common.cancel">${_t('common.cancel', isEn ? 'Cancel' : 'Annulla')}</button>
+        <button class="btn btn-primary" onclick="submitRenameSnapshot('${escapeJs(sid)}')">💾 ${isEn ? 'Save Changes' : 'Salva Modifiche'}</button>
       </div>
     </div>
   `);
 }
 
 async function submitRenameSnapshot(sid) {
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
   const name = document.getElementById('renameSnapName')?.value.trim();
   const desc = document.getElementById('renameSnapDesc')?.value.trim();
   if (!name) {
-    alert('Inserisci un nome per lo snapshot.');
+    alert(isEn ? 'Please enter a name for the snapshot.' : 'Inserisci un nome per lo snapshot.');
     return;
   }
   const res = await fetch('/api/snapshots/rename', {
@@ -10010,39 +10448,50 @@ async function submitRenameSnapshot(sid) {
   });
   if (res.ok) {
     closeModal();
-    showToast(`Snapshot aggiornato con successo!`);
+    showToast(isEn ? 'Snapshot updated successfully!' : 'Snapshot aggiornato con successo!');
     renderSnapshots();
   } else {
-    alert('Errore durante la modifica dello snapshot.');
+    alert(isEn ? 'Error updating snapshot.' : 'Errore durante la modifica dello snapshot.');
   }
 }
 
 async function restoreSnapshot(sid, snapName) {
-  if (confirm(`Sei sicuro di voler eseguire il ROLLBACK allo snapshot "${snapName}"?\n\nTutti i parametri, vincoli, cattedre e orari correnti verranno ripristinati allo stato di questo snapshot.`)) {
-    showToast('Ripristino snapshot in corso...');
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
+  const confirmMsg = isEn 
+    ? `Are you sure you want to ROLLBACK to snapshot "${snapName}"?\n\nAll current parameters, constraints, teaching assignments and timetables will be restored to this snapshot's state.`
+    : `Sei sicuro di voler eseguire il ROLLBACK allo snapshot "${snapName}"?\n\nTutti i parametri, vincoli, cattedre e orari correnti verranno ripristinati allo stato di questo snapshot.`;
+  if (confirm(confirmMsg)) {
+    showToast(isEn ? 'Restoring snapshot...' : 'Ripristino snapshot in corso...');
     const res = await fetch('/api/snapshots/restore', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id: sid })
     });
     if (res.ok) {
-      showToast(`Snapshot "${snapName}" ripristinato con successo!`, 'ok');
-      await loadInitialData();
+      showToast(isEn ? `Snapshot "${snapName}" restored successfully!` : `Snapshot "${snapName}" ripristinato con successo!`, 'ok');
+      activeEntity = '';
+      activeTimetableView = 'teacher';
+      stateData.timetableViews = null;
+      await refreshAppState();
       renderSnapshots();
     } else {
-      alert('Errore durante il ripristino dello snapshot.');
+      alert(isEn ? 'Error restoring snapshot.' : 'Errore durante il ripristino dello snapshot.');
     }
   }
 }
 
 async function deleteSnapshot(sid, snapName) {
-  if (confirm(`Sei sicuro di voler eliminare definitivamente lo snapshot "${snapName}" dall'archivio?`)) {
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
+  const confirmMsg = isEn
+    ? `Are you sure you want to permanently delete snapshot "${snapName}" from archive?`
+    : `Sei sicuro di voler eliminare definitivamente lo snapshot "${snapName}" dall'archivio?`;
+  if (confirm(confirmMsg)) {
     const res = await fetch(`/api/snapshots/${encodeURIComponent(sid)}`, { method: 'DELETE' });
     if (res.ok) {
-      showToast(`Snapshot "${snapName}" eliminato.`, 'warn');
+      showToast(isEn ? `Snapshot "${snapName}" deleted.` : `Snapshot "${snapName}" eliminato.`, 'warn');
       renderSnapshots();
     } else {
-      alert('Errore durante l\'eliminazione dello snapshot.');
+      alert(isEn ? 'Error deleting snapshot.' : 'Errore durante l\'eliminazione dello snapshot.');
     }
   }
 }
@@ -10057,10 +10506,11 @@ function downloadSnapshotFet(sid) {
 
 function uploadSnapshotFile(file) {
   if (!file) return;
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
   const reader = new FileReader();
   reader.onload = async function(e) {
     const content = e.target.result;
-    showToast(`Caricamento "${file.name}" in corso...`);
+    showToast(isEn ? `Uploading "${file.name}"...` : `Caricamento "${file.name}" in corso...`);
     try {
       const res = await fetch('/api/snapshots/upload', {
         method: 'POST',
@@ -10070,18 +10520,21 @@ function uploadSnapshotFile(file) {
       if (res.ok) {
         const respData = await res.json().catch(() => ({}));
         const snap = respData.snapshot;
-        showToast(`File "${file.name}" caricato con successo!`, 'ok');
-        if (snap && snap.id && confirm(`File "${file.name}" caricato nell'archivio!\n\nVuoi attivarlo e applicarlo subito come configurazione attiva del sistema?`)) {
+        showToast(isEn ? `File "${file.name}" uploaded successfully!` : `File "${file.name}" caricato con successo!`, 'ok');
+        const applyMsg = isEn
+          ? `File "${file.name}" uploaded to archive!\n\nDo you want to activate and apply it now as the active system configuration?`
+          : `File "${file.name}" caricato nell'archivio!\n\nVuoi attivarlo e applicarlo subito come configurazione attiva del sistema?`;
+        if (snap && snap.id && confirm(applyMsg)) {
           await restoreSnapshot(snap.id, snap.name);
         } else {
           renderSnapshots();
         }
       } else {
         const err = await res.json().catch(() => ({ error: 'Formato non valido' }));
-        alert(`Errore importazione file: ${err.error || 'Dati non validi'}`);
+        alert((isEn ? 'File import error: ' : 'Errore importazione file: ') + (err.error || (isEn ? 'Invalid data' : 'Dati non validi')));
       }
     } catch (ex) {
-      alert(`Errore durante il caricamento: ${ex.message}`);
+      alert((isEn ? 'Upload error: ' : 'Errore durante il caricamento: ') + ex.message);
     }
   };
   reader.readAsText(file, 'UTF-8');
@@ -10267,13 +10720,15 @@ function submitPrintClasses() {
     classesParam = checkedBoxes.map(cb => cb.value).join(',');
   }
 
+  const appLang = (window.I18N ? window.I18N.getLanguage() : 'it');
   const params = new URLSearchParams({
     validity_date: dateVal,
     color_mode: colorVal,
     content_mode: contentVal,
     show_rooms: showRooms,
     include_subgroups: includeSubgroups,
-    classes: classesParam
+    classes: classesParam,
+    lang: appLang
   });
 
   const url = '/api/print/classes?' + params.toString();
@@ -10317,11 +10772,13 @@ function submitPrintTeachers() {
   const showRooms = document.getElementById('printTeachersShowRooms')?.checked ? '1' : '0';
   const highlightDisp = document.getElementById('printTeachersHighlightDisp')?.checked ? '1' : '0';
 
+  const appLang = (window.I18N ? window.I18N.getLanguage() : 'it');
   const params = new URLSearchParams({
     validity_date: dateVal,
     paper_size: paperSize,
     show_rooms: showRooms,
-    highlight_disp: highlightDisp
+    highlight_disp: highlightDisp,
+    lang: appLang
   });
 
   const url = '/api/print/teachers?' + params.toString();
@@ -10338,11 +10795,13 @@ function submitDownloadTeachersDocx() {
   const showRooms = document.getElementById('printTeachersShowRooms')?.checked ? '1' : '0';
   const highlightDisp = document.getElementById('printTeachersHighlightDisp')?.checked ? '1' : '0';
 
+  const appLang = (window.I18N ? window.I18N.getLanguage() : 'it');
   const params = new URLSearchParams({
     validity_date: dateVal,
     paper_size: paperSize,
     show_rooms: showRooms,
-    highlight_disp: highlightDisp
+    highlight_disp: highlightDisp,
+    lang: appLang
   });
 
   const url = '/api/print/teachers/docx?' + params.toString();

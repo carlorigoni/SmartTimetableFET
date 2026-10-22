@@ -2227,5 +2227,6 @@
     {
       "name": "Succursale"
     }
-  ]
+  ],
+  "has_timetable": true
 }

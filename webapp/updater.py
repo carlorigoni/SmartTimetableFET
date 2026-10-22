@@ -37,7 +37,13 @@ def parse_semver(v_str):
 def check_for_updates(current_version, force=False):
     now = time.time()
     if not force and _update_cache["data"] and (now - _update_cache["timestamp"] < CACHE_TTL):
-        return _update_cache["data"]
+        cached = dict(_update_cache["data"])
+        cached["current_version"] = current_version
+        if parse_semver(cached.get("remote_version")) > parse_semver(current_version):
+            cached["update_available"] = True
+        else:
+            cached["update_available"] = False
+        return cached
 
     result = {
         "current_version": current_version,

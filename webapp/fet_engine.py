@@ -770,6 +770,10 @@ def build_timetable_views(data):
         }
 
     return {
+        "has_timetable": bool(timetable),
+        "total_placed": len(timetable),
+        "days": days,
+        "hours": hours,
         "by_teacher": by_teacher,
         "by_class": by_class,
         "by_room": by_room,
@@ -977,27 +981,35 @@ def generate_fet_xml(data, include_timetable=False, exclude_disposizioni=True):
 
     # 9. Aule
     lines.append('  <Rooms_List>')
+    valid_blds = [b["name"] if isinstance(b, dict) else str(b) for b in data.get("buildings", [])]
+    fallback_bld = valid_blds[0] if valid_blds else "Centrale"
+
     gym_emitted = False
     for r in data.get("rooms", []):
         r_name = r["name"]
-        if r_name.lower().startswith("palestra") or r.get("room_type") == "gym":
+        r_bld = r.get("building") or fallback_bld
+        if r_bld not in valid_blds:
+            r_bld = fallback_bld
+
+        if r_name.lower().startswith("palestra") or "gym" in r_name.lower() or r.get("room_type") == "gym":
             if not gym_emitted:
+                gym_bld = r_bld
                 # Emette internamente i 3 moduli per gestire la contemporaneità di 2 o 3 classi fino a 57 persone
                 lines.append('    <Room>')
                 lines.append('      <Name>Palestra-1</Name>')
-                lines.append('      <Building>Centrale</Building>')
+                lines.append(f'      <Building>{xml_escape(gym_bld)}</Building>')
                 lines.append('      <Capacity>29</Capacity>')
                 lines.append('      <Comments>Modulo interno 1/3 (Capienza max totale impianto 57)</Comments>')
                 lines.append('    </Room>')
                 lines.append('    <Room>')
                 lines.append('      <Name>Palestra-2</Name>')
-                lines.append('      <Building>Centrale</Building>')
+                lines.append(f'      <Building>{xml_escape(gym_bld)}</Building>')
                 lines.append('      <Capacity>29</Capacity>')
                 lines.append('      <Comments>Modulo interno 2/3 (Capienza max totale impianto 57)</Comments>')
                 lines.append('    </Room>')
                 lines.append('    <Room>')
                 lines.append('      <Name>Palestra-3</Name>')
-                lines.append('      <Building>Centrale</Building>')
+                lines.append(f'      <Building>{xml_escape(gym_bld)}</Building>')
                 lines.append('      <Capacity>18</Capacity>')
                 lines.append('      <Comments>Modulo interno 3/3 per terza classe piccola (Capienza max totale impianto 57)</Comments>')
                 lines.append('    </Room>')
@@ -1005,8 +1017,7 @@ def generate_fet_xml(data, include_timetable=False, exclude_disposizioni=True):
             continue
         lines.append('    <Room>')
         lines.append(f'      <Name>{xml_escape(r_name)}</Name>')
-        if r.get("building"):
-            lines.append(f'      <Building>{xml_escape(r["building"])}</Building>')
+        lines.append(f'      <Building>{xml_escape(r_bld)}</Building>')
         lines.append(f'      <Capacity>{r.get("capacity", 30)}</Capacity>')
         if r.get("comments"):
             lines.append(f'      <Comments>{xml_escape(r["comments"])}</Comments>')

@@ -86,7 +86,7 @@ def fetch_google_doc_docx_bytes(url):
     except Exception as e:
         raise ValueError(f"Impossibile scaricare il Google Doc: {e}")
 
-APP_VERSION = "1.4.10"
+APP_VERSION = "1.5.1"
 FET_VERSION = "7.12.0"
 APP_AUTHOR = "Carlo Rigoni"
 APP_MENTOR = "Federico Rettore"
@@ -425,7 +425,8 @@ class SmartTimetableHandler(BaseHTTPRequestHandler):
                 "content_mode": query.get("content_mode", ["materia_docente"])[0],
                 "show_rooms": query.get("show_rooms", ["1"])[0] in ("1", "true", "yes"),
                 "include_subgroups": query.get("include_subgroups", ["1"])[0] in ("1", "true", "yes"),
-                "classes": classes_param
+                "classes": classes_param,
+                "lang": query.get("lang", ["it"])[0]
             }
             html_content = generate_classes_print_html(db.get_all(), options)
             html_bytes = html_content.encode("utf-8")
@@ -443,6 +444,7 @@ class SmartTimetableHandler(BaseHTTPRequestHandler):
                 "paper_size": query.get("paper_size", ["A3"])[0],
                 "show_rooms": query.get("show_rooms", ["0"])[0] in ("1", "true", "yes"),
                 "highlight_disp": query.get("highlight_disp", ["1"])[0] in ("1", "true", "yes"),
+                "lang": query.get("lang", ["it"])[0]
             }
             html_content = generate_teachers_master_print_html(db.get_all(), options)
             html_bytes = html_content.encode("utf-8")
@@ -460,6 +462,7 @@ class SmartTimetableHandler(BaseHTTPRequestHandler):
                 "paper_size": query.get("paper_size", ["A3"])[0],
                 "show_rooms": query.get("show_rooms", ["0"])[0] in ("1", "true", "yes"),
                 "highlight_disp": query.get("highlight_disp", ["1"])[0] in ("1", "true", "yes"),
+                "lang": query.get("lang", ["it"])[0]
             }
             docx_bytes = generate_teachers_master_docx(db.get_all(), options)
             date_clean = (options["validity_date"] or "bozza").replace("/", "-")
@@ -589,7 +592,8 @@ class SmartTimetableHandler(BaseHTTPRequestHandler):
             self._json(200, report)
 
         elif path == "/api/advisor/analyze":
-            advisor_report = TimetableAdvisor.analyze_bottlenecks(db.get_all(), solver_dir=SOLVER_DIR, solver_state=solver_state)
+            lang = query.get("lang", ["it"])[0]
+            advisor_report = TimetableAdvisor.analyze_bottlenecks(db.get_all(), solver_dir=SOLVER_DIR, solver_state=solver_state, lang=lang)
             self._json(200, advisor_report)
 
         elif path == "/api/export/fet":
@@ -1169,7 +1173,8 @@ class SmartTimetableHandler(BaseHTTPRequestHandler):
                     self._json(200, {"status": "not_running"})
 
         elif path == "/api/advisor/analyze":
-            adv_res = TimetableAdvisor.analyze_bottlenecks(db.get_all(), solver_dir=SOLVER_DIR, solver_state=solver_state)
+            lang = (body or {}).get("lang", "it")
+            adv_res = TimetableAdvisor.analyze_bottlenecks(db.get_all(), solver_dir=SOLVER_DIR, solver_state=solver_state, lang=lang)
             self._json(200, adv_res)
 
         elif path == "/api/advisor/apply_relax":
@@ -1181,8 +1186,9 @@ class SmartTimetableHandler(BaseHTTPRequestHandler):
             restart = bool(body.get("restart_solver", False))
             timelimit = int(body.get("timelimit", 3600))
             verbose = bool(body.get("verbose", True))
+            lang = body.get("lang", "it")
 
-            new_data, msg = TimetableAdvisor.apply_relaxation(db.data, action_type, payload)
+            new_data, msg = TimetableAdvisor.apply_relaxation(db.data, action_type, payload, lang=lang)
             db.data = new_data
             db.save()
             db.create_snapshot(f"Advisor: {msg}")
@@ -1197,7 +1203,7 @@ class SmartTimetableHandler(BaseHTTPRequestHandler):
                         except Exception:
                             pass
                 time.sleep(0.5)
-                self._trigger_solve(timelimit, verbose=verbose)
+                self._trigger_solve(timelimit, verbose=verbose, respond=False)
                 restarted = True
 
             self._json(200, {"status": "ok", "message": msg, "restarted": restarted})
@@ -1209,8 +1215,10 @@ class SmartTimetableHandler(BaseHTTPRequestHandler):
 
         elif path == "/api/project/load_demo":
             try:
-                db.load_demo()
-                self._json(200, {"success": True, "message": "Demo Paperopoli caricata con successo!"})
+                lang = (body or {}).get("lang", "it")
+                db.load_demo(lang=lang)
+                msg = "Demo Duckburg loaded successfully!" if lang == "en" else "Demo Paperopoli caricata con successo!"
+                self._json(200, {"success": True, "message": msg})
             except Exception as e:
                 self._json(500, {"success": False, "error": str(e)})
 
@@ -1453,11 +1461,12 @@ class SmartTimetableHandler(BaseHTTPRequestHandler):
         else:
             self._json(404, {"error": "Endpoint non trovato"})
 
-    def _trigger_solve(self, timelimit, verbose=True):
+    def _trigger_solve(self, timelimit, verbose=True, respond=True):
         fet_bin = find_fet_cl()
         if not fet_bin:
-            self._json(500, {"error": "Binario 'fet-cl' non trovato sul server."})
-            return
+            if respond:
+                self._json(500, {"error": "Binario 'fet-cl' non trovato sul server."})
+            return False, "Binario 'fet-cl' non trovato sul server."
 
         os.makedirs(SOLVER_DIR, exist_ok=True)
         all_data = db.get_all()
@@ -1521,8 +1530,9 @@ class SmartTimetableHandler(BaseHTTPRequestHandler):
                     bufsize=1
                 )
             except Exception as e:
-                self._json(500, {"error": f"Errore avvio fet-cl: {str(e)}"})
-                return
+                if respond:
+                    self._json(500, {"error": f"Errore avvio fet-cl: {str(e)}"})
+                return False, f"Errore avvio fet-cl: {str(e)}"
 
             solver_state["running"] = True
             solver_state["process"] = proc
@@ -1617,7 +1627,6 @@ class SmartTimetableHandler(BaseHTTPRequestHandler):
                     ret = proc.poll()
                     if ret is not None:
                         solver_state["running"] = False
-                        solver_state["completed"] = True
                         solver_state["current_activity"] = None
 
                         candidates = glob.glob(os.path.join(output_dir, "**", "*_data_and_timetable.fet"), recursive=True)
@@ -1630,6 +1639,7 @@ class SmartTimetableHandler(BaseHTTPRequestHandler):
                                 with open(candidates[0], "r", encoding="utf-8", errors="ignore") as rf:
                                     db.save_solved_timetable_xml(rf.read())
                                 solver_state["logs"].append("Orario salvato e matrici visuali aggiornate!")
+                                solver_state["has_timetable"] = True
                                 if locked_acts:
                                     new_tt = db.data.get("timetable", {})
                                     verified = sum(1 for la in locked_acts if new_tt.get(la["id"], {}).get("day") == la["day"] and new_tt.get(la["id"], {}).get("hour") == la["hour"])
@@ -1713,6 +1723,7 @@ class SmartTimetableHandler(BaseHTTPRequestHandler):
                                     solver_state["logs"].append(f"💡 Disponibili {len(adv_res['recommendations'])} opzioni di allentamento (Relax Search) applicabili in 1 click.")
                             except Exception:
                                 pass
+                        solver_state["completed"] = True
                         break
 
                     # Monitoraggio periodico colli di bottiglia durante l'elaborazione (se prolungata o molti swap)
@@ -1840,7 +1851,9 @@ class SmartTimetableHandler(BaseHTTPRequestHandler):
         threading.Thread(target=monitor_worker, daemon=True).start()
         threading.Thread(target=stream_worker, daemon=True).start()
 
-        self._json(200, {"status": "started", "total_activities": total_act})
+        if respond:
+            self._json(200, {"status": "started", "total_activities": total_act})
+        return True, total_act
 
     def log_message(self, format, *args):
         # Disabilita log verbosi
