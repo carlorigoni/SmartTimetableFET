@@ -22,7 +22,7 @@ let pollSolverTimer = null;
 let currentSolverRunning = false;
 
 // --- VERSIONE E IDENTITÀ APPLICATIVA ---
-const APP_VERSION = '1.5.2';
+const APP_VERSION = '1.5.3';
 
 // Helper traduzione i18n universale
 function _t(key, fallback = '') {
@@ -1148,7 +1148,11 @@ function openRailFlyout(groupId, triggerEl, isPersistent) {
       if (it.adminOnly && (!currentUser || currentUser.role !== 'admin')) {
         return;
       }
-      const isActive = Boolean(it.view && it.view === activeView);
+      const isActive = Boolean(it.view && (
+        it.view === activeView ||
+        (it.view === 'snapshots' && (activeView === 'import_export' || activeView === 'import')) ||
+        ((it.view === 'import_export' || it.view === 'import') && activeView === 'snapshots')
+      ));
       const clickHandler = it.view ? `navigate('${it.view}'); closeRailFlyout(true);` : `${it.action}; closeRailFlyout(true);`;
 
       let badgeHtml = '';
@@ -1258,7 +1262,7 @@ function closeRailFlyout(immediate) {
 }
 
 function updateRailActiveCategories() {
-  document.querySelectorAll('.sidebar-nav .nav-group').forEach(group => {
+  document.querySelectorAll('.sidebar .nav-group').forEach(group => {
     const header = group.querySelector('.nav-group-header');
     const hasActiveChild = !!group.querySelector('.nav-group-items .nav-item.active');
     if (header) {
@@ -1296,6 +1300,17 @@ function applySidebarState(isCollapsed) {
   } else {
     wrapper?.classList.remove('collapsed');
     sb?.classList.remove('collapsed');
+    // Quando la sidebar viene aperta, assicurati che il gruppo con l'elemento attivo sia espanso
+    const activeItem = document.querySelector('.sidebar .nav-item.active');
+    if (activeItem) {
+      const parentGroup = activeItem.closest('.nav-group');
+      if (parentGroup) {
+        const groupId = parentGroup.getAttribute('data-group');
+        if (groupId) {
+          toggleNavGroup(groupId, true);
+        }
+      }
+    }
   }
   updateSidebarPinUi(!isCollapsed);
   updateRailActiveCategories();
@@ -1796,7 +1811,13 @@ function navigate(view, pushHistory = true, customLabel = null) {
   // Aggiorna classe active nella sidebar e auto-espandi il gruppo genitore se la sidebar è aperta
   document.querySelectorAll('.sidebar .nav-item').forEach(el => {
     el.classList.remove('active');
-    if (el.getAttribute('onclick') && el.getAttribute('onclick').includes(view)) {
+    const oc = el.getAttribute('onclick') || '';
+    const isTarget = oc.includes(`'${view}'`) ||
+                     oc.includes(`"${view}"`) ||
+                     oc.includes(view) ||
+                     (view === 'snapshots' && (oc.includes('import_export') || oc.includes('import'))) ||
+                     ((view === 'import_export' || view === 'import') && oc.includes('snapshots'));
+    if (isTarget) {
       el.classList.add('active');
       const parentGroup = el.closest('.nav-group');
       if (parentGroup && !isSidebarCollapsed()) {

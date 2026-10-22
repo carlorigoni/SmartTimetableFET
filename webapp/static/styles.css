@@ -778,6 +778,27 @@
   border-color: #475569;
   color: #94a3b8;
 }
+[data-theme="dark"] .sidebar-wrapper.collapsed .nav-group-header.has-active-child {
+  background-color: rgba(56, 189, 248, 0.18) !important;
+  color: #38bdf8 !important;
+  box-shadow: 0 0 0 2px #38bdf8, 0 2px 6px rgba(56, 189, 248, 0.35) !important;
+}
+[data-theme="dark"] .sidebar-wrapper.collapsed .nav-group-header.has-active-child::before {
+  background: #38bdf8 !important;
+}
+[data-theme="dark"] .sidebar-wrapper.collapsed .nav-group-header.has-active-child .rail-submenu-indicator {
+  background: #0284c7 !important;
+  border-color: #38bdf8 !important;
+  color: #ffffff !important;
+}
+[data-theme="dark"] .sidebar-wrapper.collapsed .nav-item.active {
+  background-color: rgba(56, 189, 248, 0.18) !important;
+  color: #38bdf8 !important;
+  box-shadow: 0 0 0 2px #38bdf8, 0 2px 6px rgba(56, 189, 248, 0.35) !important;
+}
+[data-theme="dark"] .sidebar-wrapper.collapsed .nav-item.active::before {
+  background: #38bdf8 !important;
+}
 
 /* Protezione universale da stili inline bianchi/chiari che sparano in Dark Mode */
 [data-theme="dark"] [style*="background:#f8fafc"],
