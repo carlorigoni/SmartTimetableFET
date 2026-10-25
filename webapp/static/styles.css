@@ -4234,8 +4234,8 @@ input:checked + .slider:before {
   display: flex;
   align-items: center;
   gap: 8px;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
   border-radius: 24px;
   padding: 3px 6px 3px 10px;
   margin-left: 8px;
@@ -4251,7 +4251,7 @@ input:checked + .slider:before {
 .user-name {
   font-size: 12px;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-main);
   max-width: 140px;
   white-space: nowrap;
   overflow: hidden;
@@ -4280,6 +4280,29 @@ input:checked + .slider:before {
 
 .btn-logout:hover {
   background: #fee2e2;
+}
+
+[data-theme="dark"] .user-pill {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+[data-theme="dark"] .user-name {
+  color: #f1f5f9;
+}
+
+[data-theme="dark"] .badge-role {
+  background: rgba(99, 102, 241, 0.25);
+  color: #a5b4fc;
+}
+
+[data-theme="dark"] .btn-logout {
+  color: #94a3b8;
+}
+
+[data-theme="dark"] .btn-logout:hover {
+  background: rgba(239, 68, 68, 0.2);
+  color: #f87171;
 }
 
 .badge-pending-count {
@@ -4979,7 +5002,8 @@ input:checked + .slider:before {
     max-width: 85vw !important;
     height: 100% !important;
     height: 100dvh !important;
-    background: #ffffff !important;
+    background: var(--bg-card) !important;
+    border-right: 1px solid var(--border) !important;
     z-index: 1001 !important;
     -webkit-transform: translate3d(-100%, 0, 0) !important;
     transform: translate3d(-100%, 0, 0) !important;
@@ -4997,8 +5021,8 @@ input:checked + .slider:before {
   .sidebar.mobile-open {
     -webkit-transform: translate3d(0, 0, 0) !important;
     transform: translate3d(0, 0, 0) !important;
-    box-shadow: 6px 0 32px rgba(15, 23, 42, 0.45) !important;
-    background: #ffffff !important;
+    box-shadow: 6px 0 32px rgba(0, 0, 0, 0.45) !important;
+    background: var(--bg-card) !important;
     opacity: 1 !important;
   }
 
@@ -5020,6 +5044,8 @@ input:checked + .slider:before {
     display: flex !important;
     align-items: center !important;
     justify-content: space-between !important;
+    background: var(--bg-card) !important;
+    border-bottom: 1px solid var(--border) !important;
   }
 
   .sidebar.mobile-open .sidebar-brand,
@@ -5051,6 +5077,7 @@ input:checked + .slider:before {
     padding: 0 14px !important;
     justify-content: flex-start !important;
     border-radius: 21px !important;
+    color: var(--text-main) !important;
   }
 
   .sidebar.mobile-open .nav-item .nav-label,
@@ -5082,6 +5109,7 @@ input:checked + .slider:before {
     padding: 0 14px !important;
     justify-content: space-between !important;
     border-radius: 20px !important;
+    color: var(--text-muted) !important;
   }
 
   .sidebar.mobile-open .nav-group-title,
@@ -5114,10 +5142,12 @@ input:checked + .slider:before {
   .sidebar.mobile-open .sidebar-footer,
   .sidebar-wrapper .sidebar.mobile-open .sidebar-footer,
   .sidebar-wrapper.collapsed .sidebar.mobile-open .sidebar-footer {
-    height: 44px !important;
+    height: 48px !important;
     padding: 0 14px !important;
     justify-content: space-between !important;
     display: flex !important;
+    background: var(--bg-card) !important;
+    border-top: 1px solid var(--border) !important;
   }
 
   .sidebar.mobile-open .footer-ver-tag,
@@ -5132,16 +5162,172 @@ input:checked + .slider:before {
     display: inline-flex !important;
   }
 
+  /* --- Topbar Ottimizzata per Mobile --- */
+  .topbar {
+    height: 48px !important;
+    padding: 0 10px !important;
+    gap: 6px !important;
+  }
+
+  .topbar-left {
+    gap: 6px !important;
+    min-width: 0 !important;
+    flex: 1 1 auto !important;
+    overflow: hidden !important;
+  }
+
+  .topbar-title {
+    font-size: 13.5px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    max-width: 140px !important;
+  }
+
+  #instBadge {
+    display: none !important;
+  }
+
+  .topbar-right {
+    gap: 4px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .topbar-btn {
+    padding: 4px 6px !important;
+    font-size: 12px !important;
+  }
+
+  .user-pill {
+    padding: 2px 6px !important;
+    gap: 4px !important;
+    margin-left: 2px !important;
+  }
+
+  .user-name {
+    display: none !important;
+  }
+
+  .badge-role {
+    font-size: 9px !important;
+    padding: 1px 4px !important;
+  }
+
+  /* --- Toolbar e Menu in Alto: Scorrimento Orizzontale Touch Fluido --- */
+  .toolbar {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 8px !important;
+    margin-bottom: 10px !important;
+  }
+
+  .toolbar > div {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+    padding-bottom: 4px !important;
+    gap: 6px !important;
+    align-items: center !important;
+    width: 100% !important;
+  }
+
+  .toolbar > div::-webkit-scrollbar {
+    display: none;
+  }
+
+  .toolbar > div > * {
+    flex-shrink: 0 !important;
+  }
+
+  /* Tutte le barre di navigazione secondaria a schede (tabs) */
+  .settings-tabs,
+  .access-tabs-nav,
+  .diag-tabs {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+    padding-bottom: 4px !important;
+    margin-bottom: 12px !important;
+    width: 100% !important;
+  }
+
+  .settings-tabs::-webkit-scrollbar,
+  .access-tabs-nav::-webkit-scrollbar,
+  .diag-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .settings-tab,
+  .access-tab-btn,
+  .diag-tab-btn {
+    flex-shrink: 0 !important;
+    white-space: nowrap !important;
+  }
+
+  .timetable-stepper-wrap {
+    flex-shrink: 0 !important;
+  }
+
+  .slider-quick-entity {
+    width: 85px !important;
+  }
+
+  /* --- Barra di Status Inferiore: Nascosta su Mobile per Massimizzare lo Spazio --- */
+  .app-page-footer {
+    display: none !important;
+  }
+
+  /* Contenuto e griglie su mobile */
   .content-body {
-    padding: 14px 10px;
+    padding: 10px 8px !important;
   }
 
   .main-wrapper {
     width: 100%;
   }
 
+  .settings-grid {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+
+  .search-input {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
   .matrix-container {
-    max-height: calc(100vh - 220px);
+    max-height: calc(100vh - 160px);
+  }
+
+  /* Modali su mobile */
+  .modal-backdrop {
+    padding: 6px !important;
+  }
+
+  .modal-dialog {
+    max-width: 100% !important;
+    max-height: 94vh !important;
+    border-radius: var(--radius-md) !important;
+  }
+
+  .modal-header {
+    padding: 10px 14px !important;
+  }
+
+  .modal-body {
+    padding: 12px 14px !important;
+  }
+
+  .modal-footer {
+    padding: 10px 14px !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
   }
 }
 
