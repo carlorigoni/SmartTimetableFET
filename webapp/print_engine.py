@@ -26,6 +26,8 @@ import html
 import io
 import zipfile
 from datetime import datetime, timedelta
+from collections import defaultdict
+from webapp.fet_engine import natural_class_sort_key
 
 # =====================================================================
 # COSTANTI E TABELLA ORARIA DELL'ISTITUTO
@@ -1663,15 +1665,17 @@ def generate_organico_template_docx(data=None):
     if data and data.get("teachers"):
         institution = data.get("institution", institution)
         # Raggruppa attività per docente
-        from collections import defaultdict
         t_acts = defaultdict(list)
         for a in data.get("activities", []):
             dur = a.get("duration", 1)
             subj = a.get("subject", "")
             studs = a.get("students", [])
             for t in a.get("teachers", []):
-                for s in studs:
-                    t_acts[t].append((s, dur, subj))
+                if studs:
+                    for s in studs:
+                        t_acts[t].append((s, dur, subj))
+                else:
+                    t_acts[t].append(("", dur, subj))
 
         for t in sorted(data.get("teachers", []), key=lambda x: (x.get("cdc", ""), x.get("name", ""))):
             tname = t.get("name", "")
@@ -1680,12 +1684,30 @@ def generate_organico_template_docx(data=None):
 
             # Raggruppa ore per classe/materia
             cls_hours = defaultdict(int)
+            total_act_hours = 0
+            has_explicit_disp = False
             for s, dur, subj in t_acts.get(tname, []):
                 cls_hours[(s, subj)] += dur
+                total_act_hours += dur
+                if (subj or "").lower().startswith("disposiz") or (s or "").upper() == "DISP":
+                    has_explicit_disp = True
+
+            # Se il docente ha target_hours > ore insegnamento e non ha ancora l'attività di disposizione esplicita
+            if not has_explicit_disp and th > total_act_hours:
+                disp_diff = th - total_act_hours
+                cls_hours[("", "Disposizione")] += disp_diff
 
             parts = []
-            for (s, subj), h in sorted(cls_hours.items(), key=lambda x: natural_class_sort_key(x[0][0]) if hasattr(x[0][0], 'lower') else x[0][0]):
-                parts.append(f"{s} ({h}) {subj}".strip())
+            for (s, subj), h in sorted(cls_hours.items(), key=lambda x: natural_class_sort_key(x[0][0]) if x[0][0] else ("ZZZ", 999, "", str(x[0][1]).upper())):
+                if not s:
+                    if (subj or "").lower().startswith("disposiz"):
+                        parts.append(f"DISP ({h})")
+                    elif (subj or "").lower().startswith("potenz"):
+                        parts.append(f"POT ({h})")
+                    else:
+                        parts.append(f"{subj} ({h})".strip())
+                else:
+                    parts.append(f"{s} ({h}) {subj}".strip())
 
             classi_str = " - ".join(parts) or t.get("comments", "Cattedra da assegnare")
             teachers_rows.append({

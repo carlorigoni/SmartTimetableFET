@@ -20,8 +20,22 @@ import smtplib
 import ssl
 import urllib.request
 import urllib.parse
+import zoneinfo
 from datetime import datetime
 from email.message import EmailMessage
+
+# Assicura il fuso orario corretto coerente con l'ora locale del server (default: Europe/Rome)
+SERVER_TZ_NAME = os.environ.get("TZ", "Europe/Rome")
+try:
+    SERVER_TZ = zoneinfo.ZoneInfo(SERVER_TZ_NAME)
+except Exception:
+    SERVER_TZ = None
+
+def get_local_now() -> datetime:
+    """Restituisce la data/ora corrente sincronizzata sul fuso orario locale del server (Europe/Rome)."""
+    if SERVER_TZ is not None:
+        return datetime.now(SERVER_TZ)
+    return datetime.now()
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(BASE_DIR, "data")
@@ -59,8 +73,8 @@ class AuthManager:
                     "picture": "",
                     "role": "admin",
                     "status": "approved",
-                    "created_at": datetime.now().isoformat(),
-                    "approved_at": datetime.now().isoformat(),
+                    "created_at": get_local_now().isoformat(),
+                    "approved_at": get_local_now().isoformat(),
                     "last_login": None
                 }
             }
@@ -96,8 +110,8 @@ class AuthManager:
                                 "picture": "",
                                 "role": "admin",
                                 "status": "approved",
-                                "created_at": datetime.now().isoformat(),
-                                "approved_at": datetime.now().isoformat(),
+                                "created_at": get_local_now().isoformat(),
+                                "approved_at": get_local_now().isoformat(),
                                 "last_login": None
                             }
                         else:
@@ -123,7 +137,7 @@ class AuthManager:
 
     def log_access(self, event, email, role, status, ip=None, user_agent=None, details=""):
         try:
-            now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            now_str = get_local_now().strftime("%Y-%m-%d %H:%M:%S")
             entry = {
                 "timestamp": now_str,
                 "event": str(event),
@@ -260,7 +274,7 @@ class AuthManager:
             raise
 
         email = user_info["email"]
-        now_iso = datetime.now().isoformat()
+        now_iso = get_local_now().isoformat()
 
         is_admin = (email == self.config["admin_email"].lower().strip())
         is_new_request = False
@@ -328,7 +342,7 @@ class AuthManager:
         admin_email = self.config["admin_email"]
         session_token = self.create_session(admin_email)
         user = dict(self.config["users"][admin_email])
-        user["last_login"] = datetime.now().isoformat()
+        user["last_login"] = get_local_now().isoformat()
         self._save()
         self.log_access("EMERGENCY_LOGIN", admin_email, "admin", "SUCCESS", ip, user_agent, "Accesso riuscito con passcode master")
         return {
@@ -413,7 +427,7 @@ SmartTimetable Automated Security Notification
         u["status"] = "approved"
         if role in ("admin", "editor", "viewer"):
             u["role"] = role
-        u["approved_at"] = datetime.now().isoformat()
+        u["approved_at"] = get_local_now().isoformat()
         self._save()
         self.log_access("USER_APPROVED", email, role, "SUCCESS", ip, "-", f"Utente approvato con ruolo '{role}' da {admin_email or 'admin'}")
         return u

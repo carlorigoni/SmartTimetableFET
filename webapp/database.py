@@ -1933,8 +1933,11 @@ class Database:
                     new_acts.append(sub_act)
 
             self.data["activities"] = new_acts
-            self.data["timetable"] = {}
-            self.data["has_timetable"] = False
+            # Preserva i posizionamenti orari esistenti per tutte le attività ancora valide (senza azzerare l'orario)
+            valid_ids = {str(a["id"]) for a in new_acts}
+            old_tt = self.data.get("timetable", {})
+            self.data["timetable"] = {str(aid): pl for aid, pl in old_tt.items() if str(aid) in valid_ids}
+            self.data["has_timetable"] = bool(self.data["timetable"])
 
             # Rimuove vincoli di spazio che fanno riferimento ad Activity_Id non più validi
             valid_ids = {str(a["id"]) for a in new_acts}
@@ -2169,6 +2172,109 @@ class Database:
             self._save_to_disk(self.data)
             return True
 
+    def sync_disposizioni_activities(self, teacher_name=None):
+        """
+        Sincronizza in modo automatico e deterministico le attività di Disposizione per i docenti.
+        Se un docente ha target_hours > ore di insegnamento effettivo (es. Cavazzana 15h lezioni su 20h target),
+        genera esattamente (target_hours - ore_insegnamento) attività individuali da 1 ora con subject='Disposizione'.
+        Rimuove eventuali disposizioni in eccesso e garantisce che ogni attività sia da 1h.
+        """
+        with self.lock:
+            acts = self.data.get("activities", [])
+            teachers = self.data.get("teachers", [])
+            target_teachers = [t for t in teachers if t.get("name") == teacher_name] if teacher_name else teachers
+
+            # Calcola ore di insegnamento reale per docente (escluse disposizioni)
+            teach_hours = defaultdict(int)
+            disp_acts_by_teacher = defaultdict(list)
+            for a in acts:
+                is_disp = (a.get("subject") or "").strip().lower().startswith("disposiz")
+                dur = int(a.get("duration", 1) or 1)
+                for t in a.get("teachers", []):
+                    if is_disp:
+                        disp_acts_by_teacher[t].append(a)
+                    else:
+                        teach_hours[t] += dur
+
+            next_id = max((int(a["id"]) for a in acts if str(a["id"]).isdigit()), default=1000) + 1
+            acts_to_remove_ids = set()
+            acts_to_add = []
+            sync_results = {}
+
+            for t in target_teachers:
+                tname = t.get("name", "").strip()
+                if not tname:
+                    continue
+                th = int(t.get("target_hours", 18) or 18)
+                t_teach = teach_hours[tname]
+                needed_disp = max(0, th - t_teach)
+
+                current_disps = disp_acts_by_teacher.get(tname, [])
+                # Espandi se qualche attività ha duration > 1
+                expanded_disps = []
+                for da in current_disps:
+                    dur = int(da.get("duration", 1) or 1)
+                    if dur > 1:
+                        da["duration"] = 1
+                        da["total_hours"] = 1
+                        expanded_disps.append(da)
+                        for _ in range(1, dur):
+                            extra = copy.deepcopy(da)
+                            extra["id"] = str(next_id)
+                            next_id += 1
+                            extra["duration"] = 1
+                            extra["total_hours"] = 1
+                            acts_to_add.append(extra)
+                            expanded_disps.append(extra)
+                    else:
+                        expanded_disps.append(da)
+
+                diff = needed_disp - len(expanded_disps)
+                if diff > 0:
+                    for _ in range(diff):
+                        new_disp = {
+                            "id": str(next_id),
+                            "teachers": [tname],
+                            "students": [],
+                            "subject": "Disposizione",
+                            "duration": 1,
+                            "total_hours": 1,
+                            "group_id": str(next_id),
+                            "room": "",
+                            "active": True,
+                            "comments": f"Ore a disposizione di {tname}",
+                            "is_custom_blocks": False,
+                            "custom_blocks": ""
+                        }
+                        next_id += 1
+                        acts_to_add.append(new_disp)
+                elif diff < 0:
+                    # Rimuovi l'eccesso partendo da quelle non ancora collocate in timetable
+                    tt = self.data.get("timetable", {})
+                    unplaced = [da for da in expanded_disps if str(da["id"]) not in tt]
+                    placed = [da for da in expanded_disps if str(da["id"]) in tt]
+                    excess = abs(diff)
+                    to_del = unplaced[:excess]
+                    if len(to_del) < excess:
+                        to_del += placed[:excess - len(to_del)]
+                    for da in to_del:
+                        acts_to_remove_ids.add(str(da["id"]))
+
+                sync_results[tname] = {
+                    "teaching": t_teach,
+                    "target": th,
+                    "disposizioni": needed_disp
+                }
+
+            if acts_to_remove_ids or acts_to_add:
+                new_acts_list = [a for a in acts if str(a["id"]) not in acts_to_remove_ids] + acts_to_add
+                self.data["activities"] = new_acts_list
+                for aid in acts_to_remove_ids:
+                    self.data.get("timetable", {}).pop(aid, None)
+                self._save_to_disk(self.data)
+
+            return sync_results
+
     def place_disposizioni_in_timetable(self):
         """
         Assegna le ore a disposizione dei docenti nell'orario post-calcolo FET.
@@ -2181,6 +2287,9 @@ class Database:
         4. Rispettare rigorosamente max_hours_daily, max_days, day_hours_limit e le indisponibilità del docente.
         5. Idempotenza: rimuove prima le eventuali disposizioni precedenti per un ricalcolo pulito e deterministico.
         """
+        # Sincronizza preventivamente il monte ore a disposizione per tutti i docenti
+        self.sync_disposizioni_activities()
+
         with self.lock:
             timetable = self.data.get("timetable", {})
             if not timetable:
@@ -2391,6 +2500,17 @@ class Database:
                             for h in range(1, day_limits[d] + 1):
                                 if h not in occ and f"{d}|{h}" not in unavail:
                                     cands.append((0, d, h, "fallback"))
+
+                    if not cands:
+                        # Fallback esteso: se max_daily satura, rilassa fino al limite giornaliero day_limits
+                        for d in active_days:
+                            occ = get_occ(d)
+                            if len(occ) >= day_limits[d]:
+                                continue
+                            for h in range(1, day_limits[d] + 1):
+                                if h not in occ and f"{d}|{h}" not in unavail:
+                                    score = -100 - len(occ) * 20 - h
+                                    cands.append((score, d, h, "fallback_extended"))
 
                     if not cands:
                         break
@@ -2955,20 +3075,9 @@ class Database:
                             "new": f"{pt['target_hours']}h"
                         })
 
-                    # Confronto Contratto (Intera / COE / Spezzone / Part-time)
-                    cur_ctype = cur.get("contract_type") or ("coe" if cur.get("is_coe") else ("spezzone" if cur.get("target_hours", 18) < 18 else "intera"))
-                    if cur_ctype == "standard":
-                        cur_ctype = "intera"
-                    new_ctype = pt.get("contract_type") or "intera"
-                    if new_ctype == "standard":
-                        new_ctype = "intera"
-                    if cur_ctype != new_ctype:
-                        diffs.append({
-                            "field": "contract_type",
-                            "label": "Tipologia Cattedra",
-                            "old": cur_ctype,
-                            "new": new_ctype
-                        })
+                    # NOTA: La tipologia contrattuale (COE, Spezzone, Part-time, Intera) è una gestione
+                    # manuale autorevole impostata nel sistema e NON deve essere considerata una variazione
+                    # dall'organico né sovrascritta durante l'aggiornamento.
 
                     # Confronto Classi / Insegnamenti
                     cur_acts = db_activities_by_teacher.get(name_low, [])
@@ -3025,6 +3134,19 @@ class Database:
                     })
 
             unchanged_names = [p["name"] if isinstance(p, dict) else str(p) for p in unchanged]
+
+            # Rileva eventuali discrepanze tra la somma delle ore per materia e le ore di cattedra
+            discrepancies = []
+            for pt in parsed_teachers:
+                if pt.get("hours_discrepancy"):
+                    discrepancies.append({
+                        "name": pt.get("name", ""),
+                        "declared_hours": pt.get("target_hours", 18),
+                        "sum_hours": pt.get("sum_hours", 0),
+                        "diff": pt.get("hours_discrepancy", 0),
+                        "classi_raw": pt.get("classi_raw", "")
+                    })
+
             return {
                 "summary": {
                     "total_docx": len(parsed_teachers),
@@ -3032,17 +3154,20 @@ class Database:
                     "added_count": len(added),
                     "modified_count": len(modified),
                     "removed_count": len(removed),
-                    "unchanged_count": len(unchanged_names)
+                    "unchanged_count": len(unchanged_names),
+                    "discrepancies_count": len(discrepancies)
                 },
                 "added": added,
                 "modified": modified,
                 "removed": removed,
                 "unchanged": unchanged_names,
+                "discrepancies": discrepancies,
                 "diff": {
                     "added": added,
                     "modified": modified,
                     "removed": removed,
-                    "unchanged": unchanged_names
+                    "unchanged": unchanged_names,
+                    "discrepancies": discrepancies
                 }
             }
 
@@ -3167,9 +3292,8 @@ class Database:
                     update_fields["cdc"] = new_data["cdc"]
                 if "target_hours" in new_data:
                     update_fields["target_hours"] = int(new_data["target_hours"])
-                if "contract_type" in new_data:
-                    update_fields["contract_type"] = new_data["contract_type"]
-                    update_fields["is_coe"] = (new_data["contract_type"] == "coe")
+                # NOTA: La tipologia contrattuale (contract_type, is_coe) per i docenti esistenti
+                # è configurata manualmente e NON viene sovrascritta dall'import organico.
                 self.update_teacher(name, update_fields)
 
                 # Opzione A: Sincronizzazione Additiva Intelligente per docenti modificati
@@ -3204,6 +3328,9 @@ class Database:
                 name = name.strip() if name else ""
                 if name:
                     self.delete_teacher(name)
+
+            # Sincronizza le disposizioni per tutti i docenti (es. 15h cattedra + 5h disposizioni)
+            self.sync_disposizioni_activities()
 
             self._save_to_disk(self.data)
             return True
@@ -3259,10 +3386,11 @@ def parse_organico_docx_content(content_bytes_or_path):
         c_parts = [p.strip() for p in classi_raw.split("-") if p.strip()]
         assignments = []
         for cp in c_parts:
-            m = re.match(r"^([0-9][A-Za-z]+|\bPOT\b|\bDISP\b|\bRESIDUO\b|\bCOE\b)\s*\((\d+)\)\s*(.*)$", cp, re.IGNORECASE)
+            # Riconosce qualunque elemento con ore indicate tra parentesi (es. '1A (4) Italiano', 'DISP (5)', 'POT (3)', ecc.)
+            m = re.match(r"^([^()]+?)\s*\(\s*(\d+)\s*\)\s*(.*)$", cp)
             if m:
                 assignments.append({
-                    "target": m.group(1).upper(),
+                    "target": m.group(1).strip().upper(),
                     "hours": int(m.group(2)),
                     "subject": m.group(3).strip(),
                     "raw": cp
@@ -3274,6 +3402,11 @@ def parse_organico_docx_content(content_bytes_or_path):
                     "subject": "",
                     "raw": cp
                 })
+
+        # Verifica se la somma delle ore per materia coincide con il totale ore di cattedra
+        sum_hours = sum(a["hours"] for a in assignments)
+        has_explicit_hours = any(a["hours"] > 0 for a in assignments)
+        discrepancy = (sum_hours - tot_ore) if (has_explicit_hours and sum_hours != tot_ore) else 0
 
         low_raw = classi_raw.lower()
         is_coe = "coe" in low_raw or "c.o.e." in low_raw
@@ -3294,6 +3427,8 @@ def parse_organico_docx_content(content_bytes_or_path):
             "name": doc_name,
             "cdc": current_cdc,
             "target_hours": tot_ore,
+            "sum_hours": sum_hours if has_explicit_hours else tot_ore,
+            "hours_discrepancy": discrepancy,
             "contract_type": contract_type,
             "classi_raw": classi_raw,
             "assignments": assignments

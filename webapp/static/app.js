@@ -22,7 +22,7 @@ let pollSolverTimer = null;
 let currentSolverRunning = false;
 
 // --- VERSIONE E IDENTITÀ APPLICATIVA ---
-const APP_VERSION = '1.5.4';
+const APP_VERSION = '1.5.5';
 
 // Helper traduzione i18n universale
 function _t(key, fallback = '') {
@@ -2751,6 +2751,27 @@ async function pollSolverStatus() {
         }
       }
 
+      // Se il calcolo non è riuscito ma nel sistema è stato preservato l'orario precedente
+      if (!s.success && s.has_timetable) {
+        const bannerSlot = document.getElementById('preflightSolverBanner');
+        if (bannerSlot) {
+          bannerSlot.innerHTML = `
+            <div style="background:rgba(59,130,246,0.12);border:1.5px solid rgba(59,130,246,0.35);border-radius:var(--radius-md);padding:12px 16px;display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:10px;">
+              <div style="display:flex;align-items:center;gap:10px;">
+                <span style="font-size:22px;">🛡️</span>
+                <div>
+                  <div style="font-weight:700;font-size:13.5px;color:#1e40af;">${isEn ? 'Previous timetable preserved' : 'Orario precedente preservato'}</div>
+                  <div style="font-size:12px;color:var(--text-muted);">${isEn ? 'FET did not finish, but your previous valid timetable was kept safe and untouched.' : 'Il calcolo non è terminato, ma il tuo orario precedente valido è rimasto intatto e attivo nel sistema.'}</div>
+                </div>
+              </div>
+              <button class="btn btn-sec" onclick="navigate('timetable')" style="font-weight:600;font-size:12px;">
+                🗓️ ${isEn ? 'View Active Timetable' : 'Visualizza Orario Attivo'}
+              </button>
+            </div>
+          `;
+        }
+      }
+
       // Mostra collo di bottiglia se presente
       if (s.bottleneck && bCard && bText) {
         bCard.style.display = 'block';
@@ -3822,6 +3843,9 @@ function openEditTeacherModal(name) {
               ? (contractType === 'coe' ? '🏫 External Timetable Assignment (COE): teacher completes hours in another school.' : (contractType === 'spezzone' ? '🧩 Fractional Assignment: residual teaching hours.' : (contractType === 'part_time' ? '⏳ Part-Time: reduced working hours upon teacher request.' : '🏛️ Full Standard Contract (18 contractual hours).')))
               : (contractType === 'coe' ? '🏫 Cattedra Orario Esterna (COE): il docente completa l\'orario in un altro istituto scolastico.' : (contractType === 'spezzone' ? '🧩 Spezzone Orario: cattedra su frazione o spezzone residuo a ore.' : (contractType === 'part_time' ? '⏳ Part-Time: docente con contratto a orario parziale su propria richiesta.' : '🏛️ Cattedra Ordinaria Intera (18 ore contrattuali).')))}
           </div>
+          <div style="font-size:11px;color:#1e40af;margin-top:3px;">
+            🛡️ ${isEn ? 'Contractual typology and target hours are manually configured and protected from automatic file updates.' : 'Tipologia contrattuale e ore target sono gestite manualmente e protette dall\'aggiornamento del file organico.'}
+          </div>
         </div>
 
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
@@ -4403,6 +4427,7 @@ function renderOrganicoDiffView(diff, totalParsed) {
   const modified = diff.modified || [];
   const removed = diff.removed || [];
   const unchanged = diff.unchanged || [];
+  const discrepancies = diff.discrepancies || (diff.diff && diff.diff.discrepancies) || [];
 
   diffBox.innerHTML = `
     <div style="border-top:1px solid var(--border);padding-top:16px;margin-top:14px;">
@@ -4429,6 +4454,27 @@ function renderOrganicoDiffView(diff, totalParsed) {
           <div style="font-size:11px;color:var(--text-muted);">dati identici</div>
         </div>
       </div>
+
+      <!-- AVVISO VERIFICA SOMMA ORE CATTEDRA -->
+      ${discrepancies.length > 0 ? `
+        <div style="background:#fef2f2;border:1.5px solid #f87171;border-radius:var(--radius-md);padding:12px 16px;margin-bottom:14px;">
+          <div style="display:flex;align-items:center;gap:8px;font-weight:700;color:#991b1b;font-size:13px;">
+            <span style="font-size:16px;">⚠️</span>
+            <span>Verifica Somma Ore Cattedra: rilevate ${discrepancies.length} anomalie tra ore per materia e totale dichiarato nel file</span>
+          </div>
+          <div style="font-size:11.5px;color:#7f1d1d;margin-top:4px;">
+            La somma delle ore specificate tra parentesi per le classi non coincide con il totale ore cattedra indicato nella colonna 'Ore':
+          </div>
+          <div style="max-height:110px;overflow:auto;margin-top:8px;font-size:11px;background:#fff;border-radius:var(--radius-sm);border:1px solid #fecaca;padding:6px 10px;">
+            ${discrepancies.map(d => `
+              <div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px dashed #fee2e2;">
+                <span><b>${escapeHtml(d.name)}</b>: dichiarato <b>${d.declared_hours}h</b> ➔ somma materie <b>${d.sum_hours}h</b> (${d.diff > 0 ? '+' + d.diff : d.diff}h)</span>
+                <span style="color:#b91c1c;font-family:var(--font-mono);font-size:10.5px;">${escapeHtml(d.classi_raw || '')}</span>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      ` : ''}
 
       <!-- 1. SEZIONE NUOVI DOCENTI -->
       ${added.length > 0 ? `
@@ -4462,7 +4508,10 @@ function renderOrganicoDiffView(diff, totalParsed) {
                     </td>
                     <td><b>👨‍🏫 ${escapeHtml(doc.name)}</b></td>
                     <td style="text-align:center;"><span class="item-chip">${escapeHtml(doc.cdc || '-')}</span></td>
-                    <td style="text-align:center;"><span class="badge badge-info">${doc.target_hours || 18}h</span></td>
+                    <td style="text-align:center;">
+                      <span class="badge badge-info">${doc.target_hours || 18}h</span>
+                      ${doc.hours_discrepancy ? `<br><span class="badge badge-err" style="font-size:10px;margin-top:2px;" title="Somma ore per materia (${doc.sum_hours}h) diversa dal totale cattedra (${doc.target_hours}h)">⚠️ ${doc.sum_hours}h</span>` : ''}
+                    </td>
                     <td><span class="badge ${doc.contract_type === 'coe' ? 'badge-coe' : (doc.contract_type === 'spezzone' ? 'badge-spezzone' : (doc.contract_type === 'part_time' ? 'badge-pt' : 'badge-intera'))}">${escapeHtml(doc.contract_type === 'coe' ? 'COE' : (doc.contract_type === 'spezzone' ? 'Spezzone' : (doc.contract_type === 'part_time' ? 'Part-Time' : 'Intera (18h)')))}</span></td>
                     <td style="font-size:11.5px;color:var(--text-muted);">${escapeHtml(doc.classi_raw || '-')}</td>
                   </tr>
@@ -4518,7 +4567,10 @@ function renderOrganicoDiffView(diff, totalParsed) {
                       <td style="text-align:center;">
                         <input type="checkbox" class="organicoModDocChk" data-index="${idx}" checked>
                       </td>
-                      <td><b>👨‍🏫 ${escapeHtml(item.name)}</b></td>
+                      <td>
+                        <b>👨‍🏫 ${escapeHtml(item.name)}</b>
+                        ${item.docente_new?.hours_discrepancy ? `<br><span class="badge badge-err" style="font-size:10px;margin-top:2px;" title="Somma ore per materia (${item.docente_new.sum_hours}h) diversa dal totale cattedra (${item.docente_new.target_hours}h)">⚠️ Somma ${item.docente_new.sum_hours}h ≠ ${item.docente_new.target_hours}h</span>` : ''}
+                      </td>
                       <td><div style="display:flex;flex-direction:column;gap:3px;">${chips.length > 0 ? chips.join('') : '<span style="color:var(--text-muted);font-size:11.5px;">Variazione cattedra</span>'}</div></td>
                       <td style="font-size:11.5px;color:var(--text-muted);">${escapeHtml(item.docente_new?.classi_raw || '-')}</td>
                     </tr>

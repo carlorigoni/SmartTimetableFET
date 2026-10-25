@@ -86,7 +86,7 @@ def fetch_google_doc_docx_bytes(url):
     except Exception as e:
         raise ValueError(f"Impossibile scaricare il Google Doc: {e}")
 
-APP_VERSION = "1.5.4"
+APP_VERSION = "1.5.5"
 FET_VERSION = "7.12.0"
 APP_AUTHOR = "Carlo Rigoni"
 APP_MENTOR = "Federico Rettore"
@@ -1514,6 +1514,10 @@ class SmartTimetableHandler(BaseHTTPRequestHandler):
                     "hour": h
                 })
 
+        # Preserva l'orario precedente valido per proteggerlo da interruzioni o timeout del solver
+        backup_timetable = copy.deepcopy(db.data.get("timetable", {}))
+        backup_has_timetable = bool(db.data.get("has_timetable", False) and len(backup_timetable) > 0)
+
         with solver_lock:
             if solver_state["running"] and solver_state["process"]:
                 try:
@@ -1708,6 +1712,19 @@ class SmartTimetableHandler(BaseHTTPRequestHandler):
                                 solver_state["logs"].append("⏹ Calcolo interrotto su richiesta dell'utente.")
                             else:
                                 solver_state["logs"].append(f"⏱️ FET terminato (codice {ret}). Nessun orario completo generato.")
+
+                            # Garantisce la preservazione integrale dell'orario precedente senza scompaginare il sistema
+                            if backup_has_timetable and backup_timetable:
+                                with db.lock:
+                                    db.data["timetable"] = backup_timetable
+                                    db.data["has_timetable"] = True
+                                    db._save_to_disk(db.data)
+                                solver_state["logs"].append("=" * 65)
+                                solver_state["logs"].append(f"🛡️ PROTEZIONE ORARIO: il calcolo non è terminato. L'orario precedente ({len(backup_timetable)} attività collocate) è stato mantenuto attivo e inalterato nel sistema.")
+                                solver_state["logs"].append("=" * 65)
+                                solver_state["has_timetable"] = True
+                            else:
+                                solver_state["has_timetable"] = False
 
                             # Genera raccomandazioni dell'Advisor Intelligente in caso di soluzione incompleta
                             try:
