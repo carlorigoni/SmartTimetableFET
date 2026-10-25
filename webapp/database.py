@@ -712,8 +712,12 @@ class Database:
         with self.lock:
             with open(demo_path, "r", encoding="utf-8") as f:
                 self.data = json.load(f)
-            if self.data.get("timetable"):
+            has_tt = bool(self.data.get("timetable") and len(self.data.get("timetable", {})) > 0)
+            if has_tt:
                 self.data["has_timetable"] = True
+                self.place_disposizioni_in_timetable()
+            else:
+                self.sync_disposizioni_activities()
             self._save_to_disk(self.data)
             if os.path.exists(demo_fet):
                 try:
@@ -2174,6 +2178,11 @@ class Database:
         with self.lock:
             parsed = parse_fet_xml(xml_content)
             self.data = parsed
+            has_tt = bool(self.data.get("has_timetable") or len(self.data.get("timetable", {})) > 0)
+            if has_tt:
+                self.place_disposizioni_in_timetable()
+            else:
+                self.sync_disposizioni_activities()
             self._save_to_disk(self.data)
             return True
 
@@ -2908,6 +2917,11 @@ class Database:
                 
                 self.data = copy.deepcopy(data_to_restore)
                 self.data["config_name"] = meta.get("name", "Configurazione Ripristinata")
+                has_tt = bool(self.data.get("has_timetable") or len(self.data.get("timetable", {})) > 0)
+                if has_tt:
+                    self.place_disposizioni_in_timetable()
+                else:
+                    self.sync_disposizioni_activities()
                 self._save_to_disk(self.data)
                 
                 snap_fet = os.path.join(SNAPSHOTS_DIR, f"{snapshot_id}.fet")

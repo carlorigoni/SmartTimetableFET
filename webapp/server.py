@@ -86,7 +86,7 @@ def fetch_google_doc_docx_bytes(url):
     except Exception as e:
         raise ValueError(f"Impossibile scaricare il Google Doc: {e}")
 
-APP_VERSION = "1.5.6"
+APP_VERSION = "1.5.7"
 FET_VERSION = "7.12.0"
 APP_AUTHOR = "Carlo Rigoni"
 APP_MENTOR = "Federico Rettore"
@@ -419,6 +419,7 @@ class SmartTimetableHandler(BaseHTTPRequestHandler):
                 classes_param = "all"
             else:
                 classes_param = [c.strip() for c in raw_classes.split(",") if c.strip()]
+            req_lang = "en" if query.get("lang", ["it"])[0].lower() in ("en", "eng", "english") else "it"
             options = {
                 "validity_date": query.get("validity_date", [""])[0],
                 "color_mode": query.get("color_mode", ["color"])[0],
@@ -426,7 +427,7 @@ class SmartTimetableHandler(BaseHTTPRequestHandler):
                 "show_rooms": query.get("show_rooms", ["1"])[0] in ("1", "true", "yes"),
                 "include_subgroups": query.get("include_subgroups", ["1"])[0] in ("1", "true", "yes"),
                 "classes": classes_param,
-                "lang": query.get("lang", ["it"])[0]
+                "lang": req_lang
             }
             html_content = generate_classes_print_html(db.get_all(), options)
             html_bytes = html_content.encode("utf-8")
@@ -439,12 +440,13 @@ class SmartTimetableHandler(BaseHTTPRequestHandler):
             return
 
         elif path == "/api/print/teachers":
+            req_lang = "en" if query.get("lang", ["it"])[0].lower() in ("en", "eng", "english") else "it"
             options = {
                 "validity_date": query.get("validity_date", [""])[0],
                 "paper_size": query.get("paper_size", ["A3"])[0],
                 "show_rooms": query.get("show_rooms", ["0"])[0] in ("1", "true", "yes"),
                 "highlight_disp": query.get("highlight_disp", ["1"])[0] in ("1", "true", "yes"),
-                "lang": query.get("lang", ["it"])[0]
+                "lang": req_lang
             }
             html_content = generate_teachers_master_print_html(db.get_all(), options)
             html_bytes = html_content.encode("utf-8")
@@ -457,12 +459,13 @@ class SmartTimetableHandler(BaseHTTPRequestHandler):
             return
 
         elif path == "/api/print/teachers/docx":
+            req_lang = "en" if query.get("lang", ["it"])[0].lower() in ("en", "eng", "english") else "it"
             options = {
                 "validity_date": query.get("validity_date", [""])[0],
                 "paper_size": query.get("paper_size", ["A3"])[0],
                 "show_rooms": query.get("show_rooms", ["0"])[0] in ("1", "true", "yes"),
                 "highlight_disp": query.get("highlight_disp", ["1"])[0] in ("1", "true", "yes"),
-                "lang": query.get("lang", ["it"])[0]
+                "lang": req_lang
             }
             docx_bytes = generate_teachers_master_docx(db.get_all(), options)
             date_clean = (options["validity_date"] or "bozza").replace("/", "-")
@@ -479,10 +482,10 @@ class SmartTimetableHandler(BaseHTTPRequestHandler):
 
         elif path == "/api/organico/template_docx":
             use_current = query.get("current", ["0"])[0] in ("1", "true", "yes")
-            lang = query.get("lang", ["it"])[0]
+            req_lang = "en" if query.get("lang", ["it"])[0].lower() in ("en", "eng", "english") else "it"
             data_to_use = db.get_all() if use_current else None
-            docx_bytes = generate_organico_template_docx(data_to_use, lang=lang)
-            if lang == "en":
+            docx_bytes = generate_organico_template_docx(data_to_use, lang=req_lang)
+            if req_lang == "en":
                 filename = "Current_School_Organico.docx" if use_current else "SmartTimetable_Faculty_Organico_Template.docx"
             else:
                 filename = "Organico_Scuola_Attuale.docx" if use_current else "Modello_Organico_SmartTimetable.docx"
@@ -1561,17 +1564,18 @@ class SmartTimetableHandler(BaseHTTPRequestHandler):
             solver_state["start_time"] = time.time()
             solver_state["elapsed"] = 0.0
             
+            now_ts = datetime.datetime.now().strftime("[%H:%M:%S]")
             init_logs = [
-                f"🚀 Avvio di fet-cl 7.12.0 su {total_act} attività (Modalità: {'Verbosa (Stile Desktop)' if verbose else 'Standard'})...",
-                f"📁 Cartella output: {output_dir}"
+                f"{now_ts} 🚀 Avvio di fet-cl 7.12.0 su {total_act} attività (Modalità: {'Verbosa (Stile Desktop)' if verbose else 'Standard'})...",
+                f"{now_ts} 📁 Cartella output: {output_dir}"
             ]
             if locked_acts:
                 lbl = "1 attività fissata/bloccata" if len(locked_acts) == 1 else f"{len(locked_acts)} attività fissate/bloccate"
-                init_logs.append(f"🔒 {lbl} dall'utente (preservata permanentemente nel calcolo):")
+                init_logs.append(f"{now_ts} 🔒 {lbl} dall'utente (preservata permanentemente nel calcolo):")
                 for la in locked_acts[:8]:
-                    init_logs.append(f"   • #{la['id']} {la['desc']}")
+                    init_logs.append(f"{now_ts}    • #{la['id']} {la['desc']}")
                 if len(locked_acts) > 8:
-                    init_logs.append(f"   ... e altre {len(locked_acts) - 8} attività.")
+                    init_logs.append(f"{now_ts}    ... e altre {len(locked_acts) - 8} attività.")
             solver_state["logs"] = init_logs
             solver_state["raw_logs"] = [f"$ {' '.join(cmd)}"]
             solver_state["completed"] = False
@@ -1583,6 +1587,14 @@ class SmartTimetableHandler(BaseHTTPRequestHandler):
             solver_state["advisor_report"] = None
             solver_state["recent_conflicts"] = []
             solver_state["verbose"] = verbose
+
+        def log_solver_msg(msg):
+            ts = datetime.datetime.now().strftime("[%H:%M:%S]")
+            line = f"{ts} {msg}"
+            with solver_lock:
+                solver_state["logs"].append(line)
+                if len(solver_state["logs"]) > 350:
+                    solver_state["logs"] = solver_state["logs"][-350:]
 
         # Monitor thread
         def monitor_worker():
@@ -1603,7 +1615,7 @@ class SmartTimetableHandler(BaseHTTPRequestHandler):
                                 added_items = re.findall(r"Added\s+(\d+\s+[\w\s]+)", fo_text)
                                 if added_items:
                                     file_open_logged = True
-                                    solver_state["logs"].append(
+                                    log_solver_msg(
                                         f"📋 Validazione input completata: {', '.join(added_items[:6])}"
                                     )
                             except Exception:
@@ -1633,7 +1645,7 @@ class SmartTimetableHandler(BaseHTTPRequestHandler):
                                             solver_state["placed_activities"] = max(solver_state["placed_activities"], val)
                                             if solver_state["total_activities"] > 0:
                                                 solver_state["percent"] = round((solver_state["placed_activities"] / solver_state["total_activities"]) * 100, 1)
-                                            solver_state["logs"].append(
+                                            log_solver_msg(
                                                 f"⭐ [Record] Raggiunte {val} / {solver_state['total_activities']} attività collocate ({solver_state['percent']}%)"
                                             )
                             except Exception:
@@ -1651,20 +1663,20 @@ class SmartTimetableHandler(BaseHTTPRequestHandler):
                             solver_state["success"] = True
                             solver_state["percent"] = 100.0
                             solver_state["placed_activities"] = solver_state["total_activities"]
-                            solver_state["logs"].append(f"🎉 FET terminato con successo! File generato: {os.path.basename(candidates[0])}")
+                            log_solver_msg(f"🎉 FET terminato con successo! File generato: {os.path.basename(candidates[0])}")
                             try:
                                 with open(candidates[0], "r", encoding="utf-8", errors="ignore") as rf:
                                     db.save_solved_timetable_xml(rf.read())
-                                solver_state["logs"].append("Orario salvato e matrici visuali aggiornate!")
+                                log_solver_msg("Orario salvato e matrici visuali aggiornate!")
                                 solver_state["has_timetable"] = True
                                 if locked_acts:
                                     new_tt = db.data.get("timetable", {})
                                     verified = sum(1 for la in locked_acts if new_tt.get(la["id"], {}).get("day") == la["day"] and new_tt.get(la["id"], {}).get("hour") == la["hour"])
-                                    solver_state["logs"].append(f"🔒 Verifica ore fissate: {verified}/{len(locked_acts)} attività preservate al 100% nelle posizioni richieste!")
+                                    log_solver_msg(f"🔒 Verifica ore fissate: {verified}/{len(locked_acts)} attività preservate al 100% nelle posizioni richieste!")
                                     for la in locked_acts:
-                                        solver_state["logs"].append(f"   ✔ #{la['id']} {la['desc']}")
+                                        log_solver_msg(f"   ✔ #{la['id']} {la['desc']}")
                             except Exception as e:
-                                solver_state["logs"].append(f"Errore caricamento orario: {e}")
+                                log_solver_msg(f"Errore caricamento orario: {e}")
                         else:
                             # 1. Controllo errori / avvisi da errors.txt
                             err_files = glob.glob(os.path.join(output_dir, "**", "errors.txt"), recursive=True)
@@ -1673,16 +1685,16 @@ class SmartTimetableHandler(BaseHTTPRequestHandler):
                                     with open(err_files[0], "r", encoding="utf-8", errors="ignore") as ef:
                                         err_text = ef.read().strip()
                                     if err_text:
-                                        solver_state["logs"].append("=" * 65)
-                                        solver_state["logs"].append("⚠️ DIAGNOSTICA ERRORI / AVVISI SEGNALATI DA FET:")
+                                        log_solver_msg("=" * 65)
+                                        log_solver_msg("⚠️ DIAGNOSTICA ERRORI / AVVISI SEGNALATI DA FET:")
                                         for eline in err_text.splitlines()[:20]:
                                             st = eline.strip()
                                             if st and not any(st.startswith(p) for p in ("Button", "Default", "Escape", "Pressing")):
-                                                solver_state["logs"].append(f"  {st}")
-                                        solver_state["logs"].append("=" * 65)
+                                                log_solver_msg(f"  {st}")
+                                        log_solver_msg("=" * 65)
                                         solver_state["error"] = err_text
                                 except Exception as e:
-                                    solver_state["logs"].append(f"Errore lettura errors.txt: {e}")
+                                    log_solver_msg(f"Errore lettura errors.txt: {e}")
 
                             # 2. Diagnostica collo di bottiglia (difficult_activities.txt)
                             diff_files = glob.glob(os.path.join(output_dir, "**", "difficult_activities.txt"), recursive=True)
@@ -1709,22 +1721,22 @@ class SmartTimetableHandler(BaseHTTPRequestHandler):
                                             "id": bot_id,
                                             "description": bot_desc
                                         }
-                                        solver_state["logs"].append("=" * 65)
-                                        solver_state["logs"].append("🔍 DIAGNOSTICA FET DESKTOP — ATTIVITÀ COLLO DI BOTTIGLIA:")
-                                        solver_state["logs"].append(f"👉 Attività critica: #{bot_id} — {bot_desc}")
-                                        solver_state["logs"].append("💡 Suggerimento: verifica i vincoli orari/giorni per questo docente o classe.")
-                                        solver_state["logs"].append("=" * 65)
+                                        log_solver_msg("=" * 65)
+                                        log_solver_msg("🔍 DIAGNOSTICA FET DESKTOP — ATTIVITÀ COLLO DI BOTTIGLIA:")
+                                        log_solver_msg(f"👉 Attività critica: #{bot_id} — {bot_desc}")
+                                        log_solver_msg("💡 Suggerimento: verifica i vincoli orari/giorni per questo docente o classe.")
+                                        log_solver_msg("=" * 65)
                                 except Exception as e:
-                                    solver_state["logs"].append(f"Errore lettura diagnostica: {e}")
+                                    log_solver_msg(f"Errore lettura diagnostica: {e}")
 
                             highest_candidates = glob.glob(os.path.join(output_dir, "**", "*highest*", "*.fet"), recursive=True)
                             if highest_candidates:
-                                solver_state["logs"].append(f"📁 Orario parziale (Highest Stage) salvato in: {os.path.basename(highest_candidates[0])}")
+                                log_solver_msg(f"📁 Orario parziale (Highest Stage) salvato in: {os.path.basename(highest_candidates[0])}")
 
                             if solver_state["stopped"]:
-                                solver_state["logs"].append("⏹ Calcolo interrotto su richiesta dell'utente.")
+                                log_solver_msg("⏹ Calcolo interrotto su richiesta dell'utente.")
                             else:
-                                solver_state["logs"].append(f"⏱️ FET terminato (codice {ret}). Nessun orario completo generato.")
+                                log_solver_msg(f"⏱️ FET terminato (codice {ret}). Nessun orario completo generato.")
 
                             # Garantisce la preservazione integrale dell'orario precedente senza scompaginare il sistema
                             if backup_has_timetable and backup_timetable:
@@ -1732,9 +1744,9 @@ class SmartTimetableHandler(BaseHTTPRequestHandler):
                                     db.data["timetable"] = backup_timetable
                                     db.data["has_timetable"] = True
                                     db._save_to_disk(db.data)
-                                solver_state["logs"].append("=" * 65)
-                                solver_state["logs"].append(f"🛡️ PROTEZIONE ORARIO: il calcolo non è terminato. L'orario precedente ({len(backup_timetable)} attività collocate) è stato mantenuto attivo e inalterato nel sistema.")
-                                solver_state["logs"].append("=" * 65)
+                                log_solver_msg("=" * 65)
+                                log_solver_msg(f"🛡️ PROTEZIONE ORARIO: il calcolo non è terminato. L'orario precedente ({len(backup_timetable)} attività collocate) è stato mantenuto attivo e inalterato nel sistema.")
+                                log_solver_msg("=" * 65)
                                 solver_state["has_timetable"] = True
                             else:
                                 solver_state["has_timetable"] = False
@@ -1745,12 +1757,12 @@ class SmartTimetableHandler(BaseHTTPRequestHandler):
                                 solver_state["advisor_report"] = adv_res
                                 solver_state["advisor_recommendations"] = adv_res.get("recommendations", [])
                                 if adv_res.get("root_cause_summary"):
-                                    solver_state["logs"].append("=" * 65)
-                                    solver_state["logs"].append("🎯 DIAGNOSI CAUSA RADICE DELL'ADVISOR INTELLIGENTE:")
-                                    solver_state["logs"].append(f"👉 {adv_res['root_cause_summary']}")
-                                    solver_state["logs"].append("=" * 65)
+                                    log_solver_msg("=" * 65)
+                                    log_solver_msg("🎯 DIAGNOSI CAUSA RADICE DELL'ADVISOR INTELLIGENTE:")
+                                    log_solver_msg(f"👉 {adv_res['root_cause_summary']}")
+                                    log_solver_msg("=" * 65)
                                 if adv_res.get("recommendations"):
-                                    solver_state["logs"].append(f"💡 Disponibili {len(adv_res['recommendations'])} opzioni di allentamento (Relax Search) applicabili in 1 click.")
+                                    log_solver_msg(f"💡 Disponibili {len(adv_res['recommendations'])} opzioni di allentamento (Relax Search) applicabili in 1 click.")
                             except Exception:
                                 pass
                         solver_state["completed"] = True
@@ -1788,6 +1800,26 @@ class SmartTimetableHandler(BaseHTTPRequestHandler):
                             solver_state["raw_logs"] = solver_state["raw_logs"][-300:]
                         solver_state["raw_logs"].append(line)
 
+                    # Rileva passaggi di pre-elaborazione iniziale di FET per dare riscontro immediato
+                    if "Processing internally the activities" in line:
+                        log_solver_msg("📋 Elaborazione e verifica interna delle attività didattiche...")
+                        continue
+                    elif "Processing internally the time constraints" in line:
+                        log_solver_msg("📋 Verifica vincoli temporali e disponibilità orarie...")
+                        continue
+                    elif "Processing internally the space constraints" in line:
+                        log_solver_msg("📋 Verifica vincoli di spazio, aule e laboratori...")
+                        continue
+                    elif "Precomputing ... please wait" in line:
+                        log_solver_msg("🔍 Precalcolo matrici di compatibilità e permutazioni...")
+                        continue
+                    elif "The order of activities" in line:
+                        log_solver_msg("⚡ Ordine euristico attività stabilito.")
+                        continue
+                    elif line.startswith("Error:") or line.startswith("Fatal:"):
+                        log_solver_msg(f"❌ {line}")
+                        continue
+
                     # 1. "Trying to place activity number added_act==121"
                     m_try = re.search(r'Trying to place activity number added_act==(\d+)', line)
                     if m_try:
@@ -1814,14 +1846,12 @@ class SmartTimetableHandler(BaseHTTPRequestHandler):
                                 "classes": classes,
                                 "stage": stage_num
                             }
-                            if stage_num != last_stage or (now - last_emit_time > 0.25):
-                                last_stage = stage_num
-                                last_emit_time = now
-                                solver_state["logs"].append(
-                                    f"▶ [{stage_num}/{total_act}] Collocamento #{act_id}: {subj} | {teachers} ({classes})"
-                                )
-                                if len(solver_state["logs"]) > 300:
-                                    solver_state["logs"] = solver_state["logs"][-300:]
+                        if stage_num != last_stage or (now - last_emit_time > 0.25):
+                            last_stage = stage_num
+                            last_emit_time = now
+                            log_solver_msg(
+                                f"▶ [{stage_num}/{total_act}] Collocamento #{act_id}: {subj} | {teachers} ({classes})"
+                            )
                         continue
 
                     # 3. Conflitti
@@ -1838,13 +1868,11 @@ class SmartTimetableHandler(BaseHTTPRequestHandler):
                             r_conf.append(cid)
                             if len(r_conf) > 60:
                                 solver_state["recent_conflicts"] = r_conf[-60:]
-                            if now - last_emit_time > 0.35:
-                                last_emit_time = now
-                                solver_state["logs"].append(
-                                    f"   ↳ ⚠️ Conflitto con #{cid} ({csubj} - {cclass}) su {croom} -> Scambio ricorsivo"
-                                )
-                                if len(solver_state["logs"]) > 300:
-                                    solver_state["logs"] = solver_state["logs"][-300:]
+                        if now - last_emit_time > 0.35:
+                            last_emit_time = now
+                            log_solver_msg(
+                                f"   ↳ ⚠️ Conflitto con #{cid} ({csubj} - {cclass}) su {croom} -> Scambio ricorsivo"
+                            )
                         continue
 
                     # 4. Swap ricorsivo
@@ -1852,31 +1880,24 @@ class SmartTimetableHandler(BaseHTTPRequestHandler):
                     if m_warn:
                         wid = m_warn.group(1)
                         wtimes = m_warn.group(2)
-                        with solver_lock:
-                            if now - last_emit_time > 0.45:
-                                last_emit_time = now
-                                solver_state["logs"].append(
-                                    f"   ↳ 🔄 Rimozione ricorsiva #{wid} (profondità swap: {wtimes})"
-                                )
-                                if len(solver_state["logs"]) > 300:
-                                    solver_state["logs"] = solver_state["logs"][-300:]
+                        if now - last_emit_time > 0.45:
+                            last_emit_time = now
+                            log_solver_msg(
+                                f"   ↳ 🔄 Rimozione ricorsiva #{wid} (profondità swap: {wtimes})"
+                            )
                         continue
 
                     # 5. Generazione avviata / completata / timeout
                     if "Starting timetable generation" in line:
-                        with solver_lock:
-                            solver_state["logs"].append("🚀 Avvio motore euristico di FET a scambio ricorsivo...")
+                        log_solver_msg("🚀 Avvio motore euristico di FET a scambio ricorsivo...")
                     elif "Time exceeded" in line:
-                        with solver_lock:
-                            solver_state["logs"].append("⏱️ Tempo massimo raggiunto (Time exceeded).")
+                        log_solver_msg("⏱️ Tempo massimo raggiunto (Time exceeded).")
                     elif "Simulation successful" in line:
-                        with solver_lock:
-                            solver_state["logs"].append("🎉 Soluzione completa trovata al 100%!")
+                        log_solver_msg("🎉 Soluzione completa trovata al 100%!")
 
                 proc.stdout.close()
             except Exception as e:
-                with solver_lock:
-                    solver_state["logs"].append(f"Errore lettura stream: {e}")
+                log_solver_msg(f"Errore lettura stream: {e}")
 
         threading.Thread(target=monitor_worker, daemon=True).start()
         threading.Thread(target=stream_worker, daemon=True).start()

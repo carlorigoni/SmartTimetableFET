@@ -22,7 +22,7 @@ let pollSolverTimer = null;
 let currentSolverRunning = false;
 
 // --- VERSIONE E IDENTITÀ APPLICATIVA ---
-const APP_VERSION = '1.5.6';
+const APP_VERSION = '1.5.7';
 
 // Helper traduzione i18n universale
 function _t(key, fallback = '') {
@@ -2619,6 +2619,11 @@ async function startSolver() {
       alert((isEn ? 'Launch error: ' : 'Errore avvio: ') + (data.error || JSON.stringify(data)));
       document.getElementById('btnStartSolve').disabled = false;
       document.getElementById('btnStopSolve').disabled = true;
+    } else {
+      // Avvia immediatamente il polling ad alta frequenza del monitoraggio real-time
+      if (pollSolverTimer) clearInterval(pollSolverTimer);
+      pollSolverStatus();
+      pollSolverTimer = setInterval(pollSolverStatus, 500);
     }
   } catch (e) {
     alert((isEn ? 'Solver error: ' : 'Errore chiamata solver: ') + e.message);
@@ -10772,6 +10777,9 @@ async function openPrintClassesModal() {
   if (!modal) return;
   modal.style.display = 'flex';
 
+  const langSelect = document.getElementById('printClassesLang');
+  if (langSelect) langSelect.value = window.I18N ? window.I18N.getLanguage() : 'it';
+
   // Imposta data di default immediata se vuota
   const dateInput = document.getElementById('printClassesDate');
   if (dateInput && !dateInput.value) {
@@ -10905,7 +10913,7 @@ function submitPrintClasses() {
     classesParam = checkedBoxes.map(cb => cb.value).join(',');
   }
 
-  const appLang = (window.I18N ? window.I18N.getLanguage() : 'it');
+  const appLang = document.getElementById('printClassesLang')?.value || (window.I18N ? window.I18N.getLanguage() : 'it');
   const params = new URLSearchParams({
     validity_date: dateVal,
     color_mode: colorVal,
@@ -10928,6 +10936,9 @@ async function openPrintTeachersModal() {
   const modal = document.getElementById('printTeachersModal');
   if (!modal) return;
   modal.style.display = 'flex';
+
+  const langSelect = document.getElementById('printTeachersLang');
+  if (langSelect) langSelect.value = window.I18N ? window.I18N.getLanguage() : 'it';
 
   const dateInput = document.getElementById('printTeachersDate');
   if (dateInput && !dateInput.value) {
@@ -10957,7 +10968,7 @@ function submitPrintTeachers() {
   const showRooms = document.getElementById('printTeachersShowRooms')?.checked ? '1' : '0';
   const highlightDisp = document.getElementById('printTeachersHighlightDisp')?.checked ? '1' : '0';
 
-  const appLang = (window.I18N ? window.I18N.getLanguage() : 'it');
+  const appLang = document.getElementById('printTeachersLang')?.value || (window.I18N ? window.I18N.getLanguage() : 'it');
   const params = new URLSearchParams({
     validity_date: dateVal,
     paper_size: paperSize,
@@ -10980,7 +10991,7 @@ function submitDownloadTeachersDocx() {
   const showRooms = document.getElementById('printTeachersShowRooms')?.checked ? '1' : '0';
   const highlightDisp = document.getElementById('printTeachersHighlightDisp')?.checked ? '1' : '0';
 
-  const appLang = (window.I18N ? window.I18N.getLanguage() : 'it');
+  const appLang = document.getElementById('printTeachersLang')?.value || (window.I18N ? window.I18N.getLanguage() : 'it');
   const params = new URLSearchParams({
     validity_date: dateVal,
     paper_size: paperSize,

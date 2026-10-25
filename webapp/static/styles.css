@@ -773,6 +773,24 @@
   background-color: rgba(56, 189, 248, 0.12);
   color: #38bdf8;
 }
+[data-theme="dark"] .nav-group-items {
+  background: rgba(30, 41, 59, 0.45);
+}
+[data-theme="dark"] .nav-group-items .nav-item {
+  color: #94a3b8;
+}
+[data-theme="dark"] .nav-group-items .nav-item::before,
+[data-theme="dark"] .nav-group-items .nav-item::after {
+  background: #475569;
+}
+[data-theme="dark"] .nav-group-items .nav-item:hover::before,
+[data-theme="dark"] .nav-group-items .nav-item:hover::after {
+  background: #64748b;
+}
+[data-theme="dark"] .nav-group-items .nav-item.active::before,
+[data-theme="dark"] .nav-group-items .nav-item.active::after {
+  background: #38bdf8;
+}
 [data-theme="dark"] .sidebar-wrapper.collapsed .rail-submenu-indicator {
   background: #1e293b;
   border-color: #475569;
@@ -1260,26 +1278,25 @@ body {
   display: none !important;
 }
 
-/* Voci interne al gruppo: Albero Gerarchico Padre-Figlio con Filetto Guida e Rientro */
+/* Voci interne al gruppo: Albero Gerarchico Padre-Figlio con Rientro, Connettore T (├──) e Chiusura ad L (└──) */
 .nav-group-items {
   display: flex;
   flex-direction: column;
   position: relative;
-  margin: 2px 10px 6px 20px;
-  padding: 4px 0 4px 6px;
-  border-left: 2px solid #cbd5e1;
+  margin: 2px 10px 6px 18px;
+  padding: 4px 0 4px 2px;
   background: rgba(241, 245, 249, 0.45);
   border-radius: 0 10px 10px 0;
   gap: 2px;
 }
 
-/* Voce Figlia (Sub-item) con visual hierarchy evidente */
+/* Voce Figlia (Sub-item) */
 .nav-group-items .nav-item {
   position: relative;
   height: 34px !important;
   min-height: 34px !important;
   max-height: 34px !important;
-  margin: 1px 4px 1px 8px !important;
+  margin: 1px 4px 1px 16px !important;
   padding: 0 10px 0 8px !important;
   border-radius: 8px !important;
   font-size: 12.5px !important;
@@ -1288,18 +1305,37 @@ body {
   color: #475569;
 }
 
-/* Connettore a ramo orizzontale continuo (Tree Branch Line ├──) */
+/* Connettore verticale continuo (tronco dell'albero) */
+.nav-group-items .nav-item::after {
+  content: "";
+  position: absolute;
+  left: -11px;
+  top: -2px;
+  width: 2px;
+  height: calc(100% + 4px);
+  background: #cbd5e1;
+  pointer-events: none;
+  transition: background-color 0.15s ease;
+}
+
+/* Connettore a ramo orizzontale (Tree Branch ─) */
 .nav-group-items .nav-item::before {
   content: "";
   position: absolute;
-  left: -14px;
+  left: -11px;
   top: 50%;
   width: 10px;
   height: 2px;
   background: #cbd5e1;
-  border-radius: 1px;
   pointer-events: none;
   transition: background-color 0.15s ease, width 0.15s ease;
+}
+
+/* ULTIMO ELEMENTO: Termina a forma di L (└──) senza proseguire verso il basso */
+.nav-group-items .nav-item:last-child::after {
+  top: -2px;
+  height: calc(50% + 2px);
+  border-bottom-left-radius: 4px;
 }
 
 .nav-group-items .nav-item:hover {
@@ -1307,9 +1343,9 @@ body {
   color: #1e40af !important;
 }
 
-.nav-group-items .nav-item:hover::before {
+.nav-group-items .nav-item:hover::before,
+.nav-group-items .nav-item:hover::after {
   background: #94a3b8;
-  width: 12px;
 }
 
 .nav-group-items .nav-item.active {
@@ -1318,9 +1354,12 @@ body {
   font-weight: 700 !important;
 }
 
-.nav-group-items .nav-item.active::before {
+.nav-group-items .nav-item.active::before,
+.nav-group-items .nav-item.active::after {
   background: #2563eb;
-  width: 12px;
+}
+
+.nav-group-items .nav-item.active::before {
   height: 2.5px;
 }
 

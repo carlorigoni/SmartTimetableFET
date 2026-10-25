@@ -60,7 +60,8 @@ GIORNI_DEFAULT = [
 
 def get_day_name(d: str, lang: str = "it", full: bool = True) -> str:
     clean = (d or "").strip().lower()
-    if lang == "en":
+    is_en = str(lang).strip().lower() in ("en", "eng", "english")
+    if is_en:
         if clean.startswith("lun") or clean.startswith("mon"):
             return "Monday" if full else "Mon"
         if clean.startswith("mar") or clean.startswith("tue"):
@@ -98,7 +99,8 @@ def get_intervallo_info(h: int, lang: str = "it") -> dict:
     if not info:
         return {}
     res = dict(info)
-    if lang == "en":
+    is_en = str(lang).strip().lower() in ("en", "eng", "english")
+    if is_en:
         if h == 2:
             res["label"] = "1st Recess"
         elif h == 4:
@@ -400,7 +402,9 @@ def generate_classes_print_html(data, options=None):
     show_rooms = bool(options.get("show_rooms", True))
     include_subgroups = bool(options.get("include_subgroups", True))
     selected_classes = options.get("classes") # list or None = all
-    lang = options.get("lang", "it")
+    raw_lang = options.get("lang", "it") if options else "it"
+    is_en = str(raw_lang).strip().lower() in ("en", "eng", "english")
+    lang = "en" if is_en else "it"
 
     institution = data.get("institution", 'Liceo & Tecnico "Pico De Paperis" - Paperopoli')
     subjects_list = [s["name"] for s in data.get("subjects", [])]
@@ -781,15 +785,25 @@ function closePrintView() {{
     }}
   }}, 120);
 }}
+
+function switchPrintLang(newLang) {{
+  const url = new URL(window.location.href);
+  url.searchParams.set('lang', newLang);
+  window.location.href = url.toString();
+}}
 </script>
 </head>
 <body>
 
 <div class="no-print">
-  <h2>{'🖨️ Print Class Timetable' if lang == 'en' else '🖨️ Stampa Orario per Classe'} &mdash; {len(classes_to_print)} {'Classes (A4 Landscape)' if lang == 'en' else 'Classi (A4 Orizzontale)'}</h2>
-  <div>
-    <button class="btn-toolbar btn-toolbar-sec" onclick="closePrintView()">{'✕ Close' if lang == 'en' else '✕ Chiudi'}</button>
-    <button class="btn-toolbar" onclick="window.print()">{'🖨️ Print / Save as PDF' if lang == 'en' else '🖨️ Stampa / Salva in PDF'}</button>
+  <h2>{'🖨️ Print Class Timetable' if is_en else '🖨️ Stampa Orario per Classe'} &mdash; {len(classes_to_print)} {'Classes (A4 Landscape)' if is_en else 'Classi (A4 Orizzontale)'}</h2>
+  <div style="display:flex;align-items:center;gap:6px;">
+    <div style="display:inline-flex;border:1px solid #475569;border-radius:4px;overflow:hidden;margin-right:6px;">
+      <button class="btn-toolbar" style="padding:4px 8px;font-size:11px;background:{'#2563eb' if not is_en else '#334155'};border-radius:0;" onclick="switchPrintLang('it')" title="Visualizza in Italiano">🇮🇹 ITA</button>
+      <button class="btn-toolbar" style="padding:4px 8px;font-size:11px;background:{'#2563eb' if is_en else '#334155'};border-radius:0;" onclick="switchPrintLang('en')" title="Switch to English">🇬🇧 ENG</button>
+    </div>
+    <button class="btn-toolbar btn-toolbar-sec" onclick="closePrintView()">{'✕ Close' if is_en else '✕ Chiudi'}</button>
+    <button class="btn-toolbar" onclick="window.print()">{'🖨️ Print / Save as PDF' if is_en else '🖨️ Stampa / Salva in PDF'}</button>
   </div>
 </div>
 
@@ -945,7 +959,9 @@ def generate_teachers_master_print_html(data, options=None):
     paper_size = options.get("paper_size", "A3") # 'A3' | 'A4'
     show_rooms = bool(options.get("show_rooms", False))
     highlight_disp = bool(options.get("highlight_disp", True))
-    lang = options.get("lang", "it")
+    raw_lang = options.get("lang", "it") if options else "it"
+    is_en = str(raw_lang).strip().lower() in ("en", "eng", "english")
+    lang = "en" if is_en else "it"
 
     institution = data.get("institution", 'Liceo & Tecnico "Pico De Paperis" - Paperopoli')
     days = data.get("days", ["Lun", "Mar", "Mer", "Gio", "Ven"])
@@ -1294,6 +1310,12 @@ function downloadDocx() {{
   window.location.href = url;
 }}
 
+function switchPrintLang(newLang) {{
+  const url = new URL(window.location.href);
+  url.searchParams.set('lang', newLang);
+  window.location.href = url.toString();
+}}
+
 function copyTableForGoogleDocs() {{
   const table = document.getElementById('masterTeacherTable');
   if (!table) return;
@@ -1305,15 +1327,15 @@ function copyTableForGoogleDocs() {{
     const ok = document.execCommand('copy');
     window.getSelection().removeAllRanges();
     if (ok) {{
-      const msgOk = "{'Faculty master timetable copied to clipboard!\\n\\nGoogle Docs will now open in a new tab: press Paste (Cmd+V or Ctrl+V) to insert the timetable.' if lang == 'en' else 'Tabellone copiato negli appunti!\\n\\nOra si aprirà Google Documenti in una nuova scheda: premi Incolla (Cmd+V o Ctrl+V) per inserire il tabellone completo.'}";
+      const msgOk = "{'Faculty master timetable copied to clipboard!\\n\\nGoogle Docs will now open in a new tab: press Paste (Cmd+V or Ctrl+V) to insert the timetable.' if is_en else 'Tabellone copiato negli appunti!\\n\\nOra si aprirà Google Documenti in una nuova scheda: premi Incolla (Cmd+V o Ctrl+V) per inserire il tabellone completo.'}";
       alert(msgOk);
       window.open('https://docs.new', '_blank');
     }} else {{
-      const msgErr = "{'Please select the table and press Cmd+C to copy.' if lang == 'en' else 'Seleziona la tabella e premi Cmd+C per copiarla.'}";
+      const msgErr = "{'Please select the table and press Cmd+C to copy.' if is_en else 'Seleziona la tabella e premi Cmd+C per copiarla.'}";
       alert(msgErr);
     }}
   }} catch(e) {{
-    const msgErr = "{'Please select the table and press Cmd+C to copy.' if lang == 'en' else 'Seleziona la tabella e premi Cmd+C per copiarla.'}";
+    const msgErr = "{'Please select the table and press Cmd+C to copy.' if is_en else 'Seleziona la tabella e premi Cmd+C per copiarla.'}";
     alert(msgErr);
   }}
 }}
@@ -1322,12 +1344,16 @@ function copyTableForGoogleDocs() {{
 <body>
 
 <div class="no-print">
-  <h2>{'📄 Faculty Master Timetable' if lang == 'en' else '📄 Tabellone Generale Orario Docenti'} &mdash; {'Format' if lang == 'en' else 'Formato'} {paper_size} ({len(sorted_teachers)} {'Teachers' if lang == 'en' else 'Docenti'})</h2>
+  <h2>{'📄 Faculty Master Timetable' if is_en else '📄 Tabellone Generale Orario Docenti'} &mdash; {'Format' if is_en else 'Formato'} {paper_size} ({len(sorted_teachers)} {'Teachers' if is_en else 'Docenti'})</h2>
   <div style="display:flex;gap:6px;align-items:center;">
-    <button class="btn-toolbar btn-toolbar-sec" onclick="closePrintView()">{'✕ Close' if lang == 'en' else '✕ Chiudi'}</button>
-    <button class="btn-toolbar btn-toolbar-accent" onclick="copyTableForGoogleDocs()">{'📋 Copy for Google Docs' if lang == 'en' else '📋 Copia per Google Docs'}</button>
-    <button class="btn-toolbar btn-toolbar-sec" onclick="downloadDocx()">{'📥 Download .docx (Google Docs)' if lang == 'en' else '📥 Scarica .docx (Google Docs)'}</button>
-    <button class="btn-toolbar" onclick="window.print()">{'🖨️ Print / Save as PDF' if lang == 'en' else '🖨️ Stampa / Salva in PDF'}</button>
+    <div style="display:inline-flex;border:1px solid #475569;border-radius:4px;overflow:hidden;margin-right:6px;">
+      <button class="btn-toolbar" style="padding:4px 8px;font-size:11px;background:{'#2563eb' if not is_en else '#334155'};border-radius:0;" onclick="switchPrintLang('it')" title="Visualizza in Italiano">🇮🇹 ITA</button>
+      <button class="btn-toolbar" style="padding:4px 8px;font-size:11px;background:{'#2563eb' if is_en else '#334155'};border-radius:0;" onclick="switchPrintLang('en')" title="Switch to English">🇬🇧 ENG</button>
+    </div>
+    <button class="btn-toolbar btn-toolbar-sec" onclick="closePrintView()">{'✕ Close' if is_en else '✕ Chiudi'}</button>
+    <button class="btn-toolbar btn-toolbar-accent" onclick="copyTableForGoogleDocs()">{'📋 Copy for Google Docs' if is_en else '📋 Copia per Google Docs'}</button>
+    <button class="btn-toolbar btn-toolbar-sec" onclick="downloadDocx()">{'📥 Download .docx (Google Docs)' if is_en else '📥 Scarica .docx (Google Docs)'}</button>
+    <button class="btn-toolbar" onclick="window.print()">{'🖨️ Print / Save as PDF' if is_en else '🖨️ Stampa / Salva in PDF'}</button>
   </div>
 </div>
 
@@ -1449,7 +1475,9 @@ def generate_teachers_master_docx(data, options=None):
     validity_date = options.get("validity_date") or get_default_validity_date()
     show_rooms = bool(options.get("show_rooms", False))
     highlight_disp = bool(options.get("highlight_disp", True))
-    lang = options.get("lang", "it")
+    raw_lang = options.get("lang", "it") if options else "it"
+    is_en = str(raw_lang).strip().lower() in ("en", "eng", "english")
+    lang = "en" if is_en else "it"
 
     institution = data.get("institution", 'Liceo & Tecnico "Pico De Paperis" - Paperopoli')
     days = data.get("days", ["Lun", "Mar", "Mer", "Gio", "Ven"])
