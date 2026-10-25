@@ -19,6 +19,21 @@
         error: "Si è verificato un errore",
         network_error: "Errore di connessione al server"
       },
+      auth: {
+        lead_title: "Accesso con Account Google",
+        lead_desc: "Accedi con il tuo account Google. Se è il tuo primo accesso, verrai autorizzato dall'amministratore e potrai essere assegnato al tuo istituto scolastico oppure abilitato a definirne uno nuovo.",
+        switch_account_btn: "👤 Usa un altro account Google",
+        admin_trigger: "Accesso Amministratore",
+        admin_passcode_hint: "Inserisci il passcode master per accedere come Amministratore:",
+        passcode_placeholder: "Passcode...",
+        btn_admin_login: "Accedi",
+        btn_google_fallback: "Continua con Google",
+        pending_title: "Richiesta di Accesso Inviata!",
+        pending_desc: "Il tuo account è stato registrato ed è in attesa di autorizzazione da parte dell'amministratore.<br>Non appena autorizzato, verrai collegato al tuo istituto scolastico oppure potrai definirne uno nuovo.",
+        pending_checking: "In attesa di approvazione... (verifica automatica in corso)",
+        btn_verify_now: "🔄 Verifica Ora",
+        btn_signout: "Disconnetti"
+      },
       nav: {
         dashboard: "Dashboard",
         dashboard_title: "Dashboard Riassuntiva",
@@ -700,6 +715,21 @@
         loading: "Loading, please wait...",
         error: "An error occurred",
         network_error: "Connection error with server"
+      },
+      auth: {
+        lead_title: "Sign in with Google Account",
+        lead_desc: "Sign in with your Google account. If this is your first time, you will be authorized by the administrator and assigned to a school or enabled to create a new one.",
+        switch_account_btn: "👤 Use another Google account",
+        admin_trigger: "Administrator Login",
+        admin_passcode_hint: "Enter master passcode to sign in as Administrator:",
+        passcode_placeholder: "Passcode...",
+        btn_admin_login: "Sign In",
+        btn_google_fallback: "Continue with Google",
+        pending_title: "Access Request Submitted!",
+        pending_desc: "Your account has been registered and is awaiting administrator authorization.<br>Once approved, you will be linked to your school or enabled to set up a new one.",
+        pending_checking: "Awaiting approval... (automatic check in progress)",
+        btn_verify_now: "🔄 Check Now",
+        btn_signout: "Sign Out"
       },
       nav: {
         dashboard: "Dashboard",

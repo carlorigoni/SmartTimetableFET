@@ -416,63 +416,43 @@
 
       <!-- Auth State 1: Form Login / Richiesta Accesso -->
       <div id="authStateLogin" class="auth-state">
-        <div class="auth-banner-info">
-          🔐 <b>Accesso Riservato con Account Google</b><br>
-          Accedi con il tuo account Gmail / Google Workspace. Se è il tuo primo accesso, verrà inviata automaticamente una richiesta di sblocco all'amministratore.
+        <div class="auth-lead-box">
+          <div style="font-weight:700;font-size:13.5px;color:var(--text-main);margin-bottom:6px;display:flex;align-items:center;gap:8px;">
+            <span>🔐</span> <span data-i18n="auth.lead_title">Accesso con Account Google</span>
+          </div>
+          <div style="font-size:12.5px;color:var(--text-muted);line-height:1.5;" data-i18n="auth.lead_desc">
+            Accedi con il tuo account Google. Se è il tuo primo accesso, verrai autorizzato dall'amministratore e potrai essere assegnato al tuo istituto scolastico oppure abilitato a definirne uno nuovo.
+          </div>
         </div>
 
         <div id="googleBtnWrapper" class="google-btn-wrapper">
           <div id="g_id_signin_placeholder"></div>
-          <div style="margin-top:12px;text-align:center;">
-            <button type="button" class="btn btn-sm btn-sec" onclick="switchGoogleAccount()" style="font-size:12px;display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;" title="Apre il selettore account Google forzando la scelta o l'aggiunta di un nuovo profilo">
-              <span>👤</span> <b>Usa un altro account Google</b>
+          <div id="switchAccountWrap" style="margin-top:4px;">
+            <button type="button" class="btn-subtle-switch" onclick="switchGoogleAccount()" data-i18n="auth.switch_account_btn">
+              👤 Usa un altro account Google
             </button>
-            <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">
-              Bypassa il popup FedCM e apre il selettore account Google
-            </div>
           </div>
-        </div>
-
-        <div id="googleConfigNotice" class="google-config-notice" style="display:none;">
-          <small>⚠️ <b>Google Client ID non ancora configurato.</b><br>
-          L'amministratore può accedere con il passcode di emergenza qui sotto per impostare il Google Client ID nelle impostazioni.</small>
-        </div>
-
-        <!-- Modulo Richiesta Abilitazione Account (per nuovi docenti o test locali) -->
-        <div id="requestAccessSection" class="request-access-box" style="margin-top:16px;background:var(--bg-hover,#f1f5f9);border:1px solid var(--border,#cbd5e1);border-radius:12px;padding:14px 16px;text-align:left;">
-          <div style="display:flex;align-items:center;gap:8px;font-weight:700;font-size:13px;color:var(--text-main,#0f172a);margin-bottom:6px;">
-            <span>📝</span> <span>Richiedi Abilitazione con Account Google</span>
-          </div>
-          <div style="font-size:11.5px;color:var(--text-muted,#64748b);margin-bottom:10px;line-height:1.4;">
-            Inserisci il tuo nome e la tua email Google: verrà inviata una notifica all'amministratore per autorizzarti e assegnarti la tua scuola.
-          </div>
-          <div style="display:flex;flex-direction:column;gap:8px;">
-            <input type="text" id="reqAccessName" class="form-input" placeholder="Nome e Cognome (es. Mario Rossi)" style="font-size:12.5px;padding:7px 10px;" />
-            <div style="display:flex;gap:8px;">
-              <input type="email" id="reqAccessEmail" class="form-input" placeholder="Email Google (es. mario.rossi@gmail.com)" style="flex:1;font-size:12.5px;padding:7px 10px;" onkeydown="if(event.key==='Enter') submitAccessRequest()" />
-              <button type="button" class="btn btn-sm btn-primary" onclick="submitAccessRequest()" style="white-space:nowrap;padding:7px 14px;font-weight:700;">
-                📩 Invia Richiesta
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div class="auth-divider">
-          <span>oppure</span>
-        </div>
-
-        <!-- Emergency Admin Login -->
-        <div class="emergency-login-box">
-          <details id="emergencyDetails">
-            <summary class="emergency-toggle">🔑 Accesso Amministratore (Passcode)</summary>
-            <div class="emergency-form">
-              <input type="password" id="emergencyPasscode" placeholder="Passcode di emergenza..." class="form-input" onkeydown="if(event.key==='Enter') submitEmergencyLogin()" />
-              <button class="btn btn-primary btn-block" onclick="submitEmergencyLogin()">Accedi come Admin</button>
-            </div>
-          </details>
         </div>
 
         <div id="authErrorMsg" class="auth-error-msg" style="display:none;"></div>
+
+        <!-- Indicatore Discreto Accesso Amministratore (Passcode) -->
+        <div class="auth-admin-indicator-wrap">
+          <button type="button" id="btnAdminTrigger" class="auth-admin-trigger-btn" onclick="toggleAdminPasscodeForm()" title="Accesso amministratore con passcode">
+            <span>🔒</span> <span data-i18n="auth.admin_trigger">Accesso Amministratore</span>
+          </button>
+
+          <div id="adminPasscodeForm" class="admin-passcode-flyout" style="display:none;">
+            <div style="font-size:11.5px;color:var(--text-muted);margin-bottom:8px;font-weight:600;" data-i18n="auth.admin_passcode_hint">
+              Inserisci il passcode master per accedere come Amministratore:
+            </div>
+            <div style="display:flex;gap:8px;">
+              <input type="password" id="emergencyPasscode" placeholder="Passcode..." data-i18n-placeholder="auth.passcode_placeholder" class="form-input" style="flex:1;font-size:12.5px;padding:6px 10px;" onkeydown="if(event.key==='Enter') submitEmergencyLogin()" />
+              <button class="btn btn-primary btn-sm" onclick="submitEmergencyLogin()" style="font-weight:700;white-space:nowrap;" data-i18n="auth.btn_admin_login">Accedi</button>
+              <button type="button" class="btn btn-sec btn-sm" onclick="toggleAdminPasscodeForm(false)" title="Chiudi">✕</button>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- Auth State 2: Richiesta In Attesa (Pending) -->
@@ -480,7 +460,7 @@
         <div class="pending-icon-wrap">
           <div class="pending-pulse">⏳</div>
         </div>
-        <h3 class="pending-title">Richiesta di Accesso Inviata!</h3>
+        <h3 class="pending-title" data-i18n="auth.pending_title">Richiesta di Accesso Inviata!</h3>
         <div class="pending-user-card">
           <img id="pendingAvatar" src="" class="pending-avatar" style="display:none;" />
           <div>
@@ -488,15 +468,16 @@
             <div id="pendingEmail" class="pending-email"></div>
           </div>
         </div>
-        <p class="pending-text">
-          La tua richiesta di accesso è stata registrata ed è attualmente <b>in attesa di sblocco</b> da parte dell'amministratore.
+        <p class="pending-text" data-i18n-html="auth.pending_desc">
+          Il tuo account è stato registrato ed è in attesa di autorizzazione da parte dell'amministratore.<br>
+          Non appena autorizzato, verrai collegato al tuo istituto scolastico oppure potrai definirne uno nuovo.
         </p>
         <div class="pending-status-box">
-          <span class="auth-status-dot"></span> In attesa di approvazione... (verifica automatica in corso)
+          <span class="auth-status-dot"></span> <span data-i18n="auth.pending_checking">In attesa di approvazione... (verifica automatica in corso)</span>
         </div>
         <div class="auth-actions-row">
-          <button class="btn btn-primary" onclick="checkAuthMe()">🔄 Verifica Ora</button>
-          <button class="btn btn-sec" onclick="logout()">Disconnetti</button>
+          <button class="btn btn-primary" onclick="checkAuthMe()" data-i18n="auth.btn_verify_now">🔄 Verifica Ora</button>
+          <button class="btn btn-sec" onclick="logout()" data-i18n="auth.btn_signout">Disconnetti</button>
         </div>
       </div>
 
