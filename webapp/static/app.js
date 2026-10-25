@@ -253,6 +253,15 @@ function applyVersionTags() {
     const el = document.getElementById(id);
     if (el) el.innerText = v;
   });
+  try {
+    const links = document.querySelectorAll('link[rel*="icon"]');
+    links.forEach(link => {
+      const href = link.getAttribute('href');
+      if (href && !href.includes('v=')) {
+        link.href = href + (href.includes('?') ? '&' : '?') + 'v=' + APP_VERSION;
+      }
+    });
+  } catch (e) {}
 }
 
 document.addEventListener('DOMContentLoaded', () => {

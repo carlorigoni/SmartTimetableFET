@@ -387,7 +387,12 @@ class EurarioHandler(BaseHTTPRequestHandler):
 
         self.send_response(200)
         self.send_header("Content-Type", content_type)
-        if file_path.endswith((".ico", ".png", ".svg", ".jpg", ".jpeg", ".webp", ".woff", ".woff2")):
+        basename = os.path.basename(file_path).lower()
+        if basename.startswith("favicon") or "eurario" in basename:
+            self.send_header("Cache-Control", "no-cache, must-revalidate")
+            self.send_header("Pragma", "no-cache")
+            self.send_header("Expires", "0")
+        elif file_path.endswith((".ico", ".png", ".svg", ".jpg", ".jpeg", ".webp", ".woff", ".woff2")):
             self.send_header("Cache-Control", "public, max-age=86400")
         else:
             self.send_header("Cache-Control", "no-cache, must-revalidate")
