@@ -293,27 +293,27 @@
 
         <!-- Selettore Multi-Scuola (Dropdown Istituti) -->
         <div class="school-selector-dropdown" id="schoolSelectorDropdown">
-          <button type="button" id="btnSchoolToggle" class="topbar-btn school-pill-btn" onclick="toggleSchoolMenu(event)" title="Cambia Istituto Scolastico" aria-label="Selettore istituto">
+          <button type="button" id="btnSchoolToggle" class="topbar-btn school-pill-btn" onclick="toggleSchoolMenu(event)" title="Cambia Istituto Scolastico" aria-label="Selettore istituto" data-i18n-title="schools.selector_title">
             <span class="school-icon">🏫</span>
             <span id="currentSchoolName" class="school-name-text">Liceo & Tecnico</span>
-            <span id="currentSchoolTrialBadge" class="badge-trial-pill" style="display:none;" title="Istituto in prova (stampe filigranate)">In Prova</span>
+            <span id="currentSchoolTrialBadge" class="badge-trial-pill" style="display:none;" title="Istituto in prova (stampe filigranate)" data-i18n="schools.trial_badge" data-i18n-title="schools.trial_badge_title">In Prova</span>
             <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor" style="opacity:0.7;">
               <path d="M7 10l5 5 5-5z"/>
             </svg>
           </button>
           <div id="schoolMenuPopup" class="topbar-popup-menu school-popup-menu" style="display:none;">
             <div class="school-popup-header">
-              <span style="font-weight:700;font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;">I Miei Istituti</span>
+              <span style="font-weight:700;font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;" data-i18n="schools.my_schools">I Miei Istituti</span>
             </div>
             <div id="schoolMenuList" class="school-menu-items">
               <!-- Elenco generato dinamicamente da app.js -->
             </div>
             <div class="school-popup-divider"></div>
             <button type="button" class="topbar-popup-item school-action-item" onclick="openCreateSchoolModal()">
-              <span>➕</span> <span style="font-weight:600;">Registra Nuovo Istituto...</span>
+              <span>➕</span> <span style="font-weight:600;" data-i18n="schools.register_new">Registra Nuovo Istituto...</span>
             </button>
             <button type="button" id="btnSuperAdminConsole" class="topbar-popup-item school-action-item superadmin-item" style="display:none;" onclick="openSuperAdminModal()">
-              <span>⭐</span> <span style="font-weight:700;color:var(--warning-dark,#b45309);">Console SuperAdmin</span>
+              <span>⭐</span> <span style="font-weight:700;color:var(--warning-dark,#b45309);" data-i18n="schools.superadmin_console">Console SuperAdmin</span>
             </button>
           </div>
         </div>
@@ -325,7 +325,7 @@
         <button type="button" id="topbarPendingBtn" class="topbar-btn topbar-pending-btn" onclick="openAccessManagementModal()" style="display:none;" title="Nuove richieste di accesso in attesa di approvazione" aria-label="Richieste di accesso in attesa">
           <span class="bell-icon">🔔</span>
           <span id="topbarPendingCount" class="badge-pending-count">1</span>
-          <span class="pending-btn-label" style="font-weight:700;font-size:11.5px;margin-left:4px;">Richieste in Attesa</span>
+          <span class="pending-btn-label" style="font-weight:700;font-size:11.5px;margin-left:4px;" data-i18n="schools.pending_requests_btn">Richieste in Attesa</span>
         </button>
 
         <!-- Selettore Lingua ITA / ENG -->
@@ -383,10 +383,10 @@
     <div id="trialWarningBanner" class="trial-warning-banner" style="display:none;">
       <div class="trial-banner-content">
         <span class="trial-banner-icon">⚠️</span>
-        <div class="trial-banner-text">
+        <div class="trial-banner-text" data-i18n-html="schools.trial_banner_text">
           <b>Modalità di Prova Attiva:</b> Tutte le funzioni di calcolo euristico FET e composizione orario sono complete e funzionanti al 100%. Le stampe ufficiali ad alta risoluzione (PDF e Word) includono la filigrana dimostrativa fino all'attivazione tecnica da parte dell'amministratore.
         </div>
-        <button class="btn-trial-action" onclick="openTrialInfoModal()">Maggiori Info</button>
+        <button class="btn-trial-action" onclick="openTrialInfoModal()" data-i18n="schools.trial_banner_btn">Maggiori Info</button>
       </div>
     </div>
 
@@ -970,57 +970,57 @@
         <div class="modal-title" style="display:flex;align-items:center;gap:10px;">
           <span style="font-size:24px;">🏫</span>
           <div>
-            <div style="font-size:16px;font-weight:700;color:var(--text-main);">Registra Nuovo Istituto</div>
-            <div style="font-size:11.5px;color:var(--text-muted);">Crea un nuovo spazio isolato per il tuo orario scolastico</div>
+            <div style="font-size:16px;font-weight:700;color:var(--text-main);" data-i18n="modals.create_school.title">Registra Nuovo Istituto</div>
+            <div style="font-size:11.5px;color:var(--text-muted);" data-i18n="modals.create_school.subtitle">Crea un nuovo spazio isolato per il tuo orario scolastico</div>
           </div>
         </div>
-        <button class="modal-close" onclick="closeCreateSchoolModal()" title="Chiudi">✕</button>
+        <button class="modal-close" onclick="closeCreateSchoolModal()" title="Chiudi" data-i18n-title="common.close">✕</button>
       </div>
 
       <div class="modal-body" style="gap:14px;">
         <div class="modal-notice" style="display:flex;align-items:flex-start;gap:10px;">
           <span style="font-size:18px;">✨</span>
-          <div style="font-size:12px;color:var(--text-main);line-height:1.4;">
+          <div style="font-size:12px;color:var(--text-main);line-height:1.4;" data-i18n-html="modals.create_school.notice">
             Il nuovo istituto verrà creato immediatamente in <b>Modalità di Prova</b>: potrai inserire dati, definire vincoli e calcolare orari con il motore FET. Le stampe ufficiali ad alta risoluzione verranno sbloccate dopo l'approvazione tecnica da parte del SuperAdmin.
           </div>
         </div>
 
         <div class="form-group">
-          <label style="font-size:12px;font-weight:600;margin-bottom:4px;display:block;">Nome Istituto Scolastico *</label>
-          <input type="text" id="newSchoolName" class="form-input" placeholder="Es. Liceo Scientifico &quot;Galileo Galilei&quot;" style="width:100%;" required>
+          <label style="font-size:12px;font-weight:600;margin-bottom:4px;display:block;" data-i18n="modals.create_school.name_label">Nome Istituto Scolastico *</label>
+          <input type="text" id="newSchoolName" class="form-input" placeholder="Es. Liceo Scientifico &quot;Galileo Galilei&quot;" data-i18n-placeholder="modals.create_school.name_placeholder" style="width:100%;" required>
         </div>
 
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
           <div class="form-group">
-            <label style="font-size:12px;font-weight:600;margin-bottom:4px;display:block;">Città / Comune</label>
-            <input type="text" id="newSchoolCity" class="form-input" placeholder="Es. Padova, Milano, Roma..." style="width:100%;">
+            <label style="font-size:12px;font-weight:600;margin-bottom:4px;display:block;" data-i18n="modals.create_school.city_label">Città / Comune</label>
+            <input type="text" id="newSchoolCity" class="form-input" placeholder="Es. Padova, Milano, Roma..." data-i18n-placeholder="modals.create_school.city_placeholder" style="width:100%;">
           </div>
           <div class="form-group">
-            <label style="font-size:12px;font-weight:600;margin-bottom:4px;display:block;">Nazione</label>
-            <input type="text" id="newSchoolCountry" class="form-input" value="Italia" style="width:100%;">
+            <label style="font-size:12px;font-weight:600;margin-bottom:4px;display:block;" data-i18n="modals.create_school.country_label">Nazione</label>
+            <input type="text" id="newSchoolCountry" class="form-input" value="Italia" data-i18n-placeholder="modals.create_school.country_placeholder" style="width:100%;">
           </div>
         </div>
 
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
           <div class="form-group">
-            <label style="font-size:12px;font-weight:600;margin-bottom:4px;display:block;">Codice Meccanografico (se presente)</label>
-            <input type="text" id="newSchoolMeccanografico" class="form-input" placeholder="Es. PDIS017007 (Facoltativo)" style="width:100%;text-transform:uppercase;">
+            <label style="font-size:12px;font-weight:600;margin-bottom:4px;display:block;" data-i18n="modals.create_school.code_label">Codice Meccanografico (se presente)</label>
+            <input type="text" id="newSchoolMeccanografico" class="form-input" placeholder="Es. PDIS017007 (Facoltativo)" data-i18n-placeholder="modals.create_school.code_placeholder" style="width:100%;text-transform:uppercase;">
           </div>
           <div class="form-group">
-            <label style="font-size:12px;font-weight:600;margin-bottom:4px;display:block;">Anno Scolastico</label>
-            <input type="text" id="newSchoolYear" class="form-input" value="2026/2027" style="width:100%;">
+            <label style="font-size:12px;font-weight:600;margin-bottom:4px;display:block;" data-i18n="modals.create_school.year_label">Anno Scolastico</label>
+            <input type="text" id="newSchoolYear" class="form-input" value="2026/2027" data-i18n-placeholder="modals.create_school.year_placeholder" style="width:100%;">
           </div>
         </div>
 
         <div class="form-group">
-          <label style="font-size:12px;font-weight:600;margin-bottom:4px;display:block;">Note / Recapito Referente Commissione Orario</label>
-          <textarea id="newSchoolNotes" class="form-input" rows="2" placeholder="Indicare eventuali recapiti o note per la configurazione..." style="width:100%;resize:vertical;"></textarea>
+          <label style="font-size:12px;font-weight:600;margin-bottom:4px;display:block;" data-i18n="modals.create_school.notes_label">Note / Recapito Referente Commissione Orario</label>
+          <textarea id="newSchoolNotes" class="form-input" rows="2" placeholder="Indicare eventuali recapiti o note per la configurazione..." data-i18n-placeholder="modals.create_school.notes_placeholder" style="width:100%;resize:vertical;"></textarea>
         </div>
       </div>
 
       <div class="modal-footer" style="display:flex;justify-content:flex-end;gap:10px;">
-        <button class="btn btn-sec" onclick="closeCreateSchoolModal()">Annulla</button>
-        <button id="btnSubmitCreateSchool" class="btn btn-primary" onclick="submitCreateSchool()">
+        <button class="btn btn-sec" onclick="closeCreateSchoolModal()" data-i18n="modals.create_school.cancel_btn">Annulla</button>
+        <button id="btnSubmitCreateSchool" class="btn btn-primary" onclick="submitCreateSchool()" data-i18n="modals.create_school.submit_btn">
           🚀 Registra ed Entra
         </button>
       </div>
@@ -1034,28 +1034,28 @@
         <div class="modal-title" style="display:flex;align-items:center;gap:10px;">
           <span style="font-size:24px;">⭐</span>
           <div>
-            <div style="font-size:16px;font-weight:700;color:var(--text-main);">Console SuperAdmin &mdash; Gestione Piattaforma Eurario</div>
-            <div style="font-size:11.5px;color:var(--text-muted);">Registro globale istituti, approvazione modalità di prova e monitoraggio</div>
+            <div style="font-size:16px;font-weight:700;color:var(--text-main);" data-i18n="superadmin.modal_title">Console SuperAdmin &mdash; Gestione Piattaforma Eurario</div>
+            <div style="font-size:11.5px;color:var(--text-muted);" data-i18n="superadmin.modal_subtitle">Registro globale istituti, approvazione modalità di prova e monitoraggio</div>
           </div>
         </div>
-        <button class="modal-close" onclick="closeSuperAdminModal()" title="Chiudi">✕</button>
+        <button class="modal-close" onclick="closeSuperAdminModal()" title="Chiudi" data-i18n-title="common.close">✕</button>
       </div>
 
       <div class="modal-body" style="gap:14px;max-height:calc(85vh - 130px);overflow-y:auto;">
         <div style="display:flex;justify-content:space-between;align-items:center;">
-          <span style="font-size:13px;font-weight:700;color:var(--text-main);">Istituti Registrati sulla Piattaforma (<span id="superAdminTotalCount">0</span>)</span>
-          <button class="btn btn-sm btn-sec" onclick="loadSuperAdminSchools(true)">🔄 Aggiorna</button>
+          <span style="font-size:13px;font-weight:700;color:var(--text-main);"><span data-i18n="superadmin.schools_title">Istituti Registrati sulla Piattaforma</span> (<span id="superAdminTotalCount">0</span>)</span>
+          <button class="btn btn-sm btn-sec" onclick="loadSuperAdminSchools(true)" data-i18n="superadmin.btn_refresh">🔄 Aggiorna</button>
         </div>
 
         <div class="table-responsive" style="max-height:420px;overflow-y:auto;border:1px solid var(--border);border-radius:8px;">
           <table class="data-table" style="width:100%;font-size:12px;margin:0;">
             <thead>
               <tr>
-                <th>Istituto</th>
-                <th>Sede / Anno</th>
-                <th>Creatore / Owner</th>
-                <th>Stato</th>
-                <th style="text-align:right;">Azioni Tecniche</th>
+                <th data-i18n="superadmin.th_school">Istituto</th>
+                <th data-i18n="superadmin.th_location">Sede / Anno</th>
+                <th data-i18n="superadmin.th_owner">Creatore / Owner</th>
+                <th data-i18n="superadmin.th_status">Stato</th>
+                <th style="text-align:right;" data-i18n="superadmin.th_actions">Azioni Tecniche</th>
               </tr>
             </thead>
             <tbody id="superAdminSchoolsTbody">
@@ -1066,7 +1066,7 @@
       </div>
 
       <div class="modal-footer" style="display:flex;justify-content:flex-end;">
-        <button class="btn btn-primary" onclick="closeSuperAdminModal()">Chiudi</button>
+        <button class="btn btn-primary" onclick="closeSuperAdminModal()" data-i18n="common.close">Chiudi</button>
       </div>
     </div>
   </div>
@@ -1078,27 +1078,27 @@
         <div class="modal-title" style="display:flex;align-items:center;gap:10px;">
           <span style="font-size:24px;">ℹ️</span>
           <div>
-            <div style="font-size:16px;font-weight:700;color:var(--text-main);">Modalità di Prova Eurario</div>
-            <div style="font-size:11.5px;color:var(--text-muted);">Come funziona la valutazione tecnica per i nuovi istituti</div>
+            <div style="font-size:16px;font-weight:700;color:var(--text-main);" data-i18n="schools.trial_modal_title">Modalità di Prova Eurario</div>
+            <div style="font-size:11.5px;color:var(--text-muted);" data-i18n="schools.trial_modal_subtitle">Come funziona la valutazione tecnica per i nuovi istituti</div>
           </div>
         </div>
-        <button class="modal-close" onclick="closeTrialInfoModal()" title="Chiudi">✕</button>
+        <button class="modal-close" onclick="closeTrialInfoModal()" title="Chiudi" data-i18n-title="common.close">✕</button>
       </div>
 
       <div class="modal-body" style="gap:12px;font-size:12.5px;line-height:1.5;color:var(--text-main);">
-        <p>Eurario consente a qualsiasi istituto scolastico di verificare immediatamente la velocità e l'efficacia del motore di calcolo FET senza alcuna limitazione funzionale:</p>
+        <p data-i18n="schools.trial_modal_desc">Eurario consente a qualsiasi istituto scolastico di verificare immediatamente la velocità e l'efficacia del motore di calcolo FET senza alcuna limitazione funzionale:</p>
         <ul style="padding-left:20px;margin:6px 0;">
-          <li><b>Nessun limite</b> sul numero di docenti, classi, materie o vincoli complessi.</li>
-          <li><b>Motore FET 7.12.0 completo:</b> generazione rapida, swapper euristico, rilevamento colli di bottiglia e report Advisor attivi.</li>
-          <li><b>Griglia orario interattiva:</b> visualizzazione tabellone docenti, classi e aule navigabile a schermo.</li>
+          <li data-i18n-html="schools.trial_modal_li1"><b>Nessun limite</b> sul numero di docenti, classi, materie o vincoli complessi.</li>
+          <li data-i18n-html="schools.trial_modal_li2"><b>Motore FET 7.12.0 completo:</b> generazione rapida, swapper euristico, rilevamento colli di bottiglia e report Advisor attivi.</li>
+          <li data-i18n-html="schools.trial_modal_li3"><b>Griglia orario interattiva:</b> visualizzazione tabellone docenti, classi e aule navigabile a schermo.</li>
         </ul>
-        <div class="modal-notice" style="margin-top:6px;">
+        <div class="modal-notice" style="margin-top:6px;" data-i18n-html="schools.trial_modal_unlock_desc">
           <b>Sblocco Stampe Ufficiali:</b> Nella versione in prova, le stampe PDF A3/A4 e i documenti Word (.docx) presentano una filigrana identificativa <i>"Eurario - Versione Dimostrativa"</i>. Per sbloccare le stampe ufficiali senza filigrana, contatta l'amministratore di sistema o attendi l'approvazione tecnica.
         </div>
       </div>
 
       <div class="modal-footer" style="display:flex;justify-content:flex-end;">
-        <button class="btn btn-primary" onclick="closeTrialInfoModal()">Ho Capito</button>
+        <button class="btn btn-primary" onclick="closeTrialInfoModal()" data-i18n="schools.understood">Ho Capito</button>
       </div>
     </div>
   </div>

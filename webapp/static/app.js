@@ -452,13 +452,14 @@ async function loadMySchools() {
     }
 
     // Popola lista istituti nel menu a tendina
+    const isEn = window.I18N && window.I18N.getLanguage() === 'en';
     const listEl = document.getElementById('schoolMenuList');
     if (listEl) {
       if (mySchools.length === 0) {
         listEl.innerHTML = `
           <div style="padding:12px 10px;font-size:12px;color:var(--text-muted);text-align:center;">
-            Nessun istituto configurato.<br>
-            <button class="btn btn-sm btn-primary" onclick="openCreateSchoolModal()" style="margin-top:8px;">➕ Registra il tuo Istituto</button>
+            ${isEn ? 'No institution configured.' : 'Nessun istituto configurato.'}<br>
+            <button class="btn btn-sm btn-primary" onclick="openCreateSchoolModal()" style="margin-top:8px;">➕ ${isEn ? 'Register your School' : 'Registra il tuo Istituto'}</button>
           </div>`;
       } else {
         listEl.innerHTML = mySchools.map(s => {
@@ -471,7 +472,7 @@ async function loadMySchools() {
               <div class="school-item-info">
                 <div class="school-item-name">
                   ${escapeHtml(s.name)}
-                  ${isSchTrial ? '<span class="badge-trial-pill" style="margin-left:4px;">In Prova</span>' : ''}
+                  ${isSchTrial ? `<span class="badge-trial-pill" style="margin-left:4px;">${isEn ? 'Trial' : 'In Prova'}</span>` : ''}
                 </div>
                 ${subText ? `<div class="school-item-sub">${escapeHtml(subText)}</div>` : ''}
               </div>
@@ -528,11 +529,17 @@ function openCreateSchoolModal() {
   if (menu) menu.style.display = 'none';
   const modal = document.getElementById('createSchoolModal');
   if (modal) {
+    const isEn = window.I18N && window.I18N.getLanguage() === 'en';
     document.getElementById('newSchoolName').value = '';
     document.getElementById('newSchoolCity').value = '';
+    const countryEl = document.getElementById('newSchoolCountry');
+    if (countryEl) countryEl.value = isEn ? 'United States' : 'Italia';
     const mecc = document.getElementById('newSchoolMeccanografico');
     if (mecc) mecc.value = '';
     document.getElementById('newSchoolNotes').value = '';
+    if (window.I18N && typeof window.I18N.applyStaticTranslations === 'function') {
+      window.I18N.applyStaticTranslations(modal);
+    }
     modal.style.display = 'flex';
   }
 }
@@ -543,15 +550,16 @@ function closeCreateSchoolModal() {
 }
 
 async function submitCreateSchool() {
+  const isEn = window.I18N && window.I18N.getLanguage() === 'en';
   const name = (document.getElementById('newSchoolName').value || '').trim();
   const city = (document.getElementById('newSchoolCity').value || '').trim();
-  const country = (document.getElementById('newSchoolCountry').value || 'Italia').trim();
+  const country = (document.getElementById('newSchoolCountry').value || (isEn ? 'United States' : 'Italia')).trim();
   const school_year = (document.getElementById('newSchoolYear').value || '2026/2027').trim();
   const meccanografico = (document.getElementById('newSchoolMeccanografico')?.value || '').trim().toUpperCase();
   const notes = (document.getElementById('newSchoolNotes').value || '').trim();
 
   if (!name) {
-    alert('Inserisci il nome del nuovo Istituto Scolastico.');
+    alert(isEn ? 'Please enter the School / Institution name.' : 'Inserisci il nome del nuovo Istituto Scolastico.');
     return;
   }
 
@@ -567,16 +575,16 @@ async function submitCreateSchool() {
     const data = await res.json();
     if (data.success) {
       closeCreateSchoolModal();
-      showToast('Nuovo istituto creato con successo!');
+      showToast(isEn ? 'New school created successfully!' : 'Nuovo istituto creato con successo!');
       await loadMySchools();
       await refreshAppState();
       navigate('dashboard', false);
     } else {
-      alert(data.error || 'Errore durante la registrazione del nuovo istituto.');
+      alert(data.error || (isEn ? 'Error while registering new school.' : 'Errore durante la registrazione del nuovo istituto.'));
     }
   } catch (err) {
     console.error('Errore creazione scuola:', err);
-    alert('Errore di connessione durante la creazione del nuovo istituto.');
+    alert(isEn ? 'Connection error while creating new school.' : 'Errore di connessione durante la creazione del nuovo istituto.');
   } finally {
     if (btn) btn.disabled = false;
   }
@@ -584,7 +592,12 @@ async function submitCreateSchool() {
 
 function openTrialInfoModal() {
   const modal = document.getElementById('trialInfoModal');
-  if (modal) modal.style.display = 'flex';
+  if (modal) {
+    if (window.I18N && typeof window.I18N.applyStaticTranslations === 'function') {
+      window.I18N.applyStaticTranslations(modal);
+    }
+    modal.style.display = 'flex';
+  }
 }
 
 function closeTrialInfoModal() {
@@ -597,6 +610,9 @@ function openSuperAdminModal() {
   if (menu) menu.style.display = 'none';
   const modal = document.getElementById('superAdminModal');
   if (modal) {
+    if (window.I18N && typeof window.I18N.applyStaticTranslations === 'function') {
+      window.I18N.applyStaticTranslations(modal);
+    }
     modal.style.display = 'flex';
     loadSuperAdminSchools();
   }
@@ -608,10 +624,11 @@ function closeSuperAdminModal() {
 }
 
 async function loadSuperAdminSchools(showNotice = false) {
+  const isEn = window.I18N && window.I18N.getLanguage() === 'en';
   try {
     const res = await fetch('/api/superadmin/schools');
     if (!res.ok) {
-      if (res.status === 403) alert('Accesso negato: riservato al SuperAdmin.');
+      if (res.status === 403) alert(isEn ? 'Access denied: reserved for SuperAdmin.' : 'Accesso negato: riservato al SuperAdmin.');
       return;
     }
     const data = await res.json();
@@ -623,16 +640,16 @@ async function loadSuperAdminSchools(showNotice = false) {
     if (!tbody) return;
 
     if (schools.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--text-muted);">Nessun istituto presente</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--text-muted);">${isEn ? 'No schools registered yet' : 'Nessun istituto presente'}</td></tr>`;
       return;
     }
 
     tbody.innerHTML = schools.map(s => {
-      let statusBadge = '<span class="status-badge-trial">In Prova (Trial)</span>';
+      let statusBadge = `<span class="status-badge-trial">${isEn ? 'Trial Mode' : 'In Prova (Trial)'}</span>`;
       if (s.status === 'active') {
-        statusBadge = '<span class="status-badge-active">Attivo / Completo</span>';
+        statusBadge = `<span class="status-badge-active">${isEn ? 'Active / Full' : 'Attivo / Completo'}</span>`;
       } else if (s.status === 'suspended') {
-        statusBadge = '<span class="status-badge-suspended">Sospeso</span>';
+        statusBadge = `<span class="status-badge-suspended">${isEn ? 'Suspended' : 'Sospeso'}</span>`;
       }
 
       const isDefault = s.id === 'default';
@@ -640,34 +657,34 @@ async function loadSuperAdminSchools(showNotice = false) {
       const isSuspended = s.status === 'suspended';
 
       let actionButtons = `
-        <button class="btn btn-sm btn-sec" onclick="switchSchool('${escapeHtml(s.id)}'); closeSuperAdminModal();" title="Passa a questo istituto" style="padding:2px 8px;font-size:11px;">
-          🚪 Entra
+        <button class="btn btn-sm btn-sec" onclick="switchSchool('${escapeHtml(s.id)}'); closeSuperAdminModal();" title="${isEn ? 'Switch to this institution' : 'Passa a questo istituto'}" style="padding:2px 8px;font-size:11px;">
+          🚪 ${isEn ? 'Enter' : 'Entra'}
         </button>
       `;
 
       if (isTrial) {
         actionButtons += `
-          <button class="btn btn-sm btn-primary" onclick="approveSchoolAsAdmin('${escapeHtml(s.id)}')" title="Approva e sblocca stampe ufficiali senza filigrana" style="padding:2px 8px;font-size:11px;margin-left:4px;">
-            ✅ Approva
+          <button class="btn btn-sm btn-primary" onclick="approveSchoolAsAdmin('${escapeHtml(s.id)}')" title="${isEn ? 'Approve and unlock official prints without watermark' : 'Approva e sblocca stampe ufficiali senza filigrana'}" style="padding:2px 8px;font-size:11px;margin-left:4px;">
+            ✅ ${isEn ? 'Approve' : 'Approva'}
           </button>
         `;
       } else if (!isDefault && !isSuspended) {
         actionButtons += `
-          <button class="btn btn-sm btn-sec" onclick="suspendSchoolAsAdmin('${escapeHtml(s.id)}')" title="Sospendi accesso per questo istituto" style="padding:2px 8px;font-size:11px;margin-left:4px;color:#b91c1c;">
-            ⏸️ Sospendi
+          <button class="btn btn-sm btn-sec" onclick="suspendSchoolAsAdmin('${escapeHtml(s.id)}')" title="${isEn ? 'Suspend access for this school' : 'Sospendi accesso per questo istituto'}" style="padding:2px 8px;font-size:11px;margin-left:4px;color:#b91c1c;">
+            ⏸️ ${isEn ? 'Suspend' : 'Sospendi'}
           </button>
         `;
       } else if (isSuspended) {
         actionButtons += `
-          <button class="btn btn-sm btn-primary" onclick="reactivateSchoolAsAdmin('${escapeHtml(s.id)}')" title="Riattiva istituto" style="padding:2px 8px;font-size:11px;margin-left:4px;">
-            ▶️ Riattiva
+          <button class="btn btn-sm btn-primary" onclick="reactivateSchoolAsAdmin('${escapeHtml(s.id)}')" title="${isEn ? 'Reactivate school' : 'Riattiva istituto'}" style="padding:2px 8px;font-size:11px;margin-left:4px;">
+            ▶️ ${isEn ? 'Reactivate' : 'Riattiva'}
           </button>
         `;
       }
 
       if (!isDefault) {
         actionButtons += `
-          <button class="btn btn-sm btn-sec" onclick="deleteSchoolAsAdmin('${escapeHtml(s.id)}', '${escapeHtml(s.name)}')" title="Elimina istituto e dati isolati" style="padding:2px 8px;font-size:11px;margin-left:4px;color:#b91c1c;">
+          <button class="btn btn-sm btn-sec" onclick="deleteSchoolAsAdmin('${escapeHtml(s.id)}', '${escapeHtml(s.name)}')" title="${isEn ? 'Delete school and isolated data' : 'Elimina istituto e dati isolati'}" style="padding:2px 8px;font-size:11px;margin-left:4px;color:#b91c1c;">
             🗑️
           </button>
         `;
@@ -678,10 +695,10 @@ async function loadSuperAdminSchools(showNotice = false) {
           <td>
             <b>${escapeHtml(s.name)}</b>
             ${s.meccanografico ? `<span class="badge" style="background:#e0e7ff;color:#3730a3;font-family:monospace;margin-left:4px;font-size:10px;">${escapeHtml(s.meccanografico)}</span>` : ''}
-            ${isDefault ? '<span class="badge badge-info" style="margin-left:4px;font-size:9.5px;">Predefinito</span>' : ''}
+            ${isDefault ? `<span class="badge badge-info" style="margin-left:4px;font-size:9.5px;">${isEn ? 'Default' : 'Predefinito'}</span>` : ''}
             <div style="font-size:10.5px;color:var(--text-muted);font-family:var(--font-mono);">${escapeHtml(s.id)}</div>
           </td>
-          <td>${escapeHtml(s.city || '-')}, ${escapeHtml(s.country || 'Italia')}<br><small style="color:var(--text-muted);">${escapeHtml(s.school_year || '-')}</small></td>
+          <td>${escapeHtml(s.city || '-')}, ${escapeHtml(s.country || (isEn ? 'Italy' : 'Italia'))}<br><small style="color:var(--text-muted);">${escapeHtml(s.school_year || '-')}</small></td>
           <td>${escapeHtml(s.owner_email || 'admin')}</td>
           <td>${statusBadge}</td>
           <td style="text-align:right;white-space:nowrap;">${actionButtons}</td>
@@ -689,14 +706,17 @@ async function loadSuperAdminSchools(showNotice = false) {
       `;
     }).join('');
 
-    if (showNotice) showToast('Elenco istituti aggiornato');
+    if (showNotice) showToast(isEn ? 'School list updated' : 'Elenco istituti aggiornato');
   } catch (err) {
     console.error('Errore caricamento scuole superadmin:', err);
   }
 }
 
 async function approveSchoolAsAdmin(schoolId) {
-  if (!confirm(`Vuoi approvare ufficialmente questo Istituto?\nVerranno sbloccate tutte le stampe ufficiali ad alta risoluzione senza filigrana.`)) return;
+  const isEn = window.I18N && window.I18N.getLanguage() === 'en';
+  if (!confirm(isEn
+    ? 'Do you want to officially approve this Institution?\nAll official high-resolution prints without watermark will be unlocked.'
+    : 'Vuoi approvare ufficialmente questo Istituto?\nVerranno sbloccate tutte le stampe ufficiali ad alta risoluzione senza filigrana.')) return;
   try {
     const res = await fetch('/api/superadmin/schools/approve', {
       method: 'POST',
@@ -705,19 +725,20 @@ async function approveSchoolAsAdmin(schoolId) {
     });
     const data = await res.json();
     if (data.success) {
-      showToast('Istituto approvato con successo!');
+      showToast(isEn ? 'School approved successfully! Official prints unlocked.' : 'Istituto approvato con successo! Stampe sbloccate.');
       loadSuperAdminSchools();
       loadMySchools();
     } else {
-      alert(data.error || 'Errore durante l\'approvazione.');
+      alert(data.error || (isEn ? 'Error while approving.' : 'Errore durante l\'approvazione.'));
     }
   } catch (err) {
-    alert('Errore di connessione.');
+    alert(isEn ? 'Connection error.' : 'Errore di connessione.');
   }
 }
 
 async function suspendSchoolAsAdmin(schoolId) {
-  if (!confirm(`Vuoi sospendere questo Istituto?`)) return;
+  const isEn = window.I18N && window.I18N.getLanguage() === 'en';
+  if (!confirm(isEn ? 'Do you want to suspend access for this Institution?' : 'Vuoi sospendere questo Istituto?')) return;
   try {
     const res = await fetch('/api/superadmin/schools/suspend', {
       method: 'POST',
@@ -726,18 +747,19 @@ async function suspendSchoolAsAdmin(schoolId) {
     });
     const data = await res.json();
     if (data.success) {
-      showToast('Istituto sospeso.');
+      showToast(isEn ? 'School suspended.' : 'Istituto sospeso.');
       loadSuperAdminSchools();
       loadMySchools();
     } else {
-      alert(data.error || 'Errore durante la sospensione.');
+      alert(data.error || (isEn ? 'Error while suspending.' : 'Errore durante la sospensione.'));
     }
   } catch (err) {
-    alert('Errore di connessione.');
+    alert(isEn ? 'Connection error.' : 'Errore di connessione.');
   }
 }
 
 async function reactivateSchoolAsAdmin(schoolId) {
+  const isEn = window.I18N && window.I18N.getLanguage() === 'en';
   try {
     const res = await fetch('/api/superadmin/schools/reactivate', {
       method: 'POST',
@@ -746,19 +768,22 @@ async function reactivateSchoolAsAdmin(schoolId) {
     });
     const data = await res.json();
     if (data.success) {
-      showToast('Istituto riattivato.');
+      showToast(isEn ? 'School reactivated.' : 'Istituto riattivato.');
       loadSuperAdminSchools();
       loadMySchools();
     } else {
-      alert(data.error || 'Errore durante la riattivazione.');
+      alert(data.error || (isEn ? 'Error while reactivating.' : 'Errore durante la riattivazione.'));
     }
   } catch (err) {
-    alert('Errore di connessione.');
+    alert(isEn ? 'Connection error.' : 'Errore di connessione.');
   }
 }
 
 async function deleteSchoolAsAdmin(schoolId, schoolName) {
-  if (!confirm(`Sei sicuro di voler eliminare definitivamente l'istituto "${schoolName}" e tutti i suoi dati?\nQuesta azione non può essere annullata.`)) return;
+  const isEn = window.I18N && window.I18N.getLanguage() === 'en';
+  if (!confirm(isEn
+    ? `Are you sure you want to permanently delete institution "${schoolName}" and all its data?\nThis action cannot be undone.`
+    : `Sei sicuro di voler eliminare definitivamente l'istituto "${schoolName}" e tutti i suoi dati?\nQuesta azione non può essere annullata.`)) return;
   try {
     const res = await fetch('/api/superadmin/schools/delete', {
       method: 'POST',
@@ -767,11 +792,11 @@ async function deleteSchoolAsAdmin(schoolId, schoolName) {
     });
     const data = await res.json();
     if (data.success) {
-      showToast('Istituto eliminato con successo.');
+      showToast(isEn ? 'School deleted successfully.' : 'Istituto eliminato con successo.');
       loadSuperAdminSchools();
       loadMySchools();
     } else {
-      alert(data.error || 'Errore durante l\'eliminazione.');
+      alert(data.error || (isEn ? 'Error while deleting.' : 'Errore durante l\'eliminazione.'));
     }
   } catch (err) {
     alert('Errore di connessione.');

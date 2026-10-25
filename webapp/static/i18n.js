@@ -273,7 +273,78 @@
           logs_loading: "Caricamento registro accessi in corso...",
           logs_error: "Errore durante il caricamento del registro accessi",
           logs_empty: "Nessun evento di accesso registrato finora."
+        },
+        create_school: {
+          title: "Registra Nuovo Istituto",
+          subtitle: "Crea un nuovo spazio isolato per il tuo orario scolastico",
+          notice: "Il nuovo istituto verrà creato immediatamente in <b>Modalità di Prova</b>: potrai inserire dati, definire vincoli e calcolare orari con il motore FET. Le stampe ufficiali ad alta risoluzione verranno sbloccate dopo l'approvazione tecnica da parte del SuperAdmin.",
+          name_label: "Nome Istituto Scolastico *",
+          name_placeholder: "Es. Liceo Scientifico \"Galileo Galilei\"",
+          city_label: "Città / Comune",
+          city_placeholder: "Es. Padova, Milano, Roma...",
+          country_label: "Nazione",
+          country_placeholder: "Italia",
+          code_label: "Codice Meccanografico (se presente)",
+          code_placeholder: "Es. PDIS017007 (Facoltativo)",
+          year_label: "Anno Scolastico",
+          year_placeholder: "2026/2027",
+          notes_label: "Note / Recapito Referente Commissione Orario",
+          notes_placeholder: "Indicare eventuali recapiti o note per la configurazione...",
+          cancel_btn: "Annulla",
+          submit_btn: "🚀 Registra ed Entra",
+          alert_name_required: "Inserisci il nome del nuovo Istituto Scolastico.",
+          toast_success: "Nuovo istituto creato con successo!",
+          err_create: "Errore durante la registrazione del nuovo istituto.",
+          err_conn: "Errore di connessione durante la creazione del nuovo istituto."
         }
+      },
+      schools: {
+        selector_title: "Cambia Istituto Scolastico",
+        my_schools: "I Miei Istituti",
+        register_new: "Registra Nuovo Istituto...",
+        superadmin_console: "Console SuperAdmin",
+        trial_badge: "In Prova",
+        trial_badge_title: "Istituto in prova (stampe filigranate)",
+        pending_requests_btn: "Richieste in Attesa",
+        trial_banner_title: "Modalità di Prova Attiva:",
+        trial_banner_text: "<b>Modalità di Prova Attiva:</b> Tutte le funzioni di calcolo euristico FET e composizione orario sono complete e funzionanti al 100%. Le stampe ufficiali ad alta risoluzione (PDF e Word) includono la filigrana dimostrativa fino all'attivazione tecnica da parte dell'amministratore.",
+        trial_banner_btn: "Maggiori Info",
+        trial_modal_title: "Modalità di Prova Eurario",
+        trial_modal_subtitle: "Come funziona la valutazione tecnica per i nuovi istituti",
+        trial_modal_desc: "Eurario consente a qualsiasi istituto scolastico di verificare immediatamente la velocità e l'efficacia del motore di calcolo FET senza alcuna limitazione funzionale:",
+        trial_modal_li1: "<b>Nessun limite</b> sul numero di docenti, classi, materie o vincoli complessi.",
+        trial_modal_li2: "<b>Motore FET 7.12.0 completo:</b> generazione rapida, swapper euristico, rilevamento colli di bottiglia e report Advisor attivi.",
+        trial_modal_li3: "<b>Griglia orario interattiva:</b> visualizzazione tabellone docenti, classi e aule navigabile a schermo.",
+        trial_modal_unlock_desc: "<b>Sblocco Stampe Ufficiali:</b> Nella versione in prova, le stampe PDF A3/A4 e i documenti Word (.docx) presentano una filigrana identificativa <i>\"Eurario - Versione Dimostrativa\"</i>. Per sbloccare le stampe ufficiali senza filigrana, contatta l'amministratore di sistema o attendi l'approvazione tecnica.",
+        understood: "Ho Capito"
+      },
+      superadmin: {
+        modal_title: "Console SuperAdmin — Gestione Piattaforma Eurario",
+        modal_subtitle: "Registro globale istituti, approvazione modalità di prova e monitoraggio",
+        schools_title: "Istituti Registrati sulla Piattaforma",
+        btn_refresh: "🔄 Aggiorna",
+        th_school: "Istituto",
+        th_location: "Sede / Anno",
+        th_owner: "Creatore / Owner",
+        th_status: "Stato",
+        th_actions: "Azioni Tecniche",
+        status_trial: "In Prova (Trial)",
+        status_active: "Attivo / Completo",
+        status_suspended: "Sospeso",
+        btn_enter: "🚪 Entra",
+        btn_approve: "✅ Approva",
+        btn_suspend: "⏸️ Sospendi",
+        btn_reactivate: "▶️ Riattiva",
+        no_schools: "Nessun istituto presente",
+        confirm_approve: "Vuoi approvare ufficialmente questo Istituto?\nVerranno sbloccate tutte le stampe ufficiali ad alta risoluzione senza filigrana.",
+        confirm_suspend: "Vuoi sospendere l'accesso per questo Istituto?",
+        confirm_reactivate: "Vuoi riattivare l'accesso per questo Istituto?",
+        confirm_delete: "Sei sicuro di voler eliminare definitivamente l'istituto \"{name}\"?\nQuesta operazione cancellerà tutti i docenti, classi e orari associati.",
+        toast_refreshed: "Elenco istituti aggiornato",
+        toast_approved: "Istituto approvato con successo! Stampe sbloccate.",
+        toast_suspended: "Istituto sospeso.",
+        toast_reactivated: "Istituto riattivato con successo.",
+        toast_deleted: "Istituto eliminato con successo."
       },
       footer: {
         version: "Versione",
@@ -884,7 +955,78 @@
           logs_loading: "Loading access audit log...",
           logs_error: "Error loading access log",
           logs_empty: "No access events recorded yet."
+        },
+        create_school: {
+          title: "Register New School",
+          subtitle: "Create an isolated workspace for your school timetable",
+          notice: "The new school will be created immediately in <b>Trial Mode</b>: you can enter data, configure constraints, and compute schedules using the FET engine. Official high-resolution prints will be unlocked after technical approval by the SuperAdmin.",
+          name_label: "School / Institution Name *",
+          name_placeholder: "e.g. Lincoln High School or Oak Academy",
+          city_label: "City / Municipality",
+          city_placeholder: "e.g. London, New York, Rome...",
+          country_label: "Country",
+          country_placeholder: "United States",
+          code_label: "School Code / ID (if applicable)",
+          code_placeholder: "e.g. US987654 (Optional)",
+          year_label: "School Year",
+          year_placeholder: "2026/2027",
+          notes_label: "Notes / Timetable Committee Contact Info",
+          notes_placeholder: "Enter contact details or timetable setup notes...",
+          cancel_btn: "Cancel",
+          submit_btn: "🚀 Register and Enter",
+          alert_name_required: "Please enter the School / Institution name.",
+          toast_success: "New school created successfully!",
+          err_create: "Error while registering new school.",
+          err_conn: "Connection error while creating new school."
         }
+      },
+      schools: {
+        selector_title: "Change School / Institution",
+        my_schools: "My Schools",
+        register_new: "Register New School...",
+        superadmin_console: "SuperAdmin Console",
+        trial_badge: "Trial",
+        trial_badge_title: "Trial mode school (watermarked exports)",
+        pending_requests_btn: "Pending Requests",
+        trial_banner_title: "Trial Mode Active:",
+        trial_banner_text: "<b>Trial Mode Active:</b> All FET heuristic solver features and timetable scheduling are 100% active and unconstrained. Official high-resolution exports (PDF and Word) include an evaluation watermark until unlocked by the administrator.",
+        trial_banner_btn: "More Info",
+        trial_modal_title: "Eurario Trial Mode",
+        trial_modal_subtitle: "How technical evaluation works for new schools",
+        trial_modal_desc: "Eurario allows any school or institution to immediately verify the speed and power of the FET timetable engine without functional limitations:",
+        trial_modal_li1: "<b>No limits</b> on the number of teachers, classes, subjects, or complex constraints.",
+        trial_modal_li2: "<b>Full FET 7.12.0 Engine:</b> rapid heuristic generation, genetic timetable swapper, bottleneck detection, and Advisor reports.",
+        trial_modal_li3: "<b>Interactive timetable grid:</b> full screen inspection of teacher boards, classes, and rooms.",
+        trial_modal_unlock_desc: "<b>Unlocking Official Prints:</b> In trial mode, high-resolution A3/A4 PDF prints and Word documents (.docx) include an evaluation watermark <i>\"Eurario - Evaluation Version\"</i>. To unlock official watermark-free prints, contact your system administrator or await technical approval.",
+        understood: "Understood"
+      },
+      superadmin: {
+        modal_title: "SuperAdmin Console — Eurario Platform Management",
+        modal_subtitle: "Global school registry, trial mode approval, and platform monitoring",
+        schools_title: "Registered Schools on Platform",
+        btn_refresh: "🔄 Refresh",
+        th_school: "School / Institution",
+        th_location: "Location / Year",
+        th_owner: "Owner / Creator",
+        th_status: "Status",
+        th_actions: "Technical Actions",
+        status_trial: "Trial Mode",
+        status_active: "Active / Full",
+        status_suspended: "Suspended",
+        btn_enter: "🚪 Enter",
+        btn_approve: "✅ Approve",
+        btn_suspend: "⏸️ Suspend",
+        btn_reactivate: "▶️ Reactivate",
+        no_schools: "No schools registered yet",
+        confirm_approve: "Do you want to officially approve this Institution?\nAll official high-resolution prints without watermark will be unlocked.",
+        confirm_suspend: "Do you want to suspend access for this Institution?",
+        confirm_reactivate: "Do you want to reactivate access for this Institution?",
+        confirm_delete: "Are you sure you want to permanently delete institution \"{name}\"?\nThis will remove all associated teachers, classes, and schedules.",
+        toast_refreshed: "School list updated",
+        toast_approved: "School approved successfully! Prints unlocked.",
+        toast_suspended: "School suspended.",
+        toast_reactivated: "School reactivated successfully.",
+        toast_deleted: "School deleted successfully."
       },
       footer: {
         version: "Version",
@@ -1316,6 +1458,13 @@
         } else {
           el.innerText = translated;
         }
+      }
+    });
+
+    scope.querySelectorAll('[data-i18n-html]').forEach(el => {
+      const key = el.getAttribute('data-i18n-html');
+      if (key) {
+        el.innerHTML = t(key);
       }
     });
 
