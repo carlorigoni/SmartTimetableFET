@@ -1226,6 +1226,12 @@
   };
 
   function detectLanguage() {
+    try {
+      const cookieMatch = document.cookie.match(/(?:^|;\s*)app_lang=([a-zA-Z]+)/);
+      if (cookieMatch && (cookieMatch[1].toLowerCase() === 'it' || cookieMatch[1].toLowerCase() === 'en')) {
+        return cookieMatch[1].toLowerCase();
+      }
+    } catch (_) {}
     const saved = localStorage.getItem('app_lang');
     if (saved && (saved === 'it' || saved === 'en')) {
       return saved;
@@ -1261,6 +1267,7 @@
     currentLanguage = lang;
     try {
       localStorage.setItem('app_lang', lang);
+      document.cookie = "app_lang=" + lang + "; path=/; max-age=31536000; SameSite=Lax";
     } catch (e) {}
 
     document.documentElement.setAttribute('lang', lang);

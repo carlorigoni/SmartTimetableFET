@@ -787,6 +787,8 @@ function closePrintView() {{
 }}
 
 function switchPrintLang(newLang) {{
+  document.cookie = "app_lang=" + newLang + "; path=/; max-age=31536000; SameSite=Lax";
+  try {{ localStorage.setItem('app_lang', newLang); }} catch(e){{}}
   const url = new URL(window.location.href);
   url.searchParams.set('lang', newLang);
   window.location.href = url.toString();
@@ -1311,6 +1313,8 @@ function downloadDocx() {{
 }}
 
 function switchPrintLang(newLang) {{
+  document.cookie = "app_lang=" + newLang + "; path=/; max-age=31536000; SameSite=Lax";
+  try {{ localStorage.setItem('app_lang', newLang); }} catch(e){{}}
   const url = new URL(window.location.href);
   url.searchParams.set('lang', newLang);
   window.location.href = url.toString();

@@ -22,7 +22,7 @@ let pollSolverTimer = null;
 let currentSolverRunning = false;
 
 // --- VERSIONE E IDENTITÀ APPLICATIVA ---
-const APP_VERSION = '1.5.7';
+const APP_VERSION = '1.5.8';
 
 // Helper traduzione i18n universale
 function _t(key, fallback = '') {
@@ -2998,6 +2998,16 @@ function renderAdvisorCardHtml(recommendations, isSolverView = false, advisorRep
       </div>
     ` : ''}
 
+    ${(() => {
+      window._advisorActions = window._advisorActions || {};
+      recommendations.forEach(r => {
+        if (r && r.id) {
+          window._advisorActions[r.id] = { action_type: r.action_type, payload: r.action_payload };
+        }
+      });
+      return '';
+    })()}
+
     ${recommendations.map(r => {
       const lvl = r.level || 1;
       const lvlClass = `badge-level-${lvl}`;
@@ -3086,20 +3096,20 @@ function renderAdvisorCardHtml(recommendations, isSolverView = false, advisorRep
           <p class="advisor-rec-desc">${escapeHtml(desc)}</p>
           <div class="advisor-rec-actions">
             ${isSolverView ? `
-              <button class="btn btn-sm ${isCombo ? 'btn-primary' : 'btn-primary'}" 
+              <button type="button" class="btn btn-sm ${isCombo ? 'btn-primary' : 'btn-primary'}" 
                       style="font-size:12.5px;white-space:nowrap;font-weight:700;display:inline-flex;align-items:center;gap:6px;${isCombo ? 'background: linear-gradient(135deg, #059669 0%, #10b981 100%);box-shadow: 0 2px 6px rgba(16,185,129,0.3);' : ''}" 
-                      onclick="applyAdvisorRelaxation('${r.action_type}', ${JSON.stringify(r.action_payload).replace(/"/g, '&quot;')}, true, this)">
+                      onclick="applyAdvisorAction('${escapeHtml(r.id)}', true, this)">
                 ⚡ ${escapeHtml(btnText)} ${isEn ? '& Restart Solver' : 'e Riavvia Solutore'}
               </button>
             ` : `
-              <button class="btn btn-sm btn-primary" 
+              <button type="button" class="btn btn-sm btn-primary" 
                       style="font-size:12px;white-space:nowrap;font-weight:700;display:inline-flex;align-items:center;gap:6px;" 
-                      onclick="applyAdvisorRelaxation('${r.action_type}', ${JSON.stringify(r.action_payload).replace(/"/g, '&quot;')}, false, this)">
+                      onclick="applyAdvisorAction('${escapeHtml(r.id)}', false, this)">
                 ⚡ ${escapeHtml(btnText)}
               </button>
-              <button class="btn btn-sm btn-sec" 
+              <button type="button" class="btn btn-sm btn-sec" 
                       style="font-size:12px;white-space:nowrap;font-weight:600;display:inline-flex;align-items:center;gap:6px;" 
-                      onclick="applyAdvisorRelaxation('${r.action_type}', ${JSON.stringify(r.action_payload).replace(/"/g, '&quot;')}, true, this)">
+                      onclick="applyAdvisorAction('${escapeHtml(r.id)}', true, this)">
                 🚀 ${isEn ? 'Apply & Start FET' : 'Applica & Avvia FET'}
               </button>
             `}
@@ -3108,6 +3118,16 @@ function renderAdvisorCardHtml(recommendations, isSolverView = false, advisorRep
       `;
     }).join('')}
   `;
+}
+
+function applyAdvisorAction(recId, restartSolver = false, btn = null) {
+  const item = (window._advisorActions && window._advisorActions[recId]) || null;
+  if (!item) {
+    console.error("Action not found for advisor rec:", recId);
+    showToast("Opzione non trovata o già applicata", "warn");
+    return;
+  }
+  applyAdvisorRelaxation(item.action_type, item.payload, restartSolver, btn);
 }
 
 async function applyAdvisorRelaxation(actionType, payload, restartSolver = false, callerBtn = null) {
@@ -3128,6 +3148,15 @@ async function applyAdvisorRelaxation(actionType, payload, restartSolver = false
         lang: isEn ? 'en' : 'it'
       })
     });
+    if (!res.ok) {
+      const errText = await res.text();
+      let errMsg = errText;
+      try {
+        const j = JSON.parse(errText);
+        errMsg = j.error || j.message || errText;
+      } catch (_) {}
+      throw new Error(errMsg || `HTTP ${res.status}`);
+    }
     const data = await res.json();
     if (data.status === 'ok') {
       showToast(data.message || (isEn ? 'Constraint updated successfully!' : 'Vincolo aggiornato con successo!'), 'ok');
@@ -3151,7 +3180,7 @@ async function applyAdvisorRelaxation(actionType, payload, restartSolver = false
       }
     }
   } catch (e) {
-    alert((isEn ? 'Error: ' : 'Errore chiamata: ') + e.message);
+    alert((isEn ? 'Error: ' : 'Errore: ') + e.message);
     if (btn) {
       btn.disabled = false;
       btn.innerText = isEn ? 'Retry' : 'Riprova';
@@ -10777,8 +10806,17 @@ async function openPrintClassesModal() {
   if (!modal) return;
   modal.style.display = 'flex';
 
+  const curLang = (window.I18N ? window.I18N.getLanguage() : null) || localStorage.getItem('app_lang') || 'it';
   const langSelect = document.getElementById('printClassesLang');
-  if (langSelect) langSelect.value = window.I18N ? window.I18N.getLanguage() : 'it';
+  if (langSelect) {
+    langSelect.value = curLang;
+    langSelect.onchange = () => {
+      try {
+        localStorage.setItem('app_lang', langSelect.value);
+        document.cookie = "app_lang=" + langSelect.value + "; path=/; max-age=31536000; SameSite=Lax";
+      } catch (_) {}
+    };
+  }
 
   // Imposta data di default immediata se vuota
   const dateInput = document.getElementById('printClassesDate');
@@ -10913,7 +10951,11 @@ function submitPrintClasses() {
     classesParam = checkedBoxes.map(cb => cb.value).join(',');
   }
 
-  const appLang = document.getElementById('printClassesLang')?.value || (window.I18N ? window.I18N.getLanguage() : 'it');
+  const appLang = document.getElementById('printClassesLang')?.value || (window.I18N ? window.I18N.getLanguage() : null) || localStorage.getItem('app_lang') || 'it';
+  try {
+    document.cookie = "app_lang=" + appLang + "; path=/; max-age=31536000; SameSite=Lax";
+    localStorage.setItem('app_lang', appLang);
+  } catch (_) {}
   const params = new URLSearchParams({
     validity_date: dateVal,
     color_mode: colorVal,
@@ -10937,8 +10979,17 @@ async function openPrintTeachersModal() {
   if (!modal) return;
   modal.style.display = 'flex';
 
+  const curLang = (window.I18N ? window.I18N.getLanguage() : null) || localStorage.getItem('app_lang') || 'it';
   const langSelect = document.getElementById('printTeachersLang');
-  if (langSelect) langSelect.value = window.I18N ? window.I18N.getLanguage() : 'it';
+  if (langSelect) {
+    langSelect.value = curLang;
+    langSelect.onchange = () => {
+      try {
+        localStorage.setItem('app_lang', langSelect.value);
+        document.cookie = "app_lang=" + langSelect.value + "; path=/; max-age=31536000; SameSite=Lax";
+      } catch (_) {}
+    };
+  }
 
   const dateInput = document.getElementById('printTeachersDate');
   if (dateInput && !dateInput.value) {
@@ -10968,7 +11019,11 @@ function submitPrintTeachers() {
   const showRooms = document.getElementById('printTeachersShowRooms')?.checked ? '1' : '0';
   const highlightDisp = document.getElementById('printTeachersHighlightDisp')?.checked ? '1' : '0';
 
-  const appLang = document.getElementById('printTeachersLang')?.value || (window.I18N ? window.I18N.getLanguage() : 'it');
+  const appLang = document.getElementById('printTeachersLang')?.value || (window.I18N ? window.I18N.getLanguage() : null) || localStorage.getItem('app_lang') || 'it';
+  try {
+    document.cookie = "app_lang=" + appLang + "; path=/; max-age=31536000; SameSite=Lax";
+    localStorage.setItem('app_lang', appLang);
+  } catch (_) {}
   const params = new URLSearchParams({
     validity_date: dateVal,
     paper_size: paperSize,
@@ -10991,7 +11046,11 @@ function submitDownloadTeachersDocx() {
   const showRooms = document.getElementById('printTeachersShowRooms')?.checked ? '1' : '0';
   const highlightDisp = document.getElementById('printTeachersHighlightDisp')?.checked ? '1' : '0';
 
-  const appLang = document.getElementById('printTeachersLang')?.value || (window.I18N ? window.I18N.getLanguage() : 'it');
+  const appLang = document.getElementById('printTeachersLang')?.value || (window.I18N ? window.I18N.getLanguage() : null) || localStorage.getItem('app_lang') || 'it';
+  try {
+    document.cookie = "app_lang=" + appLang + "; path=/; max-age=31536000; SameSite=Lax";
+    localStorage.setItem('app_lang', appLang);
+  } catch (_) {}
   const params = new URLSearchParams({
     validity_date: dateVal,
     paper_size: paperSize,

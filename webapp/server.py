@@ -86,7 +86,7 @@ def fetch_google_doc_docx_bytes(url):
     except Exception as e:
         raise ValueError(f"Impossibile scaricare il Google Doc: {e}")
 
-APP_VERSION = "1.5.7"
+APP_VERSION = "1.5.8"
 FET_VERSION = "7.12.0"
 APP_AUTHOR = "Carlo Rigoni"
 APP_MENTOR = "Federico Rettore"
@@ -203,11 +203,18 @@ class ThreadingHTTPServer(ThreadingMixIn, HTTPServer):
 
 class SmartTimetableHandler(BaseHTTPRequestHandler):
     def _send_cors(self):
-        origin = self.headers.get("Origin") or "*"
-        self.send_header("Access-Control-Allow-Origin", origin)
+        origin = self.headers.get("Origin")
+        if not origin:
+            host = self.headers.get("Host")
+            if host:
+                origin = f"http://{host}"
+        if origin and origin != "*":
+            self.send_header("Access-Control-Allow-Origin", origin)
+            self.send_header("Access-Control-Allow-Credentials", "true")
+        else:
+            self.send_header("Access-Control-Allow-Origin", "*")
         self.send_header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
         self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With")
-        self.send_header("Access-Control-Allow-Credentials", "true")
 
     def do_OPTIONS(self):
         self.send_response(204)
@@ -289,6 +296,22 @@ class SmartTimetableHandler(BaseHTTPRequestHandler):
     def _get_user_agent(self):
         ua = self.headers.get("User-Agent") or "-"
         return ua[:120]
+
+    def _get_request_lang(self, query=None):
+        raw_lang = query.get("lang", [None])[0] if query else None
+        if not raw_lang:
+            cookie_header = self.headers.get("Cookie", "")
+            for part in cookie_header.split(";"):
+                if "=" in part:
+                    k, v = part.strip().split("=", 1)
+                    if k.strip() == "app_lang":
+                        raw_lang = v.strip()
+                        break
+        if not raw_lang:
+            accept_lang = (self.headers.get("Accept-Language") or "").lower()
+            if accept_lang.startswith("en"):
+                raw_lang = "en"
+        return "en" if str(raw_lang or "").strip().lower() in ("en", "eng", "english") else "it"
 
     def _serve_file(self, file_path, content_type=None, attachment_name=None):
         if not os.path.exists(file_path):
@@ -419,7 +442,7 @@ class SmartTimetableHandler(BaseHTTPRequestHandler):
                 classes_param = "all"
             else:
                 classes_param = [c.strip() for c in raw_classes.split(",") if c.strip()]
-            req_lang = "en" if query.get("lang", ["it"])[0].lower() in ("en", "eng", "english") else "it"
+            req_lang = self._get_request_lang(query)
             options = {
                 "validity_date": query.get("validity_date", [""])[0],
                 "color_mode": query.get("color_mode", ["color"])[0],
@@ -434,13 +457,16 @@ class SmartTimetableHandler(BaseHTTPRequestHandler):
             self.send_response(200)
             self.send_header("Content-Type", "text/html; charset=utf-8")
             self.send_header("Content-Length", str(len(html_bytes)))
+            self.send_header("Cache-Control", "no-cache, no-store, must-revalidate, max-age=0")
+            self.send_header("Pragma", "no-cache")
+            self.send_header("Expires", "0")
             self._send_cors()
             self.end_headers()
             self.wfile.write(html_bytes)
             return
 
         elif path == "/api/print/teachers":
-            req_lang = "en" if query.get("lang", ["it"])[0].lower() in ("en", "eng", "english") else "it"
+            req_lang = self._get_request_lang(query)
             options = {
                 "validity_date": query.get("validity_date", [""])[0],
                 "paper_size": query.get("paper_size", ["A3"])[0],
@@ -453,13 +479,16 @@ class SmartTimetableHandler(BaseHTTPRequestHandler):
             self.send_response(200)
             self.send_header("Content-Type", "text/html; charset=utf-8")
             self.send_header("Content-Length", str(len(html_bytes)))
+            self.send_header("Cache-Control", "no-cache, no-store, must-revalidate, max-age=0")
+            self.send_header("Pragma", "no-cache")
+            self.send_header("Expires", "0")
             self._send_cors()
             self.end_headers()
             self.wfile.write(html_bytes)
             return
 
         elif path == "/api/print/teachers/docx":
-            req_lang = "en" if query.get("lang", ["it"])[0].lower() in ("en", "eng", "english") else "it"
+            req_lang = self._get_request_lang(query)
             options = {
                 "validity_date": query.get("validity_date", [""])[0],
                 "paper_size": query.get("paper_size", ["A3"])[0],
@@ -475,6 +504,9 @@ class SmartTimetableHandler(BaseHTTPRequestHandler):
             self.send_header("Content-Type", "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
             self.send_header("Content-Length", str(len(docx_bytes)))
             self.send_header("Content-Disposition", f'attachment; filename="{filename}"')
+            self.send_header("Cache-Control", "no-cache, no-store, must-revalidate, max-age=0")
+            self.send_header("Pragma", "no-cache")
+            self.send_header("Expires", "0")
             self._send_cors()
             self.end_headers()
             self.wfile.write(docx_bytes)

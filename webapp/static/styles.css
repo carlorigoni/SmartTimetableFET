@@ -1338,6 +1338,21 @@ body {
   border-bottom-left-radius: 4px;
 }
 
+/* In Dropup Group (es. Sistema & Configurazione): il menu si sviluppa verso l'alto */
+/* L'ultimo menu dell'albero è quello in alto (:first-child), mentre quello in basso (:last-child) prosegue verso l'header */
+.nav-group.dropup-group .nav-group-items .nav-item:last-child::after {
+  top: -2px;
+  height: calc(100% + 4px);
+  border-bottom-left-radius: 0;
+}
+
+.nav-group.dropup-group .nav-group-items .nav-item:first-child::after {
+  top: 50%;
+  height: calc(50% + 2px);
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 0;
+}
+
 .nav-group-items .nav-item:hover {
   background-color: rgba(37, 99, 235, 0.08) !important;
   color: #1e40af !important;

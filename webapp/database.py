@@ -524,6 +524,15 @@ class Database:
         if "config_name" not in data or not data["config_name"]:
             data["config_name"] = "Configurazione Corrente"
 
+        # Sincronizza e colloca automaticamente le ore a disposizione se l'orario è presente
+        if data.get("has_timetable") and data.get("timetable"):
+            try:
+                self.data = data
+                self.place_disposizioni_in_timetable()
+                data = self.data
+            except Exception as e_disp:
+                print("Notice: auto-sync disposizioni on init:", e_disp)
+
         # Se non esistono ancora snapshot, crea lo snapshot baseline iniziale
         existing_snaps = [f for f in os.listdir(SNAPSHOTS_DIR) if f.endswith(".json")]
         if not existing_snaps:
@@ -2085,6 +2094,30 @@ class Database:
     # --- TIMETABLE ---
     def get_timetable_views(self):
         with self.lock:
+            if self.data.get("has_timetable") and self.data.get("timetable"):
+                acts = self.data.get("activities", [])
+                teachers = self.data.get("teachers", [])
+                tt = self.data.get("timetable", {})
+                teach_hours = defaultdict(int)
+                disp_placed = defaultdict(int)
+                for a in acts:
+                    dur = int(a.get("duration", 1) or 1)
+                    if (a.get("subject") or "").strip().lower().startswith("disposiz"):
+                        for t in a.get("teachers", []):
+                            if str(a.get("id")) in tt:
+                                disp_placed[t] += 1
+                    else:
+                        for t in a.get("teachers", []):
+                            teach_hours[t] += dur
+                needs_sync = False
+                for t in teachers:
+                    tname = t.get("name", "").strip()
+                    needed = max(0, int(t.get("target_hours", 18) or 18) - teach_hours.get(tname, 0))
+                    if needed > disp_placed.get(tname, 0):
+                        needs_sync = True
+                        break
+                if needs_sync:
+                    self.place_disposizioni_in_timetable()
             return build_timetable_views(self.data)
 
     def toggle_activity_lock(self, aid, locked=None):
