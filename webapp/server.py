@@ -913,7 +913,7 @@ class EurarioHandler(BaseHTTPRequestHandler):
         self._setup_request_school(query)
         body = self._read_json()
 
-        user = self._get_auth_user()
+        user = self._get_current_user()
         base_ver = self.headers.get("X-Base-Version") or (body.get("base_version") if isinstance(body, dict) else None)
         user_email = user.get("email") if isinstance(user, dict) else None
         set_request_context(user_email=user_email, expected_version=base_ver)
@@ -1927,7 +1927,7 @@ class EurarioHandler(BaseHTTPRequestHandler):
         solver_lock = get_solver_lock(target_sid)
         solver_dir = get_solver_dir(target_sid)
 
-        user = self._get_auth_user()
+        user = self._get_current_user()
         user_email = user.get("email") if user else "utente"
 
         # Verifica se un calcolo è già in corso per questo istituto (stessa scuola)
