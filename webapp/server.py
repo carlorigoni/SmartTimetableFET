@@ -87,7 +87,7 @@ def fetch_google_doc_docx_bytes(url):
     except Exception as e:
         raise ValueError(f"Impossibile scaricare il Google Doc: {e}")
 
-APP_VERSION = "1.6.0"
+APP_VERSION = "1.6.1"
 FET_VERSION = "7.12.0"
 APP_AUTHOR = "Carlo Rigoni"
 APP_MENTOR = "Federico Rettore"
@@ -124,7 +124,7 @@ solver_state = {
     "advisor_report": None,
     "recent_conflicts": []
 }
-solver_lock = threading.Lock()
+solver_lock = threading.RLock()
 
 
 def find_fet_cl():
@@ -196,6 +196,64 @@ def get_fet_binary_info():
         "arch_label": arch_label or "Standard",
         "title_label": title_label
     }
+
+
+def kill_fet_process(proc, force=False):
+    """
+    Termina in modo sicuro e affidabile il processo fet-cl.
+    Se force=True esegue immediatamente SIGKILL.
+    Altrimenti tenta un SIGTERM grazioso per 0.4s e poi forza SIGKILL.
+    """
+    if not proc:
+        return
+    try:
+        pid = getattr(proc, "pid", None)
+        if pid is None or proc.poll() is not None:
+            return
+    except Exception:
+        return
+
+    if force:
+        try:
+            proc.kill()
+        except Exception:
+            pass
+        try:
+            if pid:
+                os.kill(pid, signal.SIGKILL)
+        except Exception:
+            pass
+        return
+
+    # Tentativo grazioso: invia SIGTERM
+    try:
+        proc.send_signal(signal.SIGTERM)
+    except Exception:
+        try:
+            proc.terminate()
+        except Exception:
+            pass
+
+    # Attendi fino a 400ms che termini
+    for _ in range(4):
+        try:
+            if proc.poll() is not None:
+                return
+        except Exception:
+            break
+        time.sleep(0.1)
+
+    # Escalation obbligatoria a SIGKILL
+    try:
+        if proc.poll() is None:
+            proc.kill()
+    except Exception:
+        pass
+    try:
+        if pid and proc.poll() is None:
+            os.kill(pid, signal.SIGKILL)
+    except Exception:
+        pass
 
 
 class ThreadingHTTPServer(ThreadingMixIn, HTTPServer):
@@ -1213,20 +1271,22 @@ class SmartTimetableHandler(BaseHTTPRequestHandler):
             self._trigger_solve(timelimit, verbose=verbose)
 
         elif path == "/api/solve/stop":
+            force = bool(body.get("force", False)) if body else False
             with solver_lock:
-                if solver_state["running"] and solver_state["process"]:
+                proc = solver_state.get("process")
+                if solver_state["running"] and proc:
                     solver_state["stopped"] = True
-                    solver_state["logs"].append("Invio richiesta di interruzione a fet-cl (salvataggio highest stage)...")
-                    try:
-                        solver_state["process"].send_signal(signal.SIGTERM)
-                    except Exception:
-                        try:
-                            solver_state["process"].terminate()
-                        except Exception:
-                            pass
-                    self._json(200, {"status": "stopping"})
+                    solver_state["logs"].append("🛑 Richiesta di interruzione inviata a fet-cl. Arresto in corso...")
+                    def _async_stopper(p, f_flag):
+                        kill_fet_process(p, force=f_flag)
+                        with solver_lock:
+                            solver_state["running"] = False
+                            solver_state["completed"] = True
+                            solver_state["logs"].append("⏹ Compilatore fet-cl arrestato con successo. Processo terminato.")
+                    threading.Thread(target=_async_stopper, args=(proc, force), daemon=True).start()
+                    self._json(200, {"status": "stopping", "stopped": True})
                 else:
-                    self._json(200, {"status": "not_running"})
+                    self._json(200, {"status": "not_running", "stopped": False})
 
         elif path == "/api/advisor/analyze":
             lang = (body or {}).get("lang", "it")
@@ -1257,13 +1317,10 @@ class SmartTimetableHandler(BaseHTTPRequestHandler):
                 restarted = False
                 if restart:
                     with solver_lock:
-                        if solver_state["running"] and solver_state["process"]:
-                            solver_state["stopped"] = True
-                            try:
-                                solver_state["process"].terminate()
-                            except Exception:
-                                pass
-                    time.sleep(0.5)
+                        old_proc = solver_state.get("process")
+                        if old_proc and old_proc.poll() is None:
+                            kill_fet_process(old_proc, force=True)
+                    time.sleep(0.15)
                     self._trigger_solve(timelimit, verbose=verbose, respond=False)
                     restarted = True
 
@@ -1532,6 +1589,24 @@ class SmartTimetableHandler(BaseHTTPRequestHandler):
                 self._json(500, {"error": "Binario 'fet-cl' non trovato sul server."})
             return False, "Binario 'fet-cl' non trovato sul server."
 
+        # Termina preventivamente qualsiasi processo solver precedente o orfano prima di toccare i file
+        with solver_lock:
+            old_proc = solver_state.get("process")
+            if old_proc and old_proc.poll() is None:
+                kill_fet_process(old_proc, force=True)
+            try:
+                for line in subprocess.check_output(["pgrep", "-f", "fet-cl.*input_run.fet"], text=True).splitlines():
+                    pid_str = line.strip()
+                    if pid_str and pid_str.isdigit():
+                        opid = int(pid_str)
+                        if opid != os.getpid():
+                            try:
+                                os.kill(opid, signal.SIGKILL)
+                            except Exception:
+                                pass
+            except Exception:
+                pass
+
         os.makedirs(SOLVER_DIR, exist_ok=True)
         all_data = db.get_all()
         xml_content = generate_fet_xml(all_data, include_timetable=False)
@@ -1584,10 +1659,7 @@ class SmartTimetableHandler(BaseHTTPRequestHandler):
 
         with solver_lock:
             if solver_state["running"] and solver_state["process"]:
-                try:
-                    solver_state["process"].terminate()
-                except Exception:
-                    pass
+                kill_fet_process(solver_state["process"], force=True)
 
             try:
                 proc = subprocess.Popen(
@@ -1648,6 +1720,7 @@ class SmartTimetableHandler(BaseHTTPRequestHandler):
         def monitor_worker():
             file_open_logged = False
             last_advisor_check = 0
+            last_heartbeat_time = time.time()
             while True:
                 with solver_lock:
                     if not solver_state["running"]:
@@ -1826,6 +1899,17 @@ class SmartTimetableHandler(BaseHTTPRequestHandler):
                             solver_state["advisor_recommendations"] = adv_res.get("recommendations", [])
                         except Exception:
                             pass
+
+                    # Heartbeat periodico visivo ogni 3s per garantire avanzamento continuo anche nei cicli euristici intensi
+                    if (now_t - last_heartbeat_time >= 3.0):
+                        last_heartbeat_time = now_t
+                        h_placed = solver_state.get("highest_placed", 0)
+                        swaps = solver_state.get("swap_count", 0)
+                        pct = solver_state.get("percent", 0.0)
+                        el_sec = int(solver_state.get("elapsed", 0.0))
+                        m_el, s_el = divmod(el_sec, 60)
+                        time_str = f"{m_el:02d}:{s_el:02d}"
+                        log_solver_msg(f"🔄 [Ricerca attiva] Stadio: {h_placed}/{total_act} ({pct}%) • Tempo: {time_str} • Scambi/Permutazioni: {swaps:,}")
 
                 time.sleep(0.5)
 

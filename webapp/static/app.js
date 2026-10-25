@@ -22,7 +22,7 @@ let pollSolverTimer = null;
 let currentSolverRunning = false;
 
 // --- VERSIONE E IDENTITÀ APPLICATIVA ---
-const APP_VERSION = '1.6.0';
+const APP_VERSION = '1.6.1';
 
 // Dizionario completo di traduzione materie scolastiche Italiano -> Inglese
 const SUBJECT_TRANSLATIONS_JS = {
@@ -2808,8 +2808,34 @@ async function startSolver() {
 async function stopSolver() {
   const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
   if (confirm(isEn ? 'Do you want to stop FET CLI execution? The timetable and highest reached stage will be preserved.' : "Vuoi interrompere il calcolo di FET CLI? L'orario e lo stadio massimo raggiunto verranno preservati.")) {
-    document.getElementById('btnStopSolve').disabled = true;
-    await fetch('/api/solve/stop', { method: 'POST' });
+    const btnStop = document.getElementById('btnStopSolve');
+    if (btnStop) {
+      btnStop.disabled = true;
+      btnStop.innerText = isEn ? '🛑 Stopping...' : '🛑 Arresto in corso...';
+    }
+    try {
+      await fetch('/api/solve/stop', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ force: false })
+      });
+      setTimeout(() => pollSolverStatus(), 250);
+      setTimeout(() => {
+        if (cachedSolverStatus && cachedSolverStatus.running) {
+          fetch('/api/solve/stop', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ force: true })
+          }).then(() => pollSolverStatus());
+        }
+      }, 1000);
+    } catch (e) {
+      console.error('Stop solver error:', e);
+      if (btnStop) {
+        btnStop.disabled = false;
+        btnStop.innerText = isEn ? '🛑 Force Stop' : '🛑 Forza Arresto';
+      }
+    }
   }
 }
 
@@ -3344,6 +3370,10 @@ async function applyAdvisorRelaxation(actionType, payload, restartSolver = false
           setTimeout(() => {
             startSolver();
           }, 300);
+        } else {
+          if (pollSolverTimer) clearInterval(pollSolverTimer);
+          pollSolverStatus();
+          pollSolverTimer = setInterval(pollSolverStatus, 500);
         }
       } else {
         renderDiagnostics(currentDiagTab);

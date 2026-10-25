@@ -19498,7 +19498,7 @@
     },
     "TEACHERS_MAX_GAPS_WEEK": {
       "active": true,
-      "val": 1,
+      "val": 2,
       "weight": 100,
       "name": "Docenti: Max ore buche a settimana",
       "category": "Docenti",
