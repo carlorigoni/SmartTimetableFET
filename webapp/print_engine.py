@@ -1858,6 +1858,9 @@ def generate_organico_template_docx(data=None, lang="it"):
 
     if data and data.get("teachers"):
         institution = data.get("institution", institution)
+        group_to_class = {g.get("name", "").strip().upper(): g.get("class_name", "").strip().upper() for g in data.get("groups", [])}
+        lang_tags = (" FRA", " SPA", " TED", " ING")
+
         # Raggruppa attività per docente
         t_acts = defaultdict(list)
         for a in data.get("activities", []):
@@ -1876,32 +1879,39 @@ def generate_organico_template_docx(data=None, lang="it"):
             cdc = t.get("cdc", "A000")
             th = t.get("target_hours", 18)
 
-            # Raggruppa ore per classe/materia
+            # Raggruppa ore per classe o disposizione/potenziamento (senza ripetere la dicitura della cattedra)
             cls_hours = defaultdict(int)
             total_act_hours = 0
             has_explicit_disp = False
             for s, dur, subj in t_acts.get(tname, []):
-                cls_hours[(s, subj)] += dur
                 total_act_hours += dur
-                if (subj or "").lower().startswith("disposiz") or (s or "").upper() == "DISP":
+                if not s or (subj or "").lower().startswith("disposiz") or (s or "").upper() == "DISP":
+                    cls_hours["DISP"] += dur
                     has_explicit_disp = True
+                elif (subj or "").lower().startswith("potenz") or (s or "").upper() == "POT":
+                    cls_hours["POT"] += dur
+                else:
+                    s_up = s.strip().upper()
+                    # Se è un gruppo con suffisso di lingua (es. '4A FRA'), esporta solo la classe ('4A')
+                    if s_up in group_to_class and any(s_up.endswith(tag) for tag in lang_tags):
+                        export_s = group_to_class[s_up]
+                    else:
+                        export_s = s
+                    cls_hours[export_s] += dur
 
             # Se il docente ha target_hours > ore insegnamento e non ha ancora l'attività di disposizione esplicita
             if not has_explicit_disp and th > total_act_hours:
                 disp_diff = th - total_act_hours
-                cls_hours[("", "Disposizione")] += disp_diff
+                cls_hours["DISP"] += disp_diff
 
             parts = []
-            for (s, subj), h in sorted(cls_hours.items(), key=lambda x: natural_class_sort_key(x[0][0]) if x[0][0] else ("ZZZ", 999, "", str(x[0][1]).upper())):
-                if not s:
-                    if (subj or "").lower().startswith("disposiz"):
-                        parts.append(f"DISP ({h})")
-                    elif (subj or "").lower().startswith("potenz"):
-                        parts.append(f"POT ({h})")
-                    else:
-                        parts.append(f"{subj} ({h})".strip())
+            for s, h in sorted(cls_hours.items(), key=lambda x: natural_class_sort_key(x[0]) if x[0] not in ("DISP", "POT") else ("ZZZ", 999, "", str(x[0]))):
+                if s == "DISP":
+                    parts.append(f"DISP ({h})")
+                elif s == "POT":
+                    parts.append(f"POT ({h})")
                 else:
-                    parts.append(f"{s} ({h}) {subj}".strip())
+                    parts.append(f"{s} ({h})")
 
             classi_str = " - ".join(parts) or t.get("comments", "Cattedra da assegnare")
             teachers_rows.append({
@@ -1914,35 +1924,35 @@ def generate_organico_template_docx(data=None, lang="it"):
     if not teachers_rows:
         if is_en:
             teachers_rows = [
-                {"cdc": "A012 - Literature & Humanities", "name": "Gastone Paperone", "classi": "1A (4) Literature - 2A (4) Literature - 3A (4) Literature - 4A (3) Literature - 5A (3) Literature", "hours": "18"},
-                {"cdc": "A012 - Literature & Humanities", "name": "Paperina", "classi": "1B (4) Literature - 2B (4) Literature - 3B (4) Literature - 4B (3) Literature - 5B (3) Literature", "hours": "18"},
-                {"cdc": "A019 - History & Philosophy", "name": "Pico De Paperis", "classi": "1A (2) History - 2A (2) History - 3A (4) Philosophy - 4A (5) Philosophy - 5A (5) Philosophy", "hours": "18"},
-                {"cdc": "A026 - Mathematics & Physics", "name": "Dinamite Bla", "classi": "1A (4) Math - 2A (4) Math - 3A (4) Math - 4A (3) Math - 5A (3) Math", "hours": "18"},
-                {"cdc": "A026 - Mathematics & Physics", "name": "Archimede Pitagorico", "classi": "1B (4) Math - 2B (4) Math - 3A (3) Physics - 4A (3) Physics - 5A (4) Physics", "hours": "18"},
-                {"cdc": "A024 - Foreign Languages (English)", "name": "Battista", "classi": "1A (3) English - 2A (3) English - 3A (3) English - 4A (3) English - 5A (3) English - POT (3)", "hours": "18"},
-                {"cdc": "A046 - Law & Economics", "name": "Paperon de' Paperoni", "classi": "1A (3) Law - 2A (3) Law - 3A (4) Economics - 4A (4) Economics - 5A (4) Finance", "hours": "18"},
-                {"cdc": "A048 - Physical Education", "name": "Paperino Paolino", "classi": "1A (2) PE - 2A (2) PE - 3A (2) PE - 4A (2) PE - 5A (2) PE - POT (8)", "hours": "18"},
-                {"cdc": "A050 - Natural Sciences", "name": "Nonna Papera", "classi": "1A (4) Science - 2A (4) Science - 3A (4) Botany - 4A (3) Biology - 5A (3) Chemistry", "hours": "18"}
+                {"cdc": "A012 - Literature & Humanities", "name": "Gastone Paperone", "classi": "1A (4) - 2A (4) - 3A (4) - 4A (3) - 5A (3)", "hours": "18"},
+                {"cdc": "A012 - Literature & Humanities", "name": "Paperina", "classi": "1B (4) - 2B (4) - 3B (4) - 4B (3) - 5B (3)", "hours": "18"},
+                {"cdc": "A019 - History & Philosophy", "name": "Pico De Paperis", "classi": "1A (2) - 2A (2) - 3A (4) - 4A (5) - 5A (5)", "hours": "18"},
+                {"cdc": "A026 - Mathematics & Physics", "name": "Dinamite Bla", "classi": "1A (4) - 2A (4) - 3A (4) - 4A (3) - 5A (3)", "hours": "18"},
+                {"cdc": "A026 - Mathematics & Physics", "name": "Archimede Pitagorico", "classi": "1B (4) - 2B (4) - 3A (3) - 4A (3) - 5A (4)", "hours": "18"},
+                {"cdc": "A024 - Foreign Languages (English)", "name": "Battista", "classi": "1A (3) - 2A (3) - 3A (3) - 4A (3) - 5A (3) - POT (3)", "hours": "18"},
+                {"cdc": "A046 - Law & Economics", "name": "Paperon de' Paperoni", "classi": "1A (3) - 2A (3) - 3A (4) - 4A (4) - 5A (4)", "hours": "18"},
+                {"cdc": "A048 - Physical Education", "name": "Paperino Paolino", "classi": "1A (2) - 2A (2) - 3A (2) - 4A (2) - 5A (2) - POT (8)", "hours": "18"},
+                {"cdc": "A050 - Natural Sciences", "name": "Nonna Papera", "classi": "1A (4) - 2A (4) - 3A (4) - 4A (3) - 5A (3)", "hours": "18"}
             ]
         else:
             # Esempio completo con evidenza di più docenti per la stessa CdC (senza ripetere la CdC)
             teachers_rows = [
                 # Gruppo A012: 2 docenti sulla stessa CdC (il secondo docente ha la cella CdC vuota)
-                {"cdc": "A012 - Discipline Letterarie", "name": "Gastone Paperone", "classi": "1A (4) Italiano - 2A (4) Italiano - 3A (4) Italiano - 4A (3) Italiano - 5A (3) Italiano", "hours": "18"},
-                {"cdc": "A012 - Discipline Letterarie", "name": "Paperina", "classi": "1B (4) Italiano - 2B (4) Italiano - 3B (4) Italiano - 4B (3) Italiano - 5B (3) Italiano", "hours": "18"},
+                {"cdc": "A012 - Discipline Letterarie", "name": "Gastone Paperone", "classi": "1A (4) - 2A (4) - 3A (4) - 4A (3) - 5A (3)", "hours": "18"},
+                {"cdc": "A012 - Discipline Letterarie", "name": "Paperina", "classi": "1B (4) - 2B (4) - 3B (4) - 4B (3) - 5B (3)", "hours": "18"},
                 
                 # Gruppo A019: 1 docente
-                {"cdc": "A019 - Storia e Filosofia", "name": "Pico De Paperis", "classi": "1A (2) Storia - 2A (2) Storia - 3A (4) Filosofia - 4A (5) Filosofia - 5A (5) Filosofia", "hours": "18"},
+                {"cdc": "A019 - Storia e Filosofia", "name": "Pico De Paperis", "classi": "1A (2) - 2A (2) - 3A (4) - 4A (5) - 5A (5)", "hours": "18"},
                 
                 # Gruppo A026: 2 docenti sulla stessa CdC (il secondo docente ha la cella CdC vuota)
-                {"cdc": "A026 - Matematica e Fisica", "name": "Dinamite Bla", "classi": "1A (4) Matematica - 2A (4) Matematica - 3A (4) Matematica - 4A (3) Matematica - 5A (3) Matematica", "hours": "18"},
-                {"cdc": "A026 - Matematica e Fisica", "name": "Archimede Pitagorico", "classi": "1B (4) Matematica - 2B (4) Matematica - 3A (3) Fisica - 4A (3) Fisica - 5A (4) Fisica", "hours": "18"},
+                {"cdc": "A026 - Matematica e Fisica", "name": "Dinamite Bla", "classi": "1A (4) - 2A (4) - 3A (4) - 4A (3) - 5A (3)", "hours": "18"},
+                {"cdc": "A026 - Matematica e Fisica", "name": "Archimede Pitagorico", "classi": "1B (4) - 2B (4) - 3A (3) - 4A (3) - 5A (4)", "hours": "18"},
                 
                 # Altri docenti
-                {"cdc": "A024 - Lingua Inglese", "name": "Battista", "classi": "1A (3) Inglese - 2A (3) Inglese - 3A (3) Inglese - 4A (3) Inglese - 5A (3) Inglese - POT (3)", "hours": "18"},
-                {"cdc": "A046 - Economia e Diritto", "name": "Paperon de' Paperoni", "classi": "1A (3) Diritto - 2A (3) Diritto - 3A (4) Economia - 4A (4) Economia - 5A (4) Finanza", "hours": "18"},
-                {"cdc": "A048 - Scienze Motorie", "name": "Paperino Paolino", "classi": "1A (2) Motoria - 2A (2) Motoria - 3A (2) Motoria - 4A (2) Motoria - 5A (2) Motoria - POT (8)", "hours": "18"},
-                {"cdc": "A050 - Scienze Naturali", "name": "Nonna Papera", "classi": "1A (4) Scienze - 2A (4) Scienze - 3A (4) Botanica - 4A (3) Biologia - 5A (3) Chimica", "hours": "18"}
+                {"cdc": "A024 - Lingua Inglese", "name": "Battista", "classi": "1A (3) - 2A (3) - 3A (3) - 4A (3) - 5A (3) - POT (3)", "hours": "18"},
+                {"cdc": "A046 - Economia e Diritto", "name": "Paperon de' Paperoni", "classi": "1A (3) - 2A (3) - 3A (4) - 4A (4) - 5A (4)", "hours": "18"},
+                {"cdc": "A048 - Scienze Motorie", "name": "Paperino Paolino", "classi": "1A (2) - 2A (2) - 3A (2) - 4A (2) - 5A (2) - POT (8)", "hours": "18"},
+                {"cdc": "A050 - Scienze Naturali", "name": "Nonna Papera", "classi": "1A (4) - 2A (4) - 3A (4) - 4A (3) - 5A (3)", "hours": "18"}
             ]
 
     # Generazione OpenXML A4 Portrait
@@ -1950,19 +1960,20 @@ def generate_organico_template_docx(data=None, lang="it"):
     doc_instructions = (
         "INSTRUCTIONS: Fill in the table keeping the 4 columns. For multiple teachers belonging to the same Teaching Certificate (CdC), "
         "specify the CdC only on the first row of the group and leave the 'Teaching Certificate' cell EMPTY for subsequent teachers of the same subject area "
-        "(as shown in the example for A012 and A026); the system inherits it automatically. In the 'Classes & Teaching Assignments' column, indicate each class "
-        "followed by hours in parentheses, separated by hyphens (e.g. 1A (4) Literature - 2A (4) Literature). Enhancement hours POT (hours) and on-call/duty DISP (hours) "
+        "(as shown in the example for A012 and A026); the system inherits it automatically. In the 'Classes' column, indicate each class "
+        "followed by hours in parentheses, separated by hyphens (e.g. 1A (4) - 2A (4) - 3A (4) - 4A (3) - 5A (3)). Enhancement hours POT (hours) and on-call/duty DISP (hours) "
         "are also supported."
     ) if is_en else (
         "ISTRUZIONI: Compilare la tabella rispettando le 4 colonne. Per più docenti appartenenti alla stessa Classe di Concorso (CdC), "
         "indicare la CdC solo sulla prima riga del gruppo e lasciare VUOTA la cella 'Classe di Concorso' per i docenti successivi della stessa cattedra "
-        "(come illustrato nell'esempio per A012 e A026); il sistema la eredita automaticamente. Nella colonna 'Classi e Cattedra' indicare ciascuna classe "
-        "seguita dalle ore tra parentesi, separate da trattino (es. 1A (4) Italiano - 2A (4) Italiano). Sono supportate anche ore di potenziamento POT (ore) "
+        "(come illustrato nell'esempio per A012 e A026); il sistema la eredita automaticamente. Nella colonna 'Classi' indicare ciascuna classe "
+        "seguita dalle ore tra parentesi, separate da trattino (es. 1A (4) - 2A (4) - 3A (4) - 4A (3) - 5A (3)). Sono supportate anche ore di potenziamento POT (ore) "
         "e a disposizione DISP (ore)."
     )
     th_col_cdc = "Teaching Certificate (CdC)" if is_en else "Classe di Concorso"
     th_col_teacher = "Teacher" if is_en else "Docente"
-    th_col_classes = "Classes & Teaching Assignments" if is_en else "Classi e Cattedra"
+    th_col_classes = "Classes" if is_en else "Classi"
+    th_col_hours = "Hours" if is_en else "Ore"
     th_col_hours = "Hours" if is_en else "Ore"
 
     xml_parts = []

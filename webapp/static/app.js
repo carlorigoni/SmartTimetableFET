@@ -22,7 +22,7 @@ let pollSolverTimer = null;
 let currentSolverRunning = false;
 
 // --- VERSIONE E IDENTITÀ APPLICATIVA ---
-const APP_VERSION = '1.6.3';
+const APP_VERSION = '1.6.4';
 
 // Dizionario completo di traduzione materie scolastiche Italiano -> Inglese
 const SUBJECT_TRANSLATIONS_JS = {

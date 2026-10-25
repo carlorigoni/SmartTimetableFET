@@ -3145,6 +3145,16 @@ class Database:
                 for t in a.get("teachers", []):
                     db_activities_by_teacher[t.lower()].append(a)
 
+            # Mappa appartenenza articolazioni/gruppi -> classe genitore
+            group_to_class = {}
+            class_to_groups = defaultdict(set)
+            for g in self.data.get("groups", []):
+                g_name = g.get("name", "").strip().upper()
+                c_name = g.get("class_name", "").strip().upper()
+                if g_name and c_name:
+                    group_to_class[g_name] = c_name
+                    class_to_groups[c_name].add(g_name)
+
             added = []
             modified = []
             unchanged = []
@@ -3203,15 +3213,65 @@ class Database:
                     for a in cur_acts:
                         for s in a.get("students", []):
                             cur_classes_set.add(s)
-                    
-                    docx_classes_set = set(
-                        a["target"] for a in pt.get("assignments", []) 
-                        if a.get("target") and not a.get("target") in ("POT", "DISP", "RESIDUO", "COE")
-                    )
 
-                    if cur_classes_set != docx_classes_set:
-                        added_cls = docx_classes_set - cur_classes_set
-                        rem_cls = cur_classes_set - docx_classes_set
+                    docx_items = [
+                        a for a in pt.get("assignments", [])
+                        if a.get("target") and a.get("target") not in ("POT", "DISP", "RESIDUO", "COE")
+                    ]
+
+                    matched_docx_idx = set()
+                    matched_cur = set()
+
+                    # 1. Corrispondenza esatta (es. '3AM' == '3AM', '5A FRA' == '5A FRA', '1A' == '1A')
+                    for idx, d_item in enumerate(docx_items):
+                        t_up = d_item["target"].strip().upper()
+                        for c in cur_classes_set:
+                            if c not in matched_cur and idx not in matched_docx_idx:
+                                if t_up == c.strip().upper():
+                                    matched_docx_idx.add(idx)
+                                    matched_cur.add(c)
+                                    break
+
+                    # 2. Corrispondenza classe madre nel docx -> gruppo articolato nel DB
+                    # (es. nel docx c'è scritto '5A', nel DB il docente insegna '5A FRA' e la materia è Francese;
+                    #  se invece nel docx fosse indicato '5A SPA' o esplicitamente Spagnolo, non corrisponde ed è una variazione)
+                    for idx, d_item in enumerate(docx_items):
+                        if idx in matched_docx_idx:
+                            continue
+                        t_up = d_item["target"].strip().upper()
+                        if t_up in class_to_groups:
+                            possible_groups = class_to_groups[t_up]
+                            for c in cur_classes_set:
+                                if c not in matched_cur and c.strip().upper() in possible_groups:
+                                    subj_low = (d_item.get("subject") or "").lower()
+                                    c_low = c.lower()
+                                    if "spagnol" in subj_low and "fra" in c_low:
+                                        continue
+                                    if "frances" in subj_low and "spa" in c_low:
+                                        continue
+                                    if "tedesc" in subj_low and ("fra" in c_low or "spa" in c_low):
+                                        continue
+                                    matched_docx_idx.add(idx)
+                                    matched_cur.add(c)
+                                    break
+
+                    # 3. Corrispondenza gruppo articolato nel docx -> classe madre nel DB
+                    for idx, d_item in enumerate(docx_items):
+                        if idx in matched_docx_idx:
+                            continue
+                        t_up = d_item["target"].strip().upper()
+                        if t_up in group_to_class:
+                            mother = group_to_class[t_up]
+                            for c in cur_classes_set:
+                                if c not in matched_cur and c.strip().upper() == mother:
+                                    matched_docx_idx.add(idx)
+                                    matched_cur.add(c)
+                                    break
+
+                    added_cls = set(docx_items[i]["target"] for i in range(len(docx_items)) if i not in matched_docx_idx)
+                    rem_cls = set(c for c in cur_classes_set if c not in matched_cur)
+
+                    if added_cls or rem_cls:
                         desc_parts = []
                         if added_cls: desc_parts.append(f"Nuove classi: {', '.join(sorted(added_cls))}")
                         if rem_cls: desc_parts.append(f"Classi rimosse: {', '.join(sorted(rem_cls))}")
@@ -3219,7 +3279,7 @@ class Database:
                             "field": "classes",
                             "label": "Classi Assegnate",
                             "old": ", ".join(sorted(cur_classes_set)) or "Nessuna",
-                            "new": pt.get("classi_raw", "") or ", ".join(sorted(docx_classes_set)),
+                            "new": pt.get("classi_raw", "") or ", ".join(sorted(d["target"] for d in docx_items)),
                             "detail": "; ".join(desc_parts)
                         })
 
