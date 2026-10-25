@@ -190,7 +190,7 @@ DEFAULT_CONSTRAINTS = {
 
 DEFAULT_PARAMETERS = {
     "Nome istituto": 'Liceo & Tecnico "Pico De Paperis" - Paperopoli',
-    "Commenti": "Orario configurato con SmartTimetable Suite FET",
+    "Commenti": "Orario configurato con Eurario Suite FET",
     "Nome file .fet": "ParametriOrario",
     "Versione FET dichiarata": "7.12.0",
     "Crea aula per classi senza aula (SI/NO)": "SI",
@@ -822,7 +822,7 @@ def generate_fet_xml(data, include_timetable=False, exclude_disposizioni=True):
     """
     lines = ['<?xml version="1.0" encoding="UTF-8"?>', '<fet version="7.10.5">']
     lines.append(f'  <Institution_Name>{xml_escape(data.get("institution", "Istituto Scolastico"))}</Institution_Name>')
-    lines.append(f'  <Comments>{xml_escape(data.get("comments", "Generato da SmartTimetable Web"))}</Comments>')
+    lines.append(f'  <Comments>{xml_escape(data.get("comments", "Generato da Eurario Web"))}</Comments>')
 
     # 1. Giorni (esporta solo i giorni con ore di lezione > 0; se un giorno come Sabato è configurato a 0h resta nella webapp ma non inserito nel calendario attivo FET per evitare contraddizioni logiche)
     day_limits = data.get("day_hours_limit", {})

@@ -23,9 +23,9 @@
   --border: #dadce0;
   --border-light: #e8eaed;
 
-  --text-main: #202124;
-  --text-muted: #5f6368;
-  --text-sub: #80868b;
+  --text-main: #1e293b;
+  --text-muted: #475569;
+  --text-sub: #334155;
 
   --radius-sm: 4px;
   --radius-md: 8px;
@@ -66,7 +66,7 @@
 
   --text-main: #f1f5f9;
   --text-muted: #94a3b8;
-  --text-sub: #64748b;
+  --text-sub: #cbd5e1;
 
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
@@ -900,6 +900,62 @@ body {
   overflow: hidden;
   font-size: 13px;
   line-height: 1.4;
+}
+
+/* ==========================================================================
+   ACCESSIBILITÀ WCAG 2.1 / 2.2 AA (AgID & Legge Stanca)
+   ========================================================================== */
+
+/* WCAG 2.4.1: Skip to main content link (visibile solo alla pressione di Tab) */
+.skip-link {
+  position: absolute;
+  top: -120px;
+  left: 16px;
+  background: var(--primary);
+  color: #ffffff !important;
+  padding: 10px 18px;
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+  font-size: 13.5px;
+  z-index: 999999;
+  text-decoration: none;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+  transition: top 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  outline: 2px solid #ffffff;
+}
+
+.skip-link:focus,
+.skip-link:focus-visible {
+  top: 14px;
+}
+
+/* WCAG 2.4.7: Focus Visible - Indicatore accessibile per navigazione da tastiera */
+:focus-visible {
+  outline: 2px solid var(--primary) !important;
+  outline-offset: 2px !important;
+}
+
+[data-theme="dark"] :focus-visible {
+  outline: 2px solid #38bdf8 !important;
+  outline-offset: 2px !important;
+}
+
+/* Rimuove l'outline SOLO quando l'interazione avviene con il mouse (click) */
+button:focus:not(:focus-visible),
+a:focus:not(:focus-visible),
+input:focus:not(:focus-visible),
+select:focus:not(:focus-visible),
+textarea:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Logo brand nella sidebar */
+.sidebar-logo-img {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  border-radius: 6px;
+  display: block;
 }
 
 /* --- APP LAYOUT --- */

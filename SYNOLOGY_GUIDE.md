@@ -1,6 +1,6 @@
 # 🚀 Guida all'Installazione su NAS Synology (Container Manager / Docker)
 
-Questa guida illustra passo per passo come installare e pubblicare **SmartTimetable** sul tuo NAS Synology, rendendolo accessibile sia all'interno della rete scolastica che su Internet in modo sicuro con certificato SSL (HTTPS).
+Questa guida illustra passo per passo come installare e pubblicare **Eurario** sul tuo NAS Synology, rendendolo accessibile sia all'interno della rete scolastica che su Internet in modo sicuro con certificato SSL (HTTPS).
 
 ---
 
@@ -127,7 +127,7 @@ Per permettere a docenti, studenti e famiglie di accedere all'applicazione in mo
    - Apri **Pannello di controllo** di DSM.
    - Vai su **Portale di accesso** (o *Portale delle applicazioni*) $\rightarrow$ scheda **Avanzate** $\rightarrow$ pulsante **Proxy inverso**.
    - Clicca su **Crea** e imposta:
-     - **Descrizione**: `SmartTimetable Orario`
+     - **Descrizione**: `Eurario`
      - **Sorgente**:
        - Protocollo: `HTTPS`
        - Nome host: `orario.iltuodominio.it` (oppure il tuo indirizzo Synology DDNS `tuonome.synology.me`)

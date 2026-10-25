@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-SmartTimetable - Backend Server & REST API
+Eurario - Backend Server & REST API
 Basato sulla libreria standard di Python (Zero dipendenze esterne).
 Compatibile con macOS (Safari & Chrome), Linux e Windows.
 """
@@ -87,7 +87,7 @@ def fetch_google_doc_docx_bytes(url):
     except Exception as e:
         raise ValueError(f"Impossibile scaricare il Google Doc: {e}")
 
-APP_VERSION = "1.6.4"
+APP_VERSION = "1.7.0"
 FET_VERSION = "7.12.0"
 APP_AUTHOR = "Carlo Rigoni"
 APP_MENTOR = "Federico Rettore"
@@ -260,7 +260,7 @@ class ThreadingHTTPServer(ThreadingMixIn, HTTPServer):
     daemon_threads = True
 
 
-class SmartTimetableHandler(BaseHTTPRequestHandler):
+class EurarioHandler(BaseHTTPRequestHandler):
     protocol_version = "HTTP/1.1"
 
     def _send_cors(self):
@@ -426,7 +426,7 @@ class SmartTimetableHandler(BaseHTTPRequestHandler):
         elif path == "/api/info":
             fet_info = get_fet_binary_info()
             self._json(200, {
-                "app_name": "SmartTimetable FET Suite",
+                "app_name": "Eurario FET Suite",
                 "version": APP_VERSION,
                 "fet_version": FET_VERSION,
                 "fet_found": fet_info["found"],
@@ -579,9 +579,9 @@ class SmartTimetableHandler(BaseHTTPRequestHandler):
             data_to_use = db.get_all() if use_current else None
             docx_bytes = generate_organico_template_docx(data_to_use, lang=req_lang)
             if req_lang == "en":
-                filename = "Current_School_Organico.docx" if use_current else "SmartTimetable_Faculty_Organico_Template.docx"
+                filename = "Current_School_Organico.docx" if use_current else "Eurario_Faculty_Organico_Template.docx"
             else:
-                filename = "Organico_Scuola_Attuale.docx" if use_current else "Modello_Organico_SmartTimetable.docx"
+                filename = "Organico_Scuola_Attuale.docx" if use_current else "Modello_Organico_Eurario.docx"
             self.send_response(200)
             self.send_header("Content-Type", "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
             self.send_header("Content-Length", str(len(docx_bytes)))
@@ -2050,7 +2050,7 @@ def main():
     fet_info = get_fet_binary_info()
     fet_bin = fet_info["path"]
     print("=" * 70)
-    print(f"  SmartTimetable Web App - Suite Completa FET {FET_VERSION} (v{APP_VERSION})")
+    print(f"  Eurario Web App - Suite Completa FET {FET_VERSION} (v{APP_VERSION})")
     print(f"  Autore: {APP_AUTHOR} • Mentore dell'Orario: {APP_MENTOR}")
     print(f"  AI Pair Programming: Google DeepMind Antigravity • Solver: FET Free Software")
     print("=" * 70)
@@ -2061,7 +2061,7 @@ def main():
     print("=" * 70)
     print(f"  Server pronto. Apri Safari o Chrome su: http://localhost:{PORT}\n")
 
-    server = ThreadingHTTPServer((HOST, PORT), SmartTimetableHandler)
+    server = ThreadingHTTPServer((HOST, PORT), EurarioHandler)
 
     def handle_shutdown(signum, frame):
         print(f"\nRicevuto segnale {signum}, arresto ordinato del server...")
@@ -2076,7 +2076,7 @@ def main():
         pass
     finally:
         server.server_close()
-        print("SmartTimetable Server arrestato con successo.")
+        print("Eurario Server arrestato con successo.")
 
 
 if __name__ == "__main__":

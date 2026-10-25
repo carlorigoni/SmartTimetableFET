@@ -1,5 +1,5 @@
 """
-SmartTimetable - Modulo Update Checker (Docker Hub & GitHub)
+Eurario - Modulo Update Checker (Docker Hub & GitHub)
 Verifica in background e su richiesta la presenza di versioni aggiornate dell'applicazione.
 Opera in totale sicurezza e resilienza: in ambienti isolati o privi di connessione (air-gapped)
 non blocca il server né genera eccezioni bloccanti.
@@ -53,7 +53,7 @@ def check_for_updates(current_version, force=False):
         "docker_hub_image": "carlorigoni/smarttimetablefet",
         "docker_hub_last_updated": None,
         "checked_at": time.strftime("%Y-%m-%d %H:%M:%S"),
-        "message": "SmartTimetable è aggiornato all'ultima versione.",
+        "message": "Eurario è aggiornato all'ultima versione.",
         "error": None
     }
 
@@ -70,7 +70,7 @@ def check_for_updates(current_version, force=False):
     # 1. Controllo versione su GitHub raw (fonte immediata del repository upstream)
     try:
         gh_url = "https://raw.githubusercontent.com/carlorigoni/SmartTimetableFET/main/webapp/server.py"
-        req = urllib.request.Request(gh_url, headers={"User-Agent": f"SmartTimetable-Updater/{current_version}"})
+        req = urllib.request.Request(gh_url, headers={"User-Agent": f"Eurario-Updater/{current_version}"})
         with urllib.request.urlopen(req, context=ctx, timeout=4) as resp:
             content = resp.read().decode("utf-8", errors="ignore")
             m = re.search(r'APP_VERSION\s*=\s*[\"\']([^\"\']+)[\"\']', content)
@@ -82,7 +82,7 @@ def check_for_updates(current_version, force=False):
     # 2. Controllo metadati ultimo push su Docker Hub
     try:
         dh_url = "https://hub.docker.com/v2/repositories/carlorigoni/smarttimetablefet/tags?page_size=5"
-        req = urllib.request.Request(dh_url, headers={"User-Agent": f"SmartTimetable-Updater/{current_version}"})
+        req = urllib.request.Request(dh_url, headers={"User-Agent": f"Eurario-Updater/{current_version}"})
         with urllib.request.urlopen(req, context=ctx, timeout=4) as resp:
             data = json.loads(resp.read().decode("utf-8", errors="ignore"))
             results = data.get("results", [])
@@ -100,7 +100,7 @@ def check_for_updates(current_version, force=False):
             result["message"] = f"Nuova versione v{remote_found_version} disponibile su Docker Hub!"
         else:
             result["update_available"] = False
-            result["message"] = "SmartTimetable è aggiornato all'ultima versione disponibile."
+            result["message"] = "Eurario è aggiornato all'ultima versione disponibile."
 
     _update_cache["timestamp"] = now
     _update_cache["data"] = result

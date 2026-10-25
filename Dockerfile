@@ -1,5 +1,5 @@
 # ==============================================================================
-# SmartTimetable - Multi-stage Dockerfile per Linux x86_64 / arm64
+# Eurario - Multi-stage Dockerfile per Linux x86_64 / arm64
 # Include FET Solutore CLI 7.12.0 e WebApp Python
 # Ottimizzato per Synology DSM Container Manager (Docker)
 # ==============================================================================

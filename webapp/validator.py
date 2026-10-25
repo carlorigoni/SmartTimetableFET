@@ -1,5 +1,5 @@
 """
-SmartTimetable - Modulo Pre-Validatore dei Vincoli (Fase 2)
+Eurario - Modulo Pre-Validatore dei Vincoli (Fase 2)
 Esegue controlli statici matematici e algebrici (Pigeonhole principle, saturazione spazi,
 disponibilità incrociate, cambi plesso e ore bloccate) prima del lancio di FET.
 """

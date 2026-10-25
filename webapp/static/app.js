@@ -1,5 +1,5 @@
 /**
- * SmartTimetable - Single Page Application Controller (Vanilla JS)
+ * Eurario - Single Page Application Controller (Vanilla JS)
  * Gestisce la navigazione, le chiamate API REST, le griglie interattive e il monitoraggio di FET CLI.
  */
 
@@ -22,7 +22,7 @@ let pollSolverTimer = null;
 let currentSolverRunning = false;
 
 // --- VERSIONE E IDENTITÀ APPLICATIVA ---
-const APP_VERSION = '1.6.4';
+const APP_VERSION = '1.7.0';
 
 // Dizionario completo di traduzione materie scolastiche Italiano -> Inglese
 const SUBJECT_TRANSLATIONS_JS = {
@@ -396,7 +396,7 @@ async function checkAuthMe() {
           clearInterval(authPollInterval);
           authPollInterval = null;
         }
-        showToast('Accesso sbloccato! Benvenuto in SmartTimetable.', 'ok');
+        showToast('Accesso sbloccato! Benvenuto in Eurario.', 'ok');
         handleAuthenticatedState(data);
       }
     }
@@ -1757,7 +1757,7 @@ function populateUpdateModal(info) {
     }
     if (icon) icon.innerText = '✅';
     if (title) {
-      title.innerText = 'SmartTimetable è Aggiornato!';
+      title.innerText = 'Eurario è Aggiornato!';
       title.style.color = '#166534';
     }
     if (desc) {
@@ -1999,7 +1999,7 @@ function navigate(view, pushHistory = true, customLabel = null) {
   updateRailActiveCategories();
 
   const titleKey = 'nav.' + view + '_title';
-  const translatedTitle = window.I18N ? window.I18N.t(titleKey, VIEW_TITLES[view] || 'SmartTimetable') : (VIEW_TITLES[view] || 'SmartTimetable');
+  const translatedTitle = window.I18N ? window.I18N.t(titleKey, VIEW_TITLES[view] || 'Eurario') : (VIEW_TITLES[view] || 'Eurario');
   document.getElementById('pageTitle').innerText = translatedTitle;
 
   const container = document.getElementById('mainContent');
@@ -2492,7 +2492,7 @@ function renderTimetableGridHtml(views, mode, entity) {
   else if (mode === 'room') matrix = (views.by_room || {})[entity] || {};
 
   const hourHeaderLbl = isEn ? 'Period' : 'Ora';
-  let headerHtml = `<div class="tt-header" style="background:#153d61;">${hourHeaderLbl}</div>` + days.map(d => `<div class="tt-header">${escapeHtml(formatDayName(d, false))}</div>`).join('');
+  let headerHtml = `<div class="tt-header" role="columnheader" style="background:#153d61;">${hourHeaderLbl}</div>` + days.map(d => `<div class="tt-header" role="columnheader">${escapeHtml(formatDayName(d, false))}</div>`).join('');
   let gridCols = `60px repeat(${days.length}, 1fr)`;
 
   let rowsHtml = '';
@@ -2504,7 +2504,7 @@ function renderTimetableGridHtml(views, mode, entity) {
     } else if (/^\d+$/.test(h)) {
       hourColLabel = isEn ? `P. ${h}` : `${h}ª ora`;
     }
-    rowsHtml += `<div class="tt-hour-col ${isBreakHour ? 'is-break' : ''}">${hourColLabel}</div>`;
+    rowsHtml += `<div class="tt-hour-col ${isBreakHour ? 'is-break' : ''}" role="rowheader">${hourColLabel}</div>`;
 
     for (const d of days) {
       if (isBreakHour) {
@@ -2582,7 +2582,7 @@ function renderTimetableGridHtml(views, mode, entity) {
   }
 
   return `
-    <div class="timetable-grid" style="grid-template-columns: ${gridCols};">
+    <div class="timetable-grid" role="grid" aria-label="${isEn ? 'Timetable grid' : 'Griglia orario'}" style="grid-template-columns: ${gridCols};">
       ${headerHtml}
       ${rowsHtml}
     </div>
@@ -2680,7 +2680,7 @@ function renderSolver() {
         </div>
       </div>
 
-      <div class="bar-bg"><div id="solverFill" class="fill"></div></div>
+      <div class="bar-bg" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="solverProgressBarAria" aria-label="${isEn ? 'Timetable compilation progress' : 'Avanzamento compilazione orario'}"><div id="solverFill" class="fill"></div></div>
       <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text-muted);margin-top:6px;">
         <span id="solverLabel">0 / 0 ${isEn ? 'activities placed (0%)' : 'attività collocate (0%)'}</span>
         <span id="solverTimer">${_t('solver.current_time', 'Tempo trascorso:')} 00:00</span>
@@ -2703,7 +2703,7 @@ function renderSolver() {
           <button class="btn btn-sm btn-sec" onclick="clearSolverConsole()" title="${isEn ? 'Clear console' : 'Svuota console'}">🧹 ${isEn ? 'Clear' : 'Pulisci'}</button>
         </div>
       </div>
-      <div id="solverConsole" class="console" style="height:380px;">${isEn ? 'Waiting for fet-cl execution...' : 'In attesa dell\'avvio di fet-cl...'}</div>
+      <div id="solverConsole" class="console" style="height:380px;" role="log" aria-live="polite" aria-atomic="false">${isEn ? 'Waiting for fet-cl execution...' : 'In attesa dell\'avvio di fet-cl...'}</div>
     </div>
 
     <!-- Bottleneck Alert Card (visibile se il calcolo si arresta su attività critica - SOTTO la console) -->
@@ -2864,6 +2864,7 @@ async function pollSolverStatus() {
 
     const pct = s.percent || 0;
     fill.style.width = pct + '%';
+    document.getElementById('solverProgressBarAria')?.setAttribute('aria-valuenow', Math.round(pct));
     const highestMsg = s.highest_placed && s.highest_placed > s.placed ? ` (Record: ${s.highest_placed})` : '';
     lbl.innerText = `${s.placed} / ${s.total} ${isEn ? 'activities placed' : 'attività collocate'} (${pct}%)${highestMsg}`;
 
@@ -3038,10 +3039,14 @@ function showToast(message, type = 'ok') {
   if (!cont) {
     cont = document.createElement('div');
     cont.className = 'toast-container';
+    cont.setAttribute('role', 'status');
+    cont.setAttribute('aria-live', 'polite');
+    cont.setAttribute('aria-atomic', 'true');
     document.body.appendChild(cont);
   }
   const t = document.createElement('div');
   t.className = `toast ${type}`;
+  t.setAttribute('role', 'alert');
   const icon = type === 'ok' ? '✅' : (type === 'warn' ? '⚠️' : '❌');
   t.innerHTML = `<span>${icon}</span> <span>${escapeHtml(message)}</span>`;
   cont.appendChild(t);
@@ -4493,7 +4498,7 @@ function openAggiornaOrganicoModal() {
             <div style="font-size:11.5px;color:var(--text-muted);">${currentLang === 'en' ? 'Download 4-column model or export current faculty organico in Word format' : "Scarica la struttura esatta a 4 colonne o esporta l'organico attuale della scuola in formato Word"}</div>
           </div>
           <div style="display:flex;gap:8px;flex-wrap:wrap;">
-            <a href="/api/organico/template_docx?lang=${currentLang}" download="${currentLang === 'en' ? 'SmartTimetable_Faculty_Organico_Template.docx' : 'Modello_Organico_SmartTimetable.docx'}" class="btn btn-sm btn-outline" style="text-decoration:none;display:inline-flex;align-items:center;gap:6px;font-weight:700;border-color:var(--primary);color:var(--primary);">
+            <a href="/api/organico/template_docx?lang=${currentLang}" download="${currentLang === 'en' ? 'Eurario_Faculty_Organico_Template.docx' : 'Modello_Organico_Eurario.docx'}" class="btn btn-sm btn-outline" style="text-decoration:none;display:inline-flex;align-items:center;gap:6px;font-weight:700;border-color:var(--primary);color:var(--primary);">
               📥 ${currentLang === 'en' ? 'Download Sample Model (.docx)' : 'Scarica Modello Esempio (.docx)'}
             </a>
             <a href="/api/organico/template_docx?current=1&lang=${currentLang}" download="${currentLang === 'en' ? 'Current_School_Organico.docx' : 'Organico_Scuola_Attuale.docx'}" class="btn btn-sm btn-sec" style="text-decoration:none;display:inline-flex;align-items:center;gap:6px;">
@@ -9125,25 +9130,81 @@ async function deleteCattedra(subIdsStr, desc) {
   }
 }
 
-// --- GESTIONE MODALI GENERICHE ---
+// --- GESTIONE MODALI GENERICHE CON ACCESSIBILITÀ WCAG (Focus Trap & ARIA Dialog) ---
+let lastFocusedElementBeforeModal = null;
+let activeModalKeydownListener = null;
+
 function showModal(html) {
+  lastFocusedElementBeforeModal = document.activeElement;
   closeModal();
+
   const modalDiv = document.createElement('div');
   modalDiv.id = 'activeModal';
   modalDiv.className = 'modal-backdrop';
+  modalDiv.setAttribute('role', 'dialog');
+  modalDiv.setAttribute('aria-modal', 'true');
   modalDiv.innerHTML = html;
+
   modalDiv.addEventListener('click', (e) => {
     if (e.target === modalDiv) closeModal();
   });
+
   document.body.appendChild(modalDiv);
+
   if (window.I18N) {
     window.I18N.applyStaticTranslations(modalDiv);
   }
+
+  // WCAG 2.1.2 & 2.4.3: Focus Trap all'interno della modale attiva
+  const focusableSelector = 'button, [href], input:not([type="hidden"]), select, textarea, [tabindex]:not([tabindex="-1"])';
+  const focusableElements = Array.from(modalDiv.querySelectorAll(focusableSelector)).filter(el => !el.disabled && el.offsetParent !== null);
+  if (focusableElements.length > 0) {
+    setTimeout(() => {
+      try { focusableElements[0].focus(); } catch (err) {}
+    }, 60);
+  }
+
+  activeModalKeydownListener = function(e) {
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      closeModal();
+      return;
+    }
+    if (e.key === 'Tab') {
+      const currentFocusables = Array.from(modalDiv.querySelectorAll(focusableSelector)).filter(el => !el.disabled && el.offsetParent !== null);
+      if (currentFocusables.length === 0) return;
+      const firstEl = currentFocusables[0];
+      const lastEl = currentFocusables[currentFocusables.length - 1];
+
+      if (e.shiftKey) {
+        if (document.activeElement === firstEl || !modalDiv.contains(document.activeElement)) {
+          e.preventDefault();
+          lastEl.focus();
+        }
+      } else {
+        if (document.activeElement === lastEl || !modalDiv.contains(document.activeElement)) {
+          e.preventDefault();
+          firstEl.focus();
+        }
+      }
+    }
+  };
+
+  document.addEventListener('keydown', activeModalKeydownListener);
 }
 
 function closeModal() {
+  if (activeModalKeydownListener) {
+    document.removeEventListener('keydown', activeModalKeydownListener);
+    activeModalKeydownListener = null;
+  }
   const m = document.getElementById('activeModal');
   if (m) m.remove();
+
+  if (lastFocusedElementBeforeModal && typeof lastFocusedElementBeforeModal.focus === 'function') {
+    try { lastFocusedElementBeforeModal.focus(); } catch (err) {}
+    lastFocusedElementBeforeModal = null;
+  }
 }
 
 // ============================================================================
@@ -9519,7 +9580,7 @@ function renderAvailabilityGridHtml(days, hours, slots, breakTimes, teacherPref 
   }
 
   return `
-    <div class="timetable-grid" style="grid-template-columns: ${gridCols};">
+    <div class="timetable-grid" role="grid" aria-label="${isEn ? 'Timetable grid' : 'Griglia orario'}" style="grid-template-columns: ${gridCols};">
       ${headerHtml}
       ${rowsHtml}
     </div>

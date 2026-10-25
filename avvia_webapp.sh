@@ -1,12 +1,12 @@
 #!/bin/bash
 # ==============================================================================
-# SmartTimetable - Launcher Web App
+# Eurario - Launcher Web App
 # ==============================================================================
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd "$DIR"
 
 echo "=================================================================="
-echo "  SmartTimetable Web App - Suite FET 7.12.0"
+echo "  Eurario Web App - Suite FET 7.12.0"
 echo "=================================================================="
 echo "  • URL Browser: http://127.0.0.1:8000"
 echo "  • Premi Ctrl+C per fermare il server."

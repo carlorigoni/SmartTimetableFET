@@ -2,7 +2,7 @@
 Modulo webapp/print_engine.py
 ==============================
 Motore di esportazione e stampa ad alta risoluzione (PDF / Web Print)
-per SmartTimetable Suite.
+per Eurario Suite.
 
 Implementa ed evolve le due procedure ufficiali storiche:
 - Procedura 9: Orario per Classe (PDF / Stampa - A4 orizzontale per classe)
@@ -1848,7 +1848,7 @@ def get_print_options_metadata(data):
 def generate_organico_template_docx(data=None, lang="it"):
     """
     Genera un file Word (.docx) contenente la tabella organico formattata nello standard
-    atteso dal parser di SmartTimetable (4 colonne: CdC, Docente, Cattedra/Classi, Ore).
+    atteso dal parser di Eurario (4 colonne: CdC, Docente, Classi, Ore).
     Può esportare l'organico attuale presente nel database o il template d'esempio.
     Supporta pienamente la localizzazione in lingua (Italiano / Inglese).
     """

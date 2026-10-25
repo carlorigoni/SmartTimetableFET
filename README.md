@@ -1,6 +1,6 @@
-# 🎓 SmartTimetable - Suite Completa per l'Orario Scolastico con FET 7.12.0
+# 🎓 Eurario - Suite Completa per l'Orario Scolastico con FET 7.12.0
 
-[![Version](https://img.shields.io/badge/version-1.6.0-blue.svg)](https://github.com/carlorigoni/SmartTimetableFET)
+[![Version](https://img.shields.io/badge/version-1.7.0-blue.svg)](https://github.com/carlorigoni/SmartTimetableFET)
 [![Docker Hub](https://img.shields.io/badge/docker%20hub-carlorigoni%2Fsmarttimetablefet%3Alatest-blue?logo=docker)](https://hub.docker.com/r/carlorigoni/smarttimetablefet)
 [![FET Solver](https://img.shields.io/badge/FET%20engine-7.12.0-orange.svg)](https://lalescu.ro/liviu/fet/)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-green.svg)](https://www.gnu.org/licenses/gpl-3.0)
@@ -131,7 +131,7 @@ docker run -d \
 
 ## 🔐 Autenticazione e Primo Accesso
 
-SmartTimetable include un sistema di autenticazione integrato con supporto **Google Identity Services (OAuth 2.0)** e **Passcode Master di Emergenza**.
+Eurario include un sistema di autenticazione integrato con supporto **Google Identity Services (OAuth 2.0)** e **Passcode Master di Emergenza**.
 
 ### 🔑 1. Primo Accesso di Emergenza (Setup Iniziale)
 
@@ -152,10 +152,10 @@ L'integrazione Google OAuth permette a presidi, docenti e commissione orario di 
 
 #### Passo A: Ottenere il Google Client ID su Google Cloud Console
 1. Accedi a [Google Cloud Console](https://console.cloud.google.com).
-2. Crea un nuovo progetto (es. *SmartTimetable Scuola*).
+2. Crea un nuovo progetto (es. *Eurario Scuola*).
 3. Vai nel menu **API e servizi** ➔ **Schermata consenso OAuth**:
    - Scegli **Esterno** (oppure **Interno** se la tua scuola usa Google Workspace for Education).
-   - Inserisci il nome dell'app (es. *SmartTimetable*) e la tua email di supporto. Salva e continua.
+   - Inserisci il nome dell'app (es. *Eurario*) e la tua email di supporto. Salva e continua.
 4. Vai nel menu **API e servizi** ➔ **Credenziali**:
    - Clicca su **Crea credenziali** ➔ **ID client OAuth**.
    - Tipo di applicazione: seleziona **Applicazione Web**.
@@ -164,8 +164,8 @@ L'integrazione Google OAuth permette a presidi, docenti e commissione orario di 
      - `https://orario.tuascuola.it` (se installato su server o NAS Synology con dominio e certificato SSL HTTPS).
    - Clicca **Crea**: verrà mostrato il tuo **ID client** (es. `123456789-abcdefg.apps.googleusercontent.com`).
 
-#### Passo B: Inserire il Client ID in SmartTimetable
-1. Accedi a SmartTimetable con il passcode `admin2026`.
+#### Passo B: Inserire il Client ID in Eurario
+1. Accedi a Eurario con il passcode `admin2026`.
 2. Nella barra laterale sinistra, clicca su **"👥 Gestione Accessi"** (in fondo alla sezione Sistema).
 3. Nel campo **"Google Client ID"**, incolla l'ID client ottenuto da Google e clicca **"Salva Configurazione"**.
    *(In alternativa, puoi passarlo come variabile d'ambiente `GOOGLE_CLIENT_ID` in `docker-compose.yml`)*.
@@ -193,7 +193,7 @@ Il sistema protegge i dati della scuola impedendo l'accesso indiscriminato a chi
 
 ## 📦 Installazione su NAS Synology (Container Manager)
 
-Per installare SmartTimetable su un NAS Synology con certificato HTTPS per tutta la scuola:
+Per installare Eurario su un NAS Synology con certificato HTTPS per tutta la scuola:
 
 👉 **Consulta la guida dedicata completa:** [`SYNOLOGY_GUIDE.md`](./SYNOLOGY_GUIDE.md)
 
@@ -329,7 +329,7 @@ Se preferisci non utilizzare container ausiliari, puoi configurare un'attività 
 
 ## 🛡️ Trattamento dei Dati Personali e Conformità GDPR (Reg. UE 2016/679)
 
-SmartTimetable FET Suite è progettato e distribuito come **software autonomo e open source**, operante **esclusivamente on-premise** all'interno della rete locale dell'Istituto, oppure su **macchina virtuale (VM) o VPS controllata** (a totale carico e gestione dell'installatore).
+Eurario FET Suite è progettato e distribuito come **software autonomo e open source**, operante **esclusivamente on-premise** all'interno della rete locale dell'Istituto, oppure su **macchina virtuale (VM) o VPS controllata** (a totale carico e gestione dell'installatore).
 
 ### 1. Ruolo del Titolare del Trattamento (Data Controller)
 - Ai sensi dell'**Articolo 4, punto 7 del Regolamento Generale sulla Protezione dei Dati (GDPR - UE 2016/679)**, l'**Istituto Scolastico o l'Ente** che installa, configura e utilizza il software agisce in via esclusiva come **Titolare del Trattamento dei Dati Personali**.
@@ -353,7 +353,7 @@ Per una piena conformità normativa, l'Istituto Scolastico o l'installatore è t
 
 ## 📜 Riconoscimenti & Credits
 
-Il progetto SmartTimetable nasce dalla sinergia tra competenze didattiche e organizzative scolastiche, software libero ad altissime prestazioni e ingegneria AI:
+Il progetto Eurario nasce dalla sinergia tra competenze didattiche e organizzative scolastiche, software libero ad altissime prestazioni e ingegneria AI:
 
 - 👨‍🏫 **Autore, Ideazione & Architettura**:
   **Carlo Rigoni** &mdash; Ideazione, progettazione del modello dati scolastico italiano (organico cattedre, cdc, articolazioni di lingue, compresenze, ore a disposizione, accorpamenti macro-materie, regole blocchi orari e stampe ufficiali per collegio e classi).
@@ -364,7 +364,7 @@ Il progetto SmartTimetable nasce dalla sinergia tra competenze didattiche e orga
 - 🤖 **AI Engineering & Pair Programming**:
   **Google DeepMind Antigravity** &mdash; Ingegnerizzazione dell'architettura full-stack, design interfaccia reattiva Material 3 (stile Google Classroom), Relaxation Engine dell'Advisor vincoli, parser e generatore Microsoft Word (.docx), pipeline Docker multi-architettura e test.
 - 🔒 **Infrastruttura & Sovranità dei Dati**:
-  SmartTimetable opera **esclusivamente on-premise** oppure su **macchina virtuale (VM) o VPS controllata** (a totale carico e gestione dell'installatore). Nessun dato risiede o transita su server cloud proprietari terzi.
+  Eurario opera **esclusivamente on-premise** oppure su **macchina virtuale (VM) o VPS controllata** (a totale carico e gestione dell'installatore). Nessun dato risiede o transita su server cloud proprietari terzi.
 
 ## 📁 Struttura del Repository
 

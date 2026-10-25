@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-SmartTimetable - Modulo Autenticazione OAuth Google & Controllo Accessi
+Eurario - Modulo Autenticazione OAuth Google & Controllo Accessi
 Fornisce:
 - Verifica Google ID Token (Google Identity Services / OpenID Connect)
 - Gestione utenti e whitelist (Approvato, In Attesa, Rifiutato)
@@ -230,7 +230,7 @@ class AuthManager:
         url = f"https://oauth2.googleapis.com/tokeninfo?id_token={urllib.parse.quote(id_token.strip())}"
         req = urllib.request.Request(
             url,
-            headers={"User-Agent": "SmartTimetable-Auth/1.0"}
+            headers={"User-Agent": "Eurario-Auth/1.0"}
         )
         try:
             with urllib.request.urlopen(req, timeout=10) as resp:
@@ -250,7 +250,7 @@ class AuthManager:
         expected_aud = self.config.get("google_client_id", "").strip()
         if expected_aud and data.get("aud") != expected_aud:
             # Se è impostato un client ID, deve coincidere
-            raise ValueError("Il Client ID del token non coincide con quello configurato per SmartTimetable")
+            raise ValueError("Il Client ID del token non coincide con quello configurato per Eurario")
 
         return {
             "email": email,
@@ -393,7 +393,7 @@ class AuthManager:
             raise ValueError("Configurazione incompleta: specifica Server SMTP, Utente/Email mittente e Password applicazione Google.")
 
         msg = EmailMessage()
-        msg["Subject"] = "✅ [SmartTimetable] Test Notifica Email Riuscito!"
+        msg["Subject"] = "✅ [Eurario] Test Notifica Email Riuscito!"
         msg["From"] = user_smtp
         msg["To"] = to_email
 
@@ -401,10 +401,10 @@ class AuthManager:
 
 Questo messaggio conferma che il server SMTP ({host}:{port}) è configurato correttamente.
 
-D'ora in poi riceverai automaticamente un'email di avviso ogni volta che un nuovo utente o docente effettuerà il login con Google richiedendo l'accesso a SmartTimetable.
+D'ora in poi riceverai automaticamente un'email di avviso ogni volta che un nuovo utente o docente effettuerà il login con Google richiedendo l'accesso a Eurario.
 
 ---
-SmartTimetable Automated Security Notification
+Eurario Automated Security Notification
 """
         msg.set_content(body)
 
@@ -509,23 +509,23 @@ SmartTimetable Automated Security Notification
             return
 
         msg = EmailMessage()
-        msg["Subject"] = f"🔔 [SmartTimetable] Richiesta di accesso da {user.get('name')}"
+        msg["Subject"] = f"🔔 [Eurario] Richiesta di accesso da {user.get('name')}"
         msg["From"] = user_smtp
         msg["To"] = to_email
 
         body = f"""Ciao Carlo,
 
-Un nuovo utente ha richiesto l'accesso alla piattaforma SmartTimetable:
+Un nuovo utente ha richiesto l'accesso alla piattaforma Eurario:
 
 - Nome: {user.get('name')}
 - Email Google: {user.get('email')}
 - Data richiesta: {user.get('created_at')}
 
-Per sbloccare o rifiutare l'accesso, apri SmartTimetable e clicca su "Gestione Accessi" nella barra superiore:
+Per sbloccare o rifiutare l'accesso, apri Eurario e clicca su "Gestione Accessi" nella barra superiore:
 http://<IP-DEL-NAS>:8000
 
 ---
-SmartTimetable Automated Security Notification
+Eurario Automated Security Notification
 """
         msg.set_content(body)
 

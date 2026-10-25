@@ -1,5 +1,5 @@
 """
-Database e Gestore dello Stato per SmartTimetable.
+Database e Gestore dello Stato per Eurario.
 Persiste i dati su JSON/SQLite e mantiene la compatibilità bidirezionale con FET.
 """
 

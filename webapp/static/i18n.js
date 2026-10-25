@@ -1,5 +1,5 @@
 /**
- * SmartTimetable - Internationalization (i18n) Engine
+ * Eurario - Internationalization (i18n) Engine
  * Supporto multilingua nativo (Italiano / English) con rilevamento automatico
  * del browser, persistenza su localStorage e commutazione istantanea senza reload.
  */
@@ -9,8 +9,11 @@
 
   const I18N_DICTIONARY = {
     it: {
+      a11y: {
+        skip_to_content: "Salta al contenuto principale"
+      },
       app: {
-        title: "SmartTimetable",
+        title: "Eurario",
         subtitle: "FET 7.12.0 Suite",
         loading: "Caricamento in corso...",
         error: "Si è verificato un errore",
@@ -186,13 +189,13 @@
           submit_btn: "🖨️ Stampa / Anteprima A3"
         },
         about: {
-          title: "SmartTimetable FET Suite",
+          title: "Eurario FET Suite",
           subtitle: "Configurazione, Vincoli & Compilatore Orario FET 7.12.0",
           stable_release: "Release Stabile",
           check_updates: "🚀 Verifica Aggiornamenti",
           engine: "Engine: FET 7.12.0 Nativo",
           author_section: "Ideazione & Architettura",
-          author_role: "Autore, Architetto del Software e Maintainer del progetto SmartTimetable.",
+          author_role: "Autore, Architetto del Software e Maintainer del progetto Eurario.",
           author_sub: "Progettazione funzionale, adattamento alla scuola italiana, modello vincoli cattedre/disposizioni e integrazione procedurale.",
           mentor_section: "Mentore dell'Orario & Guida Metodologica",
           mentor_desc: "Mentore dell'Orario e guida metodologica per l'equilibratura dei carichi orari docenti, la gestione dei vincoli e delle articolazioni cattedre nella scuola secondaria italiana.",
@@ -202,11 +205,11 @@
           ai_section: "AI Engineering & Pair Programming",
           ai_desc: "Advanced Agentic Coding: ingegnerizzazione full-stack, interfaccia Google Classroom Material 3, Relaxation Engine diagnostico per i vincoli, parser Microsoft Word (.docx) e containerizzazione multi-arch.",
           gdpr_title: "Conformità GDPR (Reg. UE 2016/679) & Privacy by Design",
-          gdpr_desc: "SmartTimetable opera esclusivamente on-premise all'interno della rete locale dell'Istituto, oppure su macchina virtuale (VM) o VPS controllata. Nessun dato dell'orario o anagrafico viene trasmesso a server cloud terzi.",
+          gdpr_desc: "Eurario opera esclusivamente on-premise all'interno della rete locale dell'Istituto, oppure su macchina virtuale (VM) o VPS controllata. Nessun dato dell'orario o anagrafico viene trasmesso a server cloud terzi.",
           close_btn: "Chiudi"
         },
         updates: {
-          title: "Aggiornamento SmartTimetable",
+          title: "Aggiornamento Eurario",
           subtitle: "Verifica immagini Docker Hub & Release Ufficiali",
           checking_title: "Verifica aggiornamenti in corso...",
           checking_desc: "Confronto tra la versione locale e il repository su Docker Hub.",
@@ -617,8 +620,11 @@
     },
 
     en: {
+      a11y: {
+        skip_to_content: "Skip to main content"
+      },
       app: {
-        title: "SmartTimetable",
+        title: "Eurario",
         subtitle: "FET 7.12.0 Suite",
         loading: "Loading, please wait...",
         error: "An error occurred",
@@ -794,13 +800,13 @@
           submit_btn: "🖨️ Print / Preview A3"
         },
         about: {
-          title: "SmartTimetable FET Suite",
+          title: "Eurario FET Suite",
           subtitle: "Configuration, Constraints & Timetable Compiler FET 7.12.0",
           stable_release: "Stable Release",
           check_updates: "🚀 Check for Updates",
           engine: "Engine: Native FET 7.12.0",
           author_section: "Design & Architecture",
-          author_role: "Author, Software Architect and Maintainer of SmartTimetable.",
+          author_role: "Author, Software Architect and Maintainer of Eurario.",
           author_sub: "Functional design, Italian school adaptation, teaching chair/on-duty constraint model and procedural integration.",
           mentor_section: "Timetable Mentor & Methodological Guidance",
           mentor_desc: "Timetable mentor and methodological advisor for balancing teacher workloads, constraints and course split management in secondary education.",
@@ -810,11 +816,11 @@
           ai_section: "AI Engineering & Pair Programming",
           ai_desc: "Advanced Agentic Coding: full-stack architecture, Google Classroom Material 3 UI, diagnostic Relaxation Engine for constraints, Microsoft Word (.docx) parser, and multi-architecture containers.",
           gdpr_title: "GDPR Compliance (EU Reg. 2016/679) & Privacy by Design",
-          gdpr_desc: "SmartTimetable runs exclusively on-premise inside the school's local network or on a dedicated virtual machine/VPS. No schedule or staff personal data is transmitted to third-party cloud servers.",
+          gdpr_desc: "Eurario runs exclusively on-premise inside the school's local network or on a dedicated virtual machine/VPS. No schedule or staff personal data is transmitted to third-party cloud servers.",
           close_btn: "Close"
         },
         updates: {
-          title: "SmartTimetable Updates",
+          title: "Eurario Updates",
           subtitle: "Verify Docker Hub images & Official Releases",
           checking_title: "Checking for updates...",
           checking_desc: "Comparing local instance with the Docker Hub image repository.",
