@@ -106,7 +106,7 @@ class SchoolManager:
             out.sort(key=lambda x: (0 if x["id"] == "default" else 1, x.get("name", "").lower()))
             return out
 
-    def list_schools_for_user(self, user_email, is_superadmin=False, memberships=None):
+    def list_schools_for_user(self, user_email, is_superadmin=False, memberships=None, can_define_school=False):
         """Restituisce le scuole accessibili dall'utente specificato."""
         with self.lock:
             if is_superadmin:
@@ -122,12 +122,17 @@ class SchoolManager:
                 is_owner = (owner_clean == user_email_clean and bool(user_email_clean))
                 is_member = (sid in user_mems and user_mems[sid].get("status") == "approved")
 
-                # La scuola default è consultabile da tutti se attiva
-                if sid == "default" or is_owner or is_member:
+                if is_owner or is_member:
                     item = dict(s)
                     role = "owner" if is_owner else (user_mems.get(sid, {}).get("role", "viewer") if is_member else "viewer")
                     item["user_role"] = role
                     out.append(item)
+                elif sid == "default":
+                    has_other_schools = any((s2.get("owner_email") or "").strip().lower() == user_email_clean for s2 in self.schools.values()) or bool(user_mems)
+                    if not can_define_school and not has_other_schools:
+                        item = dict(s)
+                        item["user_role"] = "editor"
+                        out.append(item)
 
             out.sort(key=lambda x: (0 if x["id"] == "default" else 1, x.get("name", "").lower()))
             return out

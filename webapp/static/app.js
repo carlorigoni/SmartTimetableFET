@@ -276,9 +276,9 @@ async function loadMySchools() {
 
     // Aggiorna indicatore scuola in topbar
     const nameEl = document.getElementById('currentSchoolName');
-    if (nameEl && currentSchool) {
-      nameEl.innerText = currentSchool.name || 'Istituto';
-      nameEl.title = currentSchool.name || 'Istituto';
+    if (nameEl) {
+      nameEl.innerText = (currentSchool && currentSchool.name) ? currentSchool.name : 'Nessun Istituto';
+      nameEl.title = (currentSchool && currentSchool.name) ? currentSchool.name : 'Nessun Istituto';
     }
 
     // Badge Trial e Banner di Avviso
@@ -298,7 +298,11 @@ async function loadMySchools() {
     const listEl = document.getElementById('schoolMenuList');
     if (listEl) {
       if (mySchools.length === 0) {
-        listEl.innerHTML = `<div style="padding:10px;font-size:12px;color:var(--text-muted);text-align:center;">Nessun istituto trovato</div>`;
+        listEl.innerHTML = `
+          <div style="padding:12px 10px;font-size:12px;color:var(--text-muted);text-align:center;">
+            Nessun istituto configurato.<br>
+            <button class="btn btn-sm btn-primary" onclick="openCreateSchoolModal()" style="margin-top:8px;">➕ Registra il tuo Istituto</button>
+          </div>`;
       } else {
         listEl.innerHTML = mySchools.map(s => {
           const isActive = s.id === activeId;
@@ -319,6 +323,12 @@ async function loadMySchools() {
           `;
         }).join('');
       }
+    }
+
+    if (mySchools.length === 0 && data.can_define_school) {
+      setTimeout(() => {
+        openCreateSchoolModal();
+      }, 400);
     }
   } catch (err) {
     console.error('Errore caricamento scuole utente:', err);
@@ -599,6 +609,35 @@ async function deleteSchoolAsAdmin(schoolId, schoolName) {
   } catch (err) {
     alert('Errore di connessione.');
   }
+}
+
+function renderOnboardingSchoolWelcome() {
+  const container = document.getElementById('mainContent');
+  if (!container) return;
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
+  container.innerHTML = `
+    <div style="max-width: 680px; margin: 40px auto; padding: 36px 28px; background: var(--bg-card); border-radius: 16px; border: 1px solid var(--border); box-shadow: 0 4px 20px rgba(0,0,0,0.06); text-align: center;">
+      <div style="font-size: 56px; margin-bottom: 14px;">🏫</div>
+      <h2 style="font-size: 24px; font-weight: 800; color: var(--text-main); margin-bottom: 10px;">
+        ${isEn ? 'Welcome to Eurario!' : 'Benvenuto su Eurario!'}
+      </h2>
+      <p style="font-size: 14px; color: var(--text-muted); line-height: 1.6; margin-bottom: 24px;">
+        ${isEn
+          ? 'Your account has been authorized by the SuperAdmin.<br>You are enabled to set up and manage your own educational institution in full privacy:'
+          : 'Il tuo account è stato autorizzato con successo dal SuperAdmin.<br>Puoi ora definire il tuo Istituto Scolastico in modo totalmente autonomo e privato:'}
+      </p>
+      <div style="display: inline-flex; flex-direction: column; gap: 12px; text-align: left; background: var(--bg-hover); padding: 16px 20px; border-radius: 12px; margin-bottom: 26px; width: 100%; max-width: 480px; font-size: 13px; color: var(--text-main);">
+        <div>✨ <b>${isEn ? 'No restrictions:' : 'Nessun limite:'}</b> ${isEn ? 'unlimited teachers, classes, and complex rules.' : 'docenti, classi, materie e vincoli illimitati.'}</div>
+        <div>⚡ <b>${isEn ? 'FET 7.12 Engine:' : 'Motore FET 7.12:'}</b> ${isEn ? 'high-speed heuristic timetable calculation and smart advisor.' : 'calcolo orario euristico veloce e diagnostica advisor.'}</div>
+        <div>🔒 <b>${isEn ? 'Complete tenant isolation:' : 'Isolamento totale:'}</b> ${isEn ? 'your data and snapshots reside in an isolated workspace.' : 'i tuoi dati risiedono in uno spazio isolato e riservato.'}</div>
+      </div>
+      <div>
+        <button class="btn btn-primary btn-lg" onclick="openCreateSchoolModal()" style="padding: 12px 28px; font-size: 14px; font-weight: 700; border-radius: 10px; cursor: pointer;">
+          ➕ ${isEn ? 'Register and Set Up Your School' : 'Registra e Configura il tuo Istituto'}
+        </button>
+      </div>
+    </div>
+  `;
 }
 
 // --- AUTENTICAZIONE & CONTROLLO ACCESSI (GOOGLE OAUTH & WHITELIST APPROVAL) ---
@@ -1096,27 +1135,48 @@ function renderUsersUI() {
         <p style="font-size:12px;margin-top:4px;">${isEn ? 'All teachers who signed in have already been authorized.' : 'Tutti i docenti che hanno effettuato il login sono già stati autorizzati.'}</p>
       </div>`;
   } else {
+    const availSchools = currentUsersData.available_schools || [];
+    const otherOptions = availSchools.filter(s => s.id !== 'default').map(s =>
+      `<option value="${escapeHtml(s.id)}">🏫 ${escapeHtml(s.name)}</option>`
+    ).join('');
+
     pendingContainer.innerHTML = pending.map(u => {
       const emailSafe = btoa(unescape(encodeURIComponent(u.email))).replace(/=/g, '');
       const reqDate = u.created_at ? new Date(u.created_at).toLocaleString(isEn ? 'en-US' : 'it-IT') : 'N/D';
       return `
-      <div class="user-item-card" id="user-card-${emailSafe}">
-        <div class="user-card-left">
-          ${u.picture ? `<img src="${u.picture}" class="user-card-avatar" alt="Avatar" />` : `<div class="user-card-avatar">👤</div>`}
-          <div class="user-card-info">
-            <div class="user-card-name">${escapeHtml(u.name || u.email)}</div>
-            <div class="user-card-email">${escapeHtml(u.email)}</div>
-            <div class="user-card-meta">${isEn ? 'Requested on:' : 'Richiesto il:'} ${reqDate}</div>
+      <div class="user-item-card" id="user-card-${emailSafe}" style="display:flex;flex-direction:column;gap:10px;padding:12px 14px;border:1px solid var(--border);border-radius:10px;background:var(--bg-card);margin-bottom:10px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+          <div class="user-card-left" style="display:flex;align-items:center;gap:12px;">
+            ${u.picture ? `<img src="${u.picture}" class="user-card-avatar" alt="Avatar" style="width:38px;height:38px;border-radius:50%;" />` : `<div class="user-card-avatar" style="width:38px;height:38px;display:flex;align-items:center;justify-content:center;background:var(--bg-hover);border-radius:50%;font-size:18px;">👤</div>`}
+            <div class="user-card-info">
+              <div class="user-card-name" style="font-weight:700;font-size:13.5px;color:var(--text-main);">${escapeHtml(u.name || u.email)}</div>
+              <div class="user-card-email" style="font-size:12px;color:var(--text-muted);font-family:var(--font-mono);">${escapeHtml(u.email)}</div>
+              <div class="user-card-meta" style="font-size:11px;color:var(--text-sub);margin-top:2px;">${isEn ? 'Requested on:' : 'Richiesto il:'} ${reqDate}</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:6px;align-items:center;">
+            <button class="btn btn-sm btn-success" onclick="approveUser('${escapeHtml(u.email)}')">${isEn ? '✅ Approve Access' : '✅ Sblocca Accesso'}</button>
+            <button class="btn btn-sm btn-danger" onclick="rejectUser('${escapeHtml(u.email)}')">${isEn ? '❌ Reject' : '❌ Rifiuta'}</button>
           </div>
         </div>
-        <div class="user-card-actions">
-          <select id="role-select-${emailSafe}" class="form-input" style="padding:4px 8px;font-size:12px;width:auto;">
-            <option value="editor" selected>${isEn ? 'Editor (Edit timetable)' : 'Editor (Modifica orario)'}</option>
-            <option value="viewer">${isEn ? 'Viewer (Read-only)' : 'Viewer (Sola lettura)'}</option>
-            <option value="admin">${isEn ? 'Administrator' : 'Amministratore'}</option>
-          </select>
-          <button class="btn btn-sm btn-success" onclick="approveUser('${escapeHtml(u.email)}')">${isEn ? '✅ Approve Access' : '✅ Sblocca Accesso'}</button>
-          <button class="btn btn-sm btn-danger" onclick="rejectUser('${escapeHtml(u.email)}')">${isEn ? '❌ Reject' : '❌ Rifiuta'}</button>
+
+        <div style="display:flex;flex-wrap:wrap;gap:12px;background:var(--bg-hover);padding:10px 12px;border-radius:8px;align-items:center;">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span style="font-size:11.5px;font-weight:700;color:var(--text-main);">${isEn ? 'Role:' : 'Ruolo:'}</span>
+            <select id="role-select-${emailSafe}" class="form-input" style="padding:4px 8px;font-size:11.5px;width:auto;">
+              <option value="editor" selected>${isEn ? 'Editor (Edit timetable)' : 'Editor (Modifica orario)'}</option>
+              <option value="viewer">${isEn ? 'Viewer (Read-only)' : 'Viewer (Sola lettura)'}</option>
+              <option value="admin">${isEn ? 'Administrator' : 'Amministratore'}</option>
+            </select>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;flex:1;min-width:280px;">
+            <span style="font-size:11.5px;font-weight:700;color:var(--text-main);white-space:nowrap;">${isEn ? 'Assign To:' : 'Destinazione:'}</span>
+            <select id="school-select-${emailSafe}" class="form-input" style="padding:4px 8px;font-size:11.5px;width:100%;">
+              <option value="default" selected>🏫 Scuola Principale (Rolando da Piazzola)</option>
+              <option value="new_school">✨ Nuova Scuola Autonoma (L'utente la definirà al primo accesso)</option>
+              ${otherOptions}
+            </select>
+          </div>
         </div>
       </div>
     `;
@@ -1159,20 +1219,23 @@ function renderUsersUI() {
 
 async function approveUser(email) {
   const emailSafe = btoa(unescape(encodeURIComponent(email))).replace(/=/g, '');
-  const selectId = `role-select-${emailSafe}`;
-  const role = document.getElementById(selectId)?.value || 'editor';
+  const role = document.getElementById(`role-select-${emailSafe}`)?.value || 'editor';
+  const target_school = document.getElementById(`school-select-${emailSafe}`)?.value || 'default';
   try {
     const res = await fetch('/api/auth/users/approve', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, role })
+      body: JSON.stringify({ email, role, target_school })
     });
     const data = await res.json();
     if (!res.ok) {
       showToast(data.error || 'Errore durante l\'approvazione', 'error');
       return;
     }
-    showToast(`Accesso sbloccato per ${email} (${role.toUpperCase()})!`, 'ok');
+    const msg = target_school === 'new_school'
+      ? `Accesso autorizzato per ${email}: potrà definire la propria scuola autonoma!`
+      : `Accesso sbloccato per ${email} (${role.toUpperCase()})!`;
+    showToast(msg, 'ok');
     await loadUsersList();
   } catch (e) {
     showToast('Errore di rete: ' + e.message, 'error');
@@ -2343,6 +2406,11 @@ function navigate(view, pushHistory = true, customLabel = null) {
 
   currentView = view;
   updateNavBackButton();
+
+  if (mySchools && mySchools.length === 0 && (!currentUser || !currentUser.is_superadmin)) {
+    renderOnboardingSchoolWelcome();
+    return;
+  }
 
   if (window.innerWidth <= 768) {
     closeMobileSidebar();

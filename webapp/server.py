@@ -524,15 +524,20 @@ class EurarioHandler(BaseHTTPRequestHandler):
             user = self._get_current_user()
             is_super = bool(user and user.get("is_superadmin"))
             email = user.get("email") if user else None
+            can_def = bool(user and user.get("can_define_school"))
             mems = {email: auth_manager.get_user_memberships(email)} if email else None
-            schools = school_manager.list_schools_for_user(email, is_superadmin=is_super, memberships=mems)
+            schools = school_manager.list_schools_for_user(email, is_superadmin=is_super, memberships=mems, can_define_school=can_def)
             active_sid = get_current_school_id()
-            curr_school = school_manager.get_school(active_sid) or school_manager.get_school("default")
+            if schools and not is_super and not any(s["id"] == active_sid for s in schools):
+                active_sid = schools[0]["id"]
+                set_current_school_id(active_sid)
+            curr_school = school_manager.get_school(active_sid) if (schools or is_super) else None
             self._json(200, {
                 "schools": schools,
                 "current_school": curr_school,
-                "active_school_id": active_sid,
-                "is_superadmin": is_super
+                "active_school_id": active_sid if curr_school else None,
+                "is_superadmin": is_super,
+                "can_define_school": can_def
             })
             return
 
@@ -553,7 +558,9 @@ class EurarioHandler(BaseHTTPRequestHandler):
         elif path == "/api/auth/users":
             if not self._require_admin():
                 return
-            self._json(200, auth_manager.list_users())
+            users_res = auth_manager.list_users()
+            users_res["available_schools"] = school_manager.list_all_schools()
+            self._json(200, users_res)
             return
         elif path == "/api/auth/access_logs":
             if not self._require_admin():
@@ -919,7 +926,16 @@ class EurarioHandler(BaseHTTPRequestHandler):
                 self._json(400, {"error": "Email mancante"})
                 return
             try:
-                u = auth_manager.approve_user(body["email"], body.get("role", "editor"), admin_email=admin.get("email"), ip=client_ip)
+                email = body["email"]
+                role = body.get("role", "editor")
+                target_school = body.get("target_school", "default")
+                u = auth_manager.approve_user(
+                    email,
+                    role=role,
+                    admin_email=admin.get("email"),
+                    ip=client_ip,
+                    target_school=target_school
+                )
                 self._json(200, {"ok": True, "user": u})
             except Exception as e:
                 self._json(400, {"error": str(e)})

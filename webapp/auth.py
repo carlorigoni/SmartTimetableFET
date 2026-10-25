@@ -492,7 +492,7 @@ Eurario Automated Security Notification
         print(f"[AUTH EMAIL] Email di test inviata con successo a {to_email}")
         return True
 
-    def approve_user(self, email, role="editor", admin_email=None, ip=None):
+    def approve_user(self, email, role="editor", admin_email=None, ip=None, target_school="default"):
         self._load()
         email = (email or "").lower().strip()
         if email not in self.config["users"]:
@@ -503,8 +503,36 @@ Eurario Automated Security Notification
         if role in ("admin", "editor", "viewer"):
             u["role"] = role
         u["approved_at"] = get_local_now().isoformat()
+
+        if target_school == "new_school":
+            u["can_define_school"] = True
+            mems = self.config.setdefault("school_memberships", {})
+            if email in mems and "default" in mems[email]:
+                del mems[email]["default"]
+            log_detail = f"Utente approvato ({role}) con autorizzazione a definire una nuova scuola autonoma da {admin_email or 'admin'}"
+        elif target_school and target_school != "default":
+            u["can_define_school"] = False
+            mems = self.config.setdefault("school_memberships", {})
+            user_mems = mems.setdefault(email, {})
+            user_mems[target_school] = {
+                "role": role,
+                "status": "approved",
+                "added_at": get_local_now().isoformat()
+            }
+            log_detail = f"Utente approvato ({role}) e assegnato alla scuola '{target_school}' da {admin_email or 'admin'}"
+        else:
+            u["can_define_school"] = False
+            mems = self.config.setdefault("school_memberships", {})
+            user_mems = mems.setdefault(email, {})
+            user_mems["default"] = {
+                "role": role,
+                "status": "approved",
+                "added_at": get_local_now().isoformat()
+            }
+            log_detail = f"Utente approvato ({role}) per la scuola principale da {admin_email or 'admin'}"
+
         self._save()
-        self.log_access("USER_APPROVED", email, role, "SUCCESS", ip, "-", f"Utente approvato con ruolo '{role}' da {admin_email or 'admin'}")
+        self.log_access("USER_APPROVED", email, role, "SUCCESS", ip, "-", log_detail)
         return u
 
     def reject_user(self, email, admin_email=None, ip=None):
