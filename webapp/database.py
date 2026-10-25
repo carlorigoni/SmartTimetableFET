@@ -399,6 +399,7 @@ class Database:
 
         os.makedirs(self.data_dir, exist_ok=True)
         os.makedirs(self.snapshots_dir, exist_ok=True)
+        self.data = {}
         self.data = self._init_data()
 
     def _init_data(self):
@@ -645,7 +646,10 @@ class Database:
 
     def _save_to_disk(self, data, user_email=None, expected_version=None):
         with self.lock:
-            cur_ver = int(self.data.get("data_version") or 1)
+            target_data = data if data is not None else getattr(self, "data", {})
+            self.data = target_data
+
+            cur_ver = int(target_data.get("data_version") or 1)
 
             # Usa parametri espliciti o eredita dal thread-local request context
             exp_v = expected_version if expected_version is not None else getattr(_request_context, "expected_version", None)
@@ -657,23 +661,23 @@ class Database:
                     if exp_int != cur_ver:
                         raise ConcurrentModificationError(
                             current_version=cur_ver,
-                            last_modified_by=self.data.get("last_modified_by", ""),
-                            last_modified=self.data.get("last_modified", "")
+                            last_modified_by=target_data.get("last_modified_by", ""),
+                            last_modified=target_data.get("last_modified", "")
                         )
                 except ValueError:
                     pass
 
             new_ver = cur_ver + 1
-            self.data["data_version"] = new_ver
+            target_data["data_version"] = new_ver
             now_iso = get_local_now().isoformat()
-            self.data["last_modified"] = now_iso
+            target_data["last_modified"] = now_iso
             if u_email:
-                self.data["last_modified_by"] = str(u_email).strip().lower()
+                target_data["last_modified_by"] = str(u_email).strip().lower()
 
             try:
                 tmp_file = f"{self.project_file}.tmp.{os.getpid()}"
                 with open(tmp_file, "w", encoding="utf-8") as f:
-                    json.dump(self.data, f, ensure_ascii=False, indent=2)
+                    json.dump(target_data, f, ensure_ascii=False, indent=2)
                 os.replace(tmp_file, self.project_file)
             except Exception as e:
                 print("Errore salvataggio project.json:", e)

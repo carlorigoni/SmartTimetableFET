@@ -504,6 +504,7 @@ async function switchSchool(schoolId) {
     });
     const data = await res.json();
     if (data.success) {
+      window.CURRENT_DATA_VERSION = null;
       await loadMySchools();
       await refreshAppState();
       navigate(currentView || 'dashboard', false);
