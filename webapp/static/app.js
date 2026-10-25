@@ -22,7 +22,7 @@ let pollSolverTimer = null;
 let currentSolverRunning = false;
 
 // --- VERSIONE E IDENTITÀ APPLICATIVA ---
-const APP_VERSION = '1.5.9';
+const APP_VERSION = '1.6.0';
 
 // Dizionario completo di traduzione materie scolastiche Italiano -> Inglese
 const SUBJECT_TRANSLATIONS_JS = {
@@ -246,7 +246,17 @@ let currentUser = null;
 let authPollInterval = null;
 let googleClientId = '';
 
+function applyVersionTags() {
+  const v = `v${APP_VERSION}`;
+  const ids = ['sidebarVerTag', 'pageFooterVer', 'aboutModalVer', 'updateCurrentVer'];
+  ids.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.innerText = v;
+  });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+  applyVersionTags();
   if (window.I18N) {
     window.I18N.updateLangUI();
     window.I18N.applyTheme(window.I18N.detectTheme(), false);
