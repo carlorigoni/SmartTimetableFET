@@ -2245,7 +2245,14 @@ class Database:
 
     def import_fet_xml(self, xml_content):
         with self.lock:
+            old_teachers = {t["name"]: copy.deepcopy(t) for t in self.data.get("teachers", [])}
             parsed = parse_fet_xml(xml_content)
+            for t in parsed.get("teachers", []):
+                old_t = old_teachers.get(t["name"])
+                if old_t:
+                    for k, val in old_t.items():
+                        if k not in t or t[k] is None or (k == "target_hours" and t[k] == 18 and old_t.get("target_hours") != 18):
+                            t[k] = val
             self.data = parsed
             has_tt = bool(self.data.get("has_timetable") or len(self.data.get("timetable", {})) > 0)
             if has_tt:

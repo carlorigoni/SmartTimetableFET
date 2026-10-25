@@ -9,6 +9,7 @@ import os
 import sys
 import re
 import io
+import copy
 import json
 import time
 import glob

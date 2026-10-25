@@ -395,10 +395,24 @@ def parse_fet_xml(content_or_path):
     for t in root.findall(".//Teachers_List/Teacher"):
         name = clean_text(t.findtext("Name"))
         if name:
-            data["teachers"].append({
+            raw_comm = clean_text(t.findtext("Comments", ""))
+            target_h = 18
+            custom_disp = None
+            if raw_comm:
+                m_th = re.search(r"target_hours:(\d+)", raw_comm)
+                if m_th:
+                    target_h = int(m_th.group(1))
+                m_cd = re.search(r"custom_disp:(\d+)", raw_comm)
+                if m_cd:
+                    custom_disp = int(m_cd.group(1))
+            t_data = {
                 "name": name,
-                "comments": clean_text(t.findtext("Comments", ""))
-            })
+                "comments": raw_comm,
+                "target_hours": target_h
+            }
+            if custom_disp is not None:
+                t_data["custom_disp_hours"] = custom_disp
+            data["teachers"].append(t_data)
 
     # Materie
     for s in root.findall(".//Subjects_List/Subject"):
@@ -888,11 +902,23 @@ def generate_fet_xml(data, include_timetable=False, exclude_disposizioni=True):
                 known_teachers[t_act] = ""
 
     lines.append('  <Teachers_List>')
+    teacher_obj_map = {t.get("name"): t for t in data.get("teachers", [])}
     for t_name, t_comm in sorted(known_teachers.items(), key=lambda x: x[0].lower()):
         lines.append('    <Teacher>')
         lines.append(f'      <Name>{xml_escape(t_name)}</Name>')
+        t_obj = teacher_obj_map.get(t_name, {})
+        comm_tokens = []
         if t_comm:
-            lines.append(f'      <Comments>{xml_escape(t_comm)}</Comments>')
+            comm_tokens.append(t_comm)
+        if t_obj.get("target_hours") and t_obj.get("target_hours") != 18:
+            if not any("target_hours" in tok for tok in comm_tokens):
+                comm_tokens.append(f'target_hours:{t_obj["target_hours"]}')
+        if t_obj.get("custom_disp_hours") is not None:
+            if not any("custom_disp" in tok for tok in comm_tokens):
+                comm_tokens.append(f'custom_disp:{t_obj["custom_disp_hours"]}')
+        merged_comm = " | ".join(comm_tokens)
+        if merged_comm:
+            lines.append(f'      <Comments>{xml_escape(merged_comm)}</Comments>')
         lines.append('    </Teacher>')
     lines.append('  </Teachers_List>')
 
