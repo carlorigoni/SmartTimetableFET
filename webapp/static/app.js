@@ -22,7 +22,7 @@ let pollSolverTimer = null;
 let currentSolverRunning = false;
 
 // --- VERSIONE E IDENTITÀ APPLICATIVA ---
-const APP_VERSION = '1.8.2';
+const APP_VERSION = '1.8.3';
 
 // --- OPTIMISTIC CONCURRENCY CONTROL (OCC) & FETCH INTERCEPTOR ---
 window.CURRENT_DATA_VERSION = null;
@@ -505,10 +505,15 @@ async function switchSchool(schoolId) {
     const data = await res.json();
     if (data.success) {
       window.CURRENT_DATA_VERSION = null;
+      // Resetta selezioni contestuali ed entità che appartenevano alla scuola precedente
+      activeEntity = '';
+      activeAvailEntity = '';
+      pendingActivityFilter = null;
+      stateData = { summary: null, timetableViews: null, teachers: null, classes: null, groups: null, subjects: null, rooms: null, activities: null, availability: null, settings: null };
       await loadMySchools();
       await refreshAppState();
-      navigate(currentView || 'dashboard', false);
-      showToast(`Passato a: ${data.school ? data.school.name : schoolId}`);
+      await navigate(currentView || 'dashboard', false);
+      showToast(`Passato a: ${data.school ? data.school.name : schoolId}`, 'ok');
     } else {
       alert(data.error || 'Impossibile passare alla scuola selezionata.');
     }
@@ -899,12 +904,14 @@ function handleAuthenticatedState(data) {
       if (sideItem) sideItem.style.display = 'flex';
       updatePendingBadge(data.pending_count || 0);
 
-      // Polling periodico per nuove richieste ogni 30s per l'admin
+      // Polling periodico per nuove richieste ogni 10s per l'amministratore
       if (!authPollInterval) {
-        authPollInterval = setInterval(refreshAdminPendingCount, 30000);
+        authPollInterval = setInterval(refreshAdminPendingCount, 10000);
       }
     } else {
       if (sideItem) sideItem.style.display = 'none';
+      const topBtn = document.getElementById('topbarPendingBtn');
+      if (topBtn) topBtn.style.display = 'none';
     }
 
     // Carica l'applicazione
@@ -913,7 +920,7 @@ function handleAuthenticatedState(data) {
   } else if (status === 'pending') {
     showPendingScreen(user);
     if (!authPollInterval) {
-      authPollInterval = setInterval(checkAuthMe, 6000);
+      authPollInterval = setInterval(checkAuthMe, 5000);
     }
   } else if (status === 'rejected') {
     showRejectedScreen(user);
@@ -923,11 +930,26 @@ function handleAuthenticatedState(data) {
 let latestPendingCount = 0;
 
 function updatePendingBadge(count) {
+  const prevCount = latestPendingCount;
   latestPendingCount = count || 0;
-  const badge = document.getElementById('sidebarPendingBadge') || document.getElementById('topbarPendingBadge');
+
+  // 1. Pulsante con campanella nella barra superiore (topbar)
+  const topbarBtn = document.getElementById('topbarPendingBtn');
+  const topbarCount = document.getElementById('topbarPendingCount');
+  if (topbarBtn) {
+    if (latestPendingCount > 0 && currentUser && (currentUser.role === 'admin' || currentUser.is_superadmin)) {
+      topbarBtn.style.display = 'inline-flex';
+      if (topbarCount) topbarCount.innerText = latestPendingCount;
+    } else {
+      topbarBtn.style.display = 'none';
+    }
+  }
+
+  // 2. Badge nella barra laterale (sidebar)
+  const badge = document.getElementById('sidebarPendingBadge');
   if (badge) {
-    if (count > 0) {
-      badge.innerText = count;
+    if (latestPendingCount > 0) {
+      badge.innerText = latestPendingCount;
       badge.style.display = 'inline-block';
     } else {
       badge.style.display = 'none';
@@ -935,17 +957,26 @@ function updatePendingBadge(count) {
   }
   const flyBadge = document.getElementById('flyoutPendingBadge');
   if (flyBadge) {
-    if (count > 0) {
-      flyBadge.innerText = count;
+    if (latestPendingCount > 0) {
+      flyBadge.innerText = latestPendingCount;
       flyBadge.style.display = 'inline-block';
     } else {
       flyBadge.style.display = 'none';
     }
   }
+
+  // 3. Badge interno al modal Gestione Accessi
+  const modalPendingBadge = document.getElementById('modalPendingCountBadge');
+  if (modalPendingBadge) modalPendingBadge.innerText = latestPendingCount;
+
+  // 4. Notifica sonora / visiva (Toast) all'amministratore se il conteggio aumenta
+  if (latestPendingCount > prevCount && currentUser && (currentUser.role === 'admin' || currentUser.is_superadmin)) {
+    showToast(`🔔 Nuova richiesta di accesso in attesa (${latestPendingCount} utente/i da autorizzare)!`, 'ok');
+  }
 }
 
 async function refreshAdminPendingCount() {
-  if (!currentUser || currentUser.role !== 'admin') return;
+  if (!currentUser || (currentUser.role !== 'admin' && !currentUser.is_superadmin)) return;
   try {
     const res = await fetch('/api/auth/me');
     const data = await res.json();
@@ -1091,7 +1122,7 @@ function switchGoogleAccount() {
                   handleAuthenticatedState({ user: data.user });
                 } else {
                   showPendingScreen(data.user);
-                  if (!authPollInterval) authPollInterval = setInterval(checkAuthMe, 6000);
+                  if (!authPollInterval) authPollInterval = setInterval(checkAuthMe, 5000);
                 }
               } else {
                 const errBox = document.getElementById('authErrorMsg');
@@ -1113,6 +1144,16 @@ function switchGoogleAccount() {
     }
   }
 
+  // Se Google Client ID non è ancora configurato, guida l'utente a richiedere l'abilitazione con email
+  const reqSec = document.getElementById('requestAccessSection');
+  if (reqSec) {
+    reqSec.scrollIntoView({ behavior: 'smooth' });
+    const emailInput = document.getElementById('reqAccessEmail');
+    if (emailInput) emailInput.focus();
+    showToast('⚠️ Google Client ID non configurato. Inserisci la tua email Google nel modulo sottostante per richiedere l\'abilitazione!', 'warn');
+    return;
+  }
+
   // Fallback: apri finestra di Google Account Chooser
   const w = 520, h = 620;
   const left = Math.max(0, (window.screen.width - w) / 2);
@@ -1122,6 +1163,61 @@ function switchGoogleAccount() {
     'GoogleAccountChooser',
     `width=${w},height=${h},top=${top},left=${left},resizable=yes,scrollbars=yes`
   );
+}
+
+async function submitAccessRequest() {
+  const errBox = document.getElementById('authErrorMsg');
+  if (errBox) errBox.style.display = 'none';
+
+  const nameEl = document.getElementById('reqAccessName');
+  const emailEl = document.getElementById('reqAccessEmail');
+
+  const name = (nameEl?.value || '').trim();
+  const email = (emailEl?.value || '').trim().toLowerCase();
+
+  if (!email || !email.includes('@') || !email.includes('.')) {
+    if (errBox) {
+      errBox.innerText = 'Inserisci un indirizzo email Google valido (es. nome.cognome@gmail.com).';
+      errBox.style.display = 'block';
+    }
+    return;
+  }
+
+  try {
+    const res = await fetch('/api/auth/request-access', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, name })
+    });
+    const data = await res.json();
+
+    if (!res.ok) {
+      if (errBox) {
+        errBox.innerText = data.error || 'Errore durante la richiesta di abilitazione.';
+        errBox.style.display = 'block';
+      }
+      return;
+    }
+
+    if (data.status === 'approved') {
+      showToast('Il tuo account è già approvato! Accedi per iniziare.', 'ok');
+      currentUser = data.user;
+      handleAuthenticatedState({ user: data.user });
+    } else if (data.status === 'pending') {
+      showToast('Richiesta inviata! In attesa di abilitazione da parte dell\'amministratore.', 'ok');
+      showPendingScreen(data.user);
+      if (!authPollInterval) {
+        authPollInterval = setInterval(checkAuthMe, 5000);
+      }
+    } else {
+      showRejectedScreen(data.user);
+    }
+  } catch (err) {
+    if (errBox) {
+      errBox.innerText = 'Errore di connessione: ' + err.message;
+      errBox.style.display = 'block';
+    }
+  }
 }
 
 async function handleGoogleCredentialResponse(response) {
@@ -2614,7 +2710,7 @@ function getNavReturnBarHtml(contextDesc = '') {
   `;
 }
 
-function navigate(view, pushHistory = true, customLabel = null) {
+async function navigate(view, pushHistory = true, customLabel = null) {
   if (pushHistory && currentView && currentView !== view) {
     const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
     let lbl = customLabel || getViewShortLabel(currentView);
@@ -2681,24 +2777,43 @@ function navigate(view, pushHistory = true, customLabel = null) {
   document.getElementById('pageTitle').innerText = translatedTitle;
 
   const container = document.getElementById('mainContent');
-  container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);">Caricamento dati in corso...</div>';
+  if (container) {
+    container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);">Caricamento dati in corso...</div>';
+  }
 
-  if (view === 'dashboard') renderDashboard();
-  else if (view === 'timetable') renderTimetable();
-  else if (view === 'solver') renderSolver();
-  else if (view === 'diagnostics') renderDiagnostics();
-  else if (view === 'teachers') renderTeachers();
-  else if (view === 'classes') renderClasses();
-  else if (view === 'subjects') renderSubjects();
-  else if (view === 'rooms') renderRooms();
-  else if (view === 'activities') renderActivities();
-  else if (view === 'accorpamenti') renderAccorpamenti();
-  else if (view === 'block_rules') renderBlockRulesView();
-  else if (view === 'availability') renderAvailability();
-  else if (view === 'constraints') renderConstraints();
-  else if (view === 'parameters') renderParameters();
-  else if (view === 'settings') renderParameters();
-  else if (view === 'snapshots' || view === 'import_export') renderSnapshots();
+  try {
+    if (view === 'dashboard') await renderDashboard();
+    else if (view === 'timetable') await renderTimetable();
+    else if (view === 'solver') await renderSolver();
+    else if (view === 'diagnostics') await renderDiagnostics();
+    else if (view === 'teachers') await renderTeachers();
+    else if (view === 'classes') await renderClasses();
+    else if (view === 'subjects') await renderSubjects();
+    else if (view === 'rooms') await renderRooms();
+    else if (view === 'activities') await renderActivities();
+    else if (view === 'accorpamenti') await renderAccorpamenti();
+    else if (view === 'block_rules') await renderBlockRulesView();
+    else if (view === 'availability') await renderAvailability();
+    else if (view === 'constraints') await renderConstraints();
+    else if (view === 'parameters') await renderParameters();
+    else if (view === 'settings') await renderParameters();
+    else if (view === 'snapshots' || view === 'import_export') await renderSnapshots();
+  } catch (renderErr) {
+    console.error(`Errore caricamento vista "${view}":`, renderErr);
+    if (container) {
+      container.innerHTML = `
+        <div class="card" style="text-align:center;padding:36px;margin:20px auto;max-width:600px;">
+          <div style="font-size:36px;margin-bottom:12px;">⚠️</div>
+          <h3 style="margin-bottom:8px;">Errore nel caricamento della schermata</h3>
+          <p style="color:var(--text-muted);font-size:13px;margin:0 0 16px;">${escapeHtml(renderErr.message || String(renderErr))}</p>
+          <div style="display:flex;gap:10px;justify-content:center;">
+            <button class="btn btn-primary" onclick="navigate('dashboard', false)">🏠 Torna alla Dashboard</button>
+            <button class="btn btn-sec" onclick="navigate('${escapeJs(view)}', false)">🔄 Riprova</button>
+          </div>
+        </div>
+      `;
+    }
+  }
 }
 
 // --- ORDINAMENTO CLASSI PER SEZIONE / ANNO DI CORSO (es. 1A, 2A, 3A, 4A, 5A, 2B, 1C...) ---
@@ -4445,7 +4560,8 @@ function applyTeacherFilters() {
 
 async function renderTeachers() {
   const res = await fetch('/api/teachers');
-  const teachers = await res.json();
+  let teachers = await res.json();
+  if (!Array.isArray(teachers)) teachers = [];
   // Ordinamento alfabetico rigoroso
   teachers.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
   stateData.teachers = teachers;
@@ -5738,11 +5854,13 @@ async function updateSectionPercorso(section, percorso) {
 }
 
 async function renderClasses() {
-  const [resClasses, resGroups, sectionsData] = await Promise.all([
-    fetch('/api/classes').then(r => r.json()),
-    fetch('/api/groups').then(r => r.json()),
+  let [resClasses, resGroups, sectionsData] = await Promise.all([
+    fetch('/api/classes').then(r => r.json()).catch(() => []),
+    fetch('/api/groups').then(r => r.json()).catch(() => []),
     fetch('/api/sections/percorsi').then(r => r.json()).catch(() => ({ section_percorsi: {}, sections: [] }))
   ]);
+  if (!Array.isArray(resClasses)) resClasses = [];
+  if (!Array.isArray(resGroups)) resGroups = [];
 
   // Ordinamento rigorosamente naturale per anno di corso e sezione (1A, 1B ... 5L)
   resClasses.sort((a, b) => naturalClassCompare(a.name, b.name));

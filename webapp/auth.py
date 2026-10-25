@@ -467,6 +467,62 @@ class AuthManager:
             "user": user
         }
 
+    def handle_access_request(self, email, name=None, ip=None, user_agent=None):
+        """
+        Registra una richiesta di accesso esplicita da parte di un nuovo utente o docente
+        (ad es. inserendo nome ed email Google nel modulo di richiesta sblocco).
+        Se non presente, lo registra con stato 'pending' e allerta l'amministratore.
+        """
+        clean_email = (email or "").lower().strip()
+        if not clean_email or "@" not in clean_email or "." not in clean_email.split("@")[-1]:
+            raise ValueError("Indirizzo email non valido")
+
+        clean_name = (name or "").strip() or clean_email.split("@")[0]
+        self._load()
+
+        is_admin = (clean_email == self.config["admin_email"].lower().strip())
+        now_iso = get_local_now().isoformat()
+
+        if clean_email not in self.config["users"]:
+            status = "approved" if is_admin else "pending"
+            role = "admin" if is_admin else "editor"
+            self.config["users"][clean_email] = {
+                "email": clean_email,
+                "name": clean_name,
+                "picture": "",
+                "role": role,
+                "status": status,
+                "created_at": now_iso,
+                "approved_at": now_iso if status == "approved" else None,
+                "last_login": None
+            }
+            self._save()
+            user = dict(self.config["users"][clean_email])
+            if not is_admin:
+                self._notify_admin_email(user)
+            self.log_access("REQUEST_ACCESS", clean_email, role, "INFO", ip, user_agent, f"Richiesta abilitazione inviata per {clean_name}")
+            return {
+                "ok": True,
+                "status": status,
+                "user": user,
+                "is_new_request": True,
+                "message": "Richiesta inviata all'amministratore con successo."
+            }
+        else:
+            user = dict(self.config["users"][clean_email])
+            if clean_name and (user.get("name") == clean_email.split("@")[0] or not user.get("name")):
+                self.config["users"][clean_email]["name"] = clean_name
+                self._save()
+                user["name"] = clean_name
+            self.log_access("REQUEST_ACCESS_REPEAT", clean_email, user.get("role", "editor"), "INFO", ip, user_agent, f"Richiesta ripetuta (stato attuale: {user.get('status')})")
+            return {
+                "ok": True,
+                "status": user.get("status", "pending"),
+                "user": user,
+                "is_new_request": False,
+                "message": f"Account già registrato con stato: {user.get('status')}"
+            }
+
     # --- USER APPROVAL / REJECTION ACTIONS ---
 
     def list_users(self):

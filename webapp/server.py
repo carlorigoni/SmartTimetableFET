@@ -97,7 +97,7 @@ def fetch_google_doc_docx_bytes(url):
     except Exception as e:
         raise ValueError(f"Impossibile scaricare il Google Doc: {e}")
 
-APP_VERSION = "1.8.2"
+APP_VERSION = "1.8.3"
 FET_VERSION = "7.12.0"
 APP_AUTHOR = "Carlo Rigoni"
 APP_MENTOR = "Federico Rettore"
@@ -953,6 +953,22 @@ class EurarioHandler(BaseHTTPRequestHandler):
                     "user": res["user"],
                     "is_new_request": res.get("is_new_request", False)
                 }, set_cookie=tok if tok else None)
+            except Exception as e:
+                self._json(400, {"error": str(e)})
+            return
+
+        elif path == "/api/auth/request-access":
+            if not body or not body.get("email"):
+                self._json(400, {"error": "Indirizzo email obbligatorio per richiedere l'abilitazione"})
+                return
+            try:
+                res = auth_manager.handle_access_request(
+                    email=body.get("email"),
+                    name=body.get("name"),
+                    ip=client_ip,
+                    user_agent=client_ua
+                )
+                self._json(200, res)
             except Exception as e:
                 self._json(400, {"error": str(e)})
             return

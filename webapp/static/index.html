@@ -21,14 +21,14 @@
     })();
   </script>
   <!-- Favicon & Branding Eurario (Safari macOS, Chrome, Edge, iOS, Android) -->
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=1.8.2">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png?v=1.8.2">
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png?v=1.8.2">
-  <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png?v=1.8.2">
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=1.8.2">
-  <link rel="mask-icon" href="/safari-pinned-tab.svg?v=1.8.2" color="#1B2A4A">
-  <link rel="shortcut icon" href="/favicon.ico?v=1.8.2">
-  <link rel="stylesheet" href="styles.css?v=1.8.2">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=1.8.3">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png?v=1.8.3">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png?v=1.8.3">
+  <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png?v=1.8.3">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=1.8.3">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg?v=1.8.3" color="#1B2A4A">
+  <link rel="shortcut icon" href="/favicon.ico?v=1.8.3">
+  <link rel="stylesheet" href="styles.css?v=1.8.3">
   <!-- Google Identity Services OAuth -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
@@ -247,7 +247,7 @@
             <span id="statusIndicatorDot" class="status-indicator-dot dot-green"></span>
             <span id="statusIndicatorText" class="status-indicator-text">FET 7.12</span>
           </span>
-          <span id="sidebarVerTag" class="footer-ver-tag" title="Versione Eurario">v1.8.2</span>
+          <span id="sidebarVerTag" class="footer-ver-tag" title="Versione Eurario">v1.8.3</span>
           <button class="footer-info-btn" onclick="openAboutModal()" title="Crediti, Mentore e Info Legali" aria-label="Informazioni e crediti">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
               <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
@@ -321,6 +321,13 @@
         <span id="instBadge" class="badge badge-info" style="display:none;">Eurario</span>
       </div>
       <div class="topbar-right">
+        <!-- Pulsante Notifica Richieste di Accesso in Attesa per l'Amministratore -->
+        <button type="button" id="topbarPendingBtn" class="topbar-btn topbar-pending-btn" onclick="openAccessManagementModal()" style="display:none;" title="Nuove richieste di accesso in attesa di approvazione" aria-label="Richieste di accesso in attesa">
+          <span class="bell-icon">🔔</span>
+          <span id="topbarPendingCount" class="badge-pending-count">1</span>
+          <span class="pending-btn-label" style="font-weight:700;font-size:11.5px;margin-left:4px;">Richieste in Attesa</span>
+        </button>
+
         <!-- Selettore Lingua ITA / ENG -->
         <div class="lang-selector-dropdown" id="langSelectorDropdown">
           <button type="button" id="btnLangToggle" class="topbar-btn topbar-pill-btn" onclick="toggleLangMenu(event)" title="Seleziona lingua / Change language" aria-label="Language selector">
@@ -389,7 +396,7 @@
 
     <footer class="app-page-footer">
       <div>
-        <b>Eurario FET Suite</b> &mdash; <span data-i18n="footer.version">Versione</span> <span id="pageFooterVer" class="badge-ver">v1.8.2</span> &bull; <span data-i18n="footer.author">Autore</span>: <b>Carlo Rigoni</b> &bull; <span data-i18n="footer.engine">Motore</span>: <b>FET 7.12.0</b> &bull; <a href="javascript:void(0)" onclick="openAboutModal()" style="color:var(--primary);text-decoration:none;font-weight:600;" data-i18n="footer.credits">Crediti & Note Legali</a>
+        <b>Eurario FET Suite</b> &mdash; <span data-i18n="footer.version">Versione</span> <span id="pageFooterVer" class="badge-ver">v1.8.3</span> &bull; <span data-i18n="footer.author">Autore</span>: <b>Carlo Rigoni</b> &bull; <span data-i18n="footer.engine">Motore</span>: <b>FET 7.12.0</b> &bull; <a href="javascript:void(0)" onclick="openAboutModal()" style="color:var(--primary);text-decoration:none;font-weight:600;" data-i18n="footer.credits">Crediti & Note Legali</a>
       </div>
       <div style="font-size:11.5px;color:var(--text-muted);">
         <span data-i18n="footer.heuristic">Algoritmo euristico</span>: <a href="https://lalescu.ro/liviu/fet/" target="_blank" rel="noopener" style="color:var(--primary);text-decoration:none;font-weight:600;">FET Free Timetabling Software</a> &bull; <span data-i18n="footer.ai_credit">AI Pair Programming</span>: Google DeepMind Antigravity
@@ -429,6 +436,25 @@
         <div id="googleConfigNotice" class="google-config-notice" style="display:none;">
           <small>⚠️ <b>Google Client ID non ancora configurato.</b><br>
           L'amministratore può accedere con il passcode di emergenza qui sotto per impostare il Google Client ID nelle impostazioni.</small>
+        </div>
+
+        <!-- Modulo Richiesta Abilitazione Account (per nuovi docenti o test locali) -->
+        <div id="requestAccessSection" class="request-access-box" style="margin-top:16px;background:var(--bg-hover,#f1f5f9);border:1px solid var(--border,#cbd5e1);border-radius:12px;padding:14px 16px;text-align:left;">
+          <div style="display:flex;align-items:center;gap:8px;font-weight:700;font-size:13px;color:var(--text-main,#0f172a);margin-bottom:6px;">
+            <span>📝</span> <span>Richiedi Abilitazione con Account Google</span>
+          </div>
+          <div style="font-size:11.5px;color:var(--text-muted,#64748b);margin-bottom:10px;line-height:1.4;">
+            Inserisci il tuo nome e la tua email Google: verrà inviata una notifica all'amministratore per autorizzarti e assegnarti la tua scuola.
+          </div>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <input type="text" id="reqAccessName" class="form-input" placeholder="Nome e Cognome (es. Mario Rossi)" style="font-size:12.5px;padding:7px 10px;" />
+            <div style="display:flex;gap:8px;">
+              <input type="email" id="reqAccessEmail" class="form-input" placeholder="Email Google (es. mario.rossi@gmail.com)" style="flex:1;font-size:12.5px;padding:7px 10px;" onkeydown="if(event.key==='Enter') submitAccessRequest()" />
+              <button type="button" class="btn btn-sm btn-primary" onclick="submitAccessRequest()" style="white-space:nowrap;padding:7px 14px;font-weight:700;">
+                📩 Invia Richiesta
+              </button>
+            </div>
+          </div>
         </div>
 
         <div class="auth-divider">
@@ -770,7 +796,7 @@
         <!-- Banner Versione & Verifica Aggiornamenti -->
         <div class="about-banner">
           <div style="display:flex;align-items:center;gap:8px;">
-            <span id="aboutModalVer" class="badge badge-info" style="font-size:12px;padding:3px 8px;font-weight:700;">v1.7.0</span>
+            <span id="aboutModalVer" class="badge badge-info" style="font-size:12px;padding:3px 8px;font-weight:700;">v1.8.3</span>
             <span id="aboutUpdateStatusText" style="font-size:11.5px;color:var(--text-sub);" data-i18n="modals.about.stable_release">Release Stabile</span>
           </div>
           <div style="display:flex;align-items:center;gap:10px;">
@@ -884,7 +910,7 @@
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
           <div class="update-stat-card">
             <div style="font-size: 11px; text-transform: uppercase; font-weight: 700; color: var(--text-sub); letter-spacing: 0.5px;" data-i18n="modals.updates.current_ver">Versione Corrente</div>
-            <div id="updateCurrentVer" style="font-size: 18px; font-weight: 800; color: var(--text-main); margin-top: 4px;">v1.7.0</div>
+            <div id="updateCurrentVer" style="font-size: 18px; font-weight: 800; color: var(--text-main); margin-top: 4px;">v1.8.3</div>
             <div id="updateCurrentTag" style="font-size: 11px; color: var(--text-muted); margin-top: 2px;" data-i18n="modals.updates.current_tag">In esecuzione sul server</div>
           </div>
           <div class="update-stat-card">
@@ -1077,7 +1103,7 @@
     </div>
   </div>
 
-  <script src="i18n.js?v=1.8.2"></script>
-  <script src="app.js?v=1.8.2"></script>
+  <script src="i18n.js?v=1.8.3"></script>
+  <script src="app.js?v=1.8.3"></script>
 </body>
 </html>
