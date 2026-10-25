@@ -21,7 +21,7 @@ import subprocess
 import platform
 import urllib.request
 import urllib.error
-from datetime import datetime
+import datetime
 from urllib.parse import urlparse, unquote, parse_qs
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from socketserver import ThreadingMixIn
@@ -86,7 +86,7 @@ def fetch_google_doc_docx_bytes(url):
     except Exception as e:
         raise ValueError(f"Impossibile scaricare il Google Doc: {e}")
 
-APP_VERSION = "1.5.9"
+APP_VERSION = "1.6.0"
 FET_VERSION = "7.12.0"
 APP_AUTHOR = "Carlo Rigoni"
 APP_MENTOR = "Federico Rettore"
@@ -232,6 +232,10 @@ class SmartTimetableHandler(BaseHTTPRequestHandler):
         self._send_cors()
         self.end_headers()
         self.wfile.write(body)
+        try:
+            self.wfile.flush()
+        except Exception:
+            pass
 
     def _get_session_token(self):
         cookie_header = self.headers.get("Cookie", "")
@@ -1363,7 +1367,7 @@ class SmartTimetableHandler(BaseHTTPRequestHandler):
                 return
             try:
                 if body.get("create_snapshot", True):
-                    snap_name = body.get("snapshot_name") or f"Pre-Aggiornamento Organico - {datetime.now().strftime('%d/%m/%Y %H:%M')}"
+                    snap_name = body.get("snapshot_name") or f"Pre-Aggiornamento Organico - {datetime.datetime.now().strftime('%d/%m/%Y %H:%M')}"
                     db.create_snapshot(snap_name, "Snapshot di sicurezza generato automaticamente prima dell'applicazione dell'organico.")
 
                 res = db.apply_organico_update(

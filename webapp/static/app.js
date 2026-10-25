@@ -2177,9 +2177,15 @@ async function renderTimetable() {
   let statsHtml = '';
   if (activeTimetableView === 'teacher' && views.teacher_stats && views.teacher_stats[activeEntity]) {
     const st = views.teacher_stats[activeEntity];
+    const targetH = st.target_hours || 18;
+    const teachH = st.teaching_lessons !== undefined ? st.teaching_lessons : st.total_lessons;
+    const dispH = st.disp_lessons || 0;
+    const totH = st.total_lessons || (teachH + dispH);
     statsHtml = `
-      <div style="display:flex;gap:10px;align-items:center;">
-        <span class="badge badge-info">${isEn ? 'Lesson hours:' : 'Ore lezione:'} <b>${st.total_lessons}</b></span>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+        <span class="badge badge-info" title="${isEn ? 'Front-line teaching lessons' : 'Ore di lezione frontale con studenti'}">${isEn ? 'Lesson hours:' : 'Ore lezione:'} <b>${teachH}h</b></span>
+        ${dispH > 0 ? `<span class="badge badge-disp" style="background:#fef3c7;color:#92400e;border:1px solid #f59e0b;padding:2px 8px;font-size:12px;font-weight:700;" title="${isEn ? 'On-duty / substitute hours' : 'Ore a disposizione / potenziamento'}">📌 ${isEn ? 'Duty:' : 'Disposizione:'} <b>${dispH}h</b></span>` : ''}
+        <span class="badge ${totH >= targetH ? 'badge-ok' : 'badge-warn'}" title="${isEn ? `Scheduled ${totH}h out of ${targetH}h contractual target` : `Collocate ${totH}h su ${targetH}h contrattuali`}">${isEn ? 'Total:' : 'Totale:'} <b>${totH}h / ${targetH}h</b></span>
         <span class="badge ${st.total_gaps > 0 ? 'badge-warn' : 'badge-ok'}">${isEn ? 'Gap hours:' : 'Ore buche:'} <b>${st.total_gaps}</b></span>
         <span class="badge ${st.total_transfers > 0 ? 'badge-warn' : 'badge-ok'}">${isEn ? 'Building changes:' : 'Cambi plesso:'} <b>${st.total_transfers}</b></span>
       </div>
@@ -2476,13 +2482,19 @@ function renderTimetableGridHtml(views, mode, entity) {
   else if (mode === 'room') matrix = (views.by_room || {})[entity] || {};
 
   const hourHeaderLbl = isEn ? 'Period' : 'Ora';
-  let headerHtml = `<div class="tt-header" style="background:#153d61;">${hourHeaderLbl}</div>` + days.map(d => `<div class="tt-header">${escapeHtml(formatDayName(d, true))}</div>`).join('');
+  let headerHtml = `<div class="tt-header" style="background:#153d61;">${hourHeaderLbl}</div>` + days.map(d => `<div class="tt-header">${escapeHtml(formatDayName(d, false))}</div>`).join('');
   let gridCols = `60px repeat(${days.length}, 1fr)`;
 
   let rowsHtml = '';
   for (const h of hours) {
     const isBreakHour = h.toUpperCase().startsWith('INT');
-    rowsHtml += `<div class="tt-hour-col ${isBreakHour ? 'is-break' : ''}">${h}</div>`;
+    let hourColLabel = h;
+    if (isBreakHour) {
+      hourColLabel = isEn ? 'Recess' : 'Intervallo';
+    } else if (/^\d+$/.test(h)) {
+      hourColLabel = isEn ? `P. ${h}` : `${h}ª ora`;
+    }
+    rowsHtml += `<div class="tt-hour-col ${isBreakHour ? 'is-break' : ''}">${hourColLabel}</div>`;
 
     for (const d of days) {
       if (isBreakHour) {
@@ -2500,7 +2512,7 @@ function renderTimetableGridHtml(views, mode, entity) {
           const isLocked = !isDisp && !!l.locked;
           const customDesc = (l.custom_desc || '').trim();
           const dispFallback = isEn ? '🟡 On-Duty / Substitute' : '🟡 Disposizione';
-          const subjName = isEn ? translateSubjectJs(l.subject, true) : l.subject;
+          const subjName = l.subject; // Preserva fedelmente il nome reale della materia come da richiesta
           const displaySubj = isDisp ? (customDesc ? `🟡 ${escapeHtml(customDesc)}` : dispFallback) : escapeHtml(subjName);
           const dispMetaFallback = isEn ? 'On-duty hour' : 'A disposizione';
           const dispMeta = customDesc ? `${dispMetaFallback} (${escapeHtml(customDesc)})` : dispMetaFallback;
@@ -3318,12 +3330,11 @@ async function applyAdvisorRelaxation(actionType, payload, restartSolver = false
       await refreshDiagnosticsBadge();
       if (restartSolver) {
         navigate('solver');
-        try {
-          await fetch('/api/solve/stop', { method: 'POST' });
-        } catch (_) {}
-        setTimeout(() => {
-          startSolver();
-        }, 500);
+        if (!data.restarted) {
+          setTimeout(() => {
+            startSolver();
+          }, 300);
+        }
       } else {
         renderDiagnostics(currentDiagTab);
       }
@@ -3335,7 +3346,11 @@ async function applyAdvisorRelaxation(actionType, payload, restartSolver = false
       }
     }
   } catch (e) {
-    alert((isEn ? 'Error: ' : 'Errore: ') + e.message);
+    console.error('Advisor apply_relax error:', e);
+    const msg = (e && e.message === 'Load failed') 
+      ? (isEn ? 'Network timeout or solver is restarting. Check the Solver tab.' : 'Timeout di rete o solutore in fase di riavvio. Controlla la scheda Compilatore FET.')
+      : ((isEn ? 'Error: ' : 'Errore: ') + (e ? e.message : 'Unknown error'));
+    alert(msg);
     if (btn) {
       btn.disabled = false;
       btn.innerText = isEn ? 'Retry' : 'Riprova';
@@ -3918,7 +3933,7 @@ async function renderTeachers() {
   `;
 }
 
-function updateDispPreview(totalH) {
+function updateDispPreview(lessonH) {
   const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
   const targetVal = parseInt(document.getElementById('editTeacherTarget')?.value, 10) || 18;
   const customDispInp = document.getElementById('editTeacherCustomDisp');
@@ -3927,13 +3942,13 @@ function updateDispPreview(totalH) {
   if (!resEl) return;
   if (customDispVal !== null && !isNaN(customDispVal)) {
     resEl.innerHTML = `<span class="badge-disp" style="font-size:12px;padding:3px 10px;background:#fef3c7;color:#92400e;border:1px solid #f59e0b;">📌 D = ${customDispVal}h ${isEn ? 'On-Duty (manual override)' : 'Disposizione (impostata manualmente)'}</span>`;
-  } else if (targetVal > totalH) {
-    const d = targetVal - totalH;
+  } else if (targetVal > lessonH) {
+    const d = targetVal - lessonH;
     resEl.innerHTML = `<span class="badge-disp" style="font-size:12px;padding:3px 10px;">📌 D = ${d}h ${isEn ? 'Duty Hours (uncovered by lessons)' : 'Disposizione (non coperte da lezioni)'}</span>`;
-  } else if (targetVal === totalH) {
+  } else if (targetVal === lessonH) {
     resEl.innerHTML = `<span style="color:var(--color-ok);font-weight:700;font-size:12px;">${isEn ? '✓ Assignment 100% Covered (0h Duty)' : '✓ Cattedra Coperta al 100% (0h D)'}</span>`;
   } else {
-    resEl.innerHTML = `<span style="color:var(--primary);font-weight:700;font-size:12px;">+${totalH - targetVal}h ${isEn ? 'Surplus / Overtime Hours' : 'Esubero / Ore Eccedenti'}</span>`;
+    resEl.innerHTML = `<span style="color:var(--primary);font-weight:700;font-size:12px;">+${lessonH - targetVal}h ${isEn ? 'Surplus / Overtime Hours' : 'Esubero / Ore Eccedenti'}</span>`;
   }
 }
 
@@ -3960,7 +3975,8 @@ function openEditTeacherModal(name) {
   const targetH = teacher.target_hours !== undefined ? teacher.target_hours : 18;
   const minDays = teacher.min_days !== undefined ? teacher.min_days : 4;
   const maxDays = teacher.max_days !== undefined ? teacher.max_days : 5;
-  const totalH = teacher.total_hours || 0;
+  const lessonH = (teacher.lesson_hours !== undefined && teacher.lesson_hours !== null) ? teacher.lesson_hours : (teacher.total_hours || 0);
+  const totalH = teacher.total_hours !== undefined ? teacher.total_hours : (lessonH + (teacher.disp_hours || 0));
   const shortName = (teacher.short_name || '').trim() || computeShortNameJs(name);
   
   let contractType = teacher.contract_type;
@@ -4053,14 +4069,14 @@ function openEditTeacherModal(name) {
           </div>
           <div class="form-group">
             <label class="form-label">${isEn ? 'Contract Target Hours' : 'Ore Cattedra Contrattuali'}</label>
-            <input type="number" id="editTeacherTarget" class="form-input" value="${targetH}" min="1" max="36" oninput="updateDispPreview(${totalH})">
+            <input type="number" id="editTeacherTarget" class="form-input" value="${targetH}" min="1" max="36" oninput="updateDispPreview(${lessonH})">
           </div>
           <div class="form-group">
             <label class="form-label" style="display:flex;align-items:center;justify-content:space-between;">
               <span>${isEn ? 'Duty Hours (Override)' : 'Ore Disposizione (Manuale)'}</span>
               <span style="font-size:10px;color:var(--text-muted);font-weight:normal;">${isEn ? 'Optional' : 'Opzionale'}</span>
             </label>
-            <input type="number" id="editTeacherCustomDisp" class="form-input" value="${teacher.custom_disp_hours !== undefined && teacher.custom_disp_hours !== null ? teacher.custom_disp_hours : ''}" min="0" max="36" placeholder="${isEn ? 'Auto: Target - Lessons' : 'Auto: Target - Lezioni'}" oninput="updateDispPreview(${totalH})">
+            <input type="number" id="editTeacherCustomDisp" class="form-input" value="${teacher.custom_disp_hours !== undefined && teacher.custom_disp_hours !== null ? teacher.custom_disp_hours : ''}" min="0" max="36" placeholder="${isEn ? 'Auto: Target - Lessons' : 'Auto: Target - Lezioni'}" oninput="updateDispPreview(${lessonH})">
           </div>
         </div>
 
@@ -4068,22 +4084,26 @@ function openEditTeacherModal(name) {
         <div id="dispPreviewBox" style="background:#f5f3ff;border:1px solid #ddd6fe;border-radius:6px;padding:10px 14px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
           <div>
             <span style="font-size:12px;color:#5b21b6;font-weight:600;">${isEn ? 'Assigned Teaching Hours:' : 'Ore Lezione Frontale Assegnate:'}</span>
-            <b style="font-size:14px;color:#4c1d95;margin-left:4px;">${totalH} h</b>
+            <b style="font-size:14px;color:#4c1d95;margin-left:4px;">${lessonH} h</b>
           </div>
           <div id="dispCalculationResult">
-            ${targetH > totalH ? `
-              <span class="badge-disp" style="font-size:12px;padding:3px 10px;">
-                📌 D = ${targetH - totalH}h ${isEn ? 'Duty Hours (uncovered by lessons)' : 'Disposizione (non coperte da lezioni)'}
+            ${(teacher.custom_disp_hours !== undefined && teacher.custom_disp_hours !== null) ? `
+              <span class="badge-disp" style="font-size:12px;padding:3px 10px;background:#fef3c7;color:#92400e;border:1px solid #f59e0b;">
+                📌 D = ${teacher.custom_disp_hours}h ${isEn ? 'On-Duty (manual override)' : 'Disposizione (impostata manualmente)'}
               </span>
-            ` : (targetH === totalH ? `
+            ` : (targetH > lessonH ? `
+              <span class="badge-disp" style="font-size:12px;padding:3px 10px;">
+                📌 D = ${targetH - lessonH}h ${isEn ? 'Duty Hours (uncovered by lessons)' : 'Disposizione (non coperte da lezioni)'}
+              </span>
+            ` : (targetH === lessonH ? `
               <span style="color:var(--color-ok);font-weight:700;font-size:12px;">
                 ${isEn ? '✓ Assignment 100% Covered (0h Duty)' : '✓ Cattedra Coperta al 100% (0h D)'}
               </span>
             ` : `
               <span style="color:var(--primary);font-weight:700;font-size:12px;">
-                +${totalH - targetH}h ${isEn ? 'Surplus / Overtime Hours' : 'Esubero / Ore Eccedenti'}
+                +${lessonH - targetH}h ${isEn ? 'Surplus / Overtime Hours' : 'Esubero / Ore Eccedenti'}
               </span>
-            `)}
+            `))}
           </div>
         </div>
 

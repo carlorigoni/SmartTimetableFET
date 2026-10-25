@@ -722,6 +722,8 @@ def build_timetable_views(data):
     for t in data.get("teachers", []):
         tname = t["name"]
         total_lessons = 0
+        teaching_lessons = 0
+        disp_lessons = 0
         total_gaps = 0
         total_transfers = 0
         gaps_by_day = {}
@@ -737,6 +739,13 @@ def build_timetable_views(data):
                     bld = slots[0].get("building", "")
                     if bld:
                         buildings_seq.append(bld)
+                    for item in slots:
+                        subj_s = (item.get("subject") or "").strip().lower()
+                        comments_s = (item.get("comments") or "").strip()
+                        if subj_s.startswith("disposiz") or comments_s.startswith("FET_DISPOSIZIONE"):
+                            disp_lessons += 1
+                        else:
+                            teaching_lessons += 1
 
             # Conteggio ore buche
             if len(occupied_hours) >= 2:
@@ -761,8 +770,14 @@ def build_timetable_views(data):
             transfers_by_day[d] = day_transfers
             total_lessons += len(occupied_hours)
 
+        target_h = t.get("target_hours", 18)
+        custom_disp_h = t.get("custom_disp_hours")
         teacher_stats[tname] = {
             "total_lessons": total_lessons,
+            "teaching_lessons": teaching_lessons,
+            "disp_lessons": disp_lessons,
+            "target_hours": target_h,
+            "custom_disp_hours": custom_disp_h,
             "total_gaps": total_gaps,
             "gaps_by_day": gaps_by_day,
             "total_transfers": total_transfers,

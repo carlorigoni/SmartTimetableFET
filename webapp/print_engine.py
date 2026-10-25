@@ -250,7 +250,11 @@ SUBJECT_TRANSLATIONS_EN = {
 }
 
 def get_subject_display_name(subj: str, lang: str = "it") -> str:
-    """Restituisce il nome della materia tradotto se lang == 'en', altrimenti originale."""
+    """
+    Restituisce il nome della materia. Come da richiesta tassativa dell'utente:
+    NON tradurre i nomi delle materie scolastiche (es. Matematica, Diritto, Filosofia, ecc. devono rimanere nei loro nomi originali),
+    ma tradurre solo le voci di servizio come 'Disposizione' ('On-Duty').
+    """
     if not subj:
         return ""
     is_en = str(lang).strip().lower() in ("en", "eng", "english")
@@ -258,12 +262,8 @@ def get_subject_display_name(subj: str, lang: str = "it") -> str:
         return subj
     s_clean = subj.strip()
     s_lower = s_clean.lower()
-    if s_lower in SUBJECT_TRANSLATIONS_EN:
-        return SUBJECT_TRANSLATIONS_EN[s_lower]
-    # Controlla prefissi o sottostringhe con ordine di lunghezza decrescente (le più specifiche prima)
-    for it_k in sorted(SUBJECT_TRANSLATIONS_EN.keys(), key=len, reverse=True):
-        if s_lower == it_k or s_lower.startswith(it_k + " ") or (" " + it_k) in s_lower or it_k in s_lower:
-            return SUBJECT_TRANSLATIONS_EN[it_k]
+    if s_lower.startswith("disposiz"):
+        return "On-Duty"
     return subj
 
 
