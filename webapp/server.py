@@ -35,7 +35,7 @@ if ROOT_DIR not in sys.path:
 
 from webapp.database import db, parse_organico_docx_content
 from webapp.fet_engine import generate_fet_xml
-from webapp.auth import auth_manager
+from webapp.auth import auth_manager, get_local_now, SERVER_TZ_NAME
 from webapp.validator import TimetablePreValidator
 from webapp.advisor import TimetableAdvisor
 from webapp.print_engine import (
@@ -87,7 +87,7 @@ def fetch_google_doc_docx_bytes(url):
     except Exception as e:
         raise ValueError(f"Impossibile scaricare il Google Doc: {e}")
 
-APP_VERSION = "1.6.1"
+APP_VERSION = "1.6.2"
 FET_VERSION = "7.12.0"
 APP_AUTHOR = "Carlo Rigoni"
 APP_MENTOR = "Federico Rettore"
@@ -1425,7 +1425,7 @@ class SmartTimetableHandler(BaseHTTPRequestHandler):
                 return
             try:
                 if body.get("create_snapshot", True):
-                    snap_name = body.get("snapshot_name") or f"Pre-Aggiornamento Organico - {datetime.datetime.now().strftime('%d/%m/%Y %H:%M')}"
+                    snap_name = body.get("snapshot_name") or f"Pre-Aggiornamento Organico - {get_local_now().strftime('%d/%m/%Y %H:%M')}"
                     db.create_snapshot(snap_name, "Snapshot di sicurezza generato automaticamente prima dell'applicazione dell'organico.")
 
                 res = db.apply_organico_update(
@@ -1661,13 +1661,16 @@ class SmartTimetableHandler(BaseHTTPRequestHandler):
             if solver_state["running"] and solver_state["process"]:
                 kill_fet_process(solver_state["process"], force=True)
 
+            fet_env = dict(os.environ)
+            fet_env["TZ"] = SERVER_TZ_NAME
             try:
                 proc = subprocess.Popen(
                     cmd,
                     stdout=subprocess.PIPE,
                     stderr=subprocess.STDOUT,
                     text=True,
-                    bufsize=1
+                    bufsize=1,
+                    env=fet_env
                 )
             except Exception as e:
                 if respond:
@@ -1684,7 +1687,7 @@ class SmartTimetableHandler(BaseHTTPRequestHandler):
             solver_state["start_time"] = time.time()
             solver_state["elapsed"] = 0.0
             
-            now_ts = datetime.datetime.now().strftime("[%H:%M:%S]")
+            now_ts = get_local_now().strftime("[%H:%M:%S]")
             init_logs = [
                 f"{now_ts} 🚀 Avvio di fet-cl 7.12.0 su {total_act} attività (Modalità: {'Verbosa (Stile Desktop)' if verbose else 'Standard'})...",
                 f"{now_ts} 📁 Cartella output: {output_dir}"
@@ -1709,7 +1712,7 @@ class SmartTimetableHandler(BaseHTTPRequestHandler):
             solver_state["verbose"] = verbose
 
         def log_solver_msg(msg):
-            ts = datetime.datetime.now().strftime("[%H:%M:%S]")
+            ts = get_local_now().strftime("[%H:%M:%S]")
             line = f"{ts} {msg}"
             with solver_lock:
                 solver_state["logs"].append(line)

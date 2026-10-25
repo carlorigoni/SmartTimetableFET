@@ -31,6 +31,8 @@ PROJECT_FILE = os.path.join(DATA_DIR, "current_project.json")
 SOLVED_FILE = os.path.join(DATA_DIR, "solved_timetable.fet")
 SNAPSHOTS_DIR = os.path.join(DATA_DIR, "snapshots")
 
+from webapp.auth import get_local_now
+
 
 
 def compute_short_name(name):
@@ -537,8 +539,7 @@ class Database:
         existing_snaps = [f for f in os.listdir(SNAPSHOTS_DIR) if f.endswith(".json")]
         if not existing_snaps:
             try:
-                import datetime
-                now = datetime.datetime.now()
+                now = get_local_now()
                 sid = "snap_baseline_initial"
                 stats = {
                     "teachers_count": len(data.get("teachers", [])),
@@ -2919,8 +2920,7 @@ class Database:
         """
         with self.lock:
             os.makedirs(SNAPSHOTS_DIR, exist_ok=True)
-            import datetime
-            now = datetime.datetime.now()
+            now = get_local_now()
             sid = f"snap_{now.strftime('%Y%m%d_%H%M%S')}"
             snap_name = (name or "").strip() or f"Configurazione del {now.strftime('%d/%m/%Y %H:%M')}"
             
@@ -3066,8 +3066,7 @@ class Database:
         """
         with self.lock:
             os.makedirs(SNAPSHOTS_DIR, exist_ok=True)
-            import datetime
-            now = datetime.datetime.now()
+            now = get_local_now()
             sid = f"snap_imp_{now.strftime('%Y%m%d_%H%M%S')}"
             clean_name = os.path.splitext(os.path.basename(filename))[0] if filename else f"Import_{now.strftime('%d%m_%H%M')}"
             

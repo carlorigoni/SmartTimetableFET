@@ -22,7 +22,7 @@ let pollSolverTimer = null;
 let currentSolverRunning = false;
 
 // --- VERSIONE E IDENTITÀ APPLICATIVA ---
-const APP_VERSION = '1.6.1';
+const APP_VERSION = '1.6.2';
 
 // Dizionario completo di traduzione materie scolastiche Italiano -> Inglese
 const SUBJECT_TRANSLATIONS_JS = {
@@ -2687,26 +2687,8 @@ function renderSolver() {
       </div>
     </div>
 
-    <!-- Bottleneck Alert Card (visibile se il calcolo si arresta su attività critica) -->
-    <div id="bottleneckCard" style="display:none;background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.3);border-radius:var(--radius-md);padding:14px 16px;margin-bottom:16px;">
-      <div style="display:flex;gap:10px;align-items:flex-start;">
-        <span style="font-size:20px;">⚠️</span>
-        <div style="flex:1;">
-          <h4 style="margin:0 0 4px;color:var(--warn);font-size:14px;">${isEn ? 'FET Bottleneck Diagnostic (Desktop Style)' : 'Diagnostica Collo di Bottiglia FET (Stile Desktop App)'}</h4>
-          <p id="bottleneckText" style="margin:0 0 8px;font-size:12.5px;color:var(--text-main);"></p>
-          <div style="display:flex;gap:8px;flex-wrap:wrap;">
-            <button class="btn btn-sm btn-primary" onclick="navigate('activities')">${isEn ? '📝 Go to Activities' : '📝 Vai ad Attività / Cattedre'}</button>
-            <button class="btn btn-sm btn-sec" onclick="navigate('availability')">${isEn ? '📅 Check Availability' : '📅 Controlla Indisponibilità'}</button>
-            <button class="btn btn-sm btn-sec" onclick="navigate('constraints')">${isEn ? '⚡ Relax Constraints' : '⚡ Riduci Peso Vincoli'}</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Intelligent Advisor Live Card (Fase 2: visibile durante stallo o se FET non chiude) -->
-    <div id="solverAdvisorCard" style="display:none;margin-bottom:16px;" class="advisor-box"></div>
-
-    <div class="card">
+    <!-- Live FET Console (IN ALTO, prima dell'Advisor) -->
+    <div class="card" style="margin-bottom:16px;">
       <div class="card-title" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
         <span>${isEn ? 'FET CLI Real-Time Log' : 'Log in tempo reale di FET CLI'}</span>
         <div style="display:flex;gap:8px;align-items:center;font-size:12px;flex-wrap:wrap;">
@@ -2723,6 +2705,25 @@ function renderSolver() {
       </div>
       <div id="solverConsole" class="console" style="height:380px;">${isEn ? 'Waiting for fet-cl execution...' : 'In attesa dell\'avvio di fet-cl...'}</div>
     </div>
+
+    <!-- Bottleneck Alert Card (visibile se il calcolo si arresta su attività critica - SOTTO la console) -->
+    <div id="bottleneckCard" style="display:none;background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.3);border-radius:var(--radius-md);padding:14px 16px;margin-bottom:16px;">
+      <div style="display:flex;gap:10px;align-items:flex-start;">
+        <span style="font-size:20px;">⚠️</span>
+        <div style="flex:1;">
+          <h4 style="margin:0 0 4px;color:var(--warn);font-size:14px;">${isEn ? 'FET Bottleneck Diagnostic (Desktop Style)' : 'Diagnostica Collo di Bottiglia FET (Stile Desktop App)'}</h4>
+          <p id="bottleneckText" style="margin:0 0 8px;font-size:12.5px;color:var(--text-main);"></p>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button class="btn btn-sm btn-primary" onclick="navigate('activities')">${isEn ? '📝 Go to Activities' : '📝 Vai ad Attività / Cattedre'}</button>
+            <button class="btn btn-sm btn-sec" onclick="navigate('availability')">${isEn ? '📅 Check Availability' : '📅 Controlla Indisponibilità'}</button>
+            <button class="btn btn-sm btn-sec" onclick="navigate('constraints')">${isEn ? '⚡ Relax Constraints' : '⚡ Riduci Peso Vincoli'}</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Intelligent Advisor Live Card (SOTTO la console dei log) -->
+    <div id="solverAdvisorCard" style="display:none;margin-bottom:16px;" class="advisor-box"></div>
   `;
 
   // Carica banner di pre-validazione

@@ -43,15 +43,19 @@ ENV DEBIAN_FRONTEND=noninteractive \
     PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     HOST=0.0.0.0 \
-    PORT=8000
+    PORT=8000 \
+    TZ=Europe/Rome
 
-# Dipendenze a runtime per fet-cl (Qt6 Core e Network), Python 3 e curl per healthcheck
+# Dipendenze a runtime per fet-cl (Qt6 Core e Network), Python 3, tzdata (fuso orario/ora legale) e curl
 RUN apt-get update && apt-get install -y --no-install-recommends \
     python3 \
     libqt6core6t64 \
     libqt6network6t64 \
     ca-certificates \
     curl \
+    tzdata \
+ && ln -fs /usr/share/zoneinfo/Europe/Rome /etc/localtime \
+ && echo "Europe/Rome" > /etc/timezone \
  && rm -rf /var/lib/apt/lists/*
 
 # Copia l'eseguibile compilato fet-cl nel PATH di sistema
