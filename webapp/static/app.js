@@ -22,7 +22,157 @@ let pollSolverTimer = null;
 let currentSolverRunning = false;
 
 // --- VERSIONE E IDENTITÀ APPLICATIVA ---
-const APP_VERSION = '1.5.8';
+const APP_VERSION = '1.5.9';
+
+// Dizionario completo di traduzione materie scolastiche Italiano -> Inglese
+const SUBJECT_TRANSLATIONS_JS = {
+  'discipline letterarie istituti ii grado': 'Literature & History',
+  'discipline letterarie': 'Literature & History',
+  'disegno storia arte istituto ii grado': 'Drawing & Art History',
+  'disegno e storia dell\'arte': 'Drawing & Art History',
+  'disegno storia dell\'arte': 'Drawing & Art History',
+  'italiano latino storia e geografia': 'Italian, Latin, History & Geo',
+  'italiano storia e geografia': 'Italian, History & Geography',
+  'italiano e latino': 'Italian & Latin',
+  'lingua e letteratura italiana': 'Italian Language & Literature',
+  'lingua e cultura straniera (inglese)': 'English Language & Culture',
+  'lingua e cultura straniera (francese)': 'French Language & Culture',
+  'lingua e cultura straniera (spagnolo)': 'Spanish Language & Culture',
+  'lingua e cultura straniera (tedesco)': 'German Language & Culture',
+  'scienze economiche - aziendali': 'Business Economics',
+  'scienze economiche aziendali': 'Business Economics',
+  'scienze matematiche applicate': 'Applied Mathematics',
+  'scienze motorie e sportive ii grado': 'Physical Education & Sports',
+  'scienze motorie e sportive': 'Physical Education & Sports',
+  'scienze motorie': 'Physical Education',
+  'scienze naturali, chimica e biologia': 'Natural Sciences, Chemistry & Biology',
+  'scienze naturali chimica e biologia': 'Natural Sciences, Chemistry & Biology',
+  'scienze della terra e biologia': 'Earth Sciences & Biology',
+  'scienze e tecnologie informatiche': 'Computer Science & Technologies',
+  'diritto e relazioni internazionali': 'Law & Int. Relations',
+  'diritto ed economia politica': 'Law & Political Economy',
+  'diritto ed economia': 'Law & Economics',
+  'filosofia e scienze umane': 'Philosophy & Human Sciences',
+  'filosofia e storia': 'Philosophy & History',
+  'storia e filosofia': 'History & Philosophy',
+  'storia e geografia': 'History & Geography',
+  'matematica e fisica': 'Mathematics & Physics',
+  'discipline sanitarie': 'Health Sciences',
+  'legislazione sanitaria': 'Health Legislation',
+  'metodologie operative': 'Operational Methodologies',
+  'tecniche amministrative': 'Administrative Techniques',
+  'tecniche amministrative ed economia aziendale': 'Business Economics & Admin',
+
+  // Materie Canoniche Singole
+  'italiano': 'Italian',
+  'latino': 'Latin',
+  'greco': 'Ancient Greek',
+  'storia': 'History',
+  'geografia': 'Geography',
+  'geostoria': 'Geo-History',
+  'filosofia': 'Philosophy',
+  'scienze umane': 'Human Sciences',
+  'pedagogia': 'Pedagogy',
+  'psicologia': 'Psychology',
+  'antropologia': 'Anthropology',
+  'sociologia': 'Sociology',
+
+  // Lingue Straniere
+  'inglese': 'English',
+  'lingua inglese': 'English Language',
+  'lingua e cultura inglese': 'English Language & Culture',
+  'francese': 'French',
+  'lingua francese': 'French Language',
+  'lingua e cultura francese': 'French Language & Culture',
+  'spagnolo': 'Spanish',
+  'lingua spagnola': 'Spanish Language',
+  'lingua e cultura spagnola': 'Spanish Language & Culture',
+  'tedesco': 'German',
+  'lingua tedesca': 'German Language',
+  'lingua e cultura tedesca': 'German Language & Culture',
+  'russo': 'Russian',
+  'cinese': 'Chinese',
+  'conversazione': 'Language Conversation',
+  'conversazione in lingua straniera': 'Foreign Language Conversation',
+
+  // Matematica, Fisica e Informatica
+  'matematica': 'Mathematics',
+  'fisica': 'Physics',
+  'informatica': 'Computer Science',
+  'tecnologie informatiche': 'Information Technologies',
+  'scienze e tecnologie applicate': 'Applied Science & Tech',
+  'tecnologie e tecniche di rappresentazione grafica': 'Graphic Representation Tech',
+  'disegno tecnico': 'Technical Drawing',
+  'disegno': 'Drawing',
+  'storia dell\'arte': 'Art History',
+  'arte e immagine': 'Art & Image',
+
+  // Scienze Naturali, Chimica, Biologia
+  'scienze': 'Sciences',
+  'scienze naturali': 'Natural Sciences',
+  'scienze della terra': 'Earth Sciences',
+  'biologia': 'Biology',
+  'chimica': 'Chemistry',
+  'scienze integrate': 'Integrated Sciences',
+  'scienze integrate (chimica)': 'Integrated Sciences (Chemistry)',
+  'scienze integrate (fisica)': 'Integrated Sciences (Physics)',
+  'scienze integrate (scienze della terra e biologia)': 'Integrated Sciences (Earth & Bio)',
+  'microbiologia': 'Microbiology',
+  'igiene': 'Hygiene & Health',
+
+  // Giuridico-Economiche
+  'diritto': 'Law',
+  'economia politica': 'Political Economy',
+  'economia aziendale': 'Business Economics',
+  'relazioni internazionali': 'International Relations',
+  'scienze economico-aziendali': 'Business Economics',
+  'finanza': 'Public Finance',
+
+  // Scienze Motorie e Religione
+  'educazione fisica': 'Physical Education',
+  'religione': 'Religion',
+  'religione cattolica': 'Catholic Religion',
+  'irc': 'Catholic Religious Education',
+  'materia alternativa': 'Alternative Activity',
+  'attività alternativa': 'Alternative Activity',
+  'studio assistito': 'Supervised Study',
+
+  // Discipline Tecniche e Professionali
+  'meccanica': 'Mechanics',
+  'meccanica e macchine': 'Mechanics & Machines',
+  'robotica': 'Robotics',
+  'elettronica': 'Electronics',
+  'elettronica ed elettrotecnica': 'Electronics & Electrical Eng.',
+  'elettrotecnica': 'Electrical Engineering',
+  'telecomunicazioni': 'Telecommunications',
+  'sistemi e reti': 'Systems & Networks',
+  'tecnologie chimiche': 'Chemical Technologies',
+  'biotecnologie': 'Biotechnology',
+  'costruzioni ambiente e territorio': 'Construction & Environment',
+  'topografia': 'Topography',
+
+  // Disposizioni e Attività Istituzionali
+  'disposizione': 'On-Duty / Available',
+  'disposizioni': 'On-Duty / Available',
+  'potenziamento': 'Enhancement / Support',
+  'ricevimento': 'Office Hours',
+  'coordinamento': 'Class Coordination',
+  'supplenza': 'Substitute Duty'
+};
+
+function translateSubjectJs(subj, isEn = true) {
+  if (!subj || !isEn) return subj || '';
+  const s = String(subj).trim();
+  const low = s.toLowerCase();
+  if (SUBJECT_TRANSLATIONS_JS[low]) return SUBJECT_TRANSLATIONS_JS[low];
+  const keysSorted = Object.keys(SUBJECT_TRANSLATIONS_JS).sort((a, b) => b.length - a.length);
+  for (const itK of keysSorted) {
+    if (low === itK || low.startsWith(itK + ' ') || low.includes(' ' + itK) || low.includes(itK)) {
+      return SUBJECT_TRANSLATIONS_JS[itK];
+    }
+  }
+  return s;
+}
 
 // Helper traduzione i18n universale
 function _t(key, fallback = '') {
@@ -2350,7 +2500,8 @@ function renderTimetableGridHtml(views, mode, entity) {
           const isLocked = !isDisp && !!l.locked;
           const customDesc = (l.custom_desc || '').trim();
           const dispFallback = isEn ? '🟡 On-Duty / Substitute' : '🟡 Disposizione';
-          const displaySubj = isDisp ? (customDesc ? `🟡 ${escapeHtml(customDesc)}` : dispFallback) : escapeHtml(l.subject);
+          const subjName = isEn ? translateSubjectJs(l.subject, true) : l.subject;
+          const displaySubj = isDisp ? (customDesc ? `🟡 ${escapeHtml(customDesc)}` : dispFallback) : escapeHtml(subjName);
           const dispMetaFallback = isEn ? 'On-duty hour' : 'A disposizione';
           const dispMeta = customDesc ? `${dispMetaFallback} (${escapeHtml(customDesc)})` : dispMetaFallback;
 
@@ -3140,11 +3291,15 @@ async function applyAdvisorRelaxation(actionType, payload, restartSolver = false
   try {
     const res = await fetch('/api/advisor/apply_relax', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      cache: 'no-cache',
       body: JSON.stringify({
         action_type: actionType,
         payload: payload,
-        restart_solver: false,
+        restart_solver: restartSolver,
         lang: isEn ? 'en' : 'it'
       })
     });
@@ -3661,12 +3816,14 @@ async function renderTeachers() {
             if (contractType === 'coe') {
               contractBadge = '<span class="badge badge-coe" title="Cattedra Orario Esterna (COE) - completamento su altro istituto">🏫 COE</span>';
             } else if (contractType === 'spezzone') {
-              contractBadge = '<span class="badge badge-spezzone" title="Spezzone Orario Residuo">🧩 Spezzone</span>';
+              contractBadge = `<span class="badge badge-spezzone" title="Spezzone Orario Residuo (${targetH}h)">🧩 Spezzone (${targetH}h)</span>`;
             } else if (contractType === 'part_time') {
-              contractBadge = '<span class="badge badge-pt" title="Contratto a Tempo Parziale (Part-Time)">⏳ Part-Time</span>';
+              contractBadge = `<span class="badge badge-pt" title="Contratto a Tempo Parziale (Part-Time ${targetH}h)">⏳ Part-Time (${targetH}h)</span>`;
             } else {
-              contractBadge = '<span class="badge badge-intera" title="Cattedra Ordinaria Intera (18h)">🏛️ Intera</span>';
+              contractBadge = `<span class="badge badge-intera" title="Cattedra Ordinaria Intera (${targetH}h)">🏛️ Intera (${targetH}h)</span>`;
             }
+
+            const isManualDisp = t.custom_disp_hours !== undefined && t.custom_disp_hours !== null && String(t.custom_disp_hours).trim() !== '';
 
             return `
             <tr data-contract="${contractType}" data-has-disp="${dispH > 0 ? '1' : '0'}" data-is-full="${isComplete ? '1' : '0'}">
@@ -3687,7 +3844,7 @@ async function renderTeachers() {
               <td style="text-align:center;">
                 <div>
                   <span class="badge ${totalH > 0 ? 'badge-info' : ''}" style="font-weight:700;font-size:12px;" title="${lessonH} ore di lezione ${dispH > 0 ? `+ ${dispH} ore a disposizione` : ''} = ${totalH}h su ${targetH} ore contrattuali">
-                    ${lessonH}h ${dispH > 0 ? `<b style="color:#d97706;">+ ${dispH}h D</b>` : ''} / ${targetH}h
+                    ${lessonH}h ${dispH > 0 ? `<b style="color:#d97706;">+ ${dispH}h D${isManualDisp ? ' <span title="Ore a disposizione impostate manualmente (override)">📌</span>' : ''}</b>` : ''} / ${targetH}h
                   </span>
                 </div>
                 <div style="margin-top:2px;">
@@ -3762,30 +3919,37 @@ async function renderTeachers() {
 }
 
 function updateDispPreview(totalH) {
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
   const targetVal = parseInt(document.getElementById('editTeacherTarget')?.value, 10) || 18;
+  const customDispInp = document.getElementById('editTeacherCustomDisp');
+  const customDispVal = (customDispInp && customDispInp.value.trim() !== '') ? parseInt(customDispInp.value.trim(), 10) : null;
   const resEl = document.getElementById('dispCalculationResult');
   if (!resEl) return;
-  if (targetVal > totalH) {
+  if (customDispVal !== null && !isNaN(customDispVal)) {
+    resEl.innerHTML = `<span class="badge-disp" style="font-size:12px;padding:3px 10px;background:#fef3c7;color:#92400e;border:1px solid #f59e0b;">📌 D = ${customDispVal}h ${isEn ? 'On-Duty (manual override)' : 'Disposizione (impostata manualmente)'}</span>`;
+  } else if (targetVal > totalH) {
     const d = targetVal - totalH;
-    resEl.innerHTML = `<span class="badge-disp" style="font-size:12px;padding:3px 10px;">📌 D = ${d}h Disposizione (non coperte da lezioni)</span>`;
+    resEl.innerHTML = `<span class="badge-disp" style="font-size:12px;padding:3px 10px;">📌 D = ${d}h ${isEn ? 'Duty Hours (uncovered by lessons)' : 'Disposizione (non coperte da lezioni)'}</span>`;
   } else if (targetVal === totalH) {
-    resEl.innerHTML = `<span style="color:var(--color-ok);font-weight:700;font-size:12px;">✓ Cattedra Coperta al 100% (0h D)</span>`;
+    resEl.innerHTML = `<span style="color:var(--color-ok);font-weight:700;font-size:12px;">${isEn ? '✓ Assignment 100% Covered (0h Duty)' : '✓ Cattedra Coperta al 100% (0h D)'}</span>`;
   } else {
-    resEl.innerHTML = `<span style="color:var(--primary);font-weight:700;font-size:12px;">+${totalH - targetVal}h Esubero / Ore Eccedenti</span>`;
+    resEl.innerHTML = `<span style="color:var(--primary);font-weight:700;font-size:12px;">+${totalH - targetVal}h ${isEn ? 'Surplus / Overtime Hours' : 'Esubero / Ore Eccedenti'}</span>`;
   }
 }
 
 function onContractTypeChange(ctype) {
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
   const hintEl = document.getElementById('contractTypeHint');
+  const targetVal = parseInt(document.getElementById('editTeacherTarget')?.value, 10) || 18;
   if (!hintEl) return;
   if (ctype === 'coe') {
-    hintEl.innerText = "🏫 Cattedra Orario Esterna (COE): il docente completa l'orario in un altro istituto scolastico (solitamente max 3-4 giorni nel nostro istituto).";
+    hintEl.innerText = isEn ? "🏫 External Timetable Assignment (COE): teacher completes hours in another school." : "🏫 Cattedra Orario Esterna (COE): il docente completa l'orario in un altro istituto scolastico (solitamente max 3-4 giorni nel nostro istituto).";
   } else if (ctype === 'spezzone') {
-    hintEl.innerText = "🧩 Spezzone Orario: cattedra su frazione o spezzone residuo a ore (es. 4h, 6h, 8h, 9h).";
+    hintEl.innerText = isEn ? `🧩 Fractional Assignment: residual teaching hours (${targetVal}h).` : `🧩 Spezzone Orario: cattedra su frazione o spezzone residuo a ore (${targetVal}h).`;
   } else if (ctype === 'part_time') {
-    hintEl.innerText = "⏳ Part-Time: docente con contratto a orario parziale su propria richiesta (senza completamento in altra scuola).";
+    hintEl.innerText = isEn ? `⏳ Part-Time: reduced working hours upon teacher request (${targetVal}h).` : `⏳ Part-Time: docente con contratto a orario parziale su propria richiesta (${targetVal}h).`;
   } else {
-    hintEl.innerText = "🏛️ Cattedra Ordinaria Intera (18 ore contrattuali).";
+    hintEl.innerText = isEn ? `🏛️ Full Standard Contract (${targetVal} contractual hours).` : `🏛️ Cattedra Ordinaria Intera (${targetVal} ore contrattuali).`;
   }
 }
 
@@ -3857,7 +4021,7 @@ function openEditTeacherModal(name) {
           <div style="display:grid;grid-template-columns:repeat(4, 1fr);gap:8px;">
             <label class="radio-pill ${contractType === 'intera' ? 'active' : ''}" style="border:1px solid var(--border);padding:8px 8px;border-radius:6px;cursor:pointer;display:flex;align-items:center;gap:6px;font-size:12px;">
               <input type="radio" name="editTeacherContractType" value="intera" ${contractType === 'intera' ? 'checked' : ''} onchange="onContractTypeChange('intera')">
-              <span>🏛️ <b>${isEn ? 'Full (18h)' : 'Intera (18h)'}</b></span>
+              <span>🏛️ <b>${isEn ? `Full (${targetH}h)` : `Intera (${targetH}h)`}</b></span>
             </label>
             <label class="radio-pill ${contractType === 'coe' ? 'active' : ''}" style="border:1px solid var(--border);padding:8px 8px;border-radius:6px;cursor:pointer;display:flex;align-items:center;gap:6px;font-size:12px;">
               <input type="radio" name="editTeacherContractType" value="coe" ${contractType === 'coe' ? 'checked' : ''} onchange="onContractTypeChange('coe')">
@@ -3874,22 +4038,29 @@ function openEditTeacherModal(name) {
           </div>
           <div style="font-size:11.5px;color:var(--text-muted);margin-top:5px;" id="contractTypeHint">
             ${isEn
-              ? (contractType === 'coe' ? '🏫 External Timetable Assignment (COE): teacher completes hours in another school.' : (contractType === 'spezzone' ? '🧩 Fractional Assignment: residual teaching hours.' : (contractType === 'part_time' ? '⏳ Part-Time: reduced working hours upon teacher request.' : '🏛️ Full Standard Contract (18 contractual hours).')))
-              : (contractType === 'coe' ? '🏫 Cattedra Orario Esterna (COE): il docente completa l\'orario in un altro istituto scolastico.' : (contractType === 'spezzone' ? '🧩 Spezzone Orario: cattedra su frazione o spezzone residuo a ore.' : (contractType === 'part_time' ? '⏳ Part-Time: docente con contratto a orario parziale su propria richiesta.' : '🏛️ Cattedra Ordinaria Intera (18 ore contrattuali).')))}
+              ? (contractType === 'coe' ? '🏫 External Timetable Assignment (COE): teacher completes hours in another school.' : (contractType === 'spezzone' ? `🧩 Fractional Assignment: residual teaching hours (${targetH}h).` : (contractType === 'part_time' ? `⏳ Part-Time: reduced working hours upon teacher request (${targetH}h).` : `🏛️ Full Standard Contract (${targetH} contractual hours).`)))
+              : (contractType === 'coe' ? '🏫 Cattedra Orario Esterna (COE): il docente completa l\'orario in un altro istituto scolastico.' : (contractType === 'spezzone' ? `🧩 Spezzone Orario: cattedra su frazione o spezzone residuo a ore (${targetH}h).` : (contractType === 'part_time' ? `⏳ Part-Time: docente con contratto a orario parziale su propria richiesta (${targetH}h).` : `🏛️ Cattedra Ordinaria Intera (${targetH} ore contrattuali).`)))}
           </div>
           <div style="font-size:11px;color:#1e40af;margin-top:3px;">
             🛡️ ${isEn ? 'Contractual typology and target hours are manually configured and protected from automatic file updates.' : 'Tipologia contrattuale e ore target sono gestite manualmente e protette dall\'aggiornamento del file organico.'}
           </div>
         </div>
 
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
           <div class="form-group">
-            <label class="form-label">${isEn ? 'Teaching Certificate Class (CDC)' : 'Classe di Concorso (CDC)'}</label>
+            <label class="form-label">${isEn ? 'Teaching Certificate (CDC)' : 'Classe di Concorso (CDC)'}</label>
             <input type="text" id="editTeacherCdc" class="form-input" value="${escapeHtml(cdc)}" placeholder="es. A027, A047, A012">
           </div>
           <div class="form-group">
-            <label class="form-label">${isEn ? 'Contractual Target Hours' : 'Ore Cattedra Contrattuali (Target)'}</label>
+            <label class="form-label">${isEn ? 'Contract Target Hours' : 'Ore Cattedra Contrattuali'}</label>
             <input type="number" id="editTeacherTarget" class="form-input" value="${targetH}" min="1" max="36" oninput="updateDispPreview(${totalH})">
+          </div>
+          <div class="form-group">
+            <label class="form-label" style="display:flex;align-items:center;justify-content:space-between;">
+              <span>${isEn ? 'Duty Hours (Override)' : 'Ore Disposizione (Manuale)'}</span>
+              <span style="font-size:10px;color:var(--text-muted);font-weight:normal;">${isEn ? 'Optional' : 'Opzionale'}</span>
+            </label>
+            <input type="number" id="editTeacherCustomDisp" class="form-input" value="${teacher.custom_disp_hours !== undefined && teacher.custom_disp_hours !== null ? teacher.custom_disp_hours : ''}" min="0" max="36" placeholder="${isEn ? 'Auto: Target - Lessons' : 'Auto: Target - Lezioni'}" oninput="updateDispPreview(${totalH})">
           </div>
         </div>
 
@@ -4127,6 +4298,15 @@ async function submitEditTeacher(origName) {
   const maxDailyLessons = document.getElementById('editTeacherMaxDailyLessons')?.value ? parseInt(document.getElementById('editTeacherMaxDailyLessons').value, 10) : null;
   const maxGapsPerDay = (document.getElementById('editTeacherMaxGapsPerDay')?.value !== '' && document.getElementById('editTeacherMaxGapsPerDay')?.value !== null) ? parseInt(document.getElementById('editTeacherMaxGapsPerDay').value, 10) : null;
 
+  const customDispInp = document.getElementById('editTeacherCustomDisp');
+  let customDispHours = null;
+  if (customDispInp && customDispInp.value.trim() !== '') {
+    const parsedDisp = parseInt(customDispInp.value.trim(), 10);
+    if (!isNaN(parsedDisp) && parsedDisp >= 0) {
+      customDispHours = parsedDisp;
+    }
+  }
+
   const res = await fetch('/api/teachers/update', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -4136,6 +4316,7 @@ async function submitEditTeacher(origName) {
       short_name: shortName,
       cdc: cdc,
       target_hours: targetH,
+      custom_disp_hours: customDispHours,
       min_days: minDays,
       max_days: maxDays,
       contract_type: contractType,

@@ -1391,11 +1391,19 @@
     });
   }
 
+  function translateSubject(subj) {
+    if (typeof translateSubjectJs === 'function') {
+      return translateSubjectJs(subj, getLanguage() === 'en');
+    }
+    return subj;
+  }
+
   // Esponi globalmente
   window.I18N = {
     t,
     setLanguage,
     getLanguage,
+    translateSubject,
     updateLangUI,
     applyStaticTranslations,
     applyTheme,

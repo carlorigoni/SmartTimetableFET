@@ -615,7 +615,13 @@ class Database:
                 tname = t["name"]
                 tar = t.get("target_hours", 18)
                 lez = t_hours.get(tname, 0)
-                disp = max(0, tar - lez)
+                if t.get("custom_disp_hours") is not None and str(t.get("custom_disp_hours")).strip() != "":
+                    try:
+                        disp = max(0, int(t["custom_disp_hours"]))
+                    except (ValueError, TypeError):
+                        disp = max(0, tar - lez)
+                else:
+                    disp = max(0, tar - lez)
                 tot_target += tar
                 tot_disp += disp
                 if disp > 0:
@@ -890,6 +896,14 @@ class Database:
                 if ctype == "standard":
                     ctype = "intera"
                 sn = (short_name or "").strip().upper() or compute_short_name(name)
+                custom_disp = None
+                if "custom_disp_hours" in teacher_dict:
+                    raw_disp = teacher_dict["custom_disp_hours"]
+                    if raw_disp is not None and str(raw_disp).strip() not in ("", "null", "auto"):
+                        try:
+                            custom_disp = max(0, int(raw_disp))
+                        except (ValueError, TypeError):
+                            custom_disp = None
                 self.data["teachers"].append({
                     "name": name,
                     "short_name": sn,
@@ -899,7 +913,8 @@ class Database:
                     "max_days": int(max_days or 5),
                     "min_days": int(min_days or 4),
                     "contract_type": ctype,
-                    "is_coe": bool(ctype == "coe")
+                    "is_coe": bool(ctype == "coe"),
+                    "custom_disp_hours": custom_disp
                 })
                 self.data["teachers"].sort(key=lambda t: t["name"].lower())
                 self.data["teacher_availability"][name] = []
@@ -969,6 +984,15 @@ class Database:
                     if "max_gaps_per_day" in teacher_data:
                         val = teacher_data["max_gaps_per_day"]
                         t["max_gaps_per_day"] = int(val) if val not in (None, "", "null") else None
+                    if "custom_disp_hours" in teacher_data:
+                        raw_disp = teacher_data["custom_disp_hours"]
+                        if raw_disp is None or str(raw_disp).strip() in ("", "null", "auto"):
+                            t["custom_disp_hours"] = None
+                        else:
+                            try:
+                                t["custom_disp_hours"] = max(0, int(raw_disp))
+                            except (ValueError, TypeError):
+                                t["custom_disp_hours"] = None
 
                     # Se free_day_strict è true e free_day_1 è impostato, sincronizza le indisponibilità
                     if t.get("free_day_strict") and t.get("free_day_1"):
@@ -980,6 +1004,12 @@ class Database:
                         self.data["teacher_availability"][t["name"]] = sorted(list(cur_avail))
 
                     self._save_to_disk(self.data)
+                    try:
+                        self.sync_disposizioni_activities(t["name"])
+                        if self.data.get("has_timetable"):
+                            self.place_disposizioni_in_timetable()
+                    except Exception as e_disp:
+                        print("Notice: error updating disposizioni post-teacher update:", e_disp)
                     return True
             return False
 
@@ -2112,7 +2142,13 @@ class Database:
                 needs_sync = False
                 for t in teachers:
                     tname = t.get("name", "").strip()
-                    needed = max(0, int(t.get("target_hours", 18) or 18) - teach_hours.get(tname, 0))
+                    if t.get("custom_disp_hours") is not None and str(t.get("custom_disp_hours")).strip() != "":
+                        try:
+                            needed = max(0, int(t["custom_disp_hours"]))
+                        except (ValueError, TypeError):
+                            needed = max(0, int(t.get("target_hours", 18) or 18) - teach_hours.get(tname, 0))
+                    else:
+                        needed = max(0, int(t.get("target_hours", 18) or 18) - teach_hours.get(tname, 0))
                     if needed > disp_placed.get(tname, 0):
                         needs_sync = True
                         break
@@ -2254,7 +2290,13 @@ class Database:
                     continue
                 th = int(t.get("target_hours", 18) or 18)
                 t_teach = teach_hours[tname]
-                needed_disp = max(0, th - t_teach)
+                if t.get("custom_disp_hours") is not None and str(t.get("custom_disp_hours")).strip() != "":
+                    try:
+                        needed_disp = max(0, int(t["custom_disp_hours"]))
+                    except (ValueError, TypeError):
+                        needed_disp = max(0, th - t_teach)
+                else:
+                    needed_disp = max(0, th - t_teach)
 
                 current_disps = disp_acts_by_teacher.get(tname, [])
                 # Espandi se qualche attività ha duration > 1
@@ -2584,6 +2626,12 @@ class Database:
             self.data["timetable"] = timetable
             self.data["has_timetable"] = True
             self._save_to_disk(self.data)
+            try:
+                xml_full = generate_fet_xml(self.data, include_timetable=True, exclude_disposizioni=False)
+                with open(SOLVED_FILE, "w", encoding="utf-8") as f:
+                    f.write(xml_full)
+            except Exception as e_fet:
+                pass
             return {
                 "success": True,
                 "placed_count": placed_count,
@@ -2600,10 +2648,15 @@ class Database:
             self.place_disposizioni_in_timetable()
             self._save_to_disk(self.data)
             try:
+                xml_full = generate_fet_xml(self.data, include_timetable=True, exclude_disposizioni=False)
                 with open(SOLVED_FILE, "w", encoding="utf-8") as f:
-                    f.write(xml_content)
+                    f.write(xml_full)
             except Exception:
-                pass
+                try:
+                    with open(SOLVED_FILE, "w", encoding="utf-8") as f:
+                        f.write(xml_content)
+                except Exception:
+                    pass
     # --- ACCORPAMENTI MACRO-MATERIE ---
     def get_accorpamenti_candidates(self):
         """

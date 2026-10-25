@@ -175,7 +175,8 @@
       "cdc": "A046 - Scienze Giuridico Economiche",
       "target_hours": 20,
       "contract_type": "intera",
-      "is_coe": false
+      "is_coe": false,
+      "custom_disp_hours": 5
     },
     {
       "name": "Cipriano Ciro",
@@ -20392,28 +20393,28 @@
       "room": "Aula 41"
     },
     "1": {
-      "day": "Ven",
+      "day": "Gio",
       "hour": "1",
       "room": "Aula 1A"
     },
     "2": {
-      "day": "Gio",
-      "hour": "5",
+      "day": "Ven",
+      "hour": "8",
       "room": "Aula 1A"
     },
     "3": {
-      "day": "Gio",
-      "hour": "1",
-      "room": "Aula 1A"
-    },
-    "4": {
-      "day": "Lun",
+      "day": "Ven",
       "hour": "3",
       "room": "Aula 1A"
     },
-    "5": {
+    "4": {
       "day": "Mer",
-      "hour": "2",
+      "hour": "5",
+      "room": "Aula 1A"
+    },
+    "5": {
+      "day": "Gio",
+      "hour": "3",
       "room": "Aula 1A"
     },
     "6": {
@@ -20422,8 +20423,8 @@
       "room": "Aula 1A"
     },
     "7": {
-      "day": "Lun",
-      "hour": "5",
+      "day": "Ven",
+      "hour": "1",
       "room": "Aula 1A"
     },
     "8": {
@@ -20437,63 +20438,63 @@
       "room": "Aula 1A"
     },
     "10": {
-      "day": "Ven",
-      "hour": "2",
+      "day": "Gio",
+      "hour": "4",
       "room": "Aula 1A"
     },
     "11": {
       "day": "Mar",
-      "hour": "2",
+      "hour": "1",
       "room": "Aula 1A"
     },
     "12": {
       "day": "Mar",
-      "hour": "6",
+      "hour": "2",
       "room": "Aula 1A"
     },
     "13": {
       "day": "Mer",
-      "hour": "5",
+      "hour": "2",
       "room": "Aula 1A"
     },
     "14": {
-      "day": "Ven",
-      "hour": "3",
-      "room": "Aula 1A"
-    },
-    "15": {
-      "day": "Ven",
-      "hour": "5",
-      "room": "Aula 1A"
-    },
-    "16": {
-      "day": "Mar",
-      "hour": "1",
-      "room": "Aula 1A"
-    },
-    "17": {
-      "day": "Ven",
+      "day": "Lun",
       "hour": "6",
       "room": "Aula 1A"
     },
-    "18": {
-      "day": "Mar",
-      "hour": "7",
+    "15": {
+      "day": "Lun",
+      "hour": "1",
       "room": "Aula 1A"
     },
-    "19": {
-      "day": "Ven",
-      "hour": "4",
+    "16": {
+      "day": "Lun",
+      "hour": "5",
       "room": "Aula 1A"
     },
-    "20": {
+    "17": {
       "day": "Mer",
       "hour": "3",
       "room": "Aula 1A"
     },
-    "21": {
+    "18": {
+      "day": "Gio",
+      "hour": "5",
+      "room": "Aula 1A"
+    },
+    "19": {
+      "day": "Mar",
+      "hour": "6",
+      "room": "Aula 1A"
+    },
+    "20": {
       "day": "Ven",
       "hour": "7",
+      "room": "Aula 1A"
+    },
+    "21": {
+      "day": "Lun",
+      "hour": "3",
       "room": "Palestra"
     },
     "22": {
@@ -20502,8 +20503,8 @@
       "room": "Aula 1A"
     },
     "23": {
-      "day": "Lun",
-      "hour": "1",
+      "day": "Gio",
+      "hour": "2",
       "room": "Aula 1A"
     },
     "24": {
@@ -20512,72 +20513,72 @@
       "room": "Aula 1A"
     },
     "25": {
-      "day": "Gio",
-      "hour": "3",
+      "day": "Ven",
+      "hour": "5",
       "room": "INFO 1"
     },
     "26": {
-      "day": "Lun",
-      "hour": "3",
+      "day": "Ven",
+      "hour": "6",
       "room": "Aula 1C"
     },
     "27": {
       "day": "Gio",
-      "hour": "3",
+      "hour": "5",
       "room": "Aula 1C"
     },
     "28": {
-      "day": "Gio",
+      "day": "Mar",
       "hour": "5",
       "room": "Aula 1C"
     },
     "29": {
       "day": "Ven",
-      "hour": "4",
-      "room": "Aula 1C"
-    },
-    "30": {
-      "day": "Mer",
-      "hour": "1",
-      "room": "Aula 1C"
-    },
-    "9000030": {
-      "day": "Mer",
-      "hour": "3",
-      "room": "Aula 1C"
-    },
-    "31": {
-      "day": "Mar",
-      "hour": "3",
-      "room": "Aula 1C"
-    },
-    "9000031": {
-      "day": "Mar",
       "hour": "5",
       "room": "Aula 1C"
     },
-    "32": {
+    "30": {
+      "day": "Lun",
+      "hour": "3",
+      "room": "Aula 1C"
+    },
+    "9000030": {
+      "day": "Lun",
+      "hour": "2",
+      "room": "Aula 1C"
+    },
+    "31": {
       "day": "Ven",
       "hour": "1",
       "room": "Aula 1C"
     },
+    "9000031": {
+      "day": "Ven",
+      "hour": "3",
+      "room": "Aula 1C"
+    },
+    "32": {
+      "day": "Mar",
+      "hour": "3",
+      "room": "Aula 1C"
+    },
     "33": {
-      "day": "Lun",
+      "day": "Mer",
       "hour": "1",
       "room": "Aula 1C"
     },
     "35": {
       "day": "Mar",
-      "hour": "1",
+      "hour": "2",
       "room": "Aula 1C"
     },
     "36": {
-      "day": "Ven",
-      "hour": "5",
+      "day": "Lun",
+      "hour": "1",
       "room": "Aula 1C"
     },
     "37": {
-      "day": "Mer",
+      "day": "Gio",
       "hour": "4",
       "room": "Aula 1C"
     },
@@ -20593,32 +20594,32 @@
     },
     "40": {
       "day": "Ven",
-      "hour": "3",
+      "hour": "4",
       "room": "Aula 1C"
     },
     "41": {
-      "day": "Lun",
-      "hour": "4",
+      "day": "Gio",
+      "hour": "3",
       "room": "Aula 1C"
     },
     "42": {
       "day": "Mer",
-      "hour": "5",
+      "hour": "3",
       "room": "Palestra"
     },
     "43": {
       "day": "Mar",
-      "hour": "2",
+      "hour": "1",
       "room": "Aula 1C"
     },
     "44": {
-      "day": "Gio",
-      "hour": "4",
+      "day": "Mer",
+      "hour": "5",
       "room": "Aula 1C"
     },
     "45": {
-      "day": "Ven",
-      "hour": "1",
+      "day": "Mer",
+      "hour": "6",
       "room": "Aula 1D"
     },
     "46": {
@@ -20627,72 +20628,72 @@
       "room": "Aula 1D"
     },
     "47": {
-      "day": "Lun",
+      "day": "Mar",
       "hour": "3",
       "room": "Aula 1D"
     },
     "48": {
-      "day": "Gio",
-      "hour": "2",
-      "room": "Aula 1D"
-    },
-    "49": {
       "day": "Mer",
       "hour": "5",
       "room": "Aula 1D"
     },
-    "50": {
-      "day": "Ven",
-      "hour": "5",
+    "49": {
+      "day": "Lun",
+      "hour": "3",
       "room": "Aula 1D"
     },
-    "51": {
-      "day": "Mar",
+    "50": {
+      "day": "Mer",
       "hour": "1",
       "room": "Aula 1D"
     },
+    "51": {
+      "day": "Ven",
+      "hour": "3",
+      "room": "Aula 1D"
+    },
     "52": {
-      "day": "Lun",
-      "hour": "4",
+      "day": "Gio",
+      "hour": "5",
       "room": "Aula 1D"
     },
     "53": {
-      "day": "Lun",
+      "day": "Mar",
       "hour": "5",
       "room": "Aula 1D"
     },
     "54": {
-      "day": "Ven",
-      "hour": "4",
+      "day": "Gio",
+      "hour": "2",
       "room": "Aula 1D"
     },
     "55": {
-      "day": "Mar",
-      "hour": "5",
+      "day": "Mer",
+      "hour": "3",
       "room": "Aula 1D"
     },
     "56": {
       "day": "Mar",
-      "hour": "3",
-      "room": "Aula 1D"
-    },
-    "57": {
-      "day": "Mer",
       "hour": "1",
       "room": "Aula 1D"
     },
-    "58": {
-      "day": "Gio",
+    "57": {
+      "day": "Lun",
       "hour": "5",
       "room": "Aula 1D"
     },
+    "58": {
+      "day": "Mer",
+      "hour": "4",
+      "room": "Aula 1D"
+    },
     "59": {
-      "day": "Ven",
-      "hour": "3",
+      "day": "Mar",
+      "hour": "4",
       "room": "Aula 1D"
     },
     "60": {
-      "day": "Mer",
+      "day": "Gio",
       "hour": "3",
       "room": "Palestra"
     },
@@ -20703,367 +20704,367 @@
     },
     "62": {
       "day": "Ven",
-      "hour": "2",
+      "hour": "5",
       "room": "Aula 1D"
     },
     "63": {
-      "day": "Gio",
-      "hour": "3",
-      "room": "INFO 2"
-    },
-    "64": {
-      "day": "Gio",
-      "hour": "4",
-      "room": "Aula 1E"
-    },
-    "65": {
-      "day": "Lun",
-      "hour": "4",
-      "room": "Aula 1E"
-    },
-    "66": {
       "day": "Ven",
       "hour": "1",
-      "room": "Aula 1E"
+      "room": "INFO 1"
     },
-    "67": {
+    "64": {
       "day": "Mar",
       "hour": "7",
       "room": "Aula 1E"
     },
-    "68": {
-      "day": "Mer",
-      "hour": "1",
-      "room": "Aula 1E"
-    },
-    "69": {
-      "day": "Gio",
-      "hour": "3",
-      "room": "Aula 1E"
-    },
-    "70": {
-      "day": "Gio",
-      "hour": "1",
-      "room": "Aula 1E"
-    },
-    "71": {
-      "day": "Mer",
-      "hour": "2",
-      "room": "Aula 1E"
-    },
-    "72": {
+    "65": {
       "day": "Ven",
       "hour": "6",
       "room": "Aula 1E"
     },
-    "73": {
+    "66": {
+      "day": "Lun",
+      "hour": "5",
+      "room": "Aula 1E"
+    },
+    "67": {
       "day": "Mar",
+      "hour": "3",
+      "room": "Aula 1E"
+    },
+    "68": {
+      "day": "Gio",
+      "hour": "2",
+      "room": "Aula 1E"
+    },
+    "69": {
+      "day": "Mer",
+      "hour": "4",
+      "room": "Aula 1E"
+    },
+    "70": {
+      "day": "Mar",
+      "hour": "1",
+      "room": "Aula 1E"
+    },
+    "71": {
+      "day": "Gio",
+      "hour": "6",
+      "room": "Aula 1E"
+    },
+    "72": {
+      "day": "Lun",
+      "hour": "2",
+      "room": "Aula 1E"
+    },
+    "73": {
+      "day": "Ven",
       "hour": "5",
       "room": "Aula 1E"
     },
     "74": {
-      "day": "Lun",
-      "hour": "3",
+      "day": "Mar",
+      "hour": "8",
       "room": "Aula 1E"
     },
     "75": {
-      "day": "Ven",
-      "hour": "5",
+      "day": "Mer",
+      "hour": "3",
       "room": "Aula 1E"
     },
     "76": {
-      "day": "Lun",
+      "day": "Gio",
       "hour": "5",
       "room": "Aula 1E"
     },
     "77": {
-      "day": "Mar",
-      "hour": "4",
+      "day": "Lun",
+      "hour": "3",
       "room": "Aula 1E"
     },
     "78": {
       "day": "Mar",
-      "hour": "3",
+      "hour": "5",
       "room": "Aula 1E"
     },
     "79": {
-      "day": "Lun",
+      "day": "Gio",
       "hour": "1",
       "room": "Aula 1E"
     },
     "80": {
-      "day": "Ven",
-      "hour": "7",
+      "day": "Mar",
+      "hour": "6",
       "room": "Aula 1E"
     },
     "81": {
-      "day": "Mar",
+      "day": "Mer",
       "hour": "1",
       "room": "Aula 1E"
     },
     "82": {
       "day": "Lun",
-      "hour": "2",
+      "hour": "1",
       "room": "Aula 1E"
     },
     "83": {
       "day": "Gio",
-      "hour": "5",
+      "hour": "4",
       "room": "Aula 1E"
     },
     "84": {
       "day": "Ven",
-      "hour": "3",
+      "hour": "7",
       "room": "Palestra"
     },
     "85": {
-      "day": "Mer",
-      "hour": "5",
+      "day": "Ven",
+      "hour": "1",
       "room": "Aula 1E"
     },
     "86": {
       "day": "Gio",
-      "hour": "6",
+      "hour": "3",
       "room": "Aula 1E"
     },
     "87": {
-      "day": "Mar",
-      "hour": "6",
+      "day": "Lun",
+      "hour": "4",
       "room": "Aula 1E"
     },
     "88": {
-      "day": "Mer",
+      "day": "Ven",
       "hour": "3",
       "room": "INFO 1"
     },
     "89": {
-      "day": "Gio",
-      "hour": "2",
+      "day": "Mer",
+      "hour": "5",
       "room": "Aula 1F"
     },
     "90": {
       "day": "Mar",
-      "hour": "2",
+      "hour": "6",
       "room": "Aula 1F"
     },
     "91": {
       "day": "Ven",
-      "hour": "7",
-      "room": "Aula 1F"
-    },
-    "92": {
-      "day": "Mer",
       "hour": "5",
       "room": "Aula 1F"
     },
-    "93": {
+    "92": {
       "day": "Mar",
-      "hour": "7",
+      "hour": "3",
+      "room": "Aula 1F"
+    },
+    "93": {
+      "day": "Mer",
+      "hour": "2",
       "room": "Aula 1F"
     },
     "94": {
       "day": "Gio",
-      "hour": "1",
+      "hour": "5",
       "room": "Aula 1F"
     },
     "95": {
       "day": "Ven",
-      "hour": "5",
+      "hour": "7",
       "room": "Aula 1F"
     },
     "96": {
       "day": "Mar",
-      "hour": "4",
+      "hour": "2",
       "room": "Aula 1F"
     },
     "97": {
-      "day": "Lun",
-      "hour": "5",
+      "day": "Mar",
+      "hour": "1",
       "room": "Aula 1F"
     },
     "98": {
+      "day": "Gio",
+      "hour": "6",
+      "room": "Aula 1F"
+    },
+    "99": {
+      "day": "Lun",
+      "hour": "2",
+      "room": "Aula 1F"
+    },
+    "100": {
       "day": "Ven",
       "hour": "2",
       "room": "Aula 1F"
     },
-    "99": {
-      "day": "Mar",
-      "hour": "3",
-      "room": "Aula 1F"
-    },
-    "100": {
-      "day": "Lun",
-      "hour": "3",
-      "room": "Aula 1F"
-    },
     "101": {
-      "day": "Mer",
-      "hour": "4",
+      "day": "Gio",
+      "hour": "3",
       "room": "Aula 1F"
     },
     "102": {
       "day": "Mar",
-      "hour": "8",
+      "hour": "5",
       "room": "Aula 1F"
     },
     "103": {
-      "day": "Mar",
+      "day": "Mer",
       "hour": "1",
       "room": "Aula 1F"
     },
     "104": {
-      "day": "Ven",
+      "day": "Lun",
       "hour": "1",
       "room": "Aula 1F"
     },
     "105": {
-      "day": "Lun",
-      "hour": "4",
+      "day": "Ven",
+      "hour": "1",
       "room": "Aula 1F"
     },
     "106": {
-      "day": "Ven",
-      "hour": "3",
+      "day": "Mar",
+      "hour": "7",
       "room": "Aula 1F"
     },
     "107": {
-      "day": "Lun",
-      "hour": "1",
+      "day": "Gio",
+      "hour": "4",
       "room": "Aula 1F"
     },
     "108": {
       "day": "Mer",
-      "hour": "3",
+      "hour": "4",
       "room": "Aula 1F"
     },
     "109": {
       "day": "Gio",
-      "hour": "3",
+      "hour": "1",
       "room": "Palestra"
     },
     "110": {
-      "day": "Mer",
-      "hour": "1",
+      "day": "Ven",
+      "hour": "3",
       "room": "Aula 1F"
     },
     "111": {
-      "day": "Lun",
-      "hour": "2",
+      "day": "Mer",
+      "hour": "3",
       "room": "Aula 1F"
     },
     "112": {
-      "day": "Gio",
+      "day": "Lun",
       "hour": "5",
       "room": "Aula 1F"
     },
     "113": {
-      "day": "Mar",
-      "hour": "5",
-      "room": "INFO 2"
+      "day": "Lun",
+      "hour": "3",
+      "room": "INFO 1"
     },
     "114": {
       "day": "Mer",
-      "hour": "5",
+      "hour": "6",
       "room": "Aula 1G"
     },
     "115": {
-      "day": "Mar",
-      "hour": "1",
+      "day": "Lun",
+      "hour": "2",
       "room": "Aula 1G"
     },
     "116": {
-      "day": "Mer",
+      "day": "Mar",
       "hour": "1",
       "room": "Aula 1G"
     },
     "117": {
-      "day": "Mar",
-      "hour": "6",
+      "day": "Mer",
+      "hour": "4",
       "room": "Aula 1G"
     },
     "118": {
-      "day": "Ven",
-      "hour": "7",
+      "day": "Gio",
+      "hour": "5",
       "room": "Aula 1G"
     },
     "119": {
       "day": "Ven",
-      "hour": "2",
+      "hour": "7",
       "room": "Aula 1G"
     },
     "120": {
-      "day": "Mer",
-      "hour": "3",
+      "day": "Gio",
+      "hour": "1",
       "room": "Aula 1G"
     },
     "121": {
-      "day": "Mar",
-      "hour": "7",
+      "day": "Ven",
+      "hour": "5",
       "room": "Aula 1G"
     },
     "122": {
       "day": "Lun",
-      "hour": "5",
+      "hour": "3",
       "room": "Aula 1G"
     },
     "123": {
-      "day": "Mar",
-      "hour": "8",
+      "day": "Ven",
+      "hour": "6",
       "room": "Aula 1G"
     },
     "124": {
-      "day": "Mar",
-      "hour": "2",
+      "day": "Mer",
+      "hour": "5",
       "room": "Aula 1G"
     },
     "125": {
-      "day": "Gio",
-      "hour": "1",
+      "day": "Lun",
+      "hour": "4",
       "room": "Aula 1G"
     },
     "126": {
-      "day": "Ven",
-      "hour": "5",
+      "day": "Mar",
+      "hour": "3",
       "room": "Aula 1G"
     },
     "127": {
       "day": "Ven",
-      "hour": "1",
-      "room": "Aula 1G"
-    },
-    "128": {
-      "day": "Gio",
       "hour": "2",
       "room": "Aula 1G"
     },
-    "129": {
-      "day": "Mar",
+    "128": {
+      "day": "Mer",
       "hour": "3",
       "room": "Aula 1G"
     },
-    "130": {
+    "129": {
       "day": "Lun",
-      "hour": "6",
+      "hour": "5",
+      "room": "Aula 1G"
+    },
+    "130": {
+      "day": "Mar",
+      "hour": "4",
       "room": "Aula 1G"
     },
     "131": {
       "day": "Ven",
-      "hour": "3",
+      "hour": "1",
       "room": "Aula 1G"
     },
     "132": {
-      "day": "Gio",
+      "day": "Mar",
       "hour": "5",
       "room": "Aula 1G"
     },
     "133": {
-      "day": "Lun",
-      "hour": "1",
+      "day": "Ven",
+      "hour": "3",
       "room": "Aula 1G"
     },
     "134": {
-      "day": "Ven",
-      "hour": "4",
+      "day": "Lun",
+      "hour": "1",
       "room": "Aula 1G"
     },
     "135": {
@@ -21072,153 +21073,153 @@
       "room": "Palestra"
     },
     "136": {
-      "day": "Ven",
-      "hour": "6",
+      "day": "Mer",
+      "hour": "1",
       "room": "Aula 1G"
     },
     "137": {
-      "day": "Mar",
-      "hour": "5",
+      "day": "Mer",
+      "hour": "2",
       "room": "Aula 1G"
     },
     "138": {
-      "day": "Lun",
-      "hour": "3",
+      "day": "Mar",
+      "hour": "7",
       "room": "INFO 2"
     },
     "139": {
-      "day": "Ven",
-      "hour": "3",
+      "day": "Mer",
+      "hour": "4",
       "room": "Aula 1H"
     },
     "140": {
-      "day": "Lun",
-      "hour": "5",
+      "day": "Mar",
+      "hour": "7",
       "room": "Aula 1H"
     },
     "141": {
-      "day": "Mar",
+      "day": "Mer",
       "hour": "1",
       "room": "Aula 1H"
     },
     "142": {
       "day": "Ven",
-      "hour": "6",
+      "hour": "5",
       "room": "Aula 1H"
     },
     "143": {
-      "day": "Gio",
-      "hour": "1",
+      "day": "Mar",
+      "hour": "4",
       "room": "Aula 1H"
     },
     "144": {
-      "day": "Lun",
-      "hour": "3",
+      "day": "Ven",
+      "hour": "4",
       "room": "Aula 1H"
     },
     "145": {
-      "day": "Gio",
+      "day": "Lun",
       "hour": "5",
       "room": "Aula 1H"
     },
     "146": {
-      "day": "Lun",
-      "hour": "4",
+      "day": "Gio",
+      "hour": "5",
       "room": "Aula 1H"
     },
     "147": {
       "day": "Gio",
-      "hour": "4",
+      "hour": "3",
       "room": "Aula 1H"
     },
     "148": {
-      "day": "Lun",
-      "hour": "6",
-      "room": "Aula 1H"
-    },
-    "149": {
-      "day": "Mar",
-      "hour": "7",
-      "room": "Aula 1H"
-    },
-    "150": {
-      "day": "Ven",
+      "day": "Gio",
       "hour": "4",
       "room": "Aula 1H"
     },
-    "151": {
-      "day": "Gio",
+    "149": {
+      "day": "Lun",
+      "hour": "1",
+      "room": "Aula 1H"
+    },
+    "150": {
+      "day": "Lun",
       "hour": "2",
+      "room": "Aula 1H"
+    },
+    "151": {
+      "day": "Ven",
+      "hour": "6",
       "room": "Aula 1H"
     },
     "152": {
       "day": "Mar",
-      "hour": "6",
+      "hour": "2",
       "room": "Aula 1H"
     },
     "153": {
-      "day": "Mar",
-      "hour": "5",
+      "day": "Gio",
+      "hour": "2",
       "room": "Aula 1H"
     },
     "154": {
-      "day": "Mer",
-      "hour": "5",
+      "day": "Mar",
+      "hour": "1",
       "room": "Aula 1H"
     },
     "155": {
       "day": "Mer",
-      "hour": "3",
-      "room": "Aula 1H"
-    },
-    "156": {
-      "day": "Ven",
       "hour": "5",
       "room": "Aula 1H"
     },
+    "156": {
+      "day": "Mar",
+      "hour": "3",
+      "room": "Aula 1H"
+    },
     "157": {
-      "day": "Gio",
-      "hour": "6",
+      "day": "Ven",
+      "hour": "3",
       "room": "Aula 1H"
     },
     "158": {
-      "day": "Lun",
-      "hour": "1",
+      "day": "Mar",
+      "hour": "5",
       "room": "Aula 1H"
     },
     "159": {
-      "day": "Mer",
+      "day": "Ven",
       "hour": "1",
       "room": "Aula 1H"
     },
     "160": {
-      "day": "Gio",
+      "day": "Mer",
       "hour": "3",
       "room": "Aula 1H"
     },
     "161": {
-      "day": "Mar",
-      "hour": "3",
+      "day": "Ven",
+      "hour": "7",
       "room": "Palestra"
     },
     "162": {
-      "day": "Ven",
-      "hour": "7",
+      "day": "Gio",
+      "hour": "1",
       "room": "Aula 1H"
     },
     "163": {
-      "day": "Ven",
-      "hour": "8",
+      "day": "Lun",
+      "hour": "6",
       "room": "Aula 1H"
     },
     "164": {
-      "day": "Ven",
-      "hour": "1",
+      "day": "Lun",
+      "hour": "3",
       "room": "INFO 2"
     },
     "165": {
-      "day": "Mar",
-      "hour": "1",
+      "day": "Lun",
+      "hour": "3",
       "room": "Aula 1L"
     },
     "166": {
@@ -21232,53 +21233,53 @@
       "room": "Aula 1L"
     },
     "168": {
+      "day": "Lun",
+      "hour": "5",
+      "room": "Aula 1L"
+    },
+    "169": {
       "day": "Mer",
       "hour": "3",
       "room": "Aula 1L"
     },
-    "169": {
-      "day": "Ven",
-      "hour": "1",
-      "room": "Aula 1L"
-    },
     "170": {
-      "day": "Mer",
+      "day": "Lun",
       "hour": "4",
       "room": "Aula 1L"
     },
     "171": {
-      "day": "Lun",
-      "hour": "4",
+      "day": "Mar",
+      "hour": "5",
       "room": "Aula 1L"
     },
     "172": {
       "day": "Mer",
-      "hour": "5",
+      "hour": "6",
       "room": "Aula 1L"
     },
     "173": {
-      "day": "Gio",
-      "hour": "1",
+      "day": "Ven",
+      "hour": "5",
       "room": "Aula 1L"
     },
     "174": {
-      "day": "Mar",
-      "hour": "2",
+      "day": "Lun",
+      "hour": "1",
       "room": "Aula 1L"
     },
     "175": {
-      "day": "Lun",
-      "hour": "5",
+      "day": "Mer",
+      "hour": "1",
       "room": "Aula 1L"
     },
     "176": {
       "day": "Ven",
-      "hour": "3",
+      "hour": "1",
       "room": "Aula 1L"
     },
     "177": {
-      "day": "Mar",
-      "hour": "5",
+      "day": "Gio",
+      "hour": "1",
       "room": "Aula 1L"
     },
     "178": {
@@ -21292,128 +21293,128 @@
       "room": "Palestra"
     },
     "180": {
-      "day": "Lun",
-      "hour": "1",
+      "day": "Ven",
+      "hour": "3",
       "room": "Aula 1L"
     },
     "181": {
-      "day": "Ven",
+      "day": "Mer",
       "hour": "5",
       "room": "Aula 1L"
     },
     "182": {
-      "day": "Mer",
-      "hour": "1",
+      "day": "Gio",
+      "hour": "3",
       "room": "INFO 2"
     },
     "183": {
-      "day": "Gio",
-      "hour": "3",
+      "day": "Mar",
+      "hour": "1",
       "room": "Aula 1L"
     },
     "184": {
       "day": "Lun",
-      "hour": "3",
+      "hour": "2",
       "room": "Aula 1L"
     },
     "185": {
-      "day": "Ven",
-      "hour": "2",
+      "day": "Mar",
+      "hour": "6",
       "room": "Aula 2A"
     },
     "186": {
-      "day": "Mer",
-      "hour": "1",
+      "day": "Gio",
+      "hour": "2",
       "room": "Aula 2A"
     },
     "187": {
       "day": "Mar",
-      "hour": "3",
+      "hour": "1",
       "room": "Aula 2A"
     },
     "188": {
       "day": "Mer",
-      "hour": "3",
+      "hour": "1",
       "room": "Aula 2A"
     },
     "189": {
-      "day": "Lun",
-      "hour": "5",
+      "day": "Gio",
+      "hour": "1",
       "room": "Aula 2A"
     },
     "190": {
-      "day": "Gio",
-      "hour": "4",
+      "day": "Ven",
+      "hour": "2",
       "room": "Aula 2A"
     },
     "191": {
-      "day": "Ven",
-      "hour": "7",
+      "day": "Gio",
+      "hour": "3",
       "room": "Aula 2A"
     },
     "192": {
-      "day": "Gio",
+      "day": "Mar",
       "hour": "3",
       "room": "Aula 2A"
     },
     "193": {
       "day": "Mer",
-      "hour": "2",
+      "hour": "4",
       "room": "Aula 2A"
     },
     "194": {
-      "day": "Ven",
-      "hour": "1",
+      "day": "Lun",
+      "hour": "4",
       "room": "Aula 2A"
     },
     "195": {
-      "day": "Mar",
+      "day": "Ven",
       "hour": "1",
       "room": "Aula 2A"
     },
     "196": {
-      "day": "Lun",
-      "hour": "6",
+      "day": "Ven",
+      "hour": "5",
       "room": "Aula 2A"
     },
     "197": {
       "day": "Mar",
-      "hour": "7",
+      "hour": "4",
       "room": "Aula 2A"
     },
     "198": {
-      "day": "Ven",
-      "hour": "3",
+      "day": "Lun",
+      "hour": "5",
       "room": "Aula 2A"
     },
     "199": {
-      "day": "Ven",
-      "hour": "4",
+      "day": "Mar",
+      "hour": "7",
       "room": "Aula 2A"
     },
     "200": {
       "day": "Lun",
-      "hour": "2",
+      "hour": "3",
       "room": "Aula 2A"
     },
     "201": {
       "day": "Mar",
-      "hour": "2",
+      "hour": "5",
       "room": "Aula 2A"
     },
     "202": {
-      "day": "Gio",
-      "hour": "1",
+      "day": "Mer",
+      "hour": "5",
       "room": "Aula 2A"
     },
     "203": {
-      "day": "Lun",
-      "hour": "1",
+      "day": "Ven",
+      "hour": "6",
       "room": "Aula 2A"
     },
     "204": {
-      "day": "Mar",
-      "hour": "6",
+      "day": "Lun",
+      "hour": "2",
       "room": "Aula 2A"
     },
     "205": {
@@ -21422,73 +21423,73 @@
       "room": "Palestra"
     },
     "206": {
-      "day": "Lun",
+      "day": "Ven",
       "hour": "3",
       "room": "Aula 2A"
     },
     "207": {
-      "day": "Mar",
-      "hour": "5",
+      "day": "Lun",
+      "hour": "1",
       "room": "Aula 2A"
     },
     "208": {
       "day": "Mer",
-      "hour": "5",
+      "hour": "3",
       "room": "Aula 2A"
     },
     "209": {
       "day": "Ven",
-      "hour": "5",
+      "hour": "7",
       "room": "INFO 1"
     },
     "210": {
-      "day": "Lun",
-      "hour": "3",
+      "day": "Ven",
+      "hour": "7",
       "room": "Aula 2B"
     },
     "211": {
       "day": "Mar",
-      "hour": "5",
+      "hour": "4",
       "room": "Aula 2B"
     },
     "212": {
-      "day": "Mar",
-      "hour": "7",
+      "day": "Mer",
+      "hour": "3",
       "room": "Aula 2B"
     },
     "213": {
       "day": "Ven",
-      "hour": "1",
+      "hour": "3",
       "room": "Aula 2B"
     },
     "214": {
-      "day": "Gio",
+      "day": "Mar",
       "hour": "5",
       "room": "Aula 2B"
     },
     "215": {
-      "day": "Lun",
-      "hour": "1",
+      "day": "Gio",
+      "hour": "2",
       "room": "Aula 2B"
     },
     "216": {
       "day": "Gio",
-      "hour": "1",
+      "hour": "5",
       "room": "Aula 2B"
     },
     "217": {
-      "day": "Mer",
+      "day": "Lun",
       "hour": "2",
       "room": "Aula 2B"
     },
     "218": {
       "day": "Ven",
-      "hour": "4",
+      "hour": "6",
       "room": "Aula 2B"
     },
     "219": {
       "day": "Lun",
-      "hour": "4",
+      "hour": "1",
       "room": "Aula 2B"
     },
     "220": {
@@ -21498,7 +21499,7 @@
     },
     "221": {
       "day": "Mar",
-      "hour": "2",
+      "hour": "1",
       "room": "Aula 2B"
     },
     "222": {
@@ -21508,251 +21509,251 @@
     },
     "223": {
       "day": "Mer",
-      "hour": "1",
+      "hour": "5",
       "room": "Aula 2B"
     },
     "224": {
       "day": "Ven",
-      "hour": "7",
+      "hour": "5",
       "room": "Aula 2B"
     },
     "225": {
       "day": "Mer",
-      "hour": "4",
+      "hour": "1",
       "room": "Aula 2B"
     },
     "226": {
       "day": "Mar",
-      "hour": "1",
-      "room": "Aula 2B"
-    },
-    "227": {
-      "day": "Mer",
-      "hour": "5",
-      "room": "Aula 2B"
-    },
-    "228": {
-      "day": "Ven",
-      "hour": "3",
-      "room": "Aula 2B"
-    },
-    "229": {
-      "day": "Lun",
       "hour": "2",
       "room": "Aula 2B"
     },
+    "227": {
+      "day": "Mar",
+      "hour": "7",
+      "room": "Aula 2B"
+    },
+    "228": {
+      "day": "Mer",
+      "hour": "2",
+      "room": "Aula 2B"
+    },
+    "229": {
+      "day": "Gio",
+      "hour": "1",
+      "room": "Aula 2B"
+    },
     "230": {
-      "day": "Ven",
+      "day": "Lun",
       "hour": "5",
       "room": "Palestra"
     },
     "231": {
       "day": "Lun",
-      "hour": "5",
-      "room": "Aula 2B"
-    },
-    "232": {
-      "day": "Mer",
       "hour": "3",
       "room": "Aula 2B"
     },
-    "233": {
+    "232": {
       "day": "Gio",
       "hour": "4",
       "room": "Aula 2B"
     },
-    "234": {
+    "233": {
       "day": "Mar",
       "hour": "3",
+      "room": "Aula 2B"
+    },
+    "234": {
+      "day": "Ven",
+      "hour": "1",
       "room": "INFO 2"
     },
     "235": {
-      "day": "Lun",
-      "hour": "3",
+      "day": "Mar",
+      "hour": "6",
       "room": "Aula 2C"
     },
     "236": {
-      "day": "Mer",
-      "hour": "5",
+      "day": "Ven",
+      "hour": "1",
       "room": "Aula 2C"
     },
     "237": {
-      "day": "Mar",
+      "day": "Mer",
       "hour": "1",
       "room": "Aula 2C"
     },
     "238": {
-      "day": "Lun",
-      "hour": "1",
-      "room": "Aula 2C"
-    },
-    "239": {
-      "day": "Gio",
-      "hour": "1",
-      "room": "Aula 2C"
-    },
-    "240": {
-      "day": "Mer",
-      "hour": "1",
-      "room": "Aula 2C"
-    },
-    "241": {
-      "day": "Lun",
-      "hour": "5",
-      "room": "Aula 2C"
-    },
-    "242": {
       "day": "Mar",
       "hour": "5",
       "room": "Aula 2C"
     },
-    "243": {
+    "239": {
+      "day": "Mer",
+      "hour": "5",
+      "room": "Aula 2C"
+    },
+    "240": {
       "day": "Ven",
       "hour": "3",
       "room": "Aula 2C"
     },
-    "244": {
-      "day": "Lun",
-      "hour": "2",
+    "241": {
+      "day": "Gio",
+      "hour": "1",
       "room": "Aula 2C"
     },
-    "245": {
-      "day": "Mer",
+    "242": {
+      "day": "Mar",
       "hour": "3",
       "room": "Aula 2C"
     },
+    "243": {
+      "day": "Lun",
+      "hour": "5",
+      "room": "Aula 2C"
+    },
+    "244": {
+      "day": "Lun",
+      "hour": "4",
+      "room": "Aula 2C"
+    },
+    "245": {
+      "day": "Gio",
+      "hour": "5",
+      "room": "Aula 2C"
+    },
     "246": {
-      "day": "Mar",
+      "day": "Ven",
       "hour": "2",
       "room": "Aula 2C"
     },
     "247": {
-      "day": "Gio",
-      "hour": "3",
+      "day": "Mar",
+      "hour": "1",
       "room": "Aula 2C"
     },
     "248": {
-      "day": "Mar",
+      "day": "Gio",
       "hour": "3",
       "room": "Aula 2C"
     },
     "249": {
       "day": "Mer",
-      "hour": "6",
+      "hour": "4",
       "room": "Aula 2C"
     },
     "250": {
       "day": "Mer",
-      "hour": "4",
+      "hour": "2",
       "room": "Aula 2C"
     },
     "251": {
-      "day": "Ven",
+      "day": "Lun",
       "hour": "1",
       "room": "Palestra"
     },
     "252": {
-      "day": "Ven",
-      "hour": "5",
+      "day": "Lun",
+      "hour": "3",
       "room": "Aula 2C"
     },
     "253": {
-      "day": "Lun",
-      "hour": "4",
+      "day": "Mer",
+      "hour": "3",
       "room": "Aula 2C"
     },
     "254": {
-      "day": "Lun",
-      "hour": "1",
-      "room": "Aula 2D"
-    },
-    "255": {
       "day": "Mar",
       "hour": "2",
       "room": "Aula 2D"
     },
-    "256": {
+    "255": {
       "day": "Gio",
       "hour": "3",
       "room": "Aula 2D"
     },
+    "256": {
+      "day": "Mar",
+      "hour": "4",
+      "room": "Aula 2D"
+    },
     "257": {
-      "day": "Mer",
-      "hour": "5",
+      "day": "Ven",
+      "hour": "2",
       "room": "Aula 2D"
     },
     "258": {
-      "day": "Mer",
-      "hour": "1",
+      "day": "Mar",
+      "hour": "5",
       "room": "Aula 2D"
     },
     "259": {
-      "day": "Mar",
-      "hour": "3",
+      "day": "Lun",
+      "hour": "1",
       "room": "Aula 2D"
     },
     "260": {
-      "day": "Lun",
+      "day": "Mer",
       "hour": "3",
       "room": "Aula 2D"
     },
     "261": {
-      "day": "Gio",
-      "hour": "4",
+      "day": "Ven",
+      "hour": "1",
       "room": "Aula 2D"
     },
     "262": {
-      "day": "Ven",
-      "hour": "5",
+      "day": "Mar",
+      "hour": "3",
       "room": "Aula 2D"
     },
     "263": {
-      "day": "Mar",
+      "day": "Lun",
       "hour": "5",
       "room": "Aula 2D"
     },
     "264": {
-      "day": "Mer",
-      "hour": "3",
+      "day": "Ven",
+      "hour": "4",
       "room": "Aula 2D"
     },
     "265": {
-      "day": "Ven",
+      "day": "Mer",
       "hour": "1",
       "room": "Aula 2D"
     },
     "266": {
-      "day": "Mar",
-      "hour": "1",
-      "room": "Aula 2D"
-    },
-    "267": {
       "day": "Gio",
       "hour": "5",
       "room": "Aula 2D"
     },
+    "267": {
+      "day": "Ven",
+      "hour": "5",
+      "room": "Aula 2D"
+    },
     "268": {
-      "day": "Mer",
-      "hour": "6",
+      "day": "Mar",
+      "hour": "1",
       "room": "Aula 2D"
     },
     "269": {
-      "day": "Lun",
+      "day": "Mer",
       "hour": "5",
       "room": "Palestra"
     },
     "270": {
-      "day": "Ven",
+      "day": "Lun",
       "hour": "3",
       "room": "Aula 2D"
     },
     "271": {
-      "day": "Lun",
-      "hour": "2",
+      "day": "Ven",
+      "hour": "3",
       "room": "Aula 2D"
     },
     "272": {
-      "day": "Mer",
+      "day": "Gio",
       "hour": "4",
       "room": "Aula 2D"
     },
@@ -21762,13 +21763,13 @@
       "room": "INFO 2"
     },
     "274": {
-      "day": "Mer",
-      "hour": "2",
+      "day": "Ven",
+      "hour": "1",
       "room": "Aula 2E"
     },
     "275": {
       "day": "Lun",
-      "hour": "2",
+      "hour": "3",
       "room": "Aula 2E"
     },
     "276": {
@@ -21778,62 +21779,62 @@
     },
     "277": {
       "day": "Gio",
-      "hour": "1",
+      "hour": "3",
       "room": "Aula 2E"
     },
     "278": {
-      "day": "Ven",
-      "hour": "2",
+      "day": "Mer",
+      "hour": "6",
       "room": "Aula 2E"
     },
     "279": {
-      "day": "Lun",
+      "day": "Ven",
       "hour": "3",
       "room": "Aula 2E"
     },
     "280": {
       "day": "Gio",
-      "hour": "5",
+      "hour": "1",
       "room": "Aula 2E"
     },
     "281": {
-      "day": "Mar",
-      "hour": "5",
+      "day": "Lun",
+      "hour": "1",
       "room": "Aula 2E"
     },
     "282": {
       "day": "Mar",
-      "hour": "4",
+      "hour": "7",
       "room": "Aula 2E"
     },
     "283": {
-      "day": "Ven",
-      "hour": "1",
+      "day": "Mer",
+      "hour": "5",
       "room": "Aula 2E"
     },
     "284": {
-      "day": "Mer",
+      "day": "Ven",
       "hour": "6",
       "room": "Aula 2E"
     },
     "285": {
       "day": "Ven",
-      "hour": "3",
+      "hour": "4",
       "room": "Aula 2E"
     },
     "286": {
-      "day": "Mer",
-      "hour": "1",
+      "day": "Lun",
+      "hour": "2",
       "room": "Aula 2E"
     },
     "287": {
-      "day": "Lun",
-      "hour": "1",
+      "day": "Mar",
+      "hour": "8",
       "room": "Aula 2E"
     },
     "288": {
       "day": "Mer",
-      "hour": "5",
+      "hour": "2",
       "room": "Aula 2E"
     },
     "289": {
@@ -21842,58 +21843,58 @@
       "room": "Aula 2E"
     },
     "290": {
-      "day": "Mar",
-      "hour": "3",
+      "day": "Ven",
+      "hour": "5",
       "room": "Aula 2E"
     },
     "291": {
-      "day": "Mer",
-      "hour": "3",
+      "day": "Lun",
+      "hour": "5",
       "room": "Aula 2E"
     },
     "292": {
       "day": "Ven",
-      "hour": "4",
+      "hour": "2",
       "room": "Aula 2E"
     },
     "293": {
-      "day": "Gio",
-      "hour": "4",
+      "day": "Mar",
+      "hour": "6",
       "room": "Aula 2E"
     },
     "294": {
-      "day": "Lun",
-      "hour": "5",
+      "day": "Mer",
+      "hour": "3",
       "room": "Palestra"
     },
     "295": {
-      "day": "Ven",
+      "day": "Gio",
       "hour": "5",
       "room": "Aula 2E"
     },
     "296": {
-      "day": "Mar",
-      "hour": "6",
+      "day": "Mer",
+      "hour": "1",
       "room": "Aula 2E"
     },
     "297": {
-      "day": "Gio",
-      "hour": "3",
+      "day": "Mar",
+      "hour": "5",
       "room": "Aula 2E"
     },
     "298": {
-      "day": "Ven",
-      "hour": "7",
-      "room": "INFO 1"
+      "day": "Mar",
+      "hour": "3",
+      "room": "INFO 2"
     },
     "299": {
       "day": "Mar",
-      "hour": "6",
+      "hour": "1",
       "room": "Aula 2F"
     },
     "300": {
-      "day": "Mer",
-      "hour": "1",
+      "day": "Gio",
+      "hour": "4",
       "room": "Aula 2F"
     },
     "301": {
@@ -21902,343 +21903,343 @@
       "room": "Aula 2F"
     },
     "302": {
-      "day": "Mar",
-      "hour": "1",
+      "day": "Lun",
+      "hour": "3",
       "room": "Aula 2F"
     },
     "303": {
-      "day": "Ven",
-      "hour": "2",
+      "day": "Mar",
+      "hour": "6",
       "room": "Aula 2F"
     },
     "304": {
-      "day": "Mer",
+      "day": "Ven",
       "hour": "3",
       "room": "Aula 2F"
     },
     "305": {
-      "day": "Ven",
-      "hour": "7",
+      "day": "Lun",
+      "hour": "5",
       "room": "Aula 2F"
     },
     "306": {
-      "day": "Mar",
+      "day": "Mer",
       "hour": "5",
       "room": "Aula 2F"
     },
     "307": {
-      "day": "Ven",
+      "day": "Mar",
       "hour": "5",
       "room": "Aula 2F"
     },
     "308": {
-      "day": "Gio",
-      "hour": "3",
+      "day": "Mer",
+      "hour": "1",
       "room": "Aula 2F"
     },
     "309": {
-      "day": "Lun",
-      "hour": "6",
+      "day": "Ven",
+      "hour": "4",
       "room": "Aula 2F"
     },
     "310": {
-      "day": "Ven",
-      "hour": "6",
+      "day": "Mer",
+      "hour": "2",
       "room": "Aula 2F"
     },
     "311": {
-      "day": "Mar",
-      "hour": "7",
+      "day": "Gio",
+      "hour": "5",
       "room": "Aula 2F"
     },
     "312": {
-      "day": "Lun",
-      "hour": "5",
+      "day": "Mar",
+      "hour": "4",
       "room": "Aula 2F"
     },
     "313": {
       "day": "Ven",
-      "hour": "3",
+      "hour": "7",
       "room": "Aula 2F"
     },
     "314": {
-      "day": "Gio",
-      "hour": "4",
+      "day": "Mer",
+      "hour": "6",
       "room": "Aula 2F"
     },
     "315": {
-      "day": "Ven",
-      "hour": "4",
-      "room": "Aula 2F"
-    },
-    "316": {
       "day": "Mar",
       "hour": "3",
       "room": "Aula 2F"
     },
-    "317": {
+    "316": {
       "day": "Ven",
       "hour": "1",
       "room": "Aula 2F"
     },
+    "317": {
+      "day": "Lun",
+      "hour": "1",
+      "room": "Aula 2F"
+    },
     "318": {
-      "day": "Mer",
-      "hour": "4",
+      "day": "Gio",
+      "hour": "3",
       "room": "Aula 2F"
     },
     "319": {
-      "day": "Lun",
-      "hour": "1",
+      "day": "Mar",
+      "hour": "7",
       "room": "Palestra"
     },
     "320": {
-      "day": "Gio",
+      "day": "Ven",
       "hour": "5",
       "room": "Aula 2F"
     },
     "321": {
-      "day": "Mer",
+      "day": "Lun",
       "hour": "2",
       "room": "Aula 2F"
     },
     "322": {
       "day": "Mar",
-      "hour": "8",
+      "hour": "2",
       "room": "Aula 2F"
     },
     "323": {
-      "day": "Lun",
+      "day": "Mer",
       "hour": "3",
-      "room": "INFO 1"
+      "room": "INFO 2"
     },
     "324": {
-      "day": "Ven",
-      "hour": "4",
+      "day": "Gio",
+      "hour": "5",
       "room": "Aula 2G"
     },
     "325": {
-      "day": "Lun",
-      "hour": "6",
-      "room": "Aula 2G"
-    },
-    "326": {
-      "day": "Mer",
-      "hour": "3",
-      "room": "Aula 2G"
-    },
-    "327": {
       "day": "Mar",
       "hour": "3",
       "room": "Aula 2G"
     },
+    "326": {
+      "day": "Mar",
+      "hour": "5",
+      "room": "Aula 2G"
+    },
+    "327": {
+      "day": "Lun",
+      "hour": "5",
+      "room": "Aula 2G"
+    },
     "328": {
-      "day": "Ven",
-      "hour": "8",
+      "day": "Mer",
+      "hour": "3",
       "room": "Aula 2G"
     },
     "329": {
-      "day": "Lun",
-      "hour": "1",
+      "day": "Ven",
+      "hour": "4",
       "room": "Aula 2G"
     },
     "330": {
-      "day": "Ven",
+      "day": "Gio",
       "hour": "3",
       "room": "Aula 2G"
     },
     "331": {
-      "day": "Ven",
-      "hour": "5",
+      "day": "Lun",
+      "hour": "3",
       "room": "Aula 2G"
     },
     "332": {
-      "day": "Mar",
+      "day": "Ven",
       "hour": "6",
       "room": "Aula 2G"
     },
     "333": {
-      "day": "Mar",
-      "hour": "5",
+      "day": "Ven",
+      "hour": "7",
       "room": "Aula 2G"
     },
     "334": {
-      "day": "Lun",
-      "hour": "5",
+      "day": "Gio",
+      "hour": "4",
       "room": "Aula 2G"
     },
     "335": {
-      "day": "Ven",
-      "hour": "2",
+      "day": "Mer",
+      "hour": "4",
       "room": "Aula 2G"
     },
     "336": {
-      "day": "Mer",
-      "hour": "2",
+      "day": "Ven",
+      "hour": "5",
       "room": "Aula 2G"
     },
     "337": {
       "day": "Gio",
-      "hour": "6",
-      "room": "Aula 2G"
-    },
-    "338": {
-      "day": "Gio",
-      "hour": "3",
-      "room": "Aula 2G"
-    },
-    "339": {
-      "day": "Ven",
       "hour": "1",
       "room": "Aula 2G"
     },
+    "338": {
+      "day": "Mar",
+      "hour": "1",
+      "room": "Aula 2G"
+    },
+    "339": {
+      "day": "Gio",
+      "hour": "2",
+      "room": "Aula 2G"
+    },
     "340": {
+      "day": "Ven",
+      "hour": "2",
+      "room": "Aula 2G"
+    },
+    "341": {
       "day": "Mer",
       "hour": "1",
       "room": "Aula 2G"
     },
-    "341": {
-      "day": "Lun",
-      "hour": "3",
-      "room": "Aula 2G"
-    },
     "342": {
-      "day": "Gio",
+      "day": "Lun",
       "hour": "1",
       "room": "Aula 2G"
     },
     "343": {
-      "day": "Gio",
-      "hour": "5",
+      "day": "Ven",
+      "hour": "3",
       "room": "Aula 2G"
     },
     "344": {
       "day": "Mar",
-      "hour": "1",
+      "hour": "7",
       "room": "Palestra"
     },
     "345": {
-      "day": "Lun",
-      "hour": "2",
+      "day": "Ven",
+      "hour": "1",
       "room": "Aula 2G"
     },
     "346": {
-      "day": "Ven",
-      "hour": "7",
+      "day": "Mar",
+      "hour": "4",
       "room": "Aula 2G"
     },
     "347": {
-      "day": "Mar",
-      "hour": "7",
-      "room": "INFO 1"
+      "day": "Mer",
+      "hour": "5",
+      "room": "INFO 2"
     },
     "348": {
-      "day": "Gio",
-      "hour": "5",
+      "day": "Mar",
+      "hour": "2",
       "room": "Aula 2H"
     },
     "349": {
-      "day": "Mar",
-      "hour": "5",
+      "day": "Mer",
+      "hour": "3",
       "room": "Aula 2H"
     },
     "350": {
-      "day": "Gio",
+      "day": "Lun",
       "hour": "3",
       "room": "Aula 2H"
     },
     "351": {
+      "day": "Mar",
+      "hour": "7",
+      "room": "Aula 2H"
+    },
+    "352": {
+      "day": "Gio",
+      "hour": "2",
+      "room": "Aula 2H"
+    },
+    "353": {
+      "day": "Mer",
+      "hour": "6",
+      "room": "Aula 2H"
+    },
+    "354": {
+      "day": "Mar",
+      "hour": "3",
+      "room": "Aula 2H"
+    },
+    "355": {
       "day": "Mer",
       "hour": "5",
       "room": "Aula 2H"
     },
-    "352": {
-      "day": "Lun",
-      "hour": "1",
-      "room": "Aula 2H"
-    },
-    "353": {
-      "day": "Ven",
-      "hour": "7",
-      "room": "Aula 2H"
-    },
-    "354": {
-      "day": "Ven",
-      "hour": "5",
-      "room": "Aula 2H"
-    },
-    "355": {
-      "day": "Mar",
-      "hour": "8",
-      "room": "Aula 2H"
-    },
     "356": {
-      "day": "Mar",
-      "hour": "7",
+      "day": "Ven",
+      "hour": "2",
       "room": "Aula 2H"
     },
     "357": {
-      "day": "Lun",
-      "hour": "5",
+      "day": "Gio",
+      "hour": "1",
       "room": "Aula 2H"
     },
     "358": {
-      "day": "Ven",
+      "day": "Mar",
       "hour": "1",
       "room": "Aula 2H"
     },
     "359": {
-      "day": "Mar",
-      "hour": "3",
+      "day": "Lun",
+      "hour": "1",
       "room": "Aula 2H"
     },
     "360": {
-      "day": "Lun",
-      "hour": "2",
+      "day": "Gio",
+      "hour": "4",
       "room": "Aula 2H"
     },
     "361": {
-      "day": "Mer",
-      "hour": "3",
+      "day": "Ven",
+      "hour": "1",
       "room": "Aula 2H"
     },
     "362": {
-      "day": "Mar",
-      "hour": "1",
+      "day": "Ven",
+      "hour": "7",
       "room": "Aula 2H"
     },
     "363": {
-      "day": "Gio",
-      "hour": "6",
-      "room": "Aula 2H"
-    },
-    "364": {
-      "day": "Ven",
-      "hour": "2",
-      "room": "Aula 2H"
-    },
-    "365": {
-      "day": "Gio",
-      "hour": "1",
-      "room": "Aula 2H"
-    },
-    "366": {
       "day": "Mer",
       "hour": "1",
       "room": "Aula 2H"
     },
-    "367": {
+    "364": {
+      "day": "Gio",
+      "hour": "3",
+      "room": "Aula 2H"
+    },
+    "365": {
       "day": "Mar",
-      "hour": "6",
+      "hour": "5",
+      "room": "Aula 2H"
+    },
+    "366": {
+      "day": "Lun",
+      "hour": "5",
+      "room": "Aula 2H"
+    },
+    "367": {
+      "day": "Lun",
+      "hour": "2",
       "room": "Aula 2H"
     },
     "368": {
-      "day": "Lun",
-      "hour": "3",
+      "day": "Ven",
+      "hour": "5",
       "room": "Palestra"
     },
     "369": {
-      "day": "Mar",
-      "hour": "4",
+      "day": "Mer",
+      "hour": "2",
       "room": "Aula 2H"
     },
     "370": {
@@ -22249,26 +22250,26 @@
     "371": {
       "day": "Ven",
       "hour": "3",
-      "room": "INFO 1"
+      "room": "INFO 2"
     },
     "372": {
-      "day": "Lun",
-      "hour": "2",
+      "day": "Gio",
+      "hour": "3",
       "room": "Aula 41"
     },
     "373": {
-      "day": "Gio",
-      "hour": "5",
+      "day": "Lun",
+      "hour": "3",
       "room": "Aula 41"
     },
     "374": {
-      "day": "Gio",
+      "day": "Ven",
       "hour": "1",
       "room": "Aula 41"
     },
     "375": {
-      "day": "Lun",
-      "hour": "4",
+      "day": "Mer",
+      "hour": "6",
       "room": "Aula 41"
     },
     "376": {
@@ -22277,349 +22278,349 @@
       "room": "Aula 41"
     },
     "377": {
-      "day": "Ven",
-      "hour": "3",
+      "day": "Mer",
+      "hour": "1",
       "room": "Aula 41"
     },
     "378": {
-      "day": "Mer",
+      "day": "Gio",
       "hour": "1",
       "room": "Aula 41"
     },
     "379": {
-      "day": "Lun",
+      "day": "Ven",
       "hour": "3",
       "room": "Aula 41"
     },
     "380": {
-      "day": "Gio",
-      "hour": "3",
-      "room": "Aula 41"
-    },
-    "381": {
-      "day": "Mer",
-      "hour": "5",
-      "room": "Aula 41"
-    },
-    "382": {
       "day": "Mar",
       "hour": "5",
       "room": "Aula 41"
     },
-    "384": {
-      "day": "Mer",
-      "hour": "6",
+    "381": {
+      "day": "Lun",
+      "hour": "4",
       "room": "Aula 41"
     },
-    "385": {
-      "day": "Gio",
+    "382": {
+      "day": "Ven",
       "hour": "2",
       "room": "Aula 41"
     },
-    "386": {
+    "384": {
       "day": "Gio",
       "hour": "4",
       "room": "Aula 41"
     },
+    "385": {
+      "day": "Mer",
+      "hour": "5",
+      "room": "Aula 41"
+    },
+    "386": {
+      "day": "Mar",
+      "hour": "6",
+      "room": "Aula 41"
+    },
     "387": {
-      "day": "Ven",
+      "day": "Mar",
       "hour": "1",
       "room": "Palestra"
     },
     "388": {
-      "day": "Mar",
-      "hour": "1",
-      "room": "Aula 41"
-    },
-    "389": {
       "day": "Lun",
       "hour": "1",
       "room": "Aula 41"
     },
-    "390": {
+    "389": {
       "day": "Ven",
+      "hour": "4",
+      "room": "Aula 41"
+    },
+    "390": {
+      "day": "Gio",
       "hour": "5",
       "room": "Aula 41"
     },
     "391": {
       "day": "Mer",
       "hour": "3",
-      "room": "INFO 2"
+      "room": "INFO 1"
     },
     "392": {
-      "day": "Ven",
-      "hour": "5",
+      "day": "Lun",
+      "hour": "1",
       "room": "Aula 3A"
     },
     "393": {
-      "day": "Mer",
-      "hour": "5",
+      "day": "Ven",
+      "hour": "1",
       "room": "Aula 3A"
     },
     "394": {
-      "day": "Lun",
-      "hour": "2",
+      "day": "Mer",
+      "hour": "5",
       "room": "Aula 3A"
     },
     "395": {
       "day": "Gio",
-      "hour": "4",
+      "hour": "5",
       "room": "Aula 3A"
     },
     "396": {
       "day": "Ven",
-      "hour": "8",
+      "hour": "4",
       "room": "Aula 3A"
     },
     "397": {
-      "day": "Lun",
-      "hour": "3",
+      "day": "Mar",
+      "hour": "7",
       "room": "Aula 3A"
     },
     "398": {
       "day": "Ven",
-      "hour": "7",
+      "hour": "5",
       "room": "Aula 3A"
     },
     "399": {
-      "day": "Mar",
+      "day": "Mer",
       "hour": "1",
       "room": "Palestra"
     },
     "400": {
-      "day": "Ven",
-      "hour": "1"
+      "day": "Gio",
+      "hour": "3"
     },
     "401": {
-      "day": "Mer",
+      "day": "Lun",
       "hour": "3"
     },
     "402": {
-      "day": "Lun",
-      "hour": "1"
+      "day": "Ven",
+      "hour": "8"
     },
     "403": {
       "day": "Mar",
       "hour": "3"
     },
     "404": {
-      "day": "Lun",
-      "hour": "5"
+      "day": "Ven",
+      "hour": "3"
     },
     "405": {
+      "day": "Gio",
+      "hour": "2"
+    },
+    "406": {
       "day": "Mar",
       "hour": "4"
     },
-    "406": {
-      "day": "Gio",
-      "hour": "3"
-    },
     "407": {
       "day": "Mer",
-      "hour": "2"
+      "hour": "6"
     },
     "408": {
       "day": "Gio",
-      "hour": "5"
+      "hour": "6"
     },
     "409": {
-      "day": "Mar",
+      "day": "Ven",
       "hour": "7"
     },
     "410": {
-      "day": "Gio",
-      "hour": "1"
+      "day": "Mer",
+      "hour": "3"
     },
     "411": {
       "day": "Mar",
-      "hour": "5"
-    },
-    "412": {
-      "day": "Lun",
-      "hour": "6"
-    },
-    "413": {
-      "day": "Mer",
       "hour": "1"
     },
-    "414": {
+    "412": {
+      "day": "Gio",
+      "hour": "1"
+    },
+    "413": {
       "day": "Ven",
-      "hour": "3",
+      "hour": "6"
+    },
+    "414": {
+      "day": "Mar",
+      "hour": "5",
       "room": "INFO 2"
     },
     "415": {
-      "day": "Lun",
-      "hour": "5"
-    },
-    "416": {
-      "day": "Ven",
+      "day": "Gio",
       "hour": "3"
     },
+    "416": {
+      "day": "Mar",
+      "hour": "5"
+    },
     "417": {
-      "day": "Gio",
-      "hour": "2"
+      "day": "Mer",
+      "hour": "4"
     },
     "418": {
       "day": "Mar",
-      "hour": "6"
+      "hour": "3"
     },
     "419": {
-      "day": "Gio",
-      "hour": "1"
+      "day": "Mer",
+      "hour": "3"
     },
     "420": {
-      "day": "Mer",
+      "day": "Gio",
       "hour": "1"
     },
     "421": {
       "day": "Ven",
-      "hour": "2"
+      "hour": "3"
     },
     "422": {
-      "day": "Mar",
-      "hour": "5"
+      "day": "Lun",
+      "hour": "3"
     },
     "423": {
-      "day": "Mer",
+      "day": "Gio",
       "hour": "2"
     },
     "424": {
-      "day": "Ven",
+      "day": "Lun",
       "hour": "4"
     },
     "425": {
-      "day": "Gio",
-      "hour": "3"
+      "day": "Mar",
+      "hour": "6"
     },
     "426": {
-      "day": "Lun",
-      "hour": "1"
+      "day": "Ven",
+      "hour": "6"
     },
     "427": {
-      "day": "Mar",
+      "day": "Ven",
       "hour": "7"
     },
     "428": {
-      "day": "Mer",
-      "hour": "3"
+      "day": "Lun",
+      "hour": "5"
     },
     "429": {
-      "day": "Ven",
-      "hour": "1"
+      "day": "Mar",
+      "hour": "4"
     },
     "430": {
       "day": "Mar",
-      "hour": "3",
+      "hour": "1",
       "room": "INFO 1"
     },
     "431": {
-      "day": "Mar",
-      "hour": "1",
-      "room": "Aula 3C"
-    },
-    "432": {
-      "day": "Gio",
-      "hour": "2",
-      "room": "Aula 3C"
-    },
-    "433": {
-      "day": "Ven",
-      "hour": "3",
-      "room": "Aula 3C"
-    },
-    "434": {
-      "day": "Lun",
-      "hour": "3",
-      "room": "Aula 3C"
-    },
-    "435": {
       "day": "Mer",
       "hour": "4",
       "room": "Aula 3C"
     },
-    "436": {
+    "432": {
+      "day": "Gio",
+      "hour": "4",
+      "room": "Aula 3C"
+    },
+    "433": {
       "day": "Lun",
       "hour": "1",
+      "room": "Aula 3C"
+    },
+    "434": {
+      "day": "Ven",
+      "hour": "1",
+      "room": "Aula 3C"
+    },
+    "435": {
+      "day": "Mer",
+      "hour": "6",
+      "room": "Aula 3C"
+    },
+    "436": {
+      "day": "Lun",
+      "hour": "3",
       "room": "Aula 3C"
     },
     "437": {
       "day": "Ven",
-      "hour": "1",
-      "room": "Aula 3C"
-    },
-    "438": {
-      "day": "Mer",
       "hour": "5",
       "room": "Aula 3C"
     },
-    "439": {
-      "day": "Mar",
-      "hour": "2",
-      "room": "Aula 3C"
-    },
-    "440": {
-      "day": "Mer",
-      "hour": "2",
-      "room": "Aula 3C"
-    },
-    "441": {
+    "438": {
       "day": "Gio",
       "hour": "1",
       "room": "Aula 3C"
     },
-    "442": {
+    "439": {
+      "day": "Mer",
+      "hour": "1",
+      "room": "Aula 3C"
+    },
+    "440": {
       "day": "Ven",
+      "hour": "3",
+      "room": "Aula 3C"
+    },
+    "441": {
+      "day": "Mer",
+      "hour": "5",
+      "room": "Aula 3C"
+    },
+    "442": {
+      "day": "Gio",
       "hour": "6",
       "room": "Aula 3C"
     },
     "443": {
-      "day": "Gio",
-      "hour": "3",
+      "day": "Lun",
+      "hour": "5",
       "room": "Aula 3C"
     },
     "444": {
       "day": "Mar",
-      "hour": "5",
+      "hour": "1",
       "room": "Aula 3C"
     },
     "445": {
-      "day": "Ven",
-      "hour": "5",
+      "day": "Gio",
+      "hour": "3",
       "room": "Aula 3C"
     },
     "446": {
-      "day": "Lun",
-      "hour": "6",
+      "day": "Ven",
+      "hour": "4",
       "room": "Aula 3C"
     },
     "447": {
       "day": "Mer",
-      "hour": "1",
+      "hour": "3",
       "room": "Aula 3C"
     },
     "448": {
-      "day": "Lun",
+      "day": "Gio",
       "hour": "5",
       "room": "Aula 3C"
     },
     "449": {
       "day": "Mar",
-      "hour": "3",
+      "hour": "5",
       "room": "Palestra"
     },
     "450": {
-      "day": "Gio",
-      "hour": "5",
+      "day": "Mar",
+      "hour": "3",
       "room": "Aula 3C"
     },
     "451": {
       "day": "Mer",
-      "hour": "3",
+      "hour": "2",
       "room": "Aula 3C"
     },
     "452": {
-      "day": "Gio",
-      "hour": "4",
+      "day": "Lun",
+      "hour": "2",
       "room": "Aula 3D"
     },
     "453": {
@@ -22628,83 +22629,83 @@
       "room": "Aula 3D"
     },
     "454": {
-      "day": "Lun",
+      "day": "Mar",
       "hour": "5",
       "room": "Aula 3D"
     },
     "455": {
-      "day": "Mer",
+      "day": "Ven",
       "hour": "1",
       "room": "Aula 3D"
     },
     "456": {
       "day": "Gio",
-      "hour": "3",
+      "hour": "4",
       "room": "Aula 3D"
     },
     "457": {
-      "day": "Ven",
-      "hour": "3",
+      "day": "Mar",
+      "hour": "1",
       "room": "Aula 3D"
     },
     "458": {
-      "day": "Mar",
-      "hour": "6",
+      "day": "Ven",
+      "hour": "4",
       "room": "Aula 3D"
     },
     "459": {
       "day": "Lun",
-      "hour": "4",
+      "hour": "1",
       "room": "Aula 3D"
     },
     "460": {
+      "day": "Lun",
+      "hour": "4",
+      "room": "Aula 3D"
+    },
+    "461": {
       "day": "Mer",
       "hour": "2",
       "room": "Aula 3D"
     },
-    "461": {
-      "day": "Ven",
-      "hour": "6",
-      "room": "Aula 3D"
-    },
     "462": {
-      "day": "Mar",
-      "hour": "4",
+      "day": "Gio",
+      "hour": "3",
       "room": "Aula 3D"
     },
     "463": {
-      "day": "Gio",
-      "hour": "5",
-      "room": "Aula 3D"
-    },
-    "464": {
       "day": "Mer",
       "hour": "3",
       "room": "Aula 3D"
     },
+    "464": {
+      "day": "Gio",
+      "hour": "5",
+      "room": "Aula 3D"
+    },
     "465": {
-      "day": "Mar",
-      "hour": "5",
-      "room": "Aula 3D"
-    },
-    "466": {
-      "day": "Ven",
-      "hour": "5",
-      "room": "Aula 3D"
-    },
-    "467": {
       "day": "Lun",
       "hour": "3",
       "room": "Aula 3D"
     },
-    "468": {
+    "466": {
       "day": "Ven",
+      "hour": "3",
+      "room": "Aula 3D"
+    },
+    "467": {
+      "day": "Mar",
+      "hour": "4",
+      "room": "Aula 3D"
+    },
+    "468": {
+      "day": "Mer",
       "hour": "1",
       "room": "Aula 3D"
     },
     "469": {
-      "day": "Mar",
-      "hour": "1",
+      "day": "Ven",
+      "hour": "5",
       "room": "Palestra"
     },
     "470": {
@@ -22724,42 +22725,42 @@
     },
     "473": {
       "day": "Lun",
-      "hour": "1",
+      "hour": "5",
       "room": "INFO 1"
     },
     "474": {
+      "day": "Mar",
+      "hour": "7",
+      "room": "Aula 3E"
+    },
+    "475": {
+      "day": "Mer",
+      "hour": "6",
+      "room": "Aula 3E"
+    },
+    "476": {
+      "day": "Ven",
+      "hour": "3",
+      "room": "Aula 3E"
+    },
+    "477": {
       "day": "Ven",
       "hour": "5",
       "room": "Aula 3E"
     },
-    "475": {
-      "day": "Gio",
-      "hour": "5",
-      "room": "Aula 3E"
-    },
-    "476": {
-      "day": "Lun",
-      "hour": "1",
-      "room": "Aula 3E"
-    },
-    "477": {
-      "day": "Lun",
-      "hour": "3",
-      "room": "Aula 3E"
-    },
     "478": {
-      "day": "Mar",
+      "day": "Mer",
       "hour": "3",
       "room": "Aula 3E"
     },
     "479": {
-      "day": "Ven",
-      "hour": "8",
+      "day": "Gio",
+      "hour": "1",
       "room": "Aula 3E"
     },
     "480": {
-      "day": "Gio",
-      "hour": "6",
+      "day": "Mar",
+      "hour": "5",
       "room": "Aula 3E"
     },
     "481": {
@@ -22768,393 +22769,393 @@
       "room": "Aula 3E"
     },
     "482": {
-      "day": "Lun",
+      "day": "Ven",
       "hour": "2",
       "room": "Aula 3E"
     },
     "483": {
-      "day": "Ven",
-      "hour": "7",
-      "room": "Aula 3E"
-    },
-    "484": {
-      "day": "Mar",
-      "hour": "1",
-      "room": "Aula 3E"
-    },
-    "485": {
-      "day": "Ven",
-      "hour": "3",
-      "room": "Aula 3E"
-    },
-    "486": {
-      "day": "Lun",
-      "hour": "5",
-      "room": "Aula 3E"
-    },
-    "487": {
       "day": "Gio",
       "hour": "4",
       "room": "Aula 3E"
     },
-    "488": {
+    "484": {
       "day": "Ven",
       "hour": "4",
       "room": "Aula 3E"
     },
-    "489": {
+    "485": {
+      "day": "Gio",
+      "hour": "2",
+      "room": "Aula 3E"
+    },
+    "486": {
       "day": "Mar",
       "hour": "2",
       "room": "Aula 3E"
     },
-    "490": {
-      "day": "Mar",
+    "487": {
+      "day": "Lun",
+      "hour": "1",
+      "room": "Aula 3E"
+    },
+    "488": {
+      "day": "Gio",
+      "hour": "3",
+      "room": "Aula 3E"
+    },
+    "489": {
+      "day": "Mer",
       "hour": "5",
       "room": "Aula 3E"
     },
+    "490": {
+      "day": "Lun",
+      "hour": "2",
+      "room": "Aula 3E"
+    },
     "491": {
-      "day": "Mar",
-      "hour": "7",
+      "day": "Lun",
+      "hour": "5",
       "room": "Aula 3E"
     },
     "492": {
       "day": "Mer",
-      "hour": "3",
-      "room": "Aula 3E"
-    },
-    "493": {
-      "day": "Lun",
-      "hour": "6",
-      "room": "Aula 3E"
-    },
-    "494": {
-      "day": "Mer",
       "hour": "1",
       "room": "Aula 3E"
     },
-    "495": {
-      "day": "Gio",
+    "493": {
+      "day": "Mar",
+      "hour": "1",
+      "room": "Aula 3E"
+    },
+    "494": {
+      "day": "Lun",
       "hour": "3",
+      "room": "Aula 3E"
+    },
+    "495": {
+      "day": "Ven",
+      "hour": "1",
       "room": "Aula 3E"
     },
     "496": {
       "day": "Gio",
-      "hour": "1",
+      "hour": "5",
       "room": "Palestra"
     },
     "497": {
-      "day": "Ven",
-      "hour": "1",
+      "day": "Mar",
+      "hour": "3",
       "room": "INFO 1"
     },
     "498": {
-      "day": "Mar",
+      "day": "Gio",
       "hour": "5",
       "room": "Aula 3G"
     },
     "499": {
-      "day": "Lun",
-      "hour": "3",
+      "day": "Mar",
+      "hour": "1",
       "room": "Aula 3G"
     },
     "500": {
-      "day": "Gio",
+      "day": "Mer",
       "hour": "5",
       "room": "Aula 3G"
     },
     "501": {
-      "day": "Mer",
+      "day": "Ven",
       "hour": "3",
       "room": "Aula 3G"
     },
     "502": {
-      "day": "Ven",
-      "hour": "3",
-      "room": "Aula 3G"
-    },
-    "503": {
       "day": "Lun",
       "hour": "1",
       "room": "Aula 3G"
     },
-    "504": {
-      "day": "Gio",
+    "503": {
+      "day": "Ven",
       "hour": "4",
       "room": "Aula 3G"
     },
-    "505": {
-      "day": "Gio",
-      "hour": "1",
+    "504": {
+      "day": "Mer",
+      "hour": "2",
       "room": "Aula 3G"
     },
-    "506": {
+    "505": {
       "day": "Lun",
       "hour": "5",
       "room": "Aula 3G"
     },
+    "506": {
+      "day": "Mer",
+      "hour": "1",
+      "room": "Aula 3G"
+    },
     "507": {
+      "day": "Gio",
+      "hour": "4",
+      "room": "Aula 3G"
+    },
+    "508": {
+      "day": "Lun",
+      "hour": "3",
+      "room": "Aula 3G"
+    },
+    "509": {
+      "day": "Mar",
+      "hour": "7",
+      "room": "Aula 3G"
+    },
+    "510": {
+      "day": "Gio",
+      "hour": "3",
+      "room": "Aula 3G"
+    },
+    "511": {
       "day": "Ven",
       "hour": "1",
       "room": "Aula 3G"
     },
-    "508": {
-      "day": "Ven",
-      "hour": "7",
-      "room": "Aula 3G"
-    },
-    "509": {
-      "day": "Mer",
-      "hour": "4",
-      "room": "Aula 3G"
-    },
-    "510": {
-      "day": "Lun",
-      "hour": "2",
-      "room": "Aula 3G"
-    },
-    "511": {
-      "day": "Lun",
-      "hour": "6",
-      "room": "Aula 3G"
-    },
     "512": {
-      "day": "Ven",
-      "hour": "2",
+      "day": "Mar",
+      "hour": "3",
       "room": "Aula 3G"
     },
     "513": {
-      "day": "Mar",
+      "day": "Gio",
       "hour": "1",
       "room": "Aula 3G"
     },
     "514": {
-      "day": "Ven",
-      "hour": "8",
+      "day": "Lun",
+      "hour": "4",
       "room": "Aula 3G"
     },
     "515": {
-      "day": "Mar",
-      "hour": "7",
-      "room": "Aula 3G"
-    },
-    "516": {
       "day": "Ven",
       "hour": "5",
       "room": "Aula 3G"
     },
-    "517": {
+    "516": {
       "day": "Mer",
-      "hour": "5",
+      "hour": "3",
+      "room": "Aula 3G"
+    },
+    "517": {
+      "day": "Ven",
+      "hour": "2",
       "room": "Aula 3G"
     },
     "518": {
-      "day": "Mer",
-      "hour": "1",
+      "day": "Mar",
+      "hour": "5",
       "room": "Palestra"
     },
     "519": {
-      "day": "Mar",
-      "hour": "3",
+      "day": "Ven",
+      "hour": "7",
       "room": "Aula 3G"
     },
     "520": {
-      "day": "Gio",
-      "hour": "3",
+      "day": "Mar",
+      "hour": "4",
       "room": "Aula 3G"
     },
     "521": {
-      "day": "Mer",
+      "day": "Ven",
       "hour": "5",
       "room": "Aula 3H"
     },
     "522": {
       "day": "Gio",
-      "hour": "1",
-      "room": "Aula 3H"
-    },
-    "523": {
-      "day": "Lun",
       "hour": "3",
       "room": "Aula 3H"
     },
-    "524": {
+    "523": {
       "day": "Mar",
       "hour": "6",
       "room": "Aula 3H"
     },
+    "524": {
+      "day": "Lun",
+      "hour": "2",
+      "room": "Aula 3H"
+    },
     "525": {
-      "day": "Ven",
+      "day": "Mar",
       "hour": "3",
       "room": "Aula 3H"
     },
     "526": {
-      "day": "Mar",
+      "day": "Mer",
       "hour": "1",
       "room": "Aula 3H"
     },
     "527": {
-      "day": "Gio",
+      "day": "Lun",
       "hour": "5",
       "room": "Aula 3H"
     },
     "528": {
       "day": "Lun",
-      "hour": "1",
-      "room": "Aula 3H"
-    },
-    "529": {
-      "day": "Mer",
-      "hour": "4",
-      "room": "Aula 3H"
-    },
-    "530": {
-      "day": "Gio",
-      "hour": "6",
-      "room": "Aula 3H"
-    },
-    "531": {
-      "day": "Gio",
       "hour": "3",
       "room": "Aula 3H"
     },
-    "532": {
+    "529": {
       "day": "Ven",
+      "hour": "7",
+      "room": "Aula 3H"
+    },
+    "530": {
+      "day": "Mer",
+      "hour": "2",
+      "room": "Aula 3H"
+    },
+    "531": {
+      "day": "Ven",
+      "hour": "8",
+      "room": "Aula 3H"
+    },
+    "532": {
+      "day": "Gio",
       "hour": "5",
       "room": "Aula 3H"
     },
     "533": {
+      "day": "Mar",
+      "hour": "5",
+      "room": "Aula 3H"
+    },
+    "534": {
       "day": "Mer",
       "hour": "3",
       "room": "Aula 3H"
     },
-    "534": {
-      "day": "Gio",
-      "hour": "4",
-      "room": "Aula 3H"
-    },
     "535": {
-      "day": "Lun",
-      "hour": "4",
+      "day": "Mar",
+      "hour": "2",
       "room": "Aula 3H"
     },
     "536": {
-      "day": "Mar",
-      "hour": "3",
+      "day": "Ven",
+      "hour": "1",
       "room": "Aula 3H"
     },
     "537": {
-      "day": "Ven",
-      "hour": "6",
+      "day": "Mar",
+      "hour": "1",
       "room": "Aula 3H"
     },
     "538": {
-      "day": "Ven",
+      "day": "Gio",
       "hour": "1",
       "room": "Aula 3H"
     },
     "539": {
-      "day": "Lun",
-      "hour": "5",
+      "day": "Mar",
+      "hour": "7",
       "room": "Aula 3H"
     },
     "540": {
-      "day": "Mar",
-      "hour": "5",
+      "day": "Mer",
+      "hour": "4",
       "room": "Aula 3H"
     },
     "541": {
       "day": "Ven",
-      "hour": "7",
+      "hour": "3",
       "room": "Palestra"
     },
     "542": {
       "day": "Mer",
-      "hour": "1",
+      "hour": "5",
       "room": "Aula 3H"
     },
     "543": {
-      "day": "Mar",
-      "hour": "2",
+      "day": "Lun",
+      "hour": "1",
       "room": "Aula 3H"
     },
     "544": {
-      "day": "Mer",
-      "hour": "2",
+      "day": "Mar",
+      "hour": "6",
       "room": "Aula 3L"
     },
     "545": {
-      "day": "Mar",
-      "hour": "4",
+      "day": "Gio",
+      "hour": "6",
       "room": "Aula 3L"
     },
     "546": {
-      "day": "Mer",
-      "hour": "5",
+      "day": "Lun",
+      "hour": "1",
       "room": "Aula 3L"
     },
     "547": {
-      "day": "Lun",
+      "day": "Gio",
       "hour": "3",
       "room": "Aula 3L"
     },
     "548": {
-      "day": "Ven",
-      "hour": "2",
-      "room": "Aula 3L"
-    },
-    "549": {
-      "day": "Ven",
-      "hour": "3",
-      "room": "Aula 3L"
-    },
-    "550": {
-      "day": "Gio",
-      "hour": "1",
-      "room": "Aula 3L"
-    },
-    "551": {
       "day": "Mer",
       "hour": "4",
       "room": "Aula 3L"
     },
-    "552": {
-      "day": "Mer",
-      "hour": "3",
-      "room": "Aula 3L"
-    },
-    "553": {
-      "day": "Mar",
-      "hour": "3",
-      "room": "Aula 3L"
-    },
-    "554": {
-      "day": "Lun",
-      "hour": "2",
-      "room": "Aula 3L"
-    },
-    "555": {
+    "549": {
       "day": "Ven",
       "hour": "5",
       "room": "Aula 3L"
     },
-    "556": {
+    "550": {
+      "day": "Mer",
+      "hour": "3",
+      "room": "Aula 3L"
+    },
+    "551": {
       "day": "Mar",
+      "hour": "3",
+      "room": "Aula 3L"
+    },
+    "552": {
+      "day": "Gio",
       "hour": "5",
       "room": "Aula 3L"
     },
-    "557": {
-      "day": "Lun",
+    "553": {
+      "day": "Ven",
+      "hour": "4",
+      "room": "Aula 3L"
+    },
+    "554": {
+      "day": "Mar",
+      "hour": "4",
+      "room": "Aula 3L"
+    },
+    "555": {
+      "day": "Gio",
       "hour": "1",
       "room": "Aula 3L"
     },
-    "558": {
+    "556": {
       "day": "Mer",
       "hour": "1",
       "room": "Aula 3L"
     },
+    "557": {
+      "day": "Ven",
+      "hour": "3",
+      "room": "Aula 3L"
+    },
+    "558": {
+      "day": "Mar",
+      "hour": "5",
+      "room": "Aula 3L"
+    },
     "559": {
-      "day": "Gio",
-      "hour": "2",
+      "day": "Lun",
+      "hour": "3",
       "room": "Aula 3L"
     },
     "560": {
@@ -23163,152 +23164,152 @@
       "room": "Aula 3L"
     },
     "561": {
-      "day": "Gio",
+      "day": "Lun",
       "hour": "5",
       "room": "Palestra"
     },
     "562": {
-      "day": "Lun",
-      "hour": "5",
+      "day": "Mar",
+      "hour": "1",
       "room": "Aula 3L"
     },
     "563": {
-      "day": "Gio",
-      "hour": "3",
+      "day": "Ven",
+      "hour": "1",
       "room": "Aula 3L"
     },
     "564": {
-      "day": "Ven",
-      "hour": "1",
+      "day": "Gio",
+      "hour": "4",
       "room": "Aula 3L"
     },
     "565": {
-      "day": "Mar",
-      "hour": "1",
-      "room": "INFO 2"
+      "day": "Mer",
+      "hour": "5",
+      "room": "INFO 1"
     },
     "566": {
-      "day": "Mar",
-      "hour": "1",
+      "day": "Gio",
+      "hour": "5",
       "room": "Aula 4A"
     },
     "567": {
-      "day": "Lun",
-      "hour": "3",
+      "day": "Mar",
+      "hour": "5",
       "room": "Aula 4A"
     },
     "568": {
-      "day": "Gio",
-      "hour": "4",
+      "day": "Ven",
+      "hour": "6",
       "room": "Aula 4A"
     },
     "569": {
-      "day": "Ven",
-      "hour": "3",
-      "room": "Aula 4A"
-    },
-    "570": {
-      "day": "Mar",
-      "hour": "3",
-      "room": "Aula 4A"
-    },
-    "571": {
-      "day": "Lun",
-      "hour": "1",
-      "room": "Aula 4A"
-    },
-    "572": {
-      "day": "Gio",
-      "hour": "3",
-      "room": "Aula 4A"
-    },
-    "573": {
       "day": "Mar",
       "hour": "7",
       "room": "Aula 4A"
     },
-    "574": {
+    "570": {
+      "day": "Gio",
+      "hour": "3",
+      "room": "Aula 4A"
+    },
+    "571": {
       "day": "Mer",
-      "hour": "4",
+      "hour": "6",
+      "room": "Aula 4A"
+    },
+    "572": {
+      "day": "Ven",
+      "hour": "5",
+      "room": "Aula 4A"
+    },
+    "573": {
+      "day": "Ven",
+      "hour": "3",
+      "room": "Aula 4A"
+    },
+    "574": {
+      "day": "Lun",
+      "hour": "3",
       "room": "Aula 4A"
     },
     "575": {
+      "day": "Mar",
+      "hour": "1",
+      "room": "Aula 4A"
+    },
+    "576": {
       "day": "Lun",
       "hour": "2",
       "room": "Aula 4A"
     },
-    "576": {
-      "day": "Mar",
-      "hour": "8",
-      "room": "Aula 4A"
-    },
     "577": {
-      "day": "Mer",
-      "hour": "5",
-      "room": "Aula 4A"
-    },
-    "578": {
-      "day": "Mar",
-      "hour": "5",
-      "room": "Aula 4A"
-    },
-    "579": {
       "day": "Gio",
       "hour": "1",
       "room": "Aula 4A"
     },
-    "580": {
+    "578": {
       "day": "Ven",
-      "hour": "2",
+      "hour": "1",
+      "room": "Aula 4A"
+    },
+    "579": {
+      "day": "Mer",
+      "hour": "3",
+      "room": "Aula 4A"
+    },
+    "580": {
+      "day": "Lun",
+      "hour": "4",
       "room": "Aula 4A"
     },
     "581": {
-      "day": "Ven",
-      "hour": "5",
+      "day": "Mar",
+      "hour": "3",
       "room": "Aula 4A"
     },
     "582": {
       "day": "Lun",
-      "hour": "5",
+      "hour": "1",
       "room": "Aula 4A"
     },
     "583": {
-      "day": "Mer",
-      "hour": "1",
+      "day": "Lun",
+      "hour": "5",
       "room": "Palestra"
     },
     "584": {
-      "day": "Gio",
-      "hour": "5",
-      "room": "INFO 1"
+      "day": "Mer",
+      "hour": "1",
+      "room": "INFO 2"
     },
     "585": {
-      "day": "Mer",
-      "hour": "3"
+      "day": "Ven",
+      "hour": "4"
     },
     "586": {
-      "day": "Ven",
-      "hour": "1"
+      "day": "Mer",
+      "hour": "5"
     },
     "587": {
-      "day": "Lun",
-      "hour": "6"
+      "day": "Mar",
+      "hour": "2"
     },
     "588": {
-      "day": "Lun",
-      "hour": "6"
+      "day": "Mar",
+      "hour": "2"
     },
     "589": {
       "day": "Mer",
-      "hour": "3"
+      "hour": "5"
     },
     "590": {
       "day": "Ven",
-      "hour": "1"
+      "hour": "4"
     },
     "591": {
-      "day": "Mer",
-      "hour": "3",
+      "day": "Lun",
+      "hour": "5",
       "room": "Aula 4C"
     },
     "592": {
@@ -23317,23 +23318,23 @@
       "room": "Aula 4C"
     },
     "593": {
-      "day": "Mer",
-      "hour": "5",
+      "day": "Mar",
+      "hour": "1",
       "room": "Aula 4C"
     },
     "594": {
-      "day": "Ven",
+      "day": "Mer",
       "hour": "1",
       "room": "Aula 4C"
     },
     "595": {
       "day": "Lun",
-      "hour": "5",
+      "hour": "3",
       "room": "Aula 4C"
     },
     "596": {
-      "day": "Lun",
-      "hour": "1",
+      "day": "Mar",
+      "hour": "3",
       "room": "Aula 4C"
     },
     "597": {
@@ -23342,58 +23343,58 @@
       "room": "Aula 4C"
     },
     "598": {
-      "day": "Mar",
-      "hour": "1",
+      "day": "Mer",
+      "hour": "5",
       "room": "Aula 4C"
     },
     "599": {
-      "day": "Ven",
-      "hour": "3",
+      "day": "Lun",
+      "hour": "4",
       "room": "Aula 4C"
     },
     "600": {
-      "day": "Mer",
-      "hour": "1",
+      "day": "Lun",
+      "hour": "6",
       "room": "Aula 4C"
     },
     "601": {
-      "day": "Mar",
-      "hour": "3",
+      "day": "Ven",
+      "hour": "1",
       "room": "Aula 4C"
     },
     "602": {
-      "day": "Ven",
+      "day": "Mar",
       "hour": "5",
       "room": "Aula 4C"
     },
     "603": {
+      "day": "Lun",
+      "hour": "1",
+      "room": "Aula 4C"
+    },
+    "604": {
       "day": "Gio",
       "hour": "3",
       "room": "Aula 4C"
     },
-    "604": {
-      "day": "Lun",
-      "hour": "3",
-      "room": "Aula 4C"
-    },
     "605": {
-      "day": "Mer",
+      "day": "Ven",
       "hour": "2",
       "room": "Aula 4C"
     },
     "606": {
       "day": "Mar",
-      "hour": "4",
+      "hour": "6",
       "room": "Aula 4C"
     },
     "607": {
-      "day": "Ven",
-      "hour": "4",
+      "day": "Mer",
+      "hour": "3",
       "room": "Aula 4C"
     },
     "608": {
-      "day": "Lun",
-      "hour": "6",
+      "day": "Ven",
+      "hour": "5",
       "room": "Aula 4C"
     },
     "609": {
@@ -23402,8 +23403,8 @@
       "room": "Palestra"
     },
     "610": {
-      "day": "Mar",
-      "hour": "5",
+      "day": "Ven",
+      "hour": "3",
       "room": "Aula 4C"
     },
     "611": {
@@ -23412,93 +23413,93 @@
       "room": "Aula 4C"
     },
     "612": {
-      "day": "Gio",
-      "hour": "2",
+      "day": "Ven",
+      "hour": "4",
       "room": "Aula 4D"
     },
     "613": {
       "day": "Mer",
-      "hour": "4",
+      "hour": "2",
       "room": "Aula 4D"
     },
     "614": {
-      "day": "Lun",
+      "day": "Gio",
       "hour": "1",
       "room": "Aula 4D"
     },
     "615": {
-      "day": "Ven",
-      "hour": "6",
+      "day": "Mar",
+      "hour": "3",
       "room": "Aula 4D"
     },
     "616": {
-      "day": "Mer",
+      "day": "Ven",
       "hour": "3",
       "room": "Aula 4D"
     },
     "617": {
-      "day": "Ven",
-      "hour": "1",
+      "day": "Lun",
+      "hour": "3",
       "room": "Aula 4D"
     },
     "618": {
-      "day": "Mar",
-      "hour": "4",
-      "room": "Aula 4D"
-    },
-    "619": {
-      "day": "Lun",
-      "hour": "3",
-      "room": "Aula 4D"
-    },
-    "620": {
-      "day": "Mer",
-      "hour": "1",
-      "room": "Aula 4D"
-    },
-    "621": {
-      "day": "Mar",
-      "hour": "3",
-      "room": "Aula 4D"
-    },
-    "622": {
-      "day": "Gio",
-      "hour": "1",
-      "room": "Aula 4D"
-    },
-    "623": {
-      "day": "Mer",
-      "hour": "5",
-      "room": "Aula 4D"
-    },
-    "624": {
-      "day": "Gio",
-      "hour": "5",
-      "room": "Aula 4D"
-    },
-    "625": {
-      "day": "Mar",
-      "hour": "1",
-      "room": "Aula 4D"
-    },
-    "626": {
       "day": "Ven",
       "hour": "5",
       "room": "Aula 4D"
     },
-    "627": {
-      "day": "Lun",
-      "hour": "4",
-      "room": "Aula 4D"
-    },
-    "628": {
+    "619": {
       "day": "Mar",
       "hour": "2",
       "room": "Aula 4D"
     },
-    "629": {
+    "620": {
+      "day": "Ven",
+      "hour": "6",
+      "room": "Aula 4D"
+    },
+    "621": {
+      "day": "Lun",
+      "hour": "2",
+      "room": "Aula 4D"
+    },
+    "622": {
+      "day": "Mar",
+      "hour": "4",
+      "room": "Aula 4D"
+    },
+    "623": {
+      "day": "Ven",
+      "hour": "1",
+      "room": "Aula 4D"
+    },
+    "624": {
+      "day": "Mer",
+      "hour": "3",
+      "room": "Aula 4D"
+    },
+    "625": {
+      "day": "Lun",
+      "hour": "1",
+      "room": "Aula 4D"
+    },
+    "626": {
       "day": "Gio",
       "hour": "3",
+      "room": "Aula 4D"
+    },
+    "627": {
+      "day": "Mar",
+      "hour": "1",
+      "room": "Aula 4D"
+    },
+    "628": {
+      "day": "Gio",
+      "hour": "4",
+      "room": "Aula 4D"
+    },
+    "629": {
+      "day": "Mer",
+      "hour": "5",
       "room": "Palestra"
     },
     "630": {
@@ -23507,13 +23508,13 @@
       "room": "Aula 4D"
     },
     "631": {
-      "day": "Ven",
-      "hour": "3",
+      "day": "Gio",
+      "hour": "5",
       "room": "Aula 4D"
     },
     "632": {
       "day": "Mer",
-      "hour": "2",
+      "hour": "1",
       "room": "Aula 4D"
     },
     "633": {
@@ -23522,147 +23523,147 @@
       "room": "INFO 1"
     },
     "634": {
-      "day": "Mar",
-      "hour": "1",
+      "day": "Gio",
+      "hour": "5",
       "room": "Aula 4E"
     },
     "635": {
       "day": "Mer",
-      "hour": "3",
+      "hour": "5",
       "room": "Aula 4E"
     },
     "636": {
-      "day": "Lun",
-      "hour": "3",
+      "day": "Ven",
+      "hour": "2",
       "room": "Aula 4E"
     },
     "637": {
       "day": "Ven",
-      "hour": "3",
+      "hour": "5",
       "room": "Aula 4E"
     },
     "638": {
-      "day": "Gio",
+      "day": "Mar",
       "hour": "3",
       "room": "Aula 4E"
     },
     "639": {
-      "day": "Mer",
-      "hour": "5",
-      "room": "Aula 4E"
-    },
-    "640": {
-      "day": "Mar",
+      "day": "Lun",
       "hour": "6",
       "room": "Aula 4E"
     },
-    "641": {
-      "day": "Lun",
-      "hour": "1",
-      "room": "Aula 4E"
-    },
-    "642": {
-      "day": "Gio",
-      "hour": "1",
-      "room": "Aula 4E"
-    },
-    "643": {
-      "day": "Mar",
-      "hour": "3",
-      "room": "Aula 4E"
-    },
-    "644": {
+    "640": {
       "day": "Gio",
       "hour": "2",
       "room": "Aula 4E"
     },
-    "645": {
-      "day": "Mer",
-      "hour": "6",
+    "641": {
+      "day": "Mar",
+      "hour": "7",
       "room": "Aula 4E"
     },
-    "646": {
-      "day": "Mar",
+    "642": {
+      "day": "Gio",
+      "hour": "3",
+      "room": "Aula 4E"
+    },
+    "643": {
+      "day": "Lun",
       "hour": "4",
       "room": "Aula 4E"
     },
-    "647": {
-      "day": "Gio",
+    "644": {
+      "day": "Mar",
+      "hour": "6",
+      "room": "Aula 4E"
+    },
+    "645": {
+      "day": "Lun",
       "hour": "5",
+      "room": "Aula 4E"
+    },
+    "646": {
+      "day": "Gio",
+      "hour": "1",
+      "room": "Aula 4E"
+    },
+    "647": {
+      "day": "Mar",
+      "hour": "8",
       "room": "Aula 4E"
     },
     "648": {
-      "day": "Ven",
-      "hour": "5",
+      "day": "Mar",
+      "hour": "1",
       "room": "Aula 4E"
     },
     "649": {
-      "day": "Mer",
-      "hour": "1",
+      "day": "Ven",
+      "hour": "3",
       "room": "Aula 4E"
     },
     "650": {
       "day": "Lun",
-      "hour": "4",
+      "hour": "3",
       "room": "Aula 4E"
     },
     "651": {
-      "day": "Ven",
-      "hour": "1",
+      "day": "Mer",
+      "hour": "3",
       "room": "Aula 4E"
     },
     "652": {
-      "day": "Gio",
-      "hour": "6",
+      "day": "Mar",
+      "hour": "5",
       "room": "Aula 4E"
     },
     "653": {
-      "day": "Mar",
-      "hour": "7",
+      "day": "Mer",
+      "hour": "1",
       "room": "Palestra"
     },
     "654": {
       "day": "Lun",
-      "hour": "5",
-      "room": "INFO 1"
+      "hour": "1",
+      "room": "INFO 2"
     },
     "655": {
-      "day": "Mar",
-      "hour": "5"
+      "day": "Ven",
+      "hour": "1"
     },
     "656": {
-      "day": "Lun",
-      "hour": "2"
+      "day": "Mer",
+      "hour": "6"
     },
     "657": {
-      "day": "Mer",
+      "day": "Gio",
       "hour": "4"
     },
     "658": {
-      "day": "Lun",
-      "hour": "2"
+      "day": "Ven",
+      "hour": "1"
     },
     "659": {
-      "day": "Mar",
-      "hour": "5"
+      "day": "Mer",
+      "hour": "6"
     },
     "660": {
-      "day": "Mer",
+      "day": "Gio",
       "hour": "4"
     },
     "661": {
-      "day": "Gio",
-      "hour": "1",
+      "day": "Lun",
+      "hour": "3",
       "room": "Aula 4F"
     },
     "662": {
       "day": "Ven",
-      "hour": "6",
+      "hour": "5",
       "room": "Aula 4F"
     },
     "663": {
-      "day": "Lun",
-      "hour": "1",
+      "day": "Mer",
+      "hour": "6",
       "room": "Aula 4F"
     },
     "664": {
@@ -23671,428 +23672,428 @@
       "room": "Aula 4F"
     },
     "665": {
-      "day": "Mer",
+      "day": "Ven",
       "hour": "3",
       "room": "Aula 4F"
     },
     "666": {
+      "day": "Mer",
+      "hour": "3",
+      "room": "Aula 4F"
+    },
+    "667": {
+      "day": "Mar",
+      "hour": "5",
+      "room": "Aula 4F"
+    },
+    "668": {
+      "day": "Lun",
+      "hour": "1",
+      "room": "Aula 4F"
+    },
+    "669": {
+      "day": "Mar",
+      "hour": "2",
+      "room": "Aula 4F"
+    },
+    "670": {
+      "day": "Ven",
+      "hour": "2",
+      "room": "Aula 4F"
+    },
+    "671": {
       "day": "Lun",
       "hour": "2",
       "room": "Aula 4F"
     },
-    "667": {
-      "day": "Ven",
-      "hour": "4",
-      "room": "Aula 4F"
-    },
-    "668": {
-      "day": "Ven",
-      "hour": "3",
-      "room": "Aula 4F"
-    },
-    "669": {
-      "day": "Lun",
-      "hour": "4",
-      "room": "Aula 4F"
-    },
-    "670": {
-      "day": "Mar",
-      "hour": "4",
-      "room": "Aula 4F"
-    },
-    "671": {
-      "day": "Mer",
-      "hour": "5",
-      "room": "Aula 4F"
-    },
     "672": {
-      "day": "Ven",
-      "hour": "5",
+      "day": "Mar",
+      "hour": "1",
       "room": "Aula 4F"
     },
     "673": {
-      "day": "Mar",
-      "hour": "8",
+      "day": "Gio",
+      "hour": "1",
       "room": "Aula 4F"
     },
     "674": {
+      "day": "Mer",
+      "hour": "4",
+      "room": "Aula 4F"
+    },
+    "675": {
+      "day": "Mar",
+      "hour": "6",
+      "room": "Aula 4F"
+    },
+    "676": {
+      "day": "Gio",
+      "hour": "2",
+      "room": "Aula 4F"
+    },
+    "677": {
       "day": "Ven",
       "hour": "1",
       "room": "Aula 4F"
     },
-    "675": {
-      "day": "Lun",
-      "hour": "3",
+    "678": {
+      "day": "Mer",
+      "hour": "1",
       "room": "Aula 4F"
     },
-    "676": {
-      "day": "Mar",
-      "hour": "3",
-      "room": "Aula 4F"
-    },
-    "677": {
+    "679": {
       "day": "Mar",
       "hour": "7",
       "room": "Aula 4F"
     },
-    "678": {
-      "day": "Gio",
-      "hour": "5",
-      "room": "Aula 4F"
-    },
-    "679": {
-      "day": "Lun",
-      "hour": "5",
-      "room": "Aula 4F"
-    },
     "680": {
-      "day": "Mer",
+      "day": "Ven",
       "hour": "6",
       "room": "Aula 4F"
     },
     "681": {
-      "day": "Mar",
-      "hour": "1",
+      "day": "Lun",
+      "hour": "5",
       "room": "Aula 4F"
     },
     "682": {
-      "day": "Ven",
-      "hour": "2",
+      "day": "Mer",
+      "hour": "5",
       "room": "Aula 4F"
     },
     "683": {
       "day": "Mar",
-      "hour": "5",
+      "hour": "3",
       "room": "Palestra"
     },
     "684": {
-      "day": "Mer",
-      "hour": "1",
+      "day": "Gio",
+      "hour": "5",
       "room": "INFO 1"
     },
     "685": {
-      "day": "Gio",
+      "day": "Lun",
       "hour": "3",
       "room": "Aula 4G"
     },
     "686": {
       "day": "Ven",
-      "hour": "3",
-      "room": "Aula 4G"
-    },
-    "687": {
-      "day": "Lun",
       "hour": "1",
       "room": "Aula 4G"
     },
-    "688": {
+    "687": {
       "day": "Mar",
+      "hour": "3",
+      "room": "Aula 4G"
+    },
+    "688": {
+      "day": "Gio",
       "hour": "3",
       "room": "Aula 4G"
     },
     "689": {
       "day": "Mar",
-      "hour": "1",
+      "hour": "5",
       "room": "Aula 4G"
     },
     "690": {
-      "day": "Mer",
-      "hour": "6",
+      "day": "Ven",
+      "hour": "5",
       "room": "Aula 4G"
     },
     "691": {
-      "day": "Ven",
+      "day": "Mer",
       "hour": "1",
       "room": "Aula 4G"
     },
     "692": {
-      "day": "Ven",
-      "hour": "7",
+      "day": "Mer",
+      "hour": "3",
       "room": "Aula 4G"
     },
     "693": {
-      "day": "Mer",
-      "hour": "5",
-      "room": "Aula 4G"
-    },
-    "694": {
-      "day": "Mar",
+      "day": "Gio",
       "hour": "4",
       "room": "Aula 4G"
     },
-    "695": {
+    "694": {
       "day": "Lun",
-      "hour": "6",
+      "hour": "2",
+      "room": "Aula 4G"
+    },
+    "695": {
+      "day": "Gio",
+      "hour": "1",
       "room": "Aula 4G"
     },
     "696": {
       "day": "Mer",
-      "hour": "4",
+      "hour": "2",
       "room": "Aula 4G"
     },
     "697": {
-      "day": "Ven",
-      "hour": "6",
+      "day": "Lun",
+      "hour": "1",
       "room": "Aula 4G"
     },
     "698": {
-      "day": "Lun",
-      "hour": "2",
+      "day": "Ven",
+      "hour": "8",
       "room": "Aula 4G"
     },
     "699": {
-      "day": "Ven",
-      "hour": "2",
+      "day": "Mar",
+      "hour": "4",
       "room": "Aula 4G"
     },
     "700": {
       "day": "Lun",
-      "hour": "3",
+      "hour": "5",
       "room": "Aula 4G"
     },
     "701": {
-      "day": "Mer",
-      "hour": "3",
+      "day": "Ven",
+      "hour": "6",
       "room": "Aula 4G"
     },
     "702": {
-      "day": "Mer",
-      "hour": "1",
+      "day": "Gio",
+      "hour": "5",
       "room": "Aula 4G"
     },
     "703": {
-      "day": "Lun",
-      "hour": "5",
+      "day": "Ven",
+      "hour": "7",
       "room": "Aula 4G"
     },
     "704": {
-      "day": "Ven",
-      "hour": "5",
+      "day": "Gio",
+      "hour": "2",
       "room": "Aula 4G"
     },
     "705": {
-      "day": "Gio",
-      "hour": "1",
+      "day": "Mer",
+      "hour": "5",
       "room": "Palestra"
     },
     "706": {
-      "day": "Gio",
-      "hour": "5",
+      "day": "Ven",
+      "hour": "3",
       "room": "Aula 4G"
     },
     "707": {
       "day": "Mar",
-      "hour": "5",
+      "hour": "1",
       "room": "Aula 4G"
     },
     "708": {
-      "day": "Mar",
-      "hour": "1",
+      "day": "Gio",
+      "hour": "3",
       "room": "Aula 4H"
     },
     "709": {
-      "day": "Gio",
-      "hour": "1",
+      "day": "Mar",
+      "hour": "3",
       "room": "Aula 4H"
     },
     "710": {
-      "day": "Ven",
-      "hour": "6",
+      "day": "Mer",
+      "hour": "5",
       "room": "Aula 4H"
     },
     "711": {
       "day": "Lun",
-      "hour": "2",
+      "hour": "5",
       "room": "Aula 4H"
     },
     "712": {
-      "day": "Ven",
-      "hour": "1",
+      "day": "Mar",
+      "hour": "5",
       "room": "Aula 4H"
     },
     "713": {
-      "day": "Mar",
-      "hour": "3",
-      "room": "Aula 4H"
-    },
-    "714": {
-      "day": "Gio",
+      "day": "Lun",
       "hour": "6",
       "room": "Aula 4H"
     },
+    "714": {
+      "day": "Ven",
+      "hour": "2",
+      "room": "Aula 4H"
+    },
     "715": {
-      "day": "Mar",
+      "day": "Ven",
       "hour": "5",
       "room": "Aula 4H"
     },
     "716": {
-      "day": "Lun",
+      "day": "Gio",
       "hour": "6",
       "room": "Aula 4H"
     },
     "717": {
-      "day": "Gio",
-      "hour": "3",
+      "day": "Mer",
+      "hour": "6",
       "room": "Aula 4H"
     },
     "718": {
-      "day": "Lun",
+      "day": "Gio",
       "hour": "5",
       "room": "Aula 4H"
     },
     "719": {
-      "day": "Ven",
-      "hour": "5",
+      "day": "Mer",
+      "hour": "4",
       "room": "Aula 4H"
     },
     "720": {
-      "day": "Mar",
-      "hour": "4",
+      "day": "Lun",
+      "hour": "2",
       "room": "Aula 4H"
     },
     "721": {
-      "day": "Ven",
-      "hour": "4",
+      "day": "Lun",
+      "hour": "1",
       "room": "Aula 4H"
     },
     "722": {
-      "day": "Gio",
-      "hour": "5",
+      "day": "Ven",
+      "hour": "3",
       "room": "Aula 4H"
     },
     "723": {
-      "day": "Mer",
+      "day": "Mar",
       "hour": "1",
       "room": "Aula 4H"
     },
     "724": {
-      "day": "Lun",
-      "hour": "1",
+      "day": "Mer",
+      "hour": "3",
       "room": "Aula 4H"
     },
     "725": {
       "day": "Mer",
-      "hour": "3",
+      "hour": "1",
       "room": "Aula 4H"
     },
     "726": {
       "day": "Ven",
-      "hour": "3",
+      "hour": "1",
       "room": "Aula 4H"
     },
     "727": {
-      "day": "Gio",
+      "day": "Ven",
       "hour": "4",
       "room": "Aula 4H"
     },
     "728": {
-      "day": "Mer",
-      "hour": "5",
+      "day": "Lun",
+      "hour": "3",
       "room": "Palestra"
     },
     "729": {
-      "day": "Lun",
-      "hour": "3",
-      "room": "Aula 4H"
-    },
-    "730": {
       "day": "Ven",
       "hour": "7",
       "room": "Aula 4H"
     },
+    "730": {
+      "day": "Gio",
+      "hour": "1",
+      "room": "Aula 4H"
+    },
     "731": {
-      "day": "Mar",
-      "hour": "3",
+      "day": "Gio",
+      "hour": "2",
       "room": "Aula 4L"
     },
     "732": {
-      "day": "Gio",
-      "hour": "3",
+      "day": "Mar",
+      "hour": "5",
       "room": "Aula 4L"
     },
     "733": {
-      "day": "Ven",
-      "hour": "3",
+      "day": "Mer",
+      "hour": "5",
       "room": "Aula 4L"
     },
     "734": {
       "day": "Lun",
-      "hour": "4",
+      "hour": "5",
       "room": "Aula 4L"
     },
     "735": {
-      "day": "Gio",
-      "hour": "4",
+      "day": "Ven",
+      "hour": "6",
       "room": "Aula 4L"
     },
     "736": {
-      "day": "Lun",
+      "day": "Ven",
       "hour": "1",
       "room": "Aula 4L"
     },
     "737": {
       "day": "Mer",
-      "hour": "3",
+      "hour": "4",
       "room": "Aula 4L"
     },
     "738": {
-      "day": "Ven",
-      "hour": "5",
+      "day": "Mar",
+      "hour": "6",
       "room": "Aula 4L"
     },
     "739": {
-      "day": "Mar",
+      "day": "Gio",
       "hour": "4",
       "room": "Aula 4L"
     },
     "740": {
-      "day": "Lun",
-      "hour": "3",
+      "day": "Ven",
+      "hour": "5",
       "room": "Aula 4L"
     },
     "741": {
-      "day": "Ven",
-      "hour": "6",
+      "day": "Mar",
+      "hour": "3",
       "room": "Aula 4L"
     },
     "742": {
-      "day": "Gio",
-      "hour": "5",
-      "room": "Aula 4L"
-    },
-    "743": {
       "day": "Mar",
       "hour": "1",
       "room": "Aula 4L"
     },
+    "743": {
+      "day": "Ven",
+      "hour": "3",
+      "room": "Aula 4L"
+    },
     "744": {
-      "day": "Mer",
-      "hour": "4",
+      "day": "Gio",
+      "hour": "3",
       "room": "Aula 4L"
     },
     "745": {
-      "day": "Ven",
-      "hour": "1",
-      "room": "Aula 4L"
-    },
-    "746": {
-      "day": "Lun",
-      "hour": "5",
-      "room": "Aula 4L"
-    },
-    "747": {
       "day": "Lun",
       "hour": "6",
       "room": "Aula 4L"
     },
+    "746": {
+      "day": "Mer",
+      "hour": "3",
+      "room": "Aula 4L"
+    },
+    "747": {
+      "day": "Gio",
+      "hour": "1",
+      "room": "Aula 4L"
+    },
     "748": {
-      "day": "Mar",
-      "hour": "5",
+      "day": "Lun",
+      "hour": "3",
       "room": "Palestra"
     },
     "749": {
       "day": "Gio",
-      "hour": "1",
+      "hour": "5",
       "room": "Aula 4L"
     },
     "750": {
@@ -24101,176 +24102,176 @@
       "room": "Aula 4L"
     },
     "751": {
-      "day": "Ven",
-      "hour": "2",
+      "day": "Mar",
+      "hour": "4",
       "room": "Aula 4L"
     },
     "752": {
-      "day": "Mer",
-      "hour": "5",
+      "day": "Lun",
+      "hour": "1",
       "room": "INFO 1"
     },
     "753": {
-      "day": "Ven",
-      "hour": "3",
+      "day": "Lun",
+      "hour": "5",
       "room": "Aula 5A"
     },
     "754": {
       "day": "Mar",
-      "hour": "5",
+      "hour": "1",
       "room": "Aula 5A"
     },
     "755": {
-      "day": "Lun",
-      "hour": "2",
+      "day": "Mer",
+      "hour": "3",
       "room": "Aula 5A"
     },
     "756": {
-      "day": "Mer",
-      "hour": "5",
+      "day": "Ven",
+      "hour": "7",
       "room": "Aula 5A"
     },
     "757": {
-      "day": "Mer",
-      "hour": "3",
-      "room": "Aula 5A"
-    },
-    "758": {
-      "day": "Mar",
-      "hour": "3",
-      "room": "Aula 5A"
-    },
-    "759": {
-      "day": "Lun",
-      "hour": "4",
-      "room": "Aula 5A"
-    },
-    "760": {
-      "day": "Ven",
-      "hour": "1",
-      "room": "Aula 5A"
-    },
-    "761": {
-      "day": "Lun",
-      "hour": "1",
-      "room": "Aula 5A"
-    },
-    "762": {
-      "day": "Ven",
-      "hour": "2",
-      "room": "Aula 5A"
-    },
-    "763": {
       "day": "Gio",
       "hour": "5",
       "room": "Aula 5A"
     },
-    "764": {
-      "day": "Mer",
+    "758": {
+      "day": "Ven",
       "hour": "1",
       "room": "Aula 5A"
     },
-    "765": {
+    "759": {
       "day": "Mar",
+      "hour": "5",
+      "room": "Aula 5A"
+    },
+    "760": {
+      "day": "Mer",
+      "hour": "5",
+      "room": "Aula 5A"
+    },
+    "761": {
+      "day": "Gio",
+      "hour": "4",
+      "room": "Aula 5A"
+    },
+    "762": {
+      "day": "Lun",
+      "hour": "4",
+      "room": "Aula 5A"
+    },
+    "763": {
+      "day": "Ven",
+      "hour": "6",
+      "room": "Aula 5A"
+    },
+    "764": {
+      "day": "Mar",
+      "hour": "6",
+      "room": "Aula 5A"
+    },
+    "765": {
+      "day": "Gio",
       "hour": "1",
       "room": "Aula 5A"
     },
     "766": {
       "day": "Lun",
-      "hour": "5",
-      "room": "Aula 5A"
-    },
-    "767": {
-      "day": "Ven",
-      "hour": "7",
-      "room": "Aula 5A"
-    },
-    "768": {
-      "day": "Gio",
       "hour": "1",
       "room": "Aula 5A"
     },
+    "767": {
+      "day": "Mer",
+      "hour": "1",
+      "room": "Aula 5A"
+    },
+    "768": {
+      "day": "Mar",
+      "hour": "3",
+      "room": "Aula 5A"
+    },
     "769": {
-      "day": "Gio",
+      "day": "Ven",
       "hour": "3",
       "room": "Aula 5A"
     },
     "770": {
-      "day": "Mer",
-      "hour": "2",
+      "day": "Lun",
+      "hour": "3",
       "room": "Aula 5A"
     },
     "771": {
-      "day": "Ven",
-      "hour": "5",
+      "day": "Mar",
+      "hour": "7",
       "room": "Palestra"
     },
     "772": {
-      "day": "Mer",
-      "hour": "6"
+      "day": "Gio",
+      "hour": "3"
     },
     "773": {
-      "day": "Lun",
-      "hour": "3"
+      "day": "Ven",
+      "hour": "5"
     },
     "774": {
-      "day": "Mar",
-      "hour": "7"
+      "day": "Mer",
+      "hour": "4"
     },
     "775": {
-      "day": "Mer",
-      "hour": "6"
+      "day": "Ven",
+      "hour": "5"
     },
     "776": {
-      "day": "Lun",
-      "hour": "3"
+      "day": "Mer",
+      "hour": "4"
     },
     "777": {
-      "day": "Mar",
-      "hour": "7"
+      "day": "Gio",
+      "hour": "3"
     },
     "778": {
-      "day": "Mar",
-      "hour": "6",
+      "day": "Ven",
+      "hour": "5",
       "room": "Aula 5C"
     },
     "779": {
-      "day": "Ven",
+      "day": "Mer",
       "hour": "1",
       "room": "Aula 5C"
     },
     "780": {
-      "day": "Mer",
-      "hour": "3",
+      "day": "Gio",
+      "hour": "1",
       "room": "Aula 5C"
     },
     "781": {
       "day": "Ven",
-      "hour": "5",
+      "hour": "3",
       "room": "Aula 5C"
     },
     "782": {
-      "day": "Gio",
-      "hour": "5",
+      "day": "Mer",
+      "hour": "3",
       "room": "Aula 5C"
     },
     "783": {
+      "day": "Gio",
+      "hour": "3",
+      "room": "Aula 5C"
+    },
+    "784": {
       "day": "Lun",
       "hour": "5",
       "room": "Aula 5C"
     },
-    "784": {
-      "day": "Mer",
-      "hour": "5",
-      "room": "Aula 5C"
-    },
     "785": {
-      "day": "Mar",
+      "day": "Ven",
       "hour": "1",
       "room": "Aula 5C"
     },
     "786": {
-      "day": "Gio",
+      "day": "Mer",
       "hour": "6",
       "room": "Aula 5C"
     },
@@ -24281,42 +24282,42 @@
     },
     "788": {
       "day": "Mar",
-      "hour": "5",
+      "hour": "6",
       "room": "Aula 5C"
     },
     "789": {
-      "day": "Ven",
+      "day": "Mer",
       "hour": "4",
       "room": "Aula 5C"
     },
     "790": {
+      "day": "Gio",
+      "hour": "5",
+      "room": "Aula 5C"
+    },
+    "791": {
       "day": "Mar",
       "hour": "3",
       "room": "Aula 5C"
     },
-    "791": {
-      "day": "Gio",
-      "hour": "1",
-      "room": "Aula 5C"
-    },
     "792": {
-      "day": "Lun",
-      "hour": "4",
-      "room": "Aula 5C"
-    },
-    "793": {
       "day": "Mer",
       "hour": "2",
       "room": "Aula 5C"
     },
-    "794": {
+    "793": {
       "day": "Ven",
-      "hour": "3",
+      "hour": "6",
+      "room": "Aula 5C"
+    },
+    "794": {
+      "day": "Lun",
+      "hour": "4",
       "room": "Aula 5C"
     },
     "795": {
-      "day": "Ven",
-      "hour": "2",
+      "day": "Mar",
+      "hour": "5",
       "room": "Aula 5C"
     },
     "796": {
@@ -24325,78 +24326,78 @@
       "room": "Palestra"
     },
     "797": {
-      "day": "Gio",
-      "hour": "3",
+      "day": "Mar",
+      "hour": "1",
       "room": "Aula 5C"
     },
     "798": {
       "day": "Mer",
-      "hour": "1",
+      "hour": "5",
       "room": "Aula 5C"
     },
     "799": {
       "day": "Mer",
-      "hour": "1",
-      "room": "Aula 5D"
-    },
-    "800": {
-      "day": "Ven",
       "hour": "5",
       "room": "Aula 5D"
     },
+    "800": {
+      "day": "Lun",
+      "hour": "6",
+      "room": "Aula 5D"
+    },
     "801": {
-      "day": "Gio",
-      "hour": "1",
+      "day": "Mer",
+      "hour": "3",
       "room": "Aula 5D"
     },
     "802": {
-      "day": "Mer",
-      "hour": "2",
+      "day": "Lun",
+      "hour": "4",
       "room": "Aula 5D"
     },
     "803": {
       "day": "Mar",
-      "hour": "3",
-      "room": "Aula 5D"
-    },
-    "804": {
-      "day": "Gio",
-      "hour": "5",
-      "room": "Aula 5D"
-    },
-    "805": {
-      "day": "Mer",
       "hour": "4",
       "room": "Aula 5D"
     },
-    "806": {
-      "day": "Mar",
-      "hour": "1",
+    "804": {
+      "day": "Ven",
+      "hour": "3",
       "room": "Aula 5D"
     },
-    "807": {
-      "day": "Mar",
+    "805": {
+      "day": "Gio",
+      "hour": "3",
+      "room": "Aula 5D"
+    },
+    "806": {
+      "day": "Mer",
       "hour": "2",
       "room": "Aula 5D"
     },
-    "808": {
+    "807": {
       "day": "Mer",
+      "hour": "1",
+      "room": "Aula 5D"
+    },
+    "808": {
+      "day": "Lun",
       "hour": "3",
       "room": "Aula 5D"
     },
     "809": {
-      "day": "Gio",
+      "day": "Mar",
       "hour": "3",
       "room": "Aula 5D"
     },
     "810": {
-      "day": "Mer",
-      "hour": "5",
+      "day": "Lun",
+      "hour": "1",
       "room": "Aula 5D"
     },
     "811": {
-      "day": "Lun",
-      "hour": "5",
+      "day": "Ven",
+      "hour": "1",
       "room": "Aula 5D"
     },
     "812": {
@@ -24405,78 +24406,78 @@
       "room": "Aula 5D"
     },
     "813": {
-      "day": "Ven",
+      "day": "Mer",
       "hour": "6",
       "room": "Aula 5D"
     },
     "814": {
       "day": "Mar",
-      "hour": "6",
+      "hour": "5",
       "room": "Aula 5D"
     },
     "815": {
       "day": "Mar",
-      "hour": "4",
+      "hour": "6",
       "room": "Aula 5D"
     },
     "816": {
-      "day": "Ven",
-      "hour": "3",
+      "day": "Gio",
+      "hour": "1",
       "room": "Palestra"
     },
     "817": {
       "day": "Ven",
-      "hour": "1",
+      "hour": "5",
       "room": "Aula 5D"
     },
     "818": {
-      "day": "Lun",
-      "hour": "3",
+      "day": "Mar",
+      "hour": "1",
       "room": "Aula 5D"
     },
     "819": {
-      "day": "Mar",
+      "day": "Lun",
       "hour": "5",
       "room": "Aula 5D"
     },
     "820": {
-      "day": "Lun",
-      "hour": "1",
+      "day": "Gio",
+      "hour": "5",
       "room": "INFO 2"
     },
     "821": {
       "day": "Lun",
-      "hour": "5",
+      "hour": "1",
       "room": "Aula 5E"
     },
     "822": {
       "day": "Ven",
-      "hour": "7",
+      "hour": "5",
       "room": "Aula 5E"
     },
     "823": {
-      "day": "Mer",
-      "hour": "1",
+      "day": "Mar",
+      "hour": "6",
       "room": "Aula 5E"
     },
     "824": {
-      "day": "Mer",
+      "day": "Mar",
       "hour": "3",
       "room": "Aula 5E"
     },
     "825": {
-      "day": "Gio",
-      "hour": "3",
+      "day": "Mer",
+      "hour": "1",
       "room": "Aula 5E"
     },
     "826": {
-      "day": "Lun",
-      "hour": "2",
+      "day": "Ven",
+      "hour": "7",
       "room": "Aula 5E"
     },
     "827": {
-      "day": "Ven",
-      "hour": "4",
+      "day": "Gio",
+      "hour": "1",
       "room": "Aula 5E"
     },
     "828": {
@@ -24485,33 +24486,33 @@
       "room": "Aula 5E"
     },
     "829": {
-      "day": "Mar",
-      "hour": "5",
-      "room": "Aula 5E"
-    },
-    "830": {
-      "day": "Mer",
-      "hour": "5",
-      "room": "Aula 5E"
-    },
-    "831": {
-      "day": "Mar",
-      "hour": "6",
-      "room": "Aula 5E"
-    },
-    "832": {
-      "day": "Gio",
+      "day": "Ven",
       "hour": "1",
       "room": "Aula 5E"
     },
-    "833": {
+    "830": {
+      "day": "Gio",
+      "hour": "2",
+      "room": "Aula 5E"
+    },
+    "831": {
       "day": "Ven",
-      "hour": "5",
+      "hour": "3",
+      "room": "Aula 5E"
+    },
+    "832": {
+      "day": "Mer",
+      "hour": "4",
+      "room": "Aula 5E"
+    },
+    "833": {
+      "day": "Lun",
+      "hour": "6",
       "room": "Aula 5E"
     },
     "834": {
       "day": "Mer",
-      "hour": "6",
+      "hour": "3",
       "room": "Aula 5E"
     },
     "835": {
@@ -24526,91 +24527,91 @@
     },
     "837": {
       "day": "Lun",
-      "hour": "1",
+      "hour": "5",
       "room": "Aula 5E"
     },
     "838": {
       "day": "Ven",
-      "hour": "6",
+      "hour": "4",
       "room": "Aula 5E"
     },
     "839": {
       "day": "Mar",
-      "hour": "3",
+      "hour": "7",
       "room": "Aula 5E"
     },
     "840": {
-      "day": "Ven",
-      "hour": "3",
+      "day": "Mer",
+      "hour": "5",
       "room": "Aula 5E"
     },
     "841": {
-      "day": "Ven",
-      "hour": "1",
+      "day": "Gio",
+      "hour": "3",
       "room": "Palestra"
     },
     "842": {
-      "day": "Gio",
-      "hour": "2"
-    },
-    "843": {
       "day": "Lun",
       "hour": "4"
     },
-    "844": {
-      "day": "Mer",
+    "843": {
+      "day": "Ven",
       "hour": "2"
     },
+    "844": {
+      "day": "Mar",
+      "hour": "5"
+    },
     "845": {
-      "day": "Mer",
-      "hour": "2"
+      "day": "Mar",
+      "hour": "5"
     },
     "846": {
       "day": "Lun",
       "hour": "4"
     },
     "847": {
-      "day": "Gio",
+      "day": "Ven",
       "hour": "2"
     },
     "848": {
-      "day": "Ven",
-      "hour": "3",
+      "day": "Gio",
+      "hour": "5",
       "room": "Aula 5F"
     },
     "849": {
-      "day": "Mar",
-      "hour": "7",
+      "day": "Mer",
+      "hour": "3",
       "room": "Aula 5F"
     },
     "850": {
       "day": "Lun",
-      "hour": "2",
+      "hour": "5",
       "room": "Aula 5F"
     },
     "851": {
       "day": "Mar",
-      "hour": "5",
+      "hour": "1",
       "room": "Aula 5F"
     },
     "852": {
-      "day": "Ven",
-      "hour": "5",
-      "room": "Aula 5F"
-    },
-    "853": {
-      "day": "Gio",
-      "hour": "5",
-      "room": "Aula 5F"
-    },
-    "854": {
       "day": "Lun",
       "hour": "1",
       "room": "Aula 5F"
     },
-    "855": {
-      "day": "Gio",
+    "853": {
+      "day": "Ven",
       "hour": "2",
+      "room": "Aula 5F"
+    },
+    "854": {
+      "day": "Gio",
+      "hour": "1",
+      "room": "Aula 5F"
+    },
+    "855": {
+      "day": "Mar",
+      "hour": "4",
       "room": "Aula 5F"
     },
     "856": {
@@ -24619,132 +24620,132 @@
       "room": "Aula 5F"
     },
     "857": {
-      "day": "Mar",
+      "day": "Mer",
       "hour": "2",
       "room": "Aula 5F"
     },
     "858": {
-      "day": "Mer",
-      "hour": "4",
+      "day": "Mar",
+      "hour": "3",
       "room": "Aula 5F"
     },
     "859": {
       "day": "Gio",
-      "hour": "4",
+      "hour": "2",
       "room": "Aula 5F"
     },
     "860": {
       "day": "Lun",
-      "hour": "5",
+      "hour": "3",
       "room": "Aula 5F"
     },
     "861": {
-      "day": "Ven",
-      "hour": "2",
+      "day": "Mer",
+      "hour": "1",
       "room": "Aula 5F"
     },
     "862": {
       "day": "Mar",
-      "hour": "1",
+      "hour": "7",
       "room": "Aula 5F"
     },
     "863": {
-      "day": "Mer",
+      "day": "Ven",
       "hour": "3",
       "room": "Aula 5F"
     },
     "864": {
-      "day": "Mar",
+      "day": "Ven",
       "hour": "4",
       "room": "Aula 5F"
     },
     "865": {
-      "day": "Mer",
-      "hour": "1",
+      "day": "Gio",
+      "hour": "3",
       "room": "Aula 5F"
     },
     "866": {
       "day": "Ven",
-      "hour": "7",
+      "hour": "5",
       "room": "Aula 5F"
     },
     "867": {
-      "day": "Mar",
-      "hour": "3",
-      "room": "Aula 5F"
-    },
-    "868": {
-      "day": "Gio",
-      "hour": "3",
-      "room": "Aula 5F"
-    },
-    "869": {
       "day": "Mer",
       "hour": "5",
       "room": "Aula 5F"
     },
+    "868": {
+      "day": "Lun",
+      "hour": "6",
+      "room": "Aula 5F"
+    },
+    "869": {
+      "day": "Ven",
+      "hour": "7",
+      "room": "Aula 5F"
+    },
     "870": {
-      "day": "Gio",
-      "hour": "1",
+      "day": "Lun",
+      "hour": "4",
       "room": "Aula 5F"
     },
     "871": {
-      "day": "Lun",
-      "hour": "3",
+      "day": "Mar",
+      "hour": "5",
       "room": "Palestra"
     },
     "872": {
-      "day": "Mar",
-      "hour": "7",
+      "day": "Gio",
+      "hour": "1",
       "room": "Aula 5G"
     },
     "873": {
-      "day": "Ven",
+      "day": "Lun",
       "hour": "1",
       "room": "Aula 5G"
     },
     "874": {
-      "day": "Lun",
-      "hour": "2",
+      "day": "Mer",
+      "hour": "6",
       "room": "Aula 5G"
     },
     "875": {
-      "day": "Gio",
-      "hour": "6",
+      "day": "Mar",
+      "hour": "4",
       "room": "Aula 5G"
     },
     "876": {
       "day": "Lun",
-      "hour": "5",
-      "room": "Aula 5G"
-    },
-    "877": {
-      "day": "Mer",
-      "hour": "6",
-      "room": "Aula 5G"
-    },
-    "878": {
-      "day": "Ven",
-      "hour": "5",
-      "room": "Aula 5G"
-    },
-    "879": {
-      "day": "Lun",
       "hour": "3",
       "room": "Aula 5G"
     },
-    "880": {
+    "877": {
       "day": "Mar",
-      "hour": "5",
+      "hour": "1",
+      "room": "Aula 5G"
+    },
+    "878": {
+      "day": "Mer",
+      "hour": "2",
+      "room": "Aula 5G"
+    },
+    "879": {
+      "day": "Mar",
+      "hour": "7",
+      "room": "Aula 5G"
+    },
+    "880": {
+      "day": "Gio",
+      "hour": "6",
       "room": "Aula 5G"
     },
     "881": {
-      "day": "Mer",
-      "hour": "5",
+      "day": "Ven",
+      "hour": "8",
       "room": "Aula 5G"
     },
     "882": {
-      "day": "Mar",
+      "day": "Gio",
       "hour": "3",
       "room": "Aula 5G"
     },
@@ -24754,282 +24755,282 @@
       "room": "Aula 5G"
     },
     "884": {
-      "day": "Lun",
-      "hour": "1",
+      "day": "Mer",
+      "hour": "4",
       "room": "Aula 5G"
     },
     "885": {
       "day": "Ven",
-      "hour": "4",
+      "hour": "5",
       "room": "Aula 5G"
     },
     "886": {
-      "day": "Gio",
-      "hour": "1",
+      "day": "Mar",
+      "hour": "3",
       "room": "Aula 5G"
     },
     "887": {
-      "day": "Mer",
-      "hour": "1",
+      "day": "Gio",
+      "hour": "5",
       "room": "Aula 5G"
     },
     "888": {
-      "day": "Mer",
-      "hour": "2",
+      "day": "Ven",
+      "hour": "7",
       "room": "Aula 5G"
     },
     "889": {
-      "day": "Ven",
+      "day": "Mer",
       "hour": "3",
       "room": "Aula 5G"
     },
     "890": {
       "day": "Mar",
-      "hour": "1",
-      "room": "Aula 5G"
-    },
-    "891": {
-      "day": "Gio",
       "hour": "5",
       "room": "Aula 5G"
     },
+    "891": {
+      "day": "Mer",
+      "hour": "1",
+      "room": "Aula 5G"
+    },
     "892": {
-      "day": "Gio",
+      "day": "Ven",
       "hour": "3",
       "room": "Aula 5G"
     },
     "893": {
-      "day": "Mar",
-      "hour": "6",
+      "day": "Mer",
+      "hour": "5",
       "room": "Aula 5G"
     },
     "894": {
-      "day": "Gio",
+      "day": "Mar",
       "hour": "2",
       "room": "Aula 5G"
     },
     "895": {
-      "day": "Mer",
-      "hour": "3",
+      "day": "Ven",
+      "hour": "1",
       "room": "Palestra"
     },
     "896": {
-      "day": "Lun",
-      "hour": "6",
-      "room": "Aula 5L"
-    },
-    "897": {
       "day": "Gio",
-      "hour": "1",
-      "room": "Aula 5L"
-    },
-    "898": {
-      "day": "Mar",
       "hour": "5",
       "room": "Aula 5L"
     },
+    "897": {
+      "day": "Mer",
+      "hour": "6",
+      "room": "Aula 5L"
+    },
+    "898": {
+      "day": "Lun",
+      "hour": "3",
+      "room": "Aula 5L"
+    },
     "899": {
-      "day": "Gio",
-      "hour": "2",
+      "day": "Ven",
+      "hour": "5",
       "room": "Aula 5L"
     },
     "900": {
-      "day": "Lun",
+      "day": "Mer",
       "hour": "2",
       "room": "Aula 5L"
     },
     "901": {
-      "day": "Ven",
-      "hour": "1",
+      "day": "Lun",
+      "hour": "5",
       "room": "Aula 5L"
     },
     "902": {
-      "day": "Mer",
+      "day": "Mar",
       "hour": "1",
       "room": "Aula 5L"
     },
     "903": {
-      "day": "Gio",
-      "hour": "3",
-      "room": "Aula 5L"
-    },
-    "904": {
-      "day": "Mer",
-      "hour": "2",
-      "room": "Aula 5L"
-    },
-    "905": {
-      "day": "Lun",
-      "hour": "1",
-      "room": "Aula 5L"
-    },
-    "906": {
-      "day": "Ven",
-      "hour": "5",
-      "room": "Aula 5L"
-    },
-    "907": {
-      "day": "Mer",
-      "hour": "3",
-      "room": "Aula 5L"
-    },
-    "908": {
-      "day": "Mar",
-      "hour": "3",
-      "room": "Aula 5L"
-    },
-    "909": {
       "day": "Ven",
       "hour": "6",
       "room": "Aula 5L"
     },
-    "910": {
-      "day": "Gio",
-      "hour": "4",
+    "904": {
+      "day": "Mar",
+      "hour": "2",
       "room": "Aula 5L"
     },
-    "911": {
-      "day": "Lun",
+    "905": {
+      "day": "Mer",
+      "hour": "1",
+      "room": "Aula 5L"
+    },
+    "906": {
+      "day": "Gio",
+      "hour": "6",
+      "room": "Aula 5L"
+    },
+    "907": {
+      "day": "Gio",
+      "hour": "1",
+      "room": "Aula 5L"
+    },
+    "908": {
+      "day": "Ven",
       "hour": "3",
       "room": "Aula 5L"
     },
-    "912": {
+    "909": {
+      "day": "Mar",
+      "hour": "3",
+      "room": "Aula 5L"
+    },
+    "910": {
       "day": "Lun",
+      "hour": "2",
+      "room": "Aula 5L"
+    },
+    "911": {
+      "day": "Mer",
       "hour": "5",
       "room": "Aula 5L"
     },
+    "912": {
+      "day": "Mar",
+      "hour": "4",
+      "room": "Aula 5L"
+    },
     "913": {
-      "day": "Mer",
-      "hour": "5",
+      "day": "Ven",
+      "hour": "1",
       "room": "Palestra"
     },
     "914": {
-      "day": "Ven",
+      "day": "Mer",
       "hour": "3",
       "room": "Aula 5L"
     },
     "915": {
       "day": "Mar",
-      "hour": "1",
+      "hour": "5",
       "room": "Aula 5L"
     },
     "916": {
       "day": "Lun",
-      "hour": "4",
+      "hour": "1",
       "room": "Aula 5L"
     },
     "917": {
       "day": "Gio",
-      "hour": "5",
-      "room": "INFO 2"
+      "hour": "3",
+      "room": "INFO 1"
     },
     "918": {
-      "day": "Ven",
+      "day": "Gio",
       "hour": "2",
       "room": ""
     },
     "1035": {
-      "day": "Lun",
+      "day": "Mer",
       "hour": "1",
       "room": ""
     },
     "919": {
-      "day": "Mar",
+      "day": "Lun",
       "hour": "2",
       "room": ""
     },
     "1036": {
-      "day": "Mer",
-      "hour": "3",
-      "room": ""
-    },
-    "920": {
       "day": "Mar",
       "hour": "1",
       "room": ""
     },
+    "920": {
+      "day": "Ven",
+      "hour": "3",
+      "room": ""
+    },
     "1037": {
-      "day": "Gio",
-      "hour": "1",
+      "day": "Lun",
+      "hour": "3",
       "room": ""
     },
     "921": {
       "day": "Mer",
-      "hour": "2",
+      "hour": "3",
       "room": ""
     },
     "1038": {
       "day": "Gio",
-      "hour": "2",
+      "hour": "4",
       "room": ""
     },
     "922": {
-      "day": "Mar",
+      "day": "Lun",
       "hour": "2",
       "room": ""
     },
     "923": {
       "day": "Mer",
-      "hour": "2",
+      "hour": "4",
       "room": ""
     },
     "924": {
-      "day": "Lun",
-      "hour": "2",
+      "day": "Mer",
+      "hour": "3",
       "room": ""
     },
     "925": {
-      "day": "Gio",
+      "day": "Mer",
       "hour": "4",
       "room": ""
     },
     "926": {
       "day": "Lun",
-      "hour": "4",
+      "hour": "2",
       "room": ""
     },
     "927": {
       "day": "Mar",
-      "hour": "3",
+      "hour": "4",
       "room": ""
     },
     "928": {
-      "day": "Mer",
-      "hour": "3",
+      "day": "Gio",
+      "hour": "4",
       "room": ""
     },
     "929": {
-      "day": "Lun",
-      "hour": "2",
+      "day": "Mer",
+      "hour": "4",
       "room": ""
     },
     "930": {
-      "day": "Mer",
-      "hour": "3",
-      "room": ""
-    },
-    "931": {
-      "day": "Ven",
+      "day": "Gio",
       "hour": "2",
       "room": ""
     },
+    "931": {
+      "day": "Lun",
+      "hour": "1",
+      "room": ""
+    },
     "932": {
-      "day": "Mar",
-      "hour": "3",
+      "day": "Gio",
+      "hour": "1",
       "room": ""
     },
     "933": {
-      "day": "Lun",
-      "hour": "1",
+      "day": "Mer",
+      "hour": "2",
       "room": ""
     },
     "934": {
-      "day": "Mer",
-      "hour": "1",
+      "day": "Ven",
+      "hour": "4",
       "room": ""
     },
     "935": {
-      "day": "Lun",
+      "day": "Mer",
       "hour": "4",
       "room": ""
     },
@@ -25044,17 +25045,17 @@
       "room": ""
     },
     "938": {
-      "day": "Ven",
+      "day": "Mer",
       "hour": "4",
       "room": ""
     },
     "939": {
       "day": "Mar",
-      "hour": "3",
+      "hour": "1",
       "room": ""
     },
     "1063": {
-      "day": "Mer",
+      "day": "Lun",
       "hour": "4",
       "room": ""
     },
@@ -25064,18 +25065,18 @@
       "room": ""
     },
     "940": {
-      "day": "Gio",
-      "hour": "4",
+      "day": "Lun",
+      "hour": "2",
       "room": ""
     },
     "941": {
-      "day": "Mer",
-      "hour": "1",
+      "day": "Gio",
+      "hour": "2",
       "room": ""
     },
     "942": {
       "day": "Ven",
-      "hour": "1",
+      "hour": "4",
       "room": ""
     },
     "943": {
@@ -25084,43 +25085,43 @@
       "room": ""
     },
     "944": {
-      "day": "Gio",
-      "hour": "3",
-      "room": ""
-    },
-    "945": {
-      "day": "Mar",
-      "hour": "2",
-      "room": ""
-    },
-    "946": {
       "day": "Lun",
-      "hour": "4",
-      "room": ""
-    },
-    "947": {
-      "day": "Mer",
       "hour": "1",
       "room": ""
     },
-    "948": {
-      "day": "Ven",
-      "hour": "4",
-      "room": ""
-    },
-    "949": {
-      "day": "Gio",
+    "945": {
+      "day": "Mer",
       "hour": "3",
       "room": ""
     },
-    "950": {
+    "946": {
+      "day": "Ven",
+      "hour": "3",
+      "room": ""
+    },
+    "947": {
       "day": "Lun",
       "hour": "4",
       "room": ""
     },
-    "951": {
+    "948": {
+      "day": "Mar",
+      "hour": "3",
+      "room": ""
+    },
+    "949": {
       "day": "Mer",
       "hour": "2",
+      "room": ""
+    },
+    "950": {
+      "day": "Mer",
+      "hour": "5",
+      "room": ""
+    },
+    "951": {
+      "day": "Mar",
+      "hour": "3",
       "room": ""
     },
     "952": {
@@ -25129,48 +25130,48 @@
       "room": ""
     },
     "953": {
-      "day": "Mar",
+      "day": "Lun",
       "hour": "4",
       "room": ""
     },
     "954": {
       "day": "Lun",
-      "hour": "2",
+      "hour": "4",
       "room": ""
     },
     "955": {
-      "day": "Gio",
+      "day": "Ven",
       "hour": "1",
       "room": ""
     },
     "956": {
-      "day": "Lun",
-      "hour": "3",
+      "day": "Ven",
+      "hour": "2",
       "room": ""
     },
     "1039": {
-      "day": "Ven",
-      "hour": "4",
-      "room": ""
-    },
-    "957": {
-      "day": "Mar",
-      "hour": "3",
-      "room": ""
-    },
-    "1040": {
       "day": "Mer",
       "hour": "3",
       "room": ""
     },
-    "958": {
+    "957": {
       "day": "Gio",
       "hour": "3",
       "room": ""
     },
-    "1041": {
+    "1040": {
+      "day": "Ven",
+      "hour": "1",
+      "room": ""
+    },
+    "958": {
       "day": "Lun",
-      "hour": "2",
+      "hour": "4",
+      "room": ""
+    },
+    "1041": {
+      "day": "Gio",
+      "hour": "4",
       "room": ""
     },
     "959": {
@@ -25184,47 +25185,47 @@
       "room": ""
     },
     "961": {
+      "day": "Mar",
+      "hour": "1",
+      "room": ""
+    },
+    "962": {
       "day": "Ven",
       "hour": "4",
       "room": ""
     },
-    "962": {
-      "day": "Mer",
-      "hour": "3",
-      "room": ""
-    },
     "963": {
-      "day": "Lun",
-      "hour": "3",
+      "day": "Mar",
+      "hour": "1",
       "room": ""
     },
     "964": {
-      "day": "Mer",
-      "hour": "3",
+      "day": "Ven",
+      "hour": "2",
       "room": ""
     },
     "965": {
-      "day": "Ven",
+      "day": "Mer",
       "hour": "2",
       "room": ""
     },
     "966": {
-      "day": "Mar",
+      "day": "Gio",
       "hour": "2",
       "room": ""
     },
     "967": {
-      "day": "Ven",
-      "hour": "2",
-      "room": ""
-    },
-    "968": {
       "day": "Lun",
       "hour": "4",
       "room": ""
     },
+    "968": {
+      "day": "Mar",
+      "hour": "4",
+      "room": ""
+    },
     "969": {
-      "day": "Gio",
+      "day": "Ven",
       "hour": "4",
       "room": ""
     },
@@ -25234,63 +25235,63 @@
       "room": ""
     },
     "971": {
-      "day": "Mer",
-      "hour": "4",
+      "day": "Mar",
+      "hour": "2",
       "room": ""
     },
     "972": {
-      "day": "Mar",
-      "hour": "4",
+      "day": "Gio",
+      "hour": "2",
       "room": ""
     },
     "973": {
-      "day": "Gio",
-      "hour": "3",
-      "room": ""
-    },
-    "974": {
-      "day": "Mar",
-      "hour": "2",
-      "room": ""
-    },
-    "975": {
-      "day": "Lun",
-      "hour": "2",
-      "room": ""
-    },
-    "976": {
       "day": "Ven",
       "hour": "1",
       "room": ""
     },
-    "977": {
+    "974": {
+      "day": "Mar",
+      "hour": "4",
+      "room": ""
+    },
+    "975": {
+      "day": "Mer",
+      "hour": "2",
+      "room": ""
+    },
+    "976": {
       "day": "Gio",
+      "hour": "1",
+      "room": ""
+    },
+    "977": {
+      "day": "Lun",
       "hour": "1",
       "room": ""
     },
     "978": {
-      "day": "Mer",
+      "day": "Ven",
       "hour": "1",
       "room": ""
     },
     "979": {
-      "day": "Gio",
+      "day": "Mer",
       "hour": "3",
       "room": ""
     },
     "1065": {
       "day": "Mar",
-      "hour": "4",
+      "hour": "3",
       "room": ""
     },
     "1066": {
-      "day": "Lun",
-      "hour": "2",
+      "day": "Ven",
+      "hour": "5",
       "room": ""
     },
     "980": {
-      "day": "Lun",
-      "hour": "1",
+      "day": "Gio",
+      "hour": "3",
       "room": ""
     },
     "981": {
@@ -25300,131 +25301,131 @@
     },
     "982": {
       "day": "Mar",
-      "hour": "2",
+      "hour": "5",
       "room": ""
     },
     "983": {
-      "day": "Gio",
-      "hour": "2",
+      "day": "Ven",
+      "hour": "3",
       "room": ""
     },
     "984": {
-      "day": "Mer",
+      "day": "Lun",
       "hour": "2",
       "room": ""
     },
     "985": {
-      "day": "Lun",
+      "day": "Mer",
       "hour": "2",
       "room": ""
     },
     "986": {
-      "day": "Mer",
-      "hour": "4",
+      "day": "Gio",
+      "hour": "3",
       "room": ""
     },
     "1042": {
+      "day": "Mer",
+      "hour": "3",
+      "room": ""
+    },
+    "987": {
+      "day": "Lun",
+      "hour": "3",
+      "room": ""
+    },
+    "1043": {
+      "day": "Mar",
+      "hour": "1",
+      "room": ""
+    },
+    "988": {
       "day": "Ven",
       "hour": "1",
       "room": ""
     },
-    "987": {
-      "day": "Gio",
-      "hour": "2",
-      "room": ""
-    },
-    "1043": {
-      "day": "Lun",
-      "hour": "2",
-      "room": ""
-    },
-    "988": {
-      "day": "Mar",
-      "hour": "3",
-      "room": ""
-    },
     "1044": {
-      "day": "Mer",
+      "day": "Gio",
       "hour": "2",
       "room": ""
     },
     "989": {
-      "day": "Lun",
-      "hour": "3",
+      "day": "Mer",
+      "hour": "2",
       "room": ""
     },
     "1045": {
-      "day": "Gio",
-      "hour": "3",
+      "day": "Lun",
+      "hour": "2",
       "room": ""
     },
     "990": {
-      "day": "Ven",
-      "hour": "5",
-      "room": ""
-    },
-    "991": {
       "day": "Gio",
       "hour": "2",
       "room": ""
     },
+    "991": {
+      "day": "Ven",
+      "hour": "3",
+      "room": ""
+    },
     "992": {
-      "day": "Lun",
-      "hour": "2",
+      "day": "Mer",
+      "hour": "4",
       "room": ""
     },
     "993": {
+      "day": "Lun",
+      "hour": "4",
+      "room": ""
+    },
+    "994": {
+      "day": "Gio",
+      "hour": "3",
+      "room": ""
+    },
+    "1046": {
       "day": "Mer",
       "hour": "3",
       "room": ""
     },
-    "994": {
-      "day": "Mar",
-      "hour": "2",
-      "room": ""
-    },
-    "1046": {
-      "day": "Ven",
-      "hour": "4",
-      "room": ""
-    },
     "995": {
-      "day": "Lun",
-      "hour": "5",
+      "day": "Mar",
+      "hour": "4",
       "room": ""
     },
     "1047": {
-      "day": "Mer",
-      "hour": "4",
+      "day": "Ven",
+      "hour": "5",
       "room": ""
     },
     "996": {
-      "day": "Gio",
+      "day": "Lun",
       "hour": "4",
       "room": ""
     },
     "1048": {
-      "day": "Ven",
-      "hour": "3",
+      "day": "Mer",
+      "hour": "2",
       "room": ""
     },
     "997": {
       "day": "Mer",
-      "hour": "4",
+      "hour": "2",
       "room": ""
     },
     "998": {
       "day": "Ven",
-      "hour": "3",
+      "hour": "4",
       "room": ""
     },
     "999": {
-      "day": "Lun",
-      "hour": "3",
+      "day": "Mar",
+      "hour": "4",
       "room": ""
     },
     "1000": {
-      "day": "Mer",
+      "day": "Lun",
       "hour": "3",
       "room": ""
     },
@@ -25434,167 +25435,167 @@
       "room": ""
     },
     "1002": {
-      "day": "Lun",
+      "day": "Mer",
       "hour": "1",
       "room": ""
     },
     "1003": {
-      "day": "Mer",
-      "hour": "1",
+      "day": "Ven",
+      "hour": "4",
       "room": ""
     },
     "1004": {
-      "day": "Ven",
-      "hour": "7",
+      "day": "Gio",
+      "hour": "3",
       "room": ""
     },
     "1049": {
-      "day": "Gio",
-      "hour": "1",
+      "day": "Mar",
+      "hour": "2",
       "room": ""
     },
     "1005": {
       "day": "Lun",
-      "hour": "4",
+      "hour": "3",
       "room": ""
     },
     "1050": {
       "day": "Mer",
-      "hour": "5",
+      "hour": "4",
       "room": ""
     },
     "1006": {
-      "day": "Lun",
+      "day": "Ven",
       "hour": "3",
       "room": ""
     },
     "1051": {
       "day": "Mer",
-      "hour": "4",
+      "hour": "3",
       "room": ""
     },
     "1007": {
-      "day": "Ven",
-      "hour": "1",
+      "day": "Lun",
+      "hour": "2",
       "room": ""
     },
     "1052": {
-      "day": "Gio",
+      "day": "Mar",
       "hour": "3",
       "room": ""
     },
     "1008": {
-      "day": "Lun",
-      "hour": "2",
+      "day": "Gio",
+      "hour": "4",
       "room": ""
     },
     "1009": {
-      "day": "Lun",
-      "hour": "2",
+      "day": "Gio",
+      "hour": "4",
       "room": ""
     },
     "1010": {
-      "day": "Ven",
-      "hour": "2",
+      "day": "Mar",
+      "hour": "1",
       "room": ""
     },
     "1011": {
-      "day": "Mar",
-      "hour": "3",
+      "day": "Lun",
+      "hour": "2",
       "room": ""
     },
     "1012": {
-      "day": "Gio",
-      "hour": "4",
+      "day": "Mer",
+      "hour": "1",
       "room": ""
     },
     "1013": {
-      "day": "Ven",
-      "hour": "1",
-      "room": ""
-    },
-    "1014": {
-      "day": "Lun",
-      "hour": "3",
-      "room": ""
-    },
-    "1015": {
-      "day": "Mar",
-      "hour": "3",
-      "room": ""
-    },
-    "1016": {
-      "day": "Mar",
-      "hour": "4",
-      "room": ""
-    },
-    "1017": {
-      "day": "Lun",
-      "hour": "5",
-      "room": ""
-    },
-    "1018": {
-      "day": "Ven",
-      "hour": "2",
-      "room": ""
-    },
-    "1019": {
-      "day": "Mar",
-      "hour": "4",
-      "room": ""
-    },
-    "1053": {
-      "day": "Lun",
-      "hour": "1",
-      "room": ""
-    },
-    "1020": {
-      "day": "Ven",
-      "hour": "3",
-      "room": ""
-    },
-    "1054": {
       "day": "Gio",
       "hour": "2",
       "room": ""
     },
-    "1021": {
-      "day": "Mar",
-      "hour": "1",
-      "room": ""
-    },
-    "1055": {
+    "1014": {
       "day": "Mer",
       "hour": "4",
       "room": ""
     },
-    "1022": {
+    "1015": {
+      "day": "Mar",
+      "hour": "4",
+      "room": ""
+    },
+    "1016": {
       "day": "Lun",
+      "hour": "3",
+      "room": ""
+    },
+    "1017": {
+      "day": "Gio",
+      "hour": "4",
+      "room": ""
+    },
+    "1018": {
+      "day": "Mer",
+      "hour": "1",
+      "room": ""
+    },
+    "1019": {
+      "day": "Lun",
+      "hour": "5",
+      "room": ""
+    },
+    "1053": {
+      "day": "Mer",
+      "hour": "3",
+      "room": ""
+    },
+    "1020": {
+      "day": "Mar",
+      "hour": "4",
+      "room": ""
+    },
+    "1054": {
+      "day": "Gio",
+      "hour": "4",
+      "room": ""
+    },
+    "1021": {
+      "day": "Ven",
+      "hour": "4",
+      "room": ""
+    },
+    "1055": {
+      "day": "Mer",
+      "hour": "2",
+      "room": ""
+    },
+    "1022": {
+      "day": "Mer",
       "hour": "2",
       "room": ""
     },
     "1023": {
-      "day": "Ven",
-      "hour": "1",
-      "room": ""
-    },
-    "1024": {
       "day": "Gio",
       "hour": "2",
       "room": ""
     },
+    "1024": {
+      "day": "Gio",
+      "hour": "1",
+      "room": ""
+    },
     "1025": {
-      "day": "Lun",
-      "hour": "4",
+      "day": "Mar",
+      "hour": "1",
       "room": ""
     },
     "1026": {
       "day": "Ven",
-      "hour": "3",
+      "hour": "5",
       "room": ""
     },
     "1027": {
-      "day": "Gio",
+      "day": "Ven",
       "hour": "3",
       "room": ""
     },
@@ -25604,17 +25605,17 @@
       "room": ""
     },
     "1028": {
-      "day": "Mer",
-      "hour": "3",
+      "day": "Gio",
+      "hour": "2",
       "room": ""
     },
     "1057": {
       "day": "Mar",
-      "hour": "1",
+      "hour": "5",
       "room": ""
     },
     "1029": {
-      "day": "Ven",
+      "day": "Mer",
       "hour": "3",
       "room": ""
     },
@@ -25624,33 +25625,33 @@
       "room": ""
     },
     "1030": {
-      "day": "Mer",
-      "hour": "2",
+      "day": "Mar",
+      "hour": "4",
       "room": ""
     },
     "1059": {
-      "day": "Mer",
-      "hour": "1",
+      "day": "Lun",
+      "hour": "4",
       "room": ""
     },
     "1031": {
-      "day": "Ven",
+      "day": "Mer",
       "hour": "5",
       "room": ""
     },
     "1060": {
-      "day": "Mer",
+      "day": "Lun",
       "hour": "2",
       "room": ""
     },
     "1032": {
       "day": "Mar",
-      "hour": "5",
+      "hour": "2",
       "room": ""
     },
     "1061": {
-      "day": "Lun",
-      "hour": "3",
+      "day": "Ven",
+      "hour": "4",
       "room": ""
     },
     "1033": {
@@ -25659,18 +25660,18 @@
       "room": ""
     },
     "1062": {
-      "day": "Ven",
-      "hour": "2",
+      "day": "Lun",
+      "hour": "1",
       "room": ""
     },
     "1034": {
-      "day": "Mar",
-      "hour": "4",
+      "day": "Ven",
+      "hour": "3",
       "room": ""
     },
     "1067": {
       "day": "Mer",
-      "hour": "3",
+      "hour": "2",
       "room": ""
     }
   },

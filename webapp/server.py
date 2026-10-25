@@ -86,7 +86,7 @@ def fetch_google_doc_docx_bytes(url):
     except Exception as e:
         raise ValueError(f"Impossibile scaricare il Google Doc: {e}")
 
-APP_VERSION = "1.5.8"
+APP_VERSION = "1.5.9"
 FET_VERSION = "7.12.0"
 APP_AUTHOR = "Carlo Rigoni"
 APP_MENTOR = "Federico Rettore"
@@ -202,22 +202,19 @@ class ThreadingHTTPServer(ThreadingMixIn, HTTPServer):
 
 
 class SmartTimetableHandler(BaseHTTPRequestHandler):
+    protocol_version = "HTTP/1.1"
+
     def _send_cors(self):
         origin = self.headers.get("Origin")
-        if not origin:
-            host = self.headers.get("Host")
-            if host:
-                origin = f"http://{host}"
-        if origin and origin != "*":
+        if origin:
             self.send_header("Access-Control-Allow-Origin", origin)
             self.send_header("Access-Control-Allow-Credentials", "true")
-        else:
-            self.send_header("Access-Control-Allow-Origin", "*")
-        self.send_header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-        self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With")
+            self.send_header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+            self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With, Accept")
 
     def do_OPTIONS(self):
         self.send_response(204)
+        self.send_header("Connection", "close")
         self._send_cors()
         self.send_header("Content-Length", "0")
         self.end_headers()
@@ -227,6 +224,7 @@ class SmartTimetableHandler(BaseHTTPRequestHandler):
         self.send_response(code)
         self.send_header("Content-Type", "application/json; charset=utf-8")
         self.send_header("Content-Length", str(len(body)))
+        self.send_header("Connection", "close")
         if set_cookie:
             self.send_header("Set-Cookie", f"smarttimetable_session={set_cookie}; Path=/; HttpOnly; SameSite=Lax; Max-Age=2592000")
         elif clear_cookie:
@@ -654,18 +652,31 @@ class SmartTimetableHandler(BaseHTTPRequestHandler):
                 self._json(500, {"error": f"Errore durante la generazione del file FET: {str(e)}"})
 
         elif path == "/api/export/timetable":
-            solved_path = os.path.join(DATA_DIR, "solved_timetable.fet")
-            if not os.path.exists(solved_path):
-                demo_solved = os.path.join(DATA_DIR, "demo_solved_timetable.fet")
-                if os.path.exists(demo_solved):
-                    try:
-                        shutil.copyfile(demo_solved, solved_path)
-                    except Exception:
-                        pass
-            if os.path.exists(solved_path):
-                self._serve_file(solved_path, "application/xml; charset=utf-8", "Orario_Risolto_data_and_timetable.fet")
-            else:
-                self._json(404, {"error": "Nessun orario risolto ancora calcolato o salvato."})
+            try:
+                xml_full = generate_fet_xml(db.get_all(), include_timetable=True, exclude_disposizioni=False)
+                xml_bytes = xml_full.encode("utf-8")
+                self.send_response(200)
+                self.send_header("Content-Type", "application/xml; charset=utf-8")
+                self.send_header("Content-Length", str(len(xml_bytes)))
+                self.send_header("Content-Disposition", 'attachment; filename="Orario_Risolto_data_and_timetable.fet"')
+                self.send_header("Connection", "close")
+                self._send_cors()
+                self.end_headers()
+                self.wfile.write(xml_bytes)
+                return
+            except Exception as e:
+                solved_path = os.path.join(DATA_DIR, "solved_timetable.fet")
+                if not os.path.exists(solved_path):
+                    demo_solved = os.path.join(DATA_DIR, "demo_solved_timetable.fet")
+                    if os.path.exists(demo_solved):
+                        try:
+                            shutil.copyfile(demo_solved, solved_path)
+                        except Exception:
+                            pass
+                if os.path.exists(solved_path):
+                    self._serve_file(solved_path, "application/xml; charset=utf-8", "Orario_Risolto_data_and_timetable.fet")
+                else:
+                    self._json(404, {"error": "Nessun orario risolto ancora calcolato o salvato."})
 
         elif path == "/api/snapshots":
             self._json(200, {

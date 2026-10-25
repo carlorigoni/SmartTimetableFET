@@ -1545,8 +1545,8 @@ def generate_fet_xml(data, include_timetable=False, exclude_disposizioni=True):
         if pl.get("day") and pl.get("hour") and pl["day"] in active_days:
             if include_timetable or aid_str in locked_set:
                 act = acts_map_for_lock.get(aid_str)
-                # Non vincolare in FET le attività di disposizione (vengono assegnate post-calcolo)
-                if act and (act.get("subject") or "").strip().lower().startswith("disposiz"):
+                # Non vincolare in FET le attività di disposizione se exclude_disposizioni è True (vengono assegnate post-calcolo)
+                if exclude_disposizioni and act and (act.get("subject") or "").strip().lower().startswith("disposiz"):
                     continue
                 lines.append('    <ConstraintActivityPreferredStartingTime>')
                 lines.append('      <Weight_Percentage>100</Weight_Percentage>')

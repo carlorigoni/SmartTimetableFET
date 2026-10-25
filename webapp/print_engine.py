@@ -112,6 +112,161 @@ def get_intervallo_info(h: int, lang: str = "it") -> dict:
     return res
 
 
+# Dizionario completo di traduzione materie scolastiche Italiano -> Inglese
+SUBJECT_TRANSLATIONS_EN = {
+    # Materie e Classi di Concorso Specifiche del Progetto
+    "discipline letterarie istituti ii grado": "Literature & History",
+    "discipline letterarie": "Literature & History",
+    "disegno storia arte istituto ii grado": "Drawing & Art History",
+    "disegno e storia dell'arte": "Drawing & Art History",
+    "disegno storia dell'arte": "Drawing & Art History",
+    "italiano latino storia e geografia": "Italian, Latin, History & Geo",
+    "italiano storia e geografia": "Italian, History & Geography",
+    "italiano e latino": "Italian & Latin",
+    "lingua e letteratura italiana": "Italian Language & Literature",
+    "lingua e cultura straniera (inglese)": "English Language & Culture",
+    "lingua e cultura straniera (francese)": "French Language & Culture",
+    "lingua e cultura straniera (spagnolo)": "Spanish Language & Culture",
+    "lingua e cultura straniera (tedesco)": "German Language & Culture",
+    "scienze economiche - aziendali": "Business Economics",
+    "scienze economiche aziendali": "Business Economics",
+    "scienze matematiche applicate": "Applied Mathematics",
+    "scienze motorie e sportive ii grado": "Physical Education & Sports",
+    "scienze motorie e sportive": "Physical Education & Sports",
+    "scienze motorie": "Physical Education",
+    "scienze naturali, chimica e biologia": "Natural Sciences, Chemistry & Biology",
+    "scienze naturali chimica e biologia": "Natural Sciences, Chemistry & Biology",
+    "scienze della terra e biologia": "Earth Sciences & Biology",
+    "scienze e tecnologie informatiche": "Computer Science & Technologies",
+    "diritto e relazioni internazionali": "Law & Int. Relations",
+    "diritto ed economia politica": "Law & Political Economy",
+    "diritto ed economia": "Law & Economics",
+    "filosofia e scienze umane": "Philosophy & Human Sciences",
+    "filosofia e storia": "Philosophy & History",
+    "storia e filosofia": "History & Philosophy",
+    "storia e geografia": "History & Geography",
+    "matematica e fisica": "Mathematics & Physics",
+    "discipline sanitarie": "Health Sciences",
+    "legislazione sanitaria": "Health Legislation",
+    "metodologie operative": "Operational Methodologies",
+    "tecniche amministrative": "Administrative Techniques",
+    "tecniche amministrative ed economia aziendale": "Business Economics & Admin",
+
+    # Materie Canoniche Singole
+    "italiano": "Italian",
+    "latino": "Latin",
+    "greco": "Ancient Greek",
+    "storia": "History",
+    "geografia": "Geography",
+    "geostoria": "Geo-History",
+    "filosofia": "Philosophy",
+    "scienze umane": "Human Sciences",
+    "pedagogia": "Pedagogy",
+    "psicologia": "Psychology",
+    "antropologia": "Anthropology",
+    "sociologia": "Sociology",
+
+    # Lingue Straniere
+    "inglese": "English",
+    "lingua inglese": "English Language",
+    "lingua e cultura inglese": "English Language & Culture",
+    "francese": "French",
+    "lingua francese": "French Language",
+    "lingua e cultura francese": "French Language & Culture",
+    "spagnolo": "Spanish",
+    "lingua spagnola": "Spanish Language",
+    "lingua e cultura spagnola": "Spanish Language & Culture",
+    "tedesco": "German",
+    "lingua tedesca": "German Language",
+    "lingua e cultura tedesca": "German Language & Culture",
+    "russo": "Russian",
+    "cinese": "Chinese",
+    "conversazione": "Language Conversation",
+    "conversazione in lingua straniera": "Foreign Language Conversation",
+
+    # Matematica, Fisica e Informatica
+    "matematica": "Mathematics",
+    "fisica": "Physics",
+    "informatica": "Computer Science",
+    "tecnologie informatiche": "Information Technologies",
+    "scienze e tecnologie applicate": "Applied Science & Tech",
+    "tecnologie e tecniche di rappresentazione grafica": "Graphic Representation Tech",
+    "disegno tecnico": "Technical Drawing",
+    "disegno": "Drawing",
+    "storia dell'arte": "Art History",
+    "arte e immagine": "Art & Image",
+
+    # Scienze Naturali, Chimica, Biologia
+    "scienze": "Sciences",
+    "scienze naturali": "Natural Sciences",
+    "scienze della terra": "Earth Sciences",
+    "biologia": "Biology",
+    "chimica": "Chemistry",
+    "scienze integrate": "Integrated Sciences",
+    "scienze integrate (chimica)": "Integrated Sciences (Chemistry)",
+    "scienze integrate (fisica)": "Integrated Sciences (Physics)",
+    "scienze integrate (scienze della terra e biologia)": "Integrated Sciences (Earth & Bio)",
+    "microbiologia": "Microbiology",
+    "igiene": "Hygiene & Health",
+
+    # Giuridico-Economiche
+    "diritto": "Law",
+    "economia politica": "Political Economy",
+    "economia aziendale": "Business Economics",
+    "relazioni internazionali": "International Relations",
+    "scienze economico-aziendali": "Business Economics",
+    "finanza": "Public Finance",
+
+    # Scienze Motorie e Religione
+    "educazione fisica": "Physical Education",
+    "religione": "Religion",
+    "religione cattolica": "Catholic Religion",
+    "irc": "Catholic Religious Education",
+    "materia alternativa": "Alternative Activity",
+    "attività alternativa": "Alternative Activity",
+    "studio assistito": "Supervised Study",
+
+    # Discipline Tecniche e Professionali
+    "meccanica": "Mechanics",
+    "meccanica e macchine": "Mechanics & Machines",
+    "robotica": "Robotics",
+    "elettronica": "Electronics",
+    "elettronica ed elettrotecnica": "Electronics & Electrical Eng.",
+    "elettrotecnica": "Electrical Engineering",
+    "telecomunicazioni": "Telecommunications",
+    "sistemi e reti": "Systems & Networks",
+    "tecnologie chimiche": "Chemical Technologies",
+    "biotecnologie": "Biotechnology",
+    "costruzioni ambiente e territorio": "Construction & Environment",
+    "topografia": "Topography",
+
+    # Disposizioni e Attività Istituzionali
+    "disposizione": "On-Duty / Available",
+    "disposizioni": "On-Duty / Available",
+    "potenziamento": "Enhancement / Support",
+    "ricevimento": "Office Hours",
+    "coordinamento": "Class Coordination",
+    "supplenza": "Substitute Duty",
+}
+
+def get_subject_display_name(subj: str, lang: str = "it") -> str:
+    """Restituisce il nome della materia tradotto se lang == 'en', altrimenti originale."""
+    if not subj:
+        return ""
+    is_en = str(lang).strip().lower() in ("en", "eng", "english")
+    if not is_en:
+        return subj
+    s_clean = subj.strip()
+    s_lower = s_clean.lower()
+    if s_lower in SUBJECT_TRANSLATIONS_EN:
+        return SUBJECT_TRANSLATIONS_EN[s_lower]
+    # Controlla prefissi o sottostringhe con ordine di lunghezza decrescente (le più specifiche prima)
+    for it_k in sorted(SUBJECT_TRANSLATIONS_EN.keys(), key=len, reverse=True):
+        if s_lower == it_k or s_lower.startswith(it_k + " ") or (" " + it_k) in s_lower or it_k in s_lower:
+            return SUBJECT_TRANSLATIONS_EN[it_k]
+    return subj
+
+
 # Palette storica 32 colori saturi per il bordo delle materie
 PALETTE_COLORI_MATERIE = [
     "C92626", "AD5A28", "C9A026", "9CAD28", "77C926", "39AD28", "26C94F", "28AD7B",
@@ -874,11 +1029,12 @@ function switchPrintLang(newLang) {{
                     for l in lessons:
                         tag = l.get("daughter_label") or l.get("daughter_name", "")
                         subj = l.get("subject", "")
+                        subj_disp = get_subject_display_name(subj, lang)
                         teachers_str = ", ".join(l.get("teachers_short", []))
                         items_html.append(f"""
                           <div class="articulated-item">
                             <span class="articulated-tag">{escape(tag)}:</span>
-                            <b>{escape(subj)}</b>
+                            <b>{escape(subj_disp)}</b>
                             <span style="color:#475569;">({escape(teachers_str)})</span>
                           </div>
                         """)
@@ -895,6 +1051,7 @@ function switchPrintLang(newLang) {{
                     # Lezione normale o in co-docenza
                     l = lessons[0]
                     subj = l.get("subject", "")
+                    subj_disp = get_subject_display_name(subj, lang)
                     teachers_str = " / ".join(l.get("teachers_short", []))
 
                     base = normalize_subject_base(subj)
@@ -909,7 +1066,7 @@ function switchPrintLang(newLang) {{
 
                     content_parts = []
                     if content_mode in ("materia_docente", "materia"):
-                        content_parts.append(f'<div class="riga-materia" title="{escape(subj)}">{escape(subj)}</div>')
+                        content_parts.append(f'<div class="riga-materia" title="{escape(subj_disp)}">{escape(subj_disp)}</div>')
                     if content_mode in ("materia_docente", "docente"):
                         content_parts.append(f'<div class="riga-docente" title="{escape(teachers_str)}">{escape(teachers_str)}</div>')
 
@@ -1430,7 +1587,7 @@ function copyTableForGoogleDocs() {{
 
                     if "disposiz" in subj.lower():
                         custom_desc = (item.get("custom_desc") or "").strip()
-                        disp_text = custom_desc if custom_desc else "D"
+                        disp_text = custom_desc if custom_desc else ("OD" if lang == "en" else "D")
                         disp_title = (f"Duty Period: {custom_desc}" if custom_desc else "Duty / On-call Period") if lang == "en" else (f"Ora a Disposizione: {custom_desc}" if custom_desc else "Ora a Disposizione")
                         cell_content = f'<span class="badge-disp" title="{escape(disp_title)}">{escape(disp_text)}</span>'
                     else:
@@ -1615,7 +1772,7 @@ def generate_teachers_master_docx(data, options=None):
                     students = it.get("students", [])
                     if "disposiz" in subj.lower():
                         custom_desc = (it.get("custom_desc") or "").strip()
-                        disp_text = xml_escape(custom_desc if custom_desc else "D")
+                        disp_text = xml_escape(custom_desc if custom_desc else ("OD" if lang == "en" else "D"))
                         xml_parts.append(f'        <w:tc><w:tcPr><w:tcW w:w="{hour_w}" w:type="dxa"/><w:shd w:val="clear" w:color="auto" w:fill="FEF3C7"/><w:vAlign w:val="center"/></w:tcPr><w:p><w:pPr><w:jc w:val="center"/><w:spacing w:before="10" w:after="10"/></w:pPr><w:r><w:rPr><w:b/><w:color w:val="92400E"/><w:sz w:val="13"/></w:rPr><w:t>{disp_text}</w:t></w:r></w:p></w:tc>\n')
                     else:
                         classes_str = xml_escape("/".join(students))
