@@ -3219,31 +3219,20 @@ class Database:
                         if a.get("target") and a.get("target") not in ("POT", "DISP", "RESIDUO", "COE")
                     ]
 
-                    matched_docx_idx = set()
-                    matched_cur = set()
-
-                    # 1. Corrispondenza esatta (es. '3AM' == '3AM', '5A FRA' == '5A FRA', '1A' == '1A')
-                    for idx, d_item in enumerate(docx_items):
+                    # Helper matching: verifica se un'assegnazione del file Word corrisponde a una classe/gruppo nel DB
+                    def match_assignment_to_db(d_item, cur_set):
                         t_up = d_item["target"].strip().upper()
-                        for c in cur_classes_set:
-                            if c not in matched_cur and idx not in matched_docx_idx:
-                                if t_up == c.strip().upper():
-                                    matched_docx_idx.add(idx)
-                                    matched_cur.add(c)
-                                    break
-
-                    # 2. Corrispondenza classe madre nel docx -> gruppo articolato nel DB
-                    # (es. nel docx c'è scritto '5A', nel DB il docente insegna '5A FRA' e la materia è Francese;
-                    #  se invece nel docx fosse indicato '5A SPA' o esplicitamente Spagnolo, non corrisponde ed è una variazione)
-                    for idx, d_item in enumerate(docx_items):
-                        if idx in matched_docx_idx:
-                            continue
-                        t_up = d_item["target"].strip().upper()
+                        subj_low = (d_item.get("subject") or "").lower()
+                        # 1. Corrispondenza esatta (es. '1C' == '1C', '5A FRA' == '5A FRA')
+                        for c in cur_set:
+                            if t_up == c.strip().upper():
+                                return c
+                        # 2. Corrispondenza classe madre nel docx -> gruppo articolato nel DB
+                        # (es. nel docx c'è scritto '5A', nel DB il docente insegna '5A FRA' e la materia è Francese;
+                        #  se invece nel docx fosse indicato '5A SPA' o esplicitamente Spagnolo, non corrisponde ed è una variazione)
                         if t_up in class_to_groups:
-                            possible_groups = class_to_groups[t_up]
-                            for c in cur_classes_set:
-                                if c not in matched_cur and c.strip().upper() in possible_groups:
-                                    subj_low = (d_item.get("subject") or "").lower()
+                            for c in cur_set:
+                                if c.strip().upper() in class_to_groups[t_up]:
                                     c_low = c.lower()
                                     if "spagnol" in subj_low and "fra" in c_low:
                                         continue
@@ -3251,24 +3240,28 @@ class Database:
                                         continue
                                     if "tedesc" in subj_low and ("fra" in c_low or "spa" in c_low):
                                         continue
-                                    matched_docx_idx.add(idx)
-                                    matched_cur.add(c)
-                                    break
-
-                    # 3. Corrispondenza gruppo articolato nel docx -> classe madre nel DB
-                    for idx, d_item in enumerate(docx_items):
-                        if idx in matched_docx_idx:
-                            continue
-                        t_up = d_item["target"].strip().upper()
+                                    return c
+                        # 3. Corrispondenza gruppo articolato nel docx -> classe madre nel DB
                         if t_up in group_to_class:
                             mother = group_to_class[t_up]
-                            for c in cur_classes_set:
-                                if c not in matched_cur and c.strip().upper() == mother:
-                                    matched_docx_idx.add(idx)
-                                    matched_cur.add(c)
-                                    break
+                            for c in cur_set:
+                                if c.strip().upper() == mother:
+                                    return c
+                        return None
 
-                    added_cls = set(docx_items[i]["target"] for i in range(len(docx_items)) if i not in matched_docx_idx)
+                    matched_cur = set()
+                    unmatched_docx = []
+
+                    # Verifica ciascun insegnamento del file Word: più discipline possono riferirsi alla stessa classe
+                    # (es. docenti di lettere con 1C Italiano, 1C Latino, 1C Storia e Geografia accorpate o distinte)
+                    for d_item in docx_items:
+                        matched_c = match_assignment_to_db(d_item, cur_classes_set)
+                        if matched_c:
+                            matched_cur.add(matched_c)
+                        else:
+                            unmatched_docx.append(d_item["target"])
+
+                    added_cls = set(unmatched_docx)
                     rem_cls = set(c for c in cur_classes_set if c not in matched_cur)
 
                     if added_cls or rem_cls:
