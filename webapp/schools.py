@@ -70,6 +70,7 @@ class SchoolManager:
                     "city": "Sede Principale",
                     "country": "Italia",
                     "school_year": "2026/2027",
+                    "meccanografico": "PDIS017007",
                     "status": "active",
                     "owner_email": "admin@paperopoli.edu",
                     "created_at": datetime.now().isoformat(),
@@ -78,6 +79,9 @@ class SchoolManager:
                     "notes": "Istituto Principale Predefinito",
                     "is_default": True
                 }
+                self._save()
+            elif "default" in self.schools and not self.schools["default"].get("meccanografico"):
+                self.schools["default"]["meccanografico"] = "PDIS017007"
                 self._save()
 
     def _save(self):
@@ -137,7 +141,7 @@ class SchoolManager:
             out.sort(key=lambda x: (0 if x["id"] == "default" else 1, x.get("name", "").lower()))
             return out
 
-    def create_school(self, name, city="", country="Italia", school_year="2026/2027", owner_email="", notes=""):
+    def create_school(self, name, city="", country="Italia", school_year="2026/2027", owner_email="", notes="", meccanografico=""):
         """
         Crea un nuovo Istituto in stato 'trial' (Modalità di Prova).
         Genera la cartella isolata tenant e inizializza il database dedicato.
@@ -160,6 +164,7 @@ class SchoolManager:
                 "city": (city or "").strip(),
                 "country": (country or "Italia").strip(),
                 "school_year": (school_year or "2026/2027").strip(),
+                "meccanografico": (meccanografico or "").strip().upper(),
                 "status": "trial",  # 'trial' = in prova con filigrana | 'active' = approvata dal superadmin
                 "owner_email": (owner_email or "").strip().lower(),
                 "created_at": datetime.now().isoformat(),
@@ -177,6 +182,21 @@ class SchoolManager:
             self.schools[slug] = school_obj
             self._save()
             return school_obj
+
+    def update_school_info(self, school_id, **kwargs):
+        """Aggiorna i metadati anagrafici di una scuola nel registro centralizzato."""
+        with self.lock:
+            if school_id not in self.schools:
+                return None
+            s = self.schools[school_id]
+            for k in ("name", "city", "country", "school_year", "meccanografico", "notes"):
+                if k in kwargs and kwargs[k] is not None:
+                    if k == "meccanografico":
+                        s[k] = str(kwargs[k]).strip().upper()
+                    else:
+                        s[k] = str(kwargs[k]).strip()
+            self._save()
+            return s
 
     def approve_school(self, school_id, admin_email=""):
         """Approva formalmente la scuola, sbloccando le stampe ufficiali ad alta risoluzione."""

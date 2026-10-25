@@ -94,7 +94,7 @@ def fetch_google_doc_docx_bytes(url):
     except Exception as e:
         raise ValueError(f"Impossibile scaricare il Google Doc: {e}")
 
-APP_VERSION = "1.8.0"
+APP_VERSION = "1.8.1"
 FET_VERSION = "7.12.0"
 APP_AUTHOR = "Carlo Rigoni"
 APP_MENTOR = "Federico Rettore"
@@ -1045,13 +1045,15 @@ class EurarioHandler(BaseHTTPRequestHandler):
                 country = body.get("country", "Italia")
                 school_year = body.get("school_year", "2026/2027")
                 notes = body.get("notes", "")
+                meccanografico = body.get("meccanografico", "").strip().upper()
                 new_sch = school_manager.create_school(
                     name=name,
                     city=city,
                     country=country,
                     school_year=school_year,
                     owner_email=user["email"],
-                    notes=notes
+                    notes=notes,
+                    meccanografico=meccanografico
                 )
                 auth_manager.add_user_to_school(user["email"], new_sch["id"], role="owner", status="approved")
                 tok = self._get_session_token()
@@ -1060,6 +1062,8 @@ class EurarioHandler(BaseHTTPRequestHandler):
                 set_current_school_id(new_sch["id"])
                 new_db = get_db(new_sch["id"])
                 new_db.data["institution"] = new_sch["name"]
+                if meccanografico:
+                    new_db.data["meccanografico"] = meccanografico
                 new_db.save()
                 self._json(200, {
                     "success": True,

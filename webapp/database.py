@@ -391,11 +391,14 @@ class Database:
                 from webapp.schools import school_manager
                 sinfo = school_manager.get_school(self.school_id)
                 inst_name = sinfo.get("name") if sinfo else self.school_id
+                inst_mecc = sinfo.get("meccanografico") if sinfo else ""
             except Exception:
                 inst_name = self.school_id
+                inst_mecc = ""
             data = {
                 "institution": inst_name,
                 "comments": f"Configurazione orario {inst_name}",
+                "meccanografico": (inst_mecc or "").strip().upper(),
                 "days": ["Lun", "Mar", "Mer", "Gio", "Ven"],
                 "hours": ["1", "2", "INT1", "3", "4", "INT2", "5", "6", "7", "8"],
                 "teachers": [],
@@ -798,6 +801,7 @@ class Database:
             return {
                 "institution": self.data.get("institution", ""),
                 "comments": self.data.get("comments", ""),
+                "meccanografico": self.data.get("meccanografico", ""),
                 "days": self.data.get("days", []),
                 "hours": self.data.get("hours", []),
                 "day_hours_limit": self.data.get("day_hours_limit", copy.deepcopy(DEFAULT_DAY_HOURS)),
@@ -814,6 +818,17 @@ class Database:
                 self.data["institution"] = settings["institution"]
             if "comments" in settings:
                 self.data["comments"] = settings["comments"]
+            if "meccanografico" in settings:
+                self.data["meccanografico"] = (settings["meccanografico"] or "").strip().upper()
+                try:
+                    from webapp.schools import school_manager
+                    school_manager.update_school_info(
+                        self.school_id,
+                        meccanografico=self.data["meccanografico"],
+                        name=self.data.get("institution")
+                    )
+                except Exception:
+                    pass
             if "days" in settings and settings["days"]:
                 self.data["days"] = settings["days"]
             if "hours" in settings and settings["hours"]:
@@ -824,10 +839,17 @@ class Database:
                 self.data["parameters"].update(settings["parameters"])
             if "day_hours_limit" in settings:
                 self.data["day_hours_limit"] = settings["day_hours_limit"]
+                sab_lim = int(self.data["day_hours_limit"].get("Sab", 0))
+                # Se il sabato ha ore > 0 viene inserito in days; con 0 ore la scuola è su 5 giorni
+                current_days = ["Lun", "Mar", "Mer", "Gio", "Ven"]
+                if sab_lim > 0:
+                    current_days.append("Sab")
+                self.data["days"] = current_days
+
                 hours = self.data.get("hours", ["1", "2", "INT1", "3", "4", "INT2", "5", "6", "INT3", "7", "8"])
-                days = self.data.get("days", ["Lun", "Mar", "Mer", "Gio", "Ven", "Sab"])
+                days_all = ["Lun", "Mar", "Mer", "Gio", "Ven", "Sab"]
                 new_breaks = []
-                for d in days:
+                for d in days_all:
                     lim = int(self.data["day_hours_limit"].get(d, 6 if d != "Sab" else 0))
                     for h in hours:
                         if "int" in h.lower():

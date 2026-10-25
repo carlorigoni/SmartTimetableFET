@@ -3,7 +3,22 @@
   "superadmins": [
     "admin@paperopoli.edu"
   ],
-  "school_memberships": {},
+  "school_memberships": {
+    "admin@paperopoli.edu": {
+      "itet-g-girardi": {
+        "role": "owner",
+        "status": "approved",
+        "added_at": "2026-10-25T21:44:20.512106+01:00"
+      }
+    },
+    "docente.milano@gmail.com": {
+      "liceo-scientifico-leonardo-da-vinci": {
+        "role": "owner",
+        "status": "approved",
+        "added_at": "2026-10-25T21:56:51.900711+01:00"
+      }
+    }
+  },
   "google_client_id": "",
   "emergency_passcode": "admin2026",
   "smtp": {
@@ -23,7 +38,7 @@
       "status": "approved",
       "created_at": "2026-10-21T00:00:00",
       "approved_at": "2026-10-21T00:00:00",
-      "last_login": "2026-10-25T21:56:51.897794+01:00"
+      "last_login": "2026-10-25T21:59:39.955235+01:00"
     }
   }
 }

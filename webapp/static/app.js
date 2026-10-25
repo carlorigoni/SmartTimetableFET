@@ -22,7 +22,7 @@ let pollSolverTimer = null;
 let currentSolverRunning = false;
 
 // --- VERSIONE E IDENTITÀ APPLICATIVA ---
-const APP_VERSION = '1.8.0';
+const APP_VERSION = '1.8.1';
 
 // Dizionario completo di traduzione materie scolastiche Italiano -> Inglese
 const SUBJECT_TRANSLATIONS_JS = {
@@ -367,6 +367,8 @@ function openCreateSchoolModal() {
   if (modal) {
     document.getElementById('newSchoolName').value = '';
     document.getElementById('newSchoolCity').value = '';
+    const mecc = document.getElementById('newSchoolMeccanografico');
+    if (mecc) mecc.value = '';
     document.getElementById('newSchoolNotes').value = '';
     modal.style.display = 'flex';
   }
@@ -382,6 +384,7 @@ async function submitCreateSchool() {
   const city = (document.getElementById('newSchoolCity').value || '').trim();
   const country = (document.getElementById('newSchoolCountry').value || 'Italia').trim();
   const school_year = (document.getElementById('newSchoolYear').value || '2026/2027').trim();
+  const meccanografico = (document.getElementById('newSchoolMeccanografico')?.value || '').trim().toUpperCase();
   const notes = (document.getElementById('newSchoolNotes').value || '').trim();
 
   if (!name) {
@@ -396,7 +399,7 @@ async function submitCreateSchool() {
     const res = await fetch('/api/schools/create', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, city, country, school_year, notes })
+      body: JSON.stringify({ name, city, country, school_year, meccanografico, notes })
     });
     const data = await res.json();
     if (data.success) {
@@ -511,6 +514,7 @@ async function loadSuperAdminSchools(showNotice = false) {
         <tr>
           <td>
             <b>${escapeHtml(s.name)}</b>
+            ${s.meccanografico ? `<span class="badge" style="background:#e0e7ff;color:#3730a3;font-family:monospace;margin-left:4px;font-size:10px;">${escapeHtml(s.meccanografico)}</span>` : ''}
             ${isDefault ? '<span class="badge badge-info" style="margin-left:4px;font-size:9.5px;">Predefinito</span>' : ''}
             <div style="font-size:10.5px;color:var(--text-muted);font-family:var(--font-mono);">${escapeHtml(s.id)}</div>
           </td>
@@ -10531,17 +10535,24 @@ async function renderParameters() {
 
   const container = document.getElementById('mainContent');
   const dayLimits = cfg.day_hours_limit || { Lun: 6, Mar: 8, Mer: 6, Gio: 6, Ven: 8, Sab: 0 };
-  const daysList = cfg.days || ['Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab'];
+  // Assicura che i 6 giorni standard siano SEMPRE disponibili per la configurazione del calendario
+  const standardWeek = ['Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab'];
+  const customDays = (cfg.days || []).filter(d => !standardWeek.includes(d));
+  const daysList = [...standardWeek, ...customDays];
   const params = cfg.parameters || {};
 
   container.innerHTML = `
     <!-- Sezione 1: Anagrafica Istituto -->
     <div class="card" style="margin-bottom:16px;">
       <div class="card-title">${isEn ? '🏛️ School / Institution Details & FET File' : '🏛️ Anagrafica Istituto & File FET'}</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:12px;">
+      <div style="display:grid;grid-template-columns:minmax(200px, 2fr) minmax(140px, 1.2fr) minmax(160px, 1.4fr);gap:16px;margin-top:12px;">
         <div class="form-group">
           <label class="form-label">${isEn ? 'School / Institution Name' : "Nome dell'Istituto Scolastico"}</label>
-          <input type="text" id="cfgInstName" class="form-input" value="${escapeHtml(cfg.institution || '')}" placeholder="${isEn ? 'e.g. Ludwig Von Drake High School' : 'es. Liceo & Tecnico Pico De Paperis'}">
+          <input type="text" id="cfgInstName" class="form-input" value="${escapeHtml(cfg.institution || '')}" placeholder="${isEn ? 'e.g. Ludwig Von Drake High School' : 'es. I.I.S. Rolando da Piazzola'}">
+        </div>
+        <div class="form-group">
+          <label class="form-label">${isEn ? 'MIM / School Code' : 'Codice Meccanografico (se presente)'}</label>
+          <input type="text" id="cfgMeccanografico" class="form-input" value="${escapeHtml(cfg.meccanografico || '')}" placeholder="${isEn ? 'e.g. PDIS017007 (Optional)' : 'es. PDIS017007 (Facoltativo)'}" style="text-transform:uppercase;font-weight:600;letter-spacing:0.5px;">
         </div>
         <div class="form-group">
           <label class="form-label">${isEn ? 'Notes / School Year' : 'Note / Anno Scolastico'}</label>
@@ -10562,13 +10573,13 @@ async function renderParameters() {
           </p>
         </div>
         <div style="display:flex;gap:6px;flex-wrap:wrap;">
-          <button class="btn btn-sm btn-sec" onclick="applyDayHoursPreset('corta')" title="${isEn ? 'Mon-Fri open, Saturday closed at 0h' : 'Lun-Ven aperti, Sabato chiuso a 0 ore'}">
+          <button id="btnPresetCorta" type="button" class="btn btn-sm btn-sec" onclick="applyDayHoursPreset('corta')" title="${isEn ? 'Mon-Fri open, Saturday closed at 0h' : 'Lun-Ven aperti, Sabato chiuso a 0 ore'}">
             ⚡ ${isEn ? '5-Day Week (Sat 0h)' : 'Settimana Corta (Sabato 0h)'}
           </button>
-          <button class="btn btn-sm btn-sec" onclick="applyDayHoursPreset('lunga_5h')" title="${isEn ? '6-day week with 5-period Saturday' : 'Settimana su 6 giorni con Sabato da 5 ore'}">
+          <button id="btnPresetLunga5" type="button" class="btn btn-sm btn-sec" onclick="applyDayHoursPreset('lunga_5h')" title="${isEn ? '6-day week with 5-period Saturday' : 'Settimana su 6 giorni con Sabato da 5 ore'}">
             ⚡ ${isEn ? '6-Day Week (Sat 5h)' : 'Settimana Lunga (Sabato 5h)'}
           </button>
-          <button class="btn btn-sm btn-sec" onclick="applyDayHoursPreset('lunga_4h')" title="${isEn ? '6-day week with 4-period Saturday' : 'Settimana su 6 giorni con Sabato da 4 ore'}">
+          <button id="btnPresetLunga4" type="button" class="btn btn-sm btn-sec" onclick="applyDayHoursPreset('lunga_4h')" title="${isEn ? '6-day week with 4-period Saturday' : 'Settimana su 6 giorni con Sabato da 4 ore'}">
             ⚡ ${isEn ? '6-Day Week (Sat 4h)' : 'Settimana Lunga (Sabato 4h)'}
           </button>
         </div>
@@ -10580,8 +10591,8 @@ async function renderParameters() {
           const isSab = d === 'Sab';
           const dayLabel = formatDayName(d, true);
           return `
-            <div class="day-hours-box" style="${isSab ? 'border: 2px solid #cbd5e1; background: #f8fafc;' : ''}">
-              <div class="day-hours-box-name" style="${isSab ? 'color:#475569;' : ''}">${escapeHtml(dayLabel)} ${isSab ? '🗓️' : ''}</div>
+            <div id="day_box_${d}" class="day-hours-box" style="${isSab ? (val === 0 ? 'border: 2px dashed #94a3b8; background: var(--bg-hover, #f1f5f9);' : 'border: 2px solid var(--primary, #3b82f6); background: var(--bg-card, #f8fafc);') : ''}">
+              <div class="day-hours-box-name" style="${isSab ? 'color:var(--primary);font-weight:700;' : ''}">${escapeHtml(dayLabel)} ${isSab ? '🗓️' : ''}</div>
               <input type="number" 
                      id="day_limit_${d}" 
                      class="num-input" 
@@ -10589,13 +10600,16 @@ async function renderParameters() {
                      max="10" 
                      value="${val}" 
                      ${isSab ? 'oninput="updateSabatoBadge(this.value)"' : ''}
-                     style="${isSab ? 'border-color:#94a3b8; font-size:15px;' : ''}">
+                     style="${isSab ? 'font-size:16px;font-weight:700;' : ''}">
               <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">${isEn ? 'max periods' : 'ore max'}</div>
               ${isSab ? `
-                <div style="margin-top:6px;">
-                  <span id="sabStatusBadge" class="badge ${val === 0 ? 'badge-warn' : 'badge-ok'}" style="font-size:10.5px;">
+                <div style="margin-top:8px;display:flex;flex-direction:column;gap:5px;align-items:center;">
+                  <span id="sabStatusBadge" class="badge ${val === 0 ? 'badge-warn' : 'badge-ok'}" style="font-size:11px;padding:3px 8px;font-weight:600;">
                     ${isEn ? (val === 0 ? '● Closed (0h)' : `● Active (${val}h)`) : (val === 0 ? '● Chiuso (0h)' : `● Attivo (${val}h)`)}
                   </span>
+                  <button type="button" id="btnToggleSabato" class="btn btn-sm btn-sec" style="font-size:10.5px;padding:3px 7px;width:100%;" onclick="toggleSabatoQuick()">
+                    ${val === 0 ? (isEn ? '➕ Open Saturday (5h)' : '➕ Attiva Sabato (5h)') : (isEn ? '✕ Close Saturday (0h)' : '✕ Chiudi Sabato (0h)')}
+                  </button>
                 </div>
               ` : ''}
             </div>
@@ -10736,65 +10750,117 @@ async function renderParameters() {
 function updateSabatoBadge(val) {
   const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
   const badge = document.getElementById('sabStatusBadge');
-  if (!badge) return;
+  const toggleBtn = document.getElementById('btnToggleSabato');
+  const box = document.getElementById('day_box_Sab');
   const num = parseInt(val, 10) || 0;
-  if (num === 0) {
-    badge.className = 'badge badge-warn';
-    badge.innerText = isEn ? '● Closed (0h)' : '● Chiuso (0h)';
+
+  if (badge) {
+    if (num === 0) {
+      badge.className = 'badge badge-warn';
+      badge.innerText = isEn ? '● Closed (0h)' : '● Chiuso (0h)';
+    } else {
+      badge.className = 'badge badge-ok';
+      badge.innerText = isEn ? `● Active (${num}h)` : `● Attivo (${num}h)`;
+    }
+  }
+
+  if (toggleBtn) {
+    toggleBtn.innerText = num === 0 
+      ? (isEn ? '➕ Open Saturday (5h)' : '➕ Attiva Sabato (5h)') 
+      : (isEn ? '✕ Close Saturday (0h)' : '✕ Chiudi Sabato (0h)');
+  }
+
+  if (box) {
+    if (num === 0) {
+      box.style.border = '2px dashed #94a3b8';
+      box.style.background = 'var(--bg-hover, #f1f5f9)';
+    } else {
+      box.style.border = '2px solid var(--primary, #3b82f6)';
+      box.style.background = 'var(--bg-card, #f8fafc)';
+    }
+  }
+}
+
+function toggleSabatoQuick() {
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
+  const sab = document.getElementById('day_limit_Sab');
+  if (!sab) return;
+  const cur = parseInt(sab.value, 10) || 0;
+  if (cur === 0) {
+    sab.value = 5;
+    updateSabatoBadge(5);
+    showToast(isEn ? '⚡ Saturday activated (5 periods max)' : '⚡ Sabato attivato per le lezioni (5 ore max)');
   } else {
-    badge.className = 'badge badge-ok';
-    badge.innerText = isEn ? `● Active (${num}h)` : `● Attivo (${num}h)`;
+    sab.value = 0;
+    updateSabatoBadge(0);
+    showToast(isEn ? '⚡ Saturday closed (0 periods)' : '⚡ Sabato chiuso (Settimana Corta a 0 ore)');
   }
 }
 
 function applyDayHoursPreset(type) {
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
+  const lun = document.getElementById('day_limit_Lun');
+  const mar = document.getElementById('day_limit_Mar');
+  const mer = document.getElementById('day_limit_Mer');
+  const gio = document.getElementById('day_limit_Gio');
+  const ven = document.getElementById('day_limit_Ven');
+  const sab = document.getElementById('day_limit_Sab');
+
   if (type === 'corta') {
-    document.getElementById('day_limit_Lun').value = 6;
-    document.getElementById('day_limit_Mar').value = 8;
-    document.getElementById('day_limit_Mer').value = 6;
-    document.getElementById('day_limit_Gio').value = 6;
-    document.getElementById('day_limit_Ven').value = 8;
-    const sab = document.getElementById('day_limit_Sab');
+    if (lun) lun.value = 6;
+    if (mar) mar.value = 8;
+    if (mer) mer.value = 6;
+    if (gio) gio.value = 6;
+    if (ven) ven.value = 8;
     if (sab) {
       sab.value = 0;
       updateSabatoBadge(0);
     }
+    showToast(isEn ? '⚡ 5-Day Week preset applied (Saturday closed at 0h)' : '⚡ Applicata Settimana Corta (Sabato chiuso a 0 ore)');
   } else if (type === 'lunga_5h') {
-    document.getElementById('day_limit_Lun').value = 6;
-    document.getElementById('day_limit_Mar').value = 6;
-    document.getElementById('day_limit_Mer').value = 6;
-    document.getElementById('day_limit_Gio').value = 6;
-    document.getElementById('day_limit_Ven').value = 6;
-    const sab = document.getElementById('day_limit_Sab');
+    if (lun) lun.value = 6;
+    if (mar) mar.value = 6;
+    if (mer) mer.value = 6;
+    if (gio) gio.value = 6;
+    if (ven) ven.value = 6;
     if (sab) {
       sab.value = 5;
       updateSabatoBadge(5);
     }
+    showToast(isEn ? '⚡ 6-Day Week preset applied (Saturday active with 5 periods)' : '⚡ Applicata Settimana Lunga (Sabato aperto con 5 ore)');
   } else if (type === 'lunga_4h') {
-    document.getElementById('day_limit_Lun').value = 6;
-    document.getElementById('day_limit_Mar').value = 6;
-    document.getElementById('day_limit_Mer').value = 6;
-    document.getElementById('day_limit_Gio').value = 6;
-    document.getElementById('day_limit_Ven').value = 6;
-    const sab = document.getElementById('day_limit_Sab');
+    if (lun) lun.value = 6;
+    if (mar) mar.value = 6;
+    if (mer) mer.value = 6;
+    if (gio) gio.value = 6;
+    if (ven) ven.value = 6;
     if (sab) {
       sab.value = 4;
       updateSabatoBadge(4);
     }
+    showToast(isEn ? '⚡ 6-Day Week preset applied (Saturday active with 4 periods)' : '⚡ Applicata Settimana Lunga (Sabato aperto con 4 ore)');
   }
 }
 
 async function saveParametersSettings() {
   const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
   const instName = document.getElementById('cfgInstName').value.trim();
+  const meccanografico = (document.getElementById('cfgMeccanografico')?.value || '').trim().toUpperCase();
   const comments = document.getElementById('cfgComments').value.trim();
   const dayLimits = {};
-  const days = stateData.settings?.days || ['Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab'];
   
-  days.forEach(d => {
+  const daysList = ['Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab'];
+  daysList.forEach(d => {
     const el = document.getElementById(`day_limit_${d}`);
     if (el) dayLimits[d] = parseInt(el.value, 10) || 0;
+    else if (d === 'Sab') dayLimits[d] = 0;
   });
+
+  const sabHours = dayLimits['Sab'] || 0;
+  const activeDays = ['Lun', 'Mar', 'Mer', 'Gio', 'Ven'];
+  if (sabHours > 0) {
+    activeDays.push('Sab');
+  }
 
   // Raccogli parametri avanzati
   const updatedParams = { ...(stateData.settings?.parameters || {}) };
@@ -10827,8 +10893,9 @@ async function saveParametersSettings() {
 
   const payload = {
     institution: instName,
+    meccanografico: meccanografico,
     comments: comments,
-    days: days,
+    days: activeDays,
     day_hours_limit: dayLimits,
     parameters: updatedParams
   };
@@ -10838,6 +10905,16 @@ async function saveParametersSettings() {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload)
   });
+
+  if (res.ok) {
+    showToast(isEn ? 'Institution parameters and calendar saved successfully!' : 'Parametri istituto e calendario salvati con successo!');
+    const badge = document.getElementById('instBadge');
+    if (badge) badge.innerText = instName;
+    renderParameters();
+  } else {
+    alert(isEn ? 'Error saving parameters.' : 'Errore durante il salvataggio dei parametri.');
+  }
+}
 
   if (res.ok) {
     showToast(isEn ? 'Institution parameters and calendar saved successfully!' : 'Parametri istituto e calendario salvati con successo!');

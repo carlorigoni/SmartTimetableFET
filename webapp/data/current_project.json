@@ -19485,7 +19485,18 @@
     "Gio|8",
     "Ven|INT1",
     "Ven|INT2",
-    "Ven|INT3"
+    "Ven|INT3",
+    "Sab|1",
+    "Sab|2",
+    "Sab|INT1",
+    "Sab|3",
+    "Sab|4",
+    "Sab|INT2",
+    "Sab|5",
+    "Sab|6",
+    "Sab|INT3",
+    "Sab|7",
+    "Sab|8"
   ],
   "constraints": {
     "TEACHERS_MAX_GAPS_DAY": {
@@ -19646,7 +19657,8 @@
     "Mar": 8,
     "Mer": 6,
     "Gio": 6,
-    "Ven": 8
+    "Ven": 8,
+    "Sab": 0
   },
   "teacher_availability": {
     "Avanzi Mirko": [],
@@ -26199,5 +26211,6 @@
   ],
   "locked_activities": [
     "383"
-  ]
+  ],
+  "meccanografico": "PDIS017007"
 }
