@@ -11144,16 +11144,6 @@ async function saveParametersSettings() {
   }
 }
 
-  if (res.ok) {
-    showToast(isEn ? 'Institution parameters and calendar saved successfully!' : 'Parametri istituto e calendario salvati con successo!');
-    const badge = document.getElementById('instBadge');
-    if (badge) badge.innerText = instName;
-    renderParameters();
-  } else {
-    alert(isEn ? 'Error saving parameters.' : 'Errore durante il salvataggio dei parametri.');
-  }
-}
-
 function renderSettings() {
   renderParameters();
 }
