@@ -2711,8 +2711,11 @@ class Database:
                     "components": [{"subject": c, "hours": 0} for c in rule_info.get("components", [s])]
                 })
 
-            # Ordina le macro-materie attive per classe naturale poi docente
-            existing_merged.sort(key=lambda x: (natural_class_sort_key(x["class_name"]), x["teacher"]))
+            # Ordina le macro-materie attive per docente poi classe naturale
+            existing_merged.sort(key=lambda x: (
+                (x.get("teacher") or "").strip().lower(),
+                natural_class_sort_key(x.get("class_name") or "")
+            ))
 
             # 2. Candidati con materie singole non ancora accorpate
             by_tc = defaultdict(list)
@@ -2759,6 +2762,10 @@ class Database:
                         })
 
             all_candidates = existing_merged + unmerged_candidates
+            all_candidates.sort(key=lambda x: (
+                (x.get("teacher") or "").strip().lower(),
+                natural_class_sort_key(x.get("class_name") or "")
+            ))
 
             return {
                 "rules": rules,

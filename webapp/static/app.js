@@ -22,7 +22,7 @@ let pollSolverTimer = null;
 let currentSolverRunning = false;
 
 // --- VERSIONE E IDENTITÀ APPLICATIVA ---
-const APP_VERSION = '1.6.2';
+const APP_VERSION = '1.6.3';
 
 // Dizionario completo di traduzione materie scolastiche Italiano -> Inglese
 const SUBJECT_TRANSLATIONS_JS = {
@@ -4469,6 +4469,8 @@ function openAggiornaOrganicoModal() {
   organicoAnalysisData = null;
   activeOrganicoTab = 'upload';
   selectedOrganicoFile = null;
+  const currentLang = (window.I18N ? window.I18N.getLanguage() : null) || localStorage.getItem('app_lang') || 'it';
+  const isEn = currentLang === 'en';
 
   showModal(`
     <div class="modal-dialog" style="max-width:920px;width:95vw;max-height:92vh;">
@@ -6838,6 +6840,15 @@ async function openAccorpamentiModal() {
   const rules = data.rules || [];
   const candidates = data.candidates || [];
 
+  // Ordina per Docente (alfabetico) e secondariamente per Classe (naturale)
+  candidates.sort((a, b) => {
+    const tA = (a.teacher || '').trim();
+    const tB = (b.teacher || '').trim();
+    const cmp = tA.localeCompare(tB, 'it', { sensitivity: 'base' });
+    if (cmp !== 0) return cmp;
+    return naturalClassCompare(a.class_name, b.class_name);
+  });
+
   showModal(`
     <div class="modal-dialog" style="max-width:880px;">
       <div class="modal-header">
@@ -6976,8 +6987,14 @@ async function renderAccorpamenti() {
     const rules = data.rules || [];
     let candidates = data.candidates || [];
 
-    // Ordina per classe (ordinamento naturale anno poi sezione)
-    candidates.sort((a, b) => naturalClassCompare(a.class_name, b.class_name));
+    // Ordina per Docente (alfabetico) e secondariamente per Classe (ordinamento naturale anno poi sezione)
+    candidates.sort((a, b) => {
+      const tA = (a.teacher || '').trim();
+      const tB = (b.teacher || '').trim();
+      const cmp = tA.localeCompare(tB, 'it', { sensitivity: 'base' });
+      if (cmp !== 0) return cmp;
+      return naturalClassCompare(a.class_name, b.class_name);
+    });
 
     const activeCount = candidates.filter(c => c.is_merged).length;
     const pendingCount = candidates.filter(c => !c.is_merged).length;
