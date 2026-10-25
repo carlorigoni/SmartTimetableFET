@@ -359,6 +359,29 @@ DEFAULT_BLOCK_RULES = [
 ]
 
 
+class ConcurrentModificationError(Exception):
+    """Sollevata quando un salvataggio client viola il versioning ottimistico (OCC)."""
+    def __init__(self, current_version, last_modified_by=None, last_modified=None):
+        self.current_version = current_version
+        self.last_modified_by = last_modified_by or "un altro utente"
+        self.last_modified = last_modified or ""
+        super().__init__(
+            f"Conflitto di modifica concorrente: la versione sul server è {current_version} "
+            f"(aggiornata da {self.last_modified_by})."
+        )
+
+
+_request_context = threading.local()
+
+def set_request_context(user_email=None, expected_version=None):
+    _request_context.user_email = user_email
+    _request_context.expected_version = expected_version
+
+def clear_request_context():
+    _request_context.user_email = None
+    _request_context.expected_version = None
+
+
 class Database:
     def __init__(self, school_id="default"):
         self.lock = threading.RLock()
@@ -620,17 +643,46 @@ class Database:
         self._save_to_disk(data)
         return data
 
-    def _save_to_disk(self, data):
-        try:
-            with open(self.project_file, "w", encoding="utf-8") as f:
-                json.dump(data, f, ensure_ascii=False, indent=2)
-        except Exception as e:
-            print("Errore salvataggio project.json:", e)
-
-    def save(self):
-        """Salva lo stato corrente del database su disco in modo sicuro e persistente."""
+    def _save_to_disk(self, data, user_email=None, expected_version=None):
         with self.lock:
-            return self._save_to_disk(self.data)
+            cur_ver = int(self.data.get("data_version") or 1)
+
+            # Usa parametri espliciti o eredita dal thread-local request context
+            exp_v = expected_version if expected_version is not None else getattr(_request_context, "expected_version", None)
+            u_email = user_email if user_email is not None else getattr(_request_context, "user_email", None)
+
+            if exp_v is not None and str(exp_v).strip():
+                try:
+                    exp_int = int(str(exp_v).strip())
+                    if exp_int != cur_ver:
+                        raise ConcurrentModificationError(
+                            current_version=cur_ver,
+                            last_modified_by=self.data.get("last_modified_by", ""),
+                            last_modified=self.data.get("last_modified", "")
+                        )
+                except ValueError:
+                    pass
+
+            new_ver = cur_ver + 1
+            self.data["data_version"] = new_ver
+            now_iso = get_local_now().isoformat()
+            self.data["last_modified"] = now_iso
+            if u_email:
+                self.data["last_modified_by"] = str(u_email).strip().lower()
+
+            try:
+                tmp_file = f"{self.project_file}.tmp.{os.getpid()}"
+                with open(tmp_file, "w", encoding="utf-8") as f:
+                    json.dump(self.data, f, ensure_ascii=False, indent=2)
+                os.replace(tmp_file, self.project_file)
+            except Exception as e:
+                print("Errore salvataggio project.json:", e)
+            return new_ver
+
+    def save(self, user_email=None, expected_version=None):
+        """Salva lo stato corrente del database su disco in modo sicuro e persistente con OCC."""
+        with self.lock:
+            return self._save_to_disk(self.data, user_email=user_email, expected_version=expected_version)
 
     def get_all(self):
         with self.lock:
@@ -715,16 +767,19 @@ class Database:
                 "break_times": d.get("break_times", []),
                 "has_timetable": has_tt,
                 "placed_activities": placed,
-                "locked_activities_count": len(set(d.get("locked_activities", [])) & set(d.get("timetable", {}).keys()))
+                "locked_activities_count": len(set(d.get("locked_activities", [])) & set(d.get("timetable", {}).keys())),
+                "data_version": int(d.get("data_version") or 1),
+                "last_modified": d.get("last_modified"),
+                "last_modified_by": d.get("last_modified_by")
             }
 
-    def update_config(self, institution, comments, days, hours):
+    def update_config(self, institution, comments, days, hours, user_email=None, expected_version=None):
         with self.lock:
             self.data["institution"] = institution
             self.data["comments"] = comments
             self.data["days"] = days
             self.data["hours"] = hours
-            self._save_to_disk(self.data)
+            self._save_to_disk(self.data, user_email=user_email, expected_version=expected_version)
             return True
 
     def reset_empty(self, institution="Nuovo Istituto Scolastico"):
@@ -809,10 +864,13 @@ class Database:
                 "constraints": self.data.get("constraints", copy.deepcopy(DEFAULT_CONSTRAINTS)),
                 "parameters": self.data.get("parameters", copy.deepcopy(DEFAULT_PARAMETERS)),
                 "param_help": PARAM_HELP,
-                "solo_100": list(SOLO_100_CONSTRAINTS)
+                "solo_100": list(SOLO_100_CONSTRAINTS),
+                "data_version": int(self.data.get("data_version") or 1),
+                "last_modified": self.data.get("last_modified"),
+                "last_modified_by": self.data.get("last_modified_by")
             }
 
-    def save_settings(self, settings):
+    def save_settings(self, settings, user_email=None, expected_version=None):
         with self.lock:
             if "institution" in settings:
                 self.data["institution"] = settings["institution"]
@@ -871,7 +929,7 @@ class Database:
             if "break_times" in settings:
                 self.data["break_times"] = settings["break_times"]
 
-            self._save_to_disk(self.data)
+            self._save_to_disk(self.data, user_email=user_email, expected_version=expected_version)
             return True
 
     # --- DOCENTI ---

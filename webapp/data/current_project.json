@@ -26212,5 +26212,8 @@
   "locked_activities": [
     "383"
   ],
-  "meccanografico": "PDIS017007"
+  "meccanografico": "PDIS017007",
+  "data_version": 5,
+  "last_modified": "2026-10-25T22:26:49.359491+01:00",
+  "last_modified_by": "auto@test.com"
 }

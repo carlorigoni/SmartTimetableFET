@@ -325,16 +325,58 @@ class AuthManager:
             "sub": data.get("sub", "")
         }
 
+    def verify_google_access_token(self, access_token):
+        """
+        Verifica un Google OAuth2 Access Token richiedendo i dati utente a Google userinfo.
+        Fornisce fallback ideale per il flusso prompt='select_account' se il popup FedCM è bloccato.
+        """
+        if not access_token or not isinstance(access_token, str):
+            raise ValueError("Access token Google mancante o non valido")
+
+        url = "https://www.googleapis.com/oauth2/v3/userinfo"
+        req = urllib.request.Request(
+            url,
+            headers={
+                "User-Agent": "Eurario-Auth/1.0",
+                "Authorization": f"Bearer {access_token.strip()}"
+            }
+        )
+        try:
+            with urllib.request.urlopen(req, timeout=10) as resp:
+                data = json.loads(resp.read().decode("utf-8"))
+        except Exception as e:
+            raise ValueError(f"Impossibile verificare l'access token con Google: {e}")
+
+        email = data.get("email", "").lower().strip()
+        if not email:
+            raise ValueError("I dati profilo Google non contengono un indirizzo email")
+
+        verified = data.get("email_verified")
+        if verified not in (True, "true", "True", 1):
+            raise ValueError("L'indirizzo email Google non risulta verificato")
+
+        return {
+            "email": email,
+            "name": data.get("name") or email.split("@")[0],
+            "picture": data.get("picture", ""),
+            "sub": data.get("sub", "")
+        }
+
     # --- LOGIN & REQUEST ACCESS WORKFLOW ---
 
-    def handle_google_login(self, id_token, ip=None, user_agent=None):
+    def handle_google_login(self, id_token=None, access_token=None, ip=None, user_agent=None):
         """
-        Autentica un utente tramite Google ID Token.
+        Autentica un utente tramite Google ID Token oppure OAuth2 Access Token.
         Se l'utente non esiste, registra la richiesta con stato 'pending'.
         Se è l'admin, lo approva automaticamente.
         """
         try:
-            user_info = self.verify_google_id_token(id_token)
+            if access_token:
+                user_info = self.verify_google_access_token(access_token)
+            elif id_token:
+                user_info = self.verify_google_id_token(id_token)
+            else:
+                raise ValueError("Nessun token Google (ID token o access token) fornito")
         except Exception as e:
             self.log_access("GOOGLE_LOGIN_FAIL", "-", "anonymous", "FAILED", ip, user_agent, f"Token Google non valido o errore: {e}")
             raise

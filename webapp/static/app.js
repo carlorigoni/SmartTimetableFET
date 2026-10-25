@@ -22,7 +22,164 @@ let pollSolverTimer = null;
 let currentSolverRunning = false;
 
 // --- VERSIONE E IDENTITÀ APPLICATIVA ---
-const APP_VERSION = '1.8.1';
+const APP_VERSION = '1.8.2';
+
+// --- OPTIMISTIC CONCURRENCY CONTROL (OCC) & FETCH INTERCEPTOR ---
+window.CURRENT_DATA_VERSION = null;
+window.LAST_MODIFIED_BY = null;
+
+function updateLocalDataVersion(ver, modifiedBy) {
+  if (ver !== undefined && ver !== null) {
+    const num = parseInt(ver, 10);
+    if (!isNaN(num)) {
+      window.CURRENT_DATA_VERSION = Math.max(window.CURRENT_DATA_VERSION || 0, num);
+    }
+  }
+  if (modifiedBy) {
+    window.LAST_MODIFIED_BY = modifiedBy;
+  }
+}
+
+function showConcurrencyConflictModal(errData) {
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
+  const author = errData?.last_modified_by || (isEn ? 'another user' : 'un collega');
+  const modalHtml = `
+    <div id="concurrencyConflictModal" class="modal-backdrop" style="display:flex;z-index:99999;" role="dialog" aria-modal="true">
+      <div class="modal-dialog" style="max-width:540px;border-top:4px solid #f59e0b;">
+        <div class="modal-header">
+          <div class="modal-title" style="display:flex;align-items:center;gap:10px;">
+            <span style="font-size:24px;">⚠️</span>
+            <div>
+              <div style="font-size:16px;font-weight:700;color:var(--text-main);">${isEn ? 'Concurrent Modification Detected' : 'Modifica Concorrente Rilevata'}</div>
+              <div style="font-size:11.5px;color:var(--text-muted);">${isEn ? 'Data protection & collision safeguard' : 'Protezione dati e salvaguardia modifiche'}</div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-body" style="line-height:1.6;font-size:13px;color:var(--text-main);">
+          <div class="modal-notice" style="background:#fffbeb;border:1px solid #fde68a;color:#92400e;padding:12px 14px;border-radius:6px;margin-bottom:12px;">
+            ${isEn
+              ? `<b>Warning:</b> Another timetable commissioner (<b>${escapeHtml(author)}</b>) has saved changes to this school's timetable while you were working on this view.`
+              : `<b>Attenzione:</b> Un altro utente della commissione orario (<b>${escapeHtml(author)}</b>) ha modificato e salvato i dati di questo istituto mentre stavi lavorando su questa schermata.`}
+          </div>
+          <p>
+            ${isEn
+              ? 'To prevent accidental overwrites and keep the schedule completely consistent, please reload the page now to review the latest changes before reapplying your edits.'
+              : 'Per prevenire sovrascritture accidentali o perdite di lavoro del collega, ricarica la pagina per acquisire le modifiche più recenti prima di effettuare ulteriori salvataggi.'}
+          </p>
+        </div>
+        <div class="modal-footer" style="display:flex;justify-content:flex-end;gap:10px;">
+          <button class="btn btn-primary" onclick="window.location.reload()">
+            🔄 ${isEn ? 'Reload Page Now' : 'Ricarica la Pagina Ora'}
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+  const existing = document.getElementById('concurrencyConflictModal');
+  if (existing) existing.remove();
+  document.body.insertAdjacentHTML('beforeend', modalHtml);
+}
+
+function showSolverAlreadyRunningModal(errData) {
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
+  const starter = errData?.started_by || (isEn ? 'another commissioner' : 'un altro commissario orario');
+  showToast(
+    isEn 
+      ? `FET computation already in progress (started by ${starter}). Connecting to live stream...` 
+      : `Calcolo FET già in corso per questo istituto (avviato da ${starter}). Connessione al monitor in tempo reale...`,
+    'warn'
+  );
+  if (typeof startPollingSolver === 'function') {
+    startPollingSolver();
+  }
+}
+
+const _nativeFetch = window.fetch;
+window.fetch = async function(resource, init = {}) {
+  const url = typeof resource === 'string' ? resource : (resource?.url || '');
+  const method = (init?.method || 'GET').toUpperCase();
+
+  // Invia X-Base-Version per mutazioni API
+  if (url.includes('/api/') && method !== 'GET') {
+    init = init || {};
+    init.headers = init.headers || {};
+    if (init.headers instanceof Headers) {
+      if (window.CURRENT_DATA_VERSION !== null && !init.headers.has('X-Base-Version')) {
+        init.headers.set('X-Base-Version', String(window.CURRENT_DATA_VERSION));
+      }
+    } else if (Array.isArray(init.headers)) {
+      if (window.CURRENT_DATA_VERSION !== null) {
+        init.headers.push(['X-Base-Version', String(window.CURRENT_DATA_VERSION)]);
+      }
+    } else {
+      if (window.CURRENT_DATA_VERSION !== null && !init.headers['X-Base-Version']) {
+        init.headers['X-Base-Version'] = String(window.CURRENT_DATA_VERSION);
+      }
+    }
+  }
+
+  const response = await _nativeFetch(resource, init);
+
+  if (response.status === 409) {
+    try {
+      const cloned = response.clone();
+      const errData = await cloned.json();
+      if (errData && errData.error === 'concurrent_modification_conflict') {
+        showConcurrencyConflictModal(errData);
+      } else if (errData && errData.error === 'solver_already_running') {
+        showSolverAlreadyRunningModal(errData);
+      }
+    } catch (e) {}
+  } else if (response.ok) {
+    const ct = response.headers.get('content-type') || '';
+    if (ct.includes('application/json')) {
+      try {
+        const cloned = response.clone();
+        const data = await cloned.json();
+        if (data && data.data_version !== undefined) {
+          updateLocalDataVersion(data.data_version, data.last_modified_by);
+        }
+      } catch (e) {}
+    }
+  }
+
+  return response;
+};
+
+// Heartbeat di controllo modifiche concorrenti in background
+async function checkConcurrentUpdatesHeartbeat() {
+  if (!currentUser || window.CURRENT_DATA_VERSION === null) return;
+  try {
+    const res = await _nativeFetch('/api/summary');
+    if (res.ok) {
+      const summary = await res.json();
+      if (summary && summary.data_version && window.CURRENT_DATA_VERSION && summary.data_version > window.CURRENT_DATA_VERSION) {
+        showConcurrentUpdatesPill(summary.data_version, summary.last_modified_by);
+      }
+    }
+  } catch (e) {}
+}
+
+function showConcurrentUpdatesPill(newVer, author) {
+  let pill = document.getElementById('concurrentUpdateNoticePill');
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
+  const who = author || (isEn ? 'A colleague' : 'Un collega');
+  if (!pill) {
+    pill = document.createElement('div');
+    pill.id = 'concurrentUpdateNoticePill';
+    pill.style.cssText = 'position:fixed;bottom:20px;right:20px;background:#1e293b;color:#f8fafc;padding:10px 16px;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,0.3);z-index:99998;display:flex;align-items:center;gap:12px;font-size:12.5px;border-left:4px solid #3b82f6;animation:fadeIn 0.3s ease;';
+    document.body.appendChild(pill);
+  }
+  pill.innerHTML = `
+    <span>🔔 <b>${escapeHtml(who)}</b> ${isEn ? 'has just updated school data.' : 'ha appena aggiornato i dati.'}</span>
+    <button class="btn btn-sm btn-primary" onclick="window.location.reload()" style="font-size:11px;padding:3px 10px;">
+      🔄 ${isEn ? 'Sync' : 'Sincronizza'}
+    </button>
+    <button onclick="this.parentElement.remove()" style="background:none;border:none;color:#94a3b8;cursor:pointer;font-size:14px;padding:0 4px;">✕</button>
+  `;
+}
+
+setInterval(checkConcurrentUpdatesHeartbeat, 25000);
 
 // Dizionario completo di traduzione materie scolastiche Italiano -> Inglese
 const SUBJECT_TRANSLATIONS_JS = {
@@ -877,10 +1034,15 @@ function initGoogleButton(clientId) {
     return;
   }
   try {
+    if (window.google.accounts.id.disableAutoSelect) {
+      window.google.accounts.id.disableAutoSelect();
+    }
     window.google.accounts.id.initialize({
       client_id: clientId,
       callback: handleGoogleCredentialResponse,
-      auto_select: false
+      auto_select: false,
+      itp_support: true,
+      context: 'signin'
     });
     const target = document.getElementById('g_id_signin_placeholder');
     if (target) {
@@ -898,6 +1060,67 @@ function initGoogleButton(clientId) {
   } catch (err) {
     console.error('Errore inizializzazione Google Sign-In:', err);
   }
+}
+
+function switchGoogleAccount() {
+  if (window.google?.accounts?.id?.disableAutoSelect) {
+    window.google.accounts.id.disableAutoSelect();
+  }
+
+  // Se Google Identity Services oauth2 token client è disponibile, usalo con prompt='select_account'
+  if (googleClientId && window.google?.accounts?.oauth2) {
+    try {
+      const client = window.google.accounts.oauth2.initTokenClient({
+        client_id: googleClientId,
+        scope: 'email profile openid',
+        prompt: 'select_account',
+        callback: async (tokenResponse) => {
+          if (tokenResponse && tokenResponse.access_token) {
+            try {
+              const res = await fetch('/api/auth/google', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ access_token: tokenResponse.access_token })
+              });
+              const data = await res.json();
+              if (res.ok && data.user) {
+                currentUser = data.user;
+                if (data.user.status === 'approved') {
+                  showToast('Accesso autorizzato!', 'ok');
+                  handleAuthenticatedState({ user: data.user });
+                } else {
+                  showPendingScreen(data.user);
+                  if (!authPollInterval) authPollInterval = setInterval(checkAuthMe, 6000);
+                }
+              } else {
+                const errBox = document.getElementById('authErrorMsg');
+                if (errBox) {
+                  errBox.innerText = data.error || 'Errore durante autenticazione con altro account Google.';
+                  errBox.style.display = 'block';
+                }
+              }
+            } catch (e) {
+              console.error('Errore invio access token:', e);
+            }
+          }
+        }
+      });
+      client.requestAccessToken({ prompt: 'select_account' });
+      return;
+    } catch (e) {
+      console.warn('OAuth2 token client non riuscito, fallback popup:', e);
+    }
+  }
+
+  // Fallback: apri finestra di Google Account Chooser
+  const w = 520, h = 620;
+  const left = Math.max(0, (window.screen.width - w) / 2);
+  const top = Math.max(0, (window.screen.height - h) / 2);
+  window.open(
+    'https://accounts.google.com/AccountChooser?service=lso&continue=' + encodeURIComponent(window.location.origin),
+    'GoogleAccountChooser',
+    `width=${w},height=${h},top=${top},left=${left},resizable=yes,scrollbars=yes`
+  );
 }
 
 async function handleGoogleCredentialResponse(response) {
@@ -990,6 +1213,11 @@ async function logout() {
   try {
     await fetch('/api/auth/logout', { method: 'POST' });
   } catch (e) {}
+  if (window.google?.accounts?.id?.disableAutoSelect) {
+    try {
+      window.google.accounts.id.disableAutoSelect();
+    } catch (e) {}
+  }
   currentUser = null;
   if (authPollInterval) {
     clearInterval(authPollInterval);

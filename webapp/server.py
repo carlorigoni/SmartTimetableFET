@@ -38,7 +38,10 @@ from webapp.database import (
     parse_organico_docx_content,
     get_db,
     set_current_school_id,
-    get_current_school_id
+    get_current_school_id,
+    ConcurrentModificationError,
+    set_request_context,
+    clear_request_context
 )
 from webapp.schools import school_manager
 from webapp.fet_engine import generate_fet_xml
@@ -94,7 +97,7 @@ def fetch_google_doc_docx_bytes(url):
     except Exception as e:
         raise ValueError(f"Impossibile scaricare il Google Doc: {e}")
 
-APP_VERSION = "1.8.1"
+APP_VERSION = "1.8.2"
 FET_VERSION = "7.12.0"
 APP_AUTHOR = "Carlo Rigoni"
 APP_MENTOR = "Federico Rettore"
@@ -107,31 +110,57 @@ DATA_DIR = os.path.join(BASE_DIR, "data")
 SOLVER_DIR = os.path.join(DATA_DIR, "solver_run")
 SNAPSHOTS_DIR = os.path.join(DATA_DIR, "snapshots")
 
-# Stato globale del solver
-solver_state = {
-    "running": False,
-    "process": None,
-    "total_activities": 0,
-    "placed_activities": 0,
-    "percent": 0.0,
-    "start_time": 0.0,
-    "elapsed": 0.0,
-    "logs": [],
-    "raw_logs": [],
-    "completed": False,
-    "success": False,
-    "stopped": False,
-    "error": None,
-    "verbose": True,
-    "current_activity": None,
-    "bottleneck": None,
-    "highest_placed": 0,
-    "swap_count": 0,
-    "advisor_recommendations": [],
-    "advisor_report": None,
-    "recent_conflicts": []
-}
-solver_lock = threading.RLock()
+# Gestione Multi-Tenant del Solver FET (parallelismo per istituto)
+_solver_states = {}
+_solver_locks = {}
+_solver_registry_lock = threading.RLock()
+
+def get_solver_state(school_id="default"):
+    sid = str(school_id or "default").strip() or "default"
+    with _solver_registry_lock:
+        if sid not in _solver_states:
+            _solver_states[sid] = {
+                "running": False,
+                "process": None,
+                "total_activities": 0,
+                "placed_activities": 0,
+                "percent": 0.0,
+                "start_time": 0.0,
+                "elapsed": 0.0,
+                "logs": [],
+                "raw_logs": [],
+                "completed": False,
+                "success": False,
+                "stopped": False,
+                "error": None,
+                "verbose": True,
+                "current_activity": None,
+                "bottleneck": None,
+                "highest_placed": 0,
+                "swap_count": 0,
+                "advisor_recommendations": [],
+                "advisor_report": None,
+                "recent_conflicts": [],
+                "started_by": "",
+                "school_id": sid
+            }
+        return _solver_states[sid]
+
+def get_solver_lock(school_id="default"):
+    sid = str(school_id or "default").strip() or "default"
+    with _solver_registry_lock:
+        if sid not in _solver_locks:
+            _solver_locks[sid] = threading.RLock()
+        return _solver_locks[sid]
+
+def get_solver_dir(school_id="default"):
+    sid = str(school_id or "default").strip() or "default"
+    if sid == "default":
+        sdir = os.path.join(DATA_DIR, "solver_run")
+    else:
+        sdir = os.path.join(DATA_DIR, "tenants", sid, "solver_run")
+    os.makedirs(sdir, exist_ok=True)
+    return sdir
 
 
 def find_fet_cl():
@@ -761,9 +790,13 @@ class EurarioHandler(BaseHTTPRequestHandler):
             self._json(200, db.get_timetable_views())
 
         elif path == "/api/solve/status":
-            with solver_lock:
+            target_sid = get_current_school_id()
+            solver_state = get_solver_state(target_sid)
+            with get_solver_lock(target_sid):
                 data = {
                     "running": solver_state["running"],
+                    "started_by": solver_state.get("started_by", ""),
+                    "school_id": target_sid,
                     "placed": solver_state["placed_activities"],
                     "total": solver_state["total_activities"],
                     "percent": solver_state["percent"],
@@ -789,7 +822,10 @@ class EurarioHandler(BaseHTTPRequestHandler):
 
         elif path == "/api/advisor/analyze":
             lang = query.get("lang", ["it"])[0]
-            advisor_report = TimetableAdvisor.analyze_bottlenecks(db.get_all(), solver_dir=SOLVER_DIR, solver_state=solver_state, lang=lang)
+            target_sid = get_current_school_id()
+            solver_state = get_solver_state(target_sid)
+            solver_dir = get_solver_dir(target_sid)
+            advisor_report = TimetableAdvisor.analyze_bottlenecks(db.get_all(), solver_dir=solver_dir, solver_state=solver_state, lang=lang)
             self._json(200, advisor_report)
 
         elif path == "/api/export/fet":
@@ -877,16 +913,40 @@ class EurarioHandler(BaseHTTPRequestHandler):
         self._setup_request_school(query)
         body = self._read_json()
 
+        user = self._get_auth_user()
+        base_ver = self.headers.get("X-Base-Version") or (body.get("base_version") if isinstance(body, dict) else None)
+        user_email = user.get("email") if isinstance(user, dict) else None
+        set_request_context(user_email=user_email, expected_version=base_ver)
+
+        try:
+            self._dispatch_POST(path, query, body, user)
+        except ConcurrentModificationError as e:
+            self._json(409, {
+                "error": "concurrent_modification_conflict",
+                "message": f"I dati sono stati modificati da un altro utente ({e.last_modified_by}). Ricarica per sincronizzare.",
+                "server_version": e.current_version,
+                "last_modified_by": e.last_modified_by,
+                "last_modified": e.last_modified
+            })
+        finally:
+            clear_request_context()
+
+    def _dispatch_POST(self, path, query, body, user):
         # --- AUTH POST ENDPOINTS ---
         client_ip = self._get_client_ip()
         client_ua = self._get_user_agent()
 
         if path == "/api/auth/google":
-            if not body or not body.get("credential"):
-                self._json(400, {"error": "Google ID Token mancante"})
+            if not body or (not body.get("credential") and not body.get("access_token")):
+                self._json(400, {"error": "Credenziale Google mancante"})
                 return
             try:
-                res = auth_manager.handle_google_login(body["credential"], ip=client_ip, user_agent=client_ua)
+                res = auth_manager.handle_google_login(
+                    id_token=body.get("credential"),
+                    access_token=body.get("access_token"),
+                    ip=client_ip,
+                    user_agent=client_ua
+                )
                 tok = res.get("session_token")
                 self._json(200, {
                     "ok": True,
@@ -1478,7 +1538,11 @@ class EurarioHandler(BaseHTTPRequestHandler):
                 self._json(400, {"error": "Parametri non validi"})
                 return
             db.save_settings(body)
-            self._json(200, {"success": True})
+            self._json(200, {
+                "success": True,
+                "data_version": db.data.get("data_version", 1),
+                "last_modified": db.data.get("last_modified")
+            })
 
         elif path == "/api/import/fet":
             if not body or not body.get("xml"):
@@ -1497,17 +1561,22 @@ class EurarioHandler(BaseHTTPRequestHandler):
 
         elif path == "/api/solve/stop":
             force = bool(body.get("force", False)) if body else False
+            target_sid = get_current_school_id()
+            solver_state = get_solver_state(target_sid)
+            solver_lock = get_solver_lock(target_sid)
             with solver_lock:
                 proc = solver_state.get("process")
                 if solver_state["running"] and proc:
                     solver_state["stopped"] = True
                     solver_state["logs"].append("🛑 Richiesta di interruzione inviata a fet-cl. Arresto in corso...")
-                    def _async_stopper(p, f_flag):
+                    def _async_stopper(p, f_flag, sid=target_sid):
                         kill_fet_process(p, force=f_flag)
-                        with solver_lock:
-                            solver_state["running"] = False
-                            solver_state["completed"] = True
-                            solver_state["logs"].append("⏹ Compilatore fet-cl arrestato con successo. Processo terminato.")
+                        s_lock = get_solver_lock(sid)
+                        s_state = get_solver_state(sid)
+                        with s_lock:
+                            s_state["running"] = False
+                            s_state["completed"] = True
+                            s_state["logs"].append("⏹ Compilatore fet-cl arrestato con successo. Processo terminato.")
                     threading.Thread(target=_async_stopper, args=(proc, force), daemon=True).start()
                     self._json(200, {"status": "stopping", "stopped": True})
                 else:
@@ -1515,7 +1584,10 @@ class EurarioHandler(BaseHTTPRequestHandler):
 
         elif path == "/api/advisor/analyze":
             lang = (body or {}).get("lang", "it")
-            adv_res = TimetableAdvisor.analyze_bottlenecks(db.get_all(), solver_dir=SOLVER_DIR, solver_state=solver_state, lang=lang)
+            target_sid = get_current_school_id()
+            solver_state = get_solver_state(target_sid)
+            solver_dir = get_solver_dir(target_sid)
+            adv_res = TimetableAdvisor.analyze_bottlenecks(db.get_all(), solver_dir=solver_dir, solver_state=solver_state, lang=lang)
             self._json(200, adv_res)
 
         elif path == "/api/advisor/apply_relax":
@@ -1711,56 +1783,72 @@ class EurarioHandler(BaseHTTPRequestHandler):
         query = parse_qs(parsed.query)
         self._setup_request_school(query)
 
-        if not self._require_auth():
+        user = self._require_auth()
+        if not user:
             return
 
-        if path.startswith("/api/accorpamenti/rules/"):
-            rid = unquote(path[len("/api/accorpamenti/rules/"):])
-            ok = db.delete_accorpamenti_rule(rid)
-            self._json(200 if ok else 404, {"success": ok})
+        base_ver = self.headers.get("X-Base-Version")
+        user_email = user.get("email") if isinstance(user, dict) else None
+        set_request_context(user_email=user_email, expected_version=base_ver)
 
-        elif path.startswith("/api/snapshots/"):
-            sid = unquote(path[len("/api/snapshots/"):])
-            ok = db.delete_snapshot(sid)
-            self._json(200 if ok else 404, {"success": ok})
+        try:
+            if path.startswith("/api/accorpamenti/rules/"):
+                rid = unquote(path[len("/api/accorpamenti/rules/"):])
+                ok = db.delete_accorpamenti_rule(rid)
+                self._json(200 if ok else 404, {"success": ok, "data_version": db.data.get("data_version", 1)})
 
-        elif path.startswith("/api/teachers/"):
-            name = unquote(path[len("/api/teachers/"):])
-            db.delete_teacher(name)
-            self._json(200, {"success": True})
+            elif path.startswith("/api/snapshots/"):
+                sid = unquote(path[len("/api/snapshots/"):])
+                ok = db.delete_snapshot(sid)
+                self._json(200 if ok else 404, {"success": ok})
 
-        elif path.startswith("/api/classes/"):
-            name = unquote(path[len("/api/classes/"):])
-            db.delete_class(name)
-            self._json(200, {"success": True})
+            elif path.startswith("/api/teachers/"):
+                name = unquote(path[len("/api/teachers/"):])
+                db.delete_teacher(name)
+                self._json(200, {"success": True, "data_version": db.data.get("data_version", 1)})
 
-        elif path.startswith("/api/groups/"):
-            name = unquote(path[len("/api/groups/"):])
-            db.delete_group(name)
-            self._json(200, {"success": True})
+            elif path.startswith("/api/classes/"):
+                name = unquote(path[len("/api/classes/"):])
+                db.delete_class(name)
+                self._json(200, {"success": True, "data_version": db.data.get("data_version", 1)})
 
-        elif path.startswith("/api/subjects/"):
-            name = unquote(path[len("/api/subjects/"):])
-            db.delete_subject(name)
-            self._json(200, {"success": True})
+            elif path.startswith("/api/groups/"):
+                name = unquote(path[len("/api/groups/"):])
+                db.delete_group(name)
+                self._json(200, {"success": True, "data_version": db.data.get("data_version", 1)})
 
-        elif path.startswith("/api/rooms/"):
-            name = unquote(path[len("/api/rooms/"):])
-            db.delete_room(name)
-            self._json(200, {"success": True})
+            elif path.startswith("/api/subjects/"):
+                name = unquote(path[len("/api/subjects/"):])
+                db.delete_subject(name)
+                self._json(200, {"success": True, "data_version": db.data.get("data_version", 1)})
 
-        elif path.startswith("/api/buildings/"):
-            name = unquote(path[len("/api/buildings/"):])
-            db.delete_building(name)
-            self._json(200, {"success": True})
+            elif path.startswith("/api/rooms/"):
+                name = unquote(path[len("/api/rooms/"):])
+                db.delete_room(name)
+                self._json(200, {"success": True, "data_version": db.data.get("data_version", 1)})
 
-        elif path.startswith("/api/activities/"):
-            aid = unquote(path[len("/api/activities/"):])
-            db.delete_activity(aid)
-            self._json(200, {"success": True})
+            elif path.startswith("/api/buildings/"):
+                name = unquote(path[len("/api/buildings/"):])
+                db.delete_building(name)
+                self._json(200, {"success": True, "data_version": db.data.get("data_version", 1)})
 
-        else:
-            self._json(404, {"error": "Endpoint non trovato"})
+            elif path.startswith("/api/activities/"):
+                aid = unquote(path[len("/api/activities/"):])
+                db.delete_activity(aid)
+                self._json(200, {"success": True, "data_version": db.data.get("data_version", 1)})
+
+            else:
+                self._json(404, {"error": "Endpoint non trovato"})
+        except ConcurrentModificationError as e:
+            self._json(409, {
+                "error": "concurrent_modification_conflict",
+                "message": f"I dati sono stati modificati da un altro utente ({e.last_modified_by}). Ricarica per sincronizzare.",
+                "server_version": e.current_version,
+                "last_modified_by": e.last_modified_by,
+                "last_modified": e.last_modified
+            })
+        finally:
+            clear_request_context()
 
     def do_PUT(self):
         parsed = urlparse(self.path)
@@ -1769,47 +1857,63 @@ class EurarioHandler(BaseHTTPRequestHandler):
         self._setup_request_school(query)
         body = self._read_json()
 
-        if not self._require_auth():
+        user = self._require_auth()
+        if not user:
             return
 
-        if path.startswith("/api/teachers/"):
-            name = unquote(path[len("/api/teachers/"):])
-            ok = db.update_teacher(name, body or {})
-            self._json(200 if ok else 400, {"success": ok})
-        elif path.startswith("/api/classes/"):
-            name = unquote(path[len("/api/classes/"):])
-            ok = db.update_class(name, body or {})
-            self._json(200 if ok else 400, {"success": ok})
-        elif path.startswith("/api/groups/"):
-            name = unquote(path[len("/api/groups/"):])
-            ok = db.update_group(name, body or {})
-            self._json(200 if ok else 400, {"success": ok})
-        elif path.startswith("/api/subjects/"):
-            name = unquote(path[len("/api/subjects/"):])
-            ok = db.update_subject(name, body or {})
-            self._json(200 if ok else 400, {"success": ok})
-        elif path.startswith("/api/buildings/"):
-            name = unquote(path[len("/api/buildings/"):])
-            b = body or {}
-            ok = db.update_building(name, b.get("name", name), b.get("short_code", "C"), b.get("comments", ""))
-            self._json(200 if ok else 400, {"success": ok})
-        elif path.startswith("/api/rooms/"):
-            name = unquote(path[len("/api/rooms/"):])
-            ok = db.update_room(name, body or {})
-            self._json(200 if ok else 400, {"success": ok})
-        elif path.startswith("/api/activities/"):
-            aid = unquote(path[len("/api/activities/"):])
-            if body:
-                body["id"] = aid
-                saved = db.save_activity(body)
-                self._json(200, {"success": True, "activity": saved})
+        base_ver = self.headers.get("X-Base-Version") or (body.get("base_version") if isinstance(body, dict) else None)
+        user_email = user.get("email") if isinstance(user, dict) else None
+        set_request_context(user_email=user_email, expected_version=base_ver)
+
+        try:
+            if path.startswith("/api/teachers/"):
+                name = unquote(path[len("/api/teachers/"):])
+                ok = db.update_teacher(name, body or {})
+                self._json(200 if ok else 400, {"success": ok, "data_version": db.data.get("data_version", 1)})
+            elif path.startswith("/api/classes/"):
+                name = unquote(path[len("/api/classes/"):])
+                ok = db.update_class(name, body or {})
+                self._json(200 if ok else 400, {"success": ok, "data_version": db.data.get("data_version", 1)})
+            elif path.startswith("/api/groups/"):
+                name = unquote(path[len("/api/groups/"):])
+                ok = db.update_group(name, body or {})
+                self._json(200 if ok else 400, {"success": ok, "data_version": db.data.get("data_version", 1)})
+            elif path.startswith("/api/subjects/"):
+                name = unquote(path[len("/api/subjects/"):])
+                ok = db.update_subject(name, body or {})
+                self._json(200 if ok else 400, {"success": ok, "data_version": db.data.get("data_version", 1)})
+            elif path.startswith("/api/buildings/"):
+                name = unquote(path[len("/api/buildings/"):])
+                b = body or {}
+                ok = db.update_building(name, b.get("name", name), b.get("short_code", "C"), b.get("comments", ""))
+                self._json(200 if ok else 400, {"success": ok, "data_version": db.data.get("data_version", 1)})
+            elif path.startswith("/api/rooms/"):
+                name = unquote(path[len("/api/rooms/"):])
+                ok = db.update_room(name, body or {})
+                self._json(200 if ok else 400, {"success": ok, "data_version": db.data.get("data_version", 1)})
+            elif path.startswith("/api/activities/"):
+                aid = unquote(path[len("/api/activities/"):])
+                if body:
+                    body["id"] = aid
+                    saved = db.save_activity(body)
+                    self._json(200, {"success": True, "activity": saved, "data_version": db.data.get("data_version", 1)})
+                else:
+                    self._json(400, {"error": "Dati mancanti"})
+            elif path == "/api/timetable/place_disposizioni":
+                res = db.place_disposizioni_in_timetable()
+                self._json(200, res)
             else:
-                self._json(400, {"error": "Dati mancanti"})
-        elif path == "/api/timetable/place_disposizioni":
-            res = db.place_disposizioni_in_timetable()
-            self._json(200, res)
-        else:
-            self._json(404, {"error": "Endpoint non trovato"})
+                self._json(404, {"error": "Endpoint non trovato"})
+        except ConcurrentModificationError as e:
+            self._json(409, {
+                "error": "concurrent_modification_conflict",
+                "message": f"I dati sono stati modificati da un altro utente ({e.last_modified_by}). Ricarica per sincronizzare.",
+                "server_version": e.current_version,
+                "last_modified_by": e.last_modified_by,
+                "last_modified": e.last_modified
+            })
+        finally:
+            clear_request_context()
 
     def _trigger_solve(self, timelimit, verbose=True, respond=True):
         fet_bin = find_fet_cl()
@@ -1818,31 +1922,38 @@ class EurarioHandler(BaseHTTPRequestHandler):
                 self._json(500, {"error": "Binario 'fet-cl' non trovato sul server."})
             return False, "Binario 'fet-cl' non trovato sul server."
 
-        # Termina preventivamente qualsiasi processo solver precedente o orfano prima di toccare i file
+        target_sid = get_current_school_id()
+        solver_state = get_solver_state(target_sid)
+        solver_lock = get_solver_lock(target_sid)
+        solver_dir = get_solver_dir(target_sid)
+
+        user = self._get_auth_user()
+        user_email = user.get("email") if user else "utente"
+
+        # Verifica se un calcolo è già in corso per questo istituto (stessa scuola)
         with solver_lock:
             old_proc = solver_state.get("process")
+            if solver_state.get("running") and old_proc and old_proc.poll() is None:
+                starter = solver_state.get("started_by") or "un altro utente"
+                msg = f"Il calcolo dell'orario per questo istituto è già in corso (avviato da {starter}). Puoi seguire l'avanzamento in tempo reale dalla dashboard."
+                if respond:
+                    self._json(409, {
+                        "error": "solver_already_running",
+                        "message": msg,
+                        "started_by": starter,
+                        "school_id": target_sid,
+                        "start_time": solver_state.get("start_time")
+                    })
+                return False, msg
+
             if old_proc and old_proc.poll() is None:
                 kill_fet_process(old_proc, force=True)
-            try:
-                for line in subprocess.check_output(["pgrep", "-f", "fet-cl.*input_run.fet"], text=True).splitlines():
-                    pid_str = line.strip()
-                    if pid_str and pid_str.isdigit():
-                        opid = int(pid_str)
-                        if opid != os.getpid():
-                            try:
-                                os.kill(opid, signal.SIGKILL)
-                            except Exception:
-                                pass
-            except Exception:
-                pass
 
-        os.makedirs(SOLVER_DIR, exist_ok=True)
-        target_sid = get_current_school_id()
         target_db = get_db(target_sid)
         all_data = target_db.get_all()
         xml_content = generate_fet_xml(all_data, include_timetable=False)
-        input_file = os.path.join(SOLVER_DIR, "input_run.fet")
-        output_dir = os.path.join(SOLVER_DIR, "output")
+        input_file = os.path.join(solver_dir, "input_run.fet")
+        output_dir = os.path.join(solver_dir, "output")
 
         if os.path.exists(output_dir):
             shutil.rmtree(output_dir, ignore_errors=True)
@@ -1885,8 +1996,8 @@ class EurarioHandler(BaseHTTPRequestHandler):
                 })
 
         # Preserva l'orario precedente valido per proteggerlo da interruzioni o timeout del solver
-        backup_timetable = copy.deepcopy(db.data.get("timetable", {}))
-        backup_has_timetable = bool(db.data.get("has_timetable", False) and len(backup_timetable) > 0)
+        backup_timetable = copy.deepcopy(target_db.data.get("timetable", {}))
+        backup_has_timetable = bool(target_db.data.get("has_timetable", False) and len(backup_timetable) > 0)
 
         with solver_lock:
             if solver_state["running"] and solver_state["process"]:
@@ -1910,6 +2021,8 @@ class EurarioHandler(BaseHTTPRequestHandler):
 
             solver_state["running"] = True
             solver_state["process"] = proc
+            solver_state["started_by"] = user_email
+            solver_state["school_id"] = target_sid
             solver_state["total_activities"] = total_act
             solver_state["placed_activities"] = 0
             solver_state["highest_placed"] = 0

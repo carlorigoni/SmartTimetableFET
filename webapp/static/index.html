@@ -21,14 +21,14 @@
     })();
   </script>
   <!-- Favicon & Branding Eurario (Safari macOS, Chrome, Edge, iOS, Android) -->
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=1.8.1">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png?v=1.8.1">
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png?v=1.8.1">
-  <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png?v=1.8.1">
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=1.8.1">
-  <link rel="mask-icon" href="/safari-pinned-tab.svg?v=1.8.1" color="#1B2A4A">
-  <link rel="shortcut icon" href="/favicon.ico?v=1.8.1">
-  <link rel="stylesheet" href="styles.css?v=1.8.1">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=1.8.2">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png?v=1.8.2">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png?v=1.8.2">
+  <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png?v=1.8.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=1.8.2">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg?v=1.8.2" color="#1B2A4A">
+  <link rel="shortcut icon" href="/favicon.ico?v=1.8.2">
+  <link rel="stylesheet" href="styles.css?v=1.8.2">
   <!-- Google Identity Services OAuth -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
@@ -247,7 +247,7 @@
             <span id="statusIndicatorDot" class="status-indicator-dot dot-green"></span>
             <span id="statusIndicatorText" class="status-indicator-text">FET 7.12</span>
           </span>
-          <span id="sidebarVerTag" class="footer-ver-tag" title="Versione Eurario">v1.8.1</span>
+          <span id="sidebarVerTag" class="footer-ver-tag" title="Versione Eurario">v1.8.2</span>
           <button class="footer-info-btn" onclick="openAboutModal()" title="Crediti, Mentore e Info Legali" aria-label="Informazioni e crediti">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
               <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
@@ -389,7 +389,7 @@
 
     <footer class="app-page-footer">
       <div>
-        <b>Eurario FET Suite</b> &mdash; <span data-i18n="footer.version">Versione</span> <span id="pageFooterVer" class="badge-ver">v1.8.1</span> &bull; <span data-i18n="footer.author">Autore</span>: <b>Carlo Rigoni</b> &bull; <span data-i18n="footer.engine">Motore</span>: <b>FET 7.12.0</b> &bull; <a href="javascript:void(0)" onclick="openAboutModal()" style="color:var(--primary);text-decoration:none;font-weight:600;" data-i18n="footer.credits">Crediti & Note Legali</a>
+        <b>Eurario FET Suite</b> &mdash; <span data-i18n="footer.version">Versione</span> <span id="pageFooterVer" class="badge-ver">v1.8.2</span> &bull; <span data-i18n="footer.author">Autore</span>: <b>Carlo Rigoni</b> &bull; <span data-i18n="footer.engine">Motore</span>: <b>FET 7.12.0</b> &bull; <a href="javascript:void(0)" onclick="openAboutModal()" style="color:var(--primary);text-decoration:none;font-weight:600;" data-i18n="footer.credits">Crediti & Note Legali</a>
       </div>
       <div style="font-size:11.5px;color:var(--text-muted);">
         <span data-i18n="footer.heuristic">Algoritmo euristico</span>: <a href="https://lalescu.ro/liviu/fet/" target="_blank" rel="noopener" style="color:var(--primary);text-decoration:none;font-weight:600;">FET Free Timetabling Software</a> &bull; <span data-i18n="footer.ai_credit">AI Pair Programming</span>: Google DeepMind Antigravity
@@ -416,6 +416,14 @@
 
         <div id="googleBtnWrapper" class="google-btn-wrapper">
           <div id="g_id_signin_placeholder"></div>
+          <div style="margin-top:12px;text-align:center;">
+            <button type="button" class="btn btn-sm btn-sec" onclick="switchGoogleAccount()" style="font-size:12px;display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;" title="Apre il selettore account Google forzando la scelta o l'aggiunta di un nuovo profilo">
+              <span>👤</span> <b>Usa un altro account Google</b>
+            </button>
+            <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">
+              Bypassa il popup FedCM e apre il selettore account Google
+            </div>
+          </div>
         </div>
 
         <div id="googleConfigNotice" class="google-config-notice" style="display:none;">
@@ -1069,7 +1077,7 @@
     </div>
   </div>
 
-  <script src="i18n.js?v=1.8.1"></script>
-  <script src="app.js?v=1.8.1"></script>
+  <script src="i18n.js?v=1.8.2"></script>
+  <script src="app.js?v=1.8.2"></script>
 </body>
 </html>
