@@ -86,7 +86,7 @@ def fetch_google_doc_docx_bytes(url):
     except Exception as e:
         raise ValueError(f"Impossibile scaricare il Google Doc: {e}")
 
-APP_VERSION = "1.5.5"
+APP_VERSION = "1.5.6"
 FET_VERSION = "7.12.0"
 APP_AUTHOR = "Carlo Rigoni"
 APP_MENTOR = "Federico Rettore"
@@ -466,7 +466,8 @@ class SmartTimetableHandler(BaseHTTPRequestHandler):
             }
             docx_bytes = generate_teachers_master_docx(db.get_all(), options)
             date_clean = (options["validity_date"] or "bozza").replace("/", "-")
-            filename = f"Orario_Docenti_{date_clean}.docx"
+            prefix = "Faculty_Timetable" if options["lang"] == "en" else "Orario_Docenti"
+            filename = f"{prefix}_{date_clean}.docx"
             self.send_response(200)
             self.send_header("Content-Type", "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
             self.send_header("Content-Length", str(len(docx_bytes)))
@@ -478,9 +479,13 @@ class SmartTimetableHandler(BaseHTTPRequestHandler):
 
         elif path == "/api/organico/template_docx":
             use_current = query.get("current", ["0"])[0] in ("1", "true", "yes")
+            lang = query.get("lang", ["it"])[0]
             data_to_use = db.get_all() if use_current else None
-            docx_bytes = generate_organico_template_docx(data_to_use)
-            filename = "Organico_Scuola_Attuale.docx" if use_current else "Modello_Organico_SmartTimetable.docx"
+            docx_bytes = generate_organico_template_docx(data_to_use, lang=lang)
+            if lang == "en":
+                filename = "Current_School_Organico.docx" if use_current else "SmartTimetable_Faculty_Organico_Template.docx"
+            else:
+                filename = "Organico_Scuola_Attuale.docx" if use_current else "Modello_Organico_SmartTimetable.docx"
             self.send_response(200)
             self.send_header("Content-Type", "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
             self.send_header("Content-Length", str(len(docx_bytes)))
@@ -1181,32 +1186,40 @@ class SmartTimetableHandler(BaseHTTPRequestHandler):
             if not body:
                 self._json(400, {"error": "Dati mancanti"})
                 return
-            action_type = body.get("action_type")
-            payload = body.get("payload", {})
-            restart = bool(body.get("restart_solver", False))
-            timelimit = int(body.get("timelimit", 3600))
-            verbose = bool(body.get("verbose", True))
-            lang = body.get("lang", "it")
+            try:
+                action_type = body.get("action_type")
+                payload = body.get("payload", {})
+                restart = bool(body.get("restart_solver", False))
+                timelimit = int(body.get("timelimit", 3600))
+                verbose = bool(body.get("verbose", True))
+                lang = body.get("lang", "it")
 
-            new_data, msg = TimetableAdvisor.apply_relaxation(db.data, action_type, payload, lang=lang)
-            db.data = new_data
-            db.save()
-            db.create_snapshot(f"Advisor: {msg}")
+                new_data, msg = TimetableAdvisor.apply_relaxation(db.data, action_type, payload, lang=lang)
+                with db.lock:
+                    db.data = new_data
+                    db.save()
+                try:
+                    db.create_snapshot(f"Advisor: {msg}", "Modifica applicata automaticamente dai suggerimenti dell'Advisor")
+                except Exception as e_snap:
+                    print("[ADVISOR SNAPSHOT WARNING]", e_snap)
 
-            restarted = False
-            if restart:
-                with solver_lock:
-                    if solver_state["running"] and solver_state["process"]:
-                        solver_state["stopped"] = True
-                        try:
-                            solver_state["process"].terminate()
-                        except Exception:
-                            pass
-                time.sleep(0.5)
-                self._trigger_solve(timelimit, verbose=verbose, respond=False)
-                restarted = True
+                restarted = False
+                if restart:
+                    with solver_lock:
+                        if solver_state["running"] and solver_state["process"]:
+                            solver_state["stopped"] = True
+                            try:
+                                solver_state["process"].terminate()
+                            except Exception:
+                                pass
+                    time.sleep(0.5)
+                    self._trigger_solve(timelimit, verbose=verbose, respond=False)
+                    restarted = True
 
-            self._json(200, {"status": "ok", "message": msg, "restarted": restarted})
+                self._json(200, {"status": "ok", "message": msg, "restarted": restarted})
+            except Exception as e:
+                print("[ADVISOR ERROR]", e)
+                self._json(500, {"error": str(e), "message": str(e)})
 
         elif path == "/api/project/reset_empty":
             inst_name = body.get("institution", "Nuovo Istituto Scolastico") if body else "Nuovo Istituto Scolastico"

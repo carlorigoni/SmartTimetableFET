@@ -565,6 +565,11 @@ class Database:
         except Exception as e:
             print("Errore salvataggio project.json:", e)
 
+    def save(self):
+        """Salva lo stato corrente del database su disco in modo sicuro e persistente."""
+        with self.lock:
+            return self._save_to_disk(self.data)
+
     def get_all(self):
         with self.lock:
             return self.data

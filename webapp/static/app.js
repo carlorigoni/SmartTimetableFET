@@ -22,7 +22,7 @@ let pollSolverTimer = null;
 let currentSolverRunning = false;
 
 // --- VERSIONE E IDENTITÀ APPLICATIVA ---
-const APP_VERSION = '1.5.5';
+const APP_VERSION = '1.5.6';
 
 // Helper traduzione i18n universale
 function _t(key, fallback = '') {
@@ -2087,9 +2087,9 @@ async function renderTimetable() {
     </div>
 
     <div class="print-only print-title" style="display:none;margin-bottom:12px;">
-      <h2 style="margin:0;font-size:18px;">${escapeHtml(stateData.summary.institution || 'Istituto Scolastico')}</h2>
+      <h2 style="margin:0;font-size:18px;">${escapeHtml(stateData.summary.institution || (isEn ? 'School Institute' : 'Istituto Scolastico'))}</h2>
       <div style="font-size:14px;color:#333;margin-top:4px;">
-        Orario Settimanale Lezioni &mdash; <b>${activeTimetableView === 'teacher' ? 'Docente: ' : (activeTimetableView === 'class' ? 'Classe: ' : 'Aula: ')}${escapeHtml(activeEntity)}</b>
+        ${isEn ? 'Weekly Timetable' : 'Orario Settimanale Lezioni'} &mdash; <b>${activeTimetableView === 'teacher' ? (isEn ? 'Teacher: ' : 'Docente: ') : (activeTimetableView === 'class' ? (isEn ? 'Class: ' : 'Classe: ') : (isEn ? 'Room: ' : 'Aula: '))}${escapeHtml(activeEntity)}</b>
       </div>
     </div>
 
@@ -4211,15 +4211,15 @@ function openAggiornaOrganicoModal() {
         <!-- Download Modello Word o Esportazione Attuale -->
         <div style="background:var(--bg-main);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
           <div>
-            <div style="font-weight:700;font-size:13px;color:var(--text-main);">📥 Modello Word Ufficiale (.docx)</div>
-            <div style="font-size:11.5px;color:var(--text-muted);">Scarica la struttura esatta a 4 colonne o esporta l'organico attuale della scuola in formato Word</div>
+            <div style="font-weight:700;font-size:13px;color:var(--text-main);">📥 ${currentLang === 'en' ? 'Official Word Model (.docx)' : 'Modello Word Ufficiale (.docx)'}</div>
+            <div style="font-size:11.5px;color:var(--text-muted);">${currentLang === 'en' ? 'Download 4-column model or export current faculty organico in Word format' : "Scarica la struttura esatta a 4 colonne o esporta l'organico attuale della scuola in formato Word"}</div>
           </div>
           <div style="display:flex;gap:8px;flex-wrap:wrap;">
-            <a href="/api/organico/template_docx" download="Modello_Organico_SmartTimetable.docx" class="btn btn-sm btn-outline" style="text-decoration:none;display:inline-flex;align-items:center;gap:6px;font-weight:700;border-color:var(--primary);color:var(--primary);">
-              📥 Scarica Modello Esempio (.docx)
+            <a href="/api/organico/template_docx?lang=${currentLang}" download="${currentLang === 'en' ? 'SmartTimetable_Faculty_Organico_Template.docx' : 'Modello_Organico_SmartTimetable.docx'}" class="btn btn-sm btn-outline" style="text-decoration:none;display:inline-flex;align-items:center;gap:6px;font-weight:700;border-color:var(--primary);color:var(--primary);">
+              📥 ${currentLang === 'en' ? 'Download Sample Model (.docx)' : 'Scarica Modello Esempio (.docx)'}
             </a>
-            <a href="/api/organico/template_docx?current=1" download="Organico_Scuola_Attuale.docx" class="btn btn-sm btn-sec" style="text-decoration:none;display:inline-flex;align-items:center;gap:6px;">
-              📄 Esporta Organico Attuale (.docx)
+            <a href="/api/organico/template_docx?current=1&lang=${currentLang}" download="${currentLang === 'en' ? 'Current_School_Organico.docx' : 'Organico_Scuola_Attuale.docx'}" class="btn btn-sm btn-sec" style="text-decoration:none;display:inline-flex;align-items:center;gap:6px;">
+              📄 ${currentLang === 'en' ? 'Export Current Organico (.docx)' : 'Esporta Organico Attuale (.docx)'}
             </a>
           </div>
         </div>

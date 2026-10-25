@@ -1034,11 +1034,11 @@ def generate_teachers_master_print_html(data, options=None):
 
     html_out = []
     html_out.append(f"""<!DOCTYPE html>
-<html lang="it">
+<html lang="{lang}">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tabellone Generale Orario Docenti ({paper_size}) &mdash; {escape(institution)}</title>
+<title>{'Faculty Master Timetable' if lang == 'en' else 'Tabellone Generale Orario Docenti'} ({paper_size}) &mdash; {escape(institution)}</title>
 <style>
   @page {{
     size: landscape;
@@ -1305,13 +1305,16 @@ function copyTableForGoogleDocs() {{
     const ok = document.execCommand('copy');
     window.getSelection().removeAllRanges();
     if (ok) {{
-      alert('Tabellone copiato negli appunti!\\n\\nOra si aprirà Google Documenti in una nuova scheda: premi Incolla (Cmd+V o Ctrl+V) per inserire il tabellone completo.');
+      const msgOk = "{'Faculty master timetable copied to clipboard!\\n\\nGoogle Docs will now open in a new tab: press Paste (Cmd+V or Ctrl+V) to insert the timetable.' if lang == 'en' else 'Tabellone copiato negli appunti!\\n\\nOra si aprirà Google Documenti in una nuova scheda: premi Incolla (Cmd+V o Ctrl+V) per inserire il tabellone completo.'}";
+      alert(msgOk);
       window.open('https://docs.new', '_blank');
     }} else {{
-      alert('Seleziona la tabella e premi Cmd+C per copiarla.');
+      const msgErr = "{'Please select the table and press Cmd+C to copy.' if lang == 'en' else 'Seleziona la tabella e premi Cmd+C per copiarla.'}";
+      alert(msgErr);
     }}
   }} catch(e) {{
-    alert('Seleziona la tabella e premi Cmd+C per copiarla.');
+    const msgErr = "{'Please select the table and press Cmd+C to copy.' if lang == 'en' else 'Seleziona la tabella e premi Cmd+C per copiarla.'}";
+    alert(msgErr);
   }}
 }}
 </script>
@@ -1398,11 +1401,11 @@ function copyTableForGoogleDocs() {{
                     if "disposiz" in subj.lower():
                         custom_desc = (item.get("custom_desc") or "").strip()
                         disp_text = custom_desc if custom_desc else "D"
-                        disp_title = f"Ora a Disposizione: {custom_desc}" if custom_desc else "Ora a Disposizione"
+                        disp_title = (f"Duty Period: {custom_desc}" if custom_desc else "Duty / On-call Period") if lang == "en" else (f"Ora a Disposizione: {custom_desc}" if custom_desc else "Ora a Disposizione")
                         cell_content = f'<span class="badge-disp" title="{escape(disp_title)}">{escape(disp_text)}</span>'
                     else:
                         classes_str = "/".join(students)
-                        coteach_mark = '<span class="badge-coteach" title="Co-docenza">*</span>' if has_coteach else ""
+                        coteach_mark = f'<span class="badge-coteach" title="{"Co-teaching" if lang == "en" else "Co-docenza"}">*</span>' if has_coteach else ""
                         if show_rooms and room:
                             room_clean = room.replace("Aula ", "").replace("Lab ", "L.").strip()
                             cell_content = f'<span class="cell-cls" title="{escape(classes_str)} - {escape(room)}">{escape(classes_str)}<small style="font-size:5.5pt;color:#64748b;display:block;">{escape(room_clean)}</small>{coteach_mark}</span>'
@@ -1653,13 +1656,15 @@ def get_print_options_metadata(data):
 # MODELLO ORGANICO DOCENTI IN FORMATO WORD (.DOCX)
 # =====================================================================
 
-def generate_organico_template_docx(data=None):
+def generate_organico_template_docx(data=None, lang="it"):
     """
     Genera un file Word (.docx) contenente la tabella organico formattata nello standard
     atteso dal parser di SmartTimetable (4 colonne: CdC, Docente, Cattedra/Classi, Ore).
     Può esportare l'organico attuale presente nel database o il template d'esempio.
+    Supporta pienamente la localizzazione in lingua (Italiano / Inglese).
     """
-    institution = 'Liceo & Tecnico "Pico De Paperis" - Modello Organico Docenti'
+    is_en = (lang == "en")
+    institution = 'Liceo & Tecnico "Pico De Paperis" - Modello Organico Docenti' if not is_en else 'High School & Technical Institute - Faculty Organico Model'
     teachers_rows = []
 
     if data and data.get("teachers"):
@@ -1718,27 +1723,59 @@ def generate_organico_template_docx(data=None):
             })
 
     if not teachers_rows:
-        # Esempio completo con evidenza di più docenti per la stessa CdC (senza ripetere la CdC)
-        teachers_rows = [
-            # Gruppo A012: 2 docenti sulla stessa CdC (il secondo docente ha la cella CdC vuota)
-            {"cdc": "A012 - Discipline Letterarie", "name": "Gastone Paperone", "classi": "1A (4) Italiano - 2A (4) Italiano - 3A (4) Italiano - 4A (3) Italiano - 5A (3) Italiano", "hours": "18"},
-            {"cdc": "A012 - Discipline Letterarie", "name": "Paperina", "classi": "1B (4) Italiano - 2B (4) Italiano - 3B (4) Italiano - 4B (3) Italiano - 5B (3) Italiano", "hours": "18"},
-            
-            # Gruppo A019: 1 docente
-            {"cdc": "A019 - Storia e Filosofia", "name": "Pico De Paperis", "classi": "1A (2) Storia - 2A (2) Storia - 3A (4) Filosofia - 4A (5) Filosofia - 5A (5) Filosofia", "hours": "18"},
-            
-            # Gruppo A026: 2 docenti sulla stessa CdC (il secondo docente ha la cella CdC vuota)
-            {"cdc": "A026 - Matematica e Fisica", "name": "Dinamite Bla", "classi": "1A (4) Matematica - 2A (4) Matematica - 3A (4) Matematica - 4A (3) Matematica - 5A (3) Matematica", "hours": "18"},
-            {"cdc": "A026 - Matematica e Fisica", "name": "Archimede Pitagorico", "classi": "1B (4) Matematica - 2B (4) Matematica - 3A (3) Fisica - 4A (3) Fisica - 5A (4) Fisica", "hours": "18"},
-            
-            # Altri docenti
-            {"cdc": "A024 - Lingua Inglese", "name": "Battista", "classi": "1A (3) Inglese - 2A (3) Inglese - 3A (3) Inglese - 4A (3) Inglese - 5A (3) Inglese - POT (3)", "hours": "18"},
-            {"cdc": "A046 - Economia e Diritto", "name": "Paperon de' Paperoni", "classi": "1A (3) Diritto - 2A (3) Diritto - 3A (4) Economia - 4A (4) Economia - 5A (4) Finanza", "hours": "18"},
-            {"cdc": "A048 - Scienze Motorie", "name": "Paperino Paolino", "classi": "1A (2) Motoria - 2A (2) Motoria - 3A (2) Motoria - 4A (2) Motoria - 5A (2) Motoria - POT (8)", "hours": "18"},
-            {"cdc": "A050 - Scienze Naturali", "name": "Nonna Papera", "classi": "1A (4) Scienze - 2A (4) Scienze - 3A (4) Botanica - 4A (3) Biologia - 5A (3) Chimica", "hours": "18"}
-        ]
+        if is_en:
+            teachers_rows = [
+                {"cdc": "A012 - Literature & Humanities", "name": "Gastone Paperone", "classi": "1A (4) Literature - 2A (4) Literature - 3A (4) Literature - 4A (3) Literature - 5A (3) Literature", "hours": "18"},
+                {"cdc": "A012 - Literature & Humanities", "name": "Paperina", "classi": "1B (4) Literature - 2B (4) Literature - 3B (4) Literature - 4B (3) Literature - 5B (3) Literature", "hours": "18"},
+                {"cdc": "A019 - History & Philosophy", "name": "Pico De Paperis", "classi": "1A (2) History - 2A (2) History - 3A (4) Philosophy - 4A (5) Philosophy - 5A (5) Philosophy", "hours": "18"},
+                {"cdc": "A026 - Mathematics & Physics", "name": "Dinamite Bla", "classi": "1A (4) Math - 2A (4) Math - 3A (4) Math - 4A (3) Math - 5A (3) Math", "hours": "18"},
+                {"cdc": "A026 - Mathematics & Physics", "name": "Archimede Pitagorico", "classi": "1B (4) Math - 2B (4) Math - 3A (3) Physics - 4A (3) Physics - 5A (4) Physics", "hours": "18"},
+                {"cdc": "A024 - Foreign Languages (English)", "name": "Battista", "classi": "1A (3) English - 2A (3) English - 3A (3) English - 4A (3) English - 5A (3) English - POT (3)", "hours": "18"},
+                {"cdc": "A046 - Law & Economics", "name": "Paperon de' Paperoni", "classi": "1A (3) Law - 2A (3) Law - 3A (4) Economics - 4A (4) Economics - 5A (4) Finance", "hours": "18"},
+                {"cdc": "A048 - Physical Education", "name": "Paperino Paolino", "classi": "1A (2) PE - 2A (2) PE - 3A (2) PE - 4A (2) PE - 5A (2) PE - POT (8)", "hours": "18"},
+                {"cdc": "A050 - Natural Sciences", "name": "Nonna Papera", "classi": "1A (4) Science - 2A (4) Science - 3A (4) Botany - 4A (3) Biology - 5A (3) Chemistry", "hours": "18"}
+            ]
+        else:
+            # Esempio completo con evidenza di più docenti per la stessa CdC (senza ripetere la CdC)
+            teachers_rows = [
+                # Gruppo A012: 2 docenti sulla stessa CdC (il secondo docente ha la cella CdC vuota)
+                {"cdc": "A012 - Discipline Letterarie", "name": "Gastone Paperone", "classi": "1A (4) Italiano - 2A (4) Italiano - 3A (4) Italiano - 4A (3) Italiano - 5A (3) Italiano", "hours": "18"},
+                {"cdc": "A012 - Discipline Letterarie", "name": "Paperina", "classi": "1B (4) Italiano - 2B (4) Italiano - 3B (4) Italiano - 4B (3) Italiano - 5B (3) Italiano", "hours": "18"},
+                
+                # Gruppo A019: 1 docente
+                {"cdc": "A019 - Storia e Filosofia", "name": "Pico De Paperis", "classi": "1A (2) Storia - 2A (2) Storia - 3A (4) Filosofia - 4A (5) Filosofia - 5A (5) Filosofia", "hours": "18"},
+                
+                # Gruppo A026: 2 docenti sulla stessa CdC (il secondo docente ha la cella CdC vuota)
+                {"cdc": "A026 - Matematica e Fisica", "name": "Dinamite Bla", "classi": "1A (4) Matematica - 2A (4) Matematica - 3A (4) Matematica - 4A (3) Matematica - 5A (3) Matematica", "hours": "18"},
+                {"cdc": "A026 - Matematica e Fisica", "name": "Archimede Pitagorico", "classi": "1B (4) Matematica - 2B (4) Matematica - 3A (3) Fisica - 4A (3) Fisica - 5A (4) Fisica", "hours": "18"},
+                
+                # Altri docenti
+                {"cdc": "A024 - Lingua Inglese", "name": "Battista", "classi": "1A (3) Inglese - 2A (3) Inglese - 3A (3) Inglese - 4A (3) Inglese - 5A (3) Inglese - POT (3)", "hours": "18"},
+                {"cdc": "A046 - Economia e Diritto", "name": "Paperon de' Paperoni", "classi": "1A (3) Diritto - 2A (3) Diritto - 3A (4) Economia - 4A (4) Economia - 5A (4) Finanza", "hours": "18"},
+                {"cdc": "A048 - Scienze Motorie", "name": "Paperino Paolino", "classi": "1A (2) Motoria - 2A (2) Motoria - 3A (2) Motoria - 4A (2) Motoria - 5A (2) Motoria - POT (8)", "hours": "18"},
+                {"cdc": "A050 - Scienze Naturali", "name": "Nonna Papera", "classi": "1A (4) Scienze - 2A (4) Scienze - 3A (4) Botanica - 4A (3) Biologia - 5A (3) Chimica", "hours": "18"}
+            ]
 
     # Generazione OpenXML A4 Portrait
+    doc_header_title = "OFFICIAL FACULTY ORGANICO & TEACHING ASSIGNMENTS MODEL" if is_en else "MODELLO UFFICIALE ORGANICO DOCENTI E ASSEGNAZIONE CATTEDRE"
+    doc_instructions = (
+        "INSTRUCTIONS: Fill in the table keeping the 4 columns. For multiple teachers belonging to the same Teaching Certificate (CdC), "
+        "specify the CdC only on the first row of the group and leave the 'Teaching Certificate' cell EMPTY for subsequent teachers of the same subject area "
+        "(as shown in the example for A012 and A026); the system inherits it automatically. In the 'Classes & Teaching Assignments' column, indicate each class "
+        "followed by hours in parentheses, separated by hyphens (e.g. 1A (4) Literature - 2A (4) Literature). Enhancement hours POT (hours) and on-call/duty DISP (hours) "
+        "are also supported."
+    ) if is_en else (
+        "ISTRUZIONI: Compilare la tabella rispettando le 4 colonne. Per più docenti appartenenti alla stessa Classe di Concorso (CdC), "
+        "indicare la CdC solo sulla prima riga del gruppo e lasciare VUOTA la cella 'Classe di Concorso' per i docenti successivi della stessa cattedra "
+        "(come illustrato nell'esempio per A012 e A026); il sistema la eredita automaticamente. Nella colonna 'Classi e Cattedra' indicare ciascuna classe "
+        "seguita dalle ore tra parentesi, separate da trattino (es. 1A (4) Italiano - 2A (4) Italiano). Sono supportate anche ore di potenziamento POT (ore) "
+        "e a disposizione DISP (ore)."
+    )
+    th_col_cdc = "Teaching Certificate (CdC)" if is_en else "Classe di Concorso"
+    th_col_teacher = "Teacher" if is_en else "Docente"
+    th_col_classes = "Classes & Teaching Assignments" if is_en else "Classi e Cattedra"
+    th_col_hours = "Hours" if is_en else "Ore"
+
     xml_parts = []
     xml_parts.append("""<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
@@ -1768,7 +1805,7 @@ def generate_organico_template_docx(data=None):
           <w:sz w:val="22"/>
           <w:color w:val="1E40AF"/>
         </w:rPr>
-        <w:t>MODELLO UFFICIALE ORGANICO DOCENTI E ASSEGNAZIONE CATTEDRE</w:t>
+        <w:t>""" + xml_escape(doc_header_title) + """</w:t>
       </w:r>
     </w:p>
     <w:p>
@@ -1782,7 +1819,7 @@ def generate_organico_template_docx(data=None):
           <w:sz w:val="18"/>
           <w:color w:val="475569"/>
         </w:rPr>
-        <w:t>ISTRUZIONI: Compilare la tabella rispettando le 4 colonne. Per più docenti appartenenti alla stessa Classe di Concorso (CdC), indicare la CdC solo sulla prima riga del gruppo e lasciare VUOTA la cella 'Classe di Concorso' per i docenti successivi della stessa cattedra (come illustrato nell'esempio per A012 e A026); il sistema la eredita automaticamente. Nella colonna 'Classi e Cattedra' indicare ciascuna classe seguita dalle ore tra parentesi, separate da trattino (es. 1A (4) Italiano - 2A (4) Italiano). Sono supportate anche ore di potenziamento POT (ore) e a disposizione DISP (ore).</w:t>
+        <w:t>""" + xml_escape(doc_instructions) + """</w:t>
       </w:r>
     </w:p>
     <w:tbl>
@@ -1813,28 +1850,28 @@ def generate_organico_template_docx(data=None):
             <w:tcW w:w="2200" w:type="dxa"/>
             <w:shd w:val="clear" w:color="auto" w:fill="1E3A8A"/>
           </w:tcPr>
-          <w:p><w:pPr><w:jc w:val="center"/></w:pPr><w:r><w:rPr><w:b/><w:sz w:val="18"/><w:color w:val="FFFFFF"/></w:rPr><w:t>Classe di Concorso</w:t></w:r></w:p>
+          <w:p><w:pPr><w:jc w:val="center"/></w:pPr><w:r><w:rPr><w:b/><w:sz w:val="18"/><w:color w:val="FFFFFF"/></w:rPr><w:t>""" + xml_escape(th_col_cdc) + """</w:t></w:r></w:p>
         </w:tc>
         <w:tc>
           <w:tcPr>
             <w:tcW w:w="2600" w:type="dxa"/>
             <w:shd w:val="clear" w:color="auto" w:fill="1E3A8A"/>
           </w:tcPr>
-          <w:p><w:pPr><w:jc w:val="center"/></w:pPr><w:r><w:rPr><w:b/><w:sz w:val="18"/><w:color w:val="FFFFFF"/></w:rPr><w:t>Docente</w:t></w:r></w:p>
+          <w:p><w:pPr><w:jc w:val="center"/></w:pPr><w:r><w:rPr><w:b/><w:sz w:val="18"/><w:color w:val="FFFFFF"/></w:rPr><w:t>""" + xml_escape(th_col_teacher) + """</w:t></w:r></w:p>
         </w:tc>
         <w:tc>
           <w:tcPr>
             <w:tcW w:w="4000" w:type="dxa"/>
             <w:shd w:val="clear" w:color="auto" w:fill="1E3A8A"/>
           </w:tcPr>
-          <w:p><w:pPr><w:jc w:val="center"/></w:pPr><w:r><w:rPr><w:b/><w:sz w:val="18"/><w:color w:val="FFFFFF"/></w:rPr><w:t>Classi e Cattedra</w:t></w:r></w:p>
+          <w:p><w:pPr><w:jc w:val="center"/></w:pPr><w:r><w:rPr><w:b/><w:sz w:val="18"/><w:color w:val="FFFFFF"/></w:rPr><w:t>""" + xml_escape(th_col_classes) + """</w:t></w:r></w:p>
         </w:tc>
         <w:tc>
           <w:tcPr>
             <w:tcW w:w="800" w:type="dxa"/>
             <w:shd w:val="clear" w:color="auto" w:fill="1E3A8A"/>
           </w:tcPr>
-          <w:p><w:pPr><w:jc w:val="center"/></w:pPr><w:r><w:rPr><w:b/><w:sz w:val="18"/><w:color w:val="FFFFFF"/></w:rPr><w:t>Ore</w:t></w:r></w:p>
+          <w:p><w:pPr><w:jc w:val="center"/></w:pPr><w:r><w:rPr><w:b/><w:sz w:val="18"/><w:color w:val="FFFFFF"/></w:rPr><w:t>""" + xml_escape(th_col_hours) + """</w:t></w:r></w:p>
         </w:tc>
       </w:tr>
 """)

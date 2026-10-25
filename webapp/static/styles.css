@@ -1160,10 +1160,10 @@ body {
   height: 34px;
   min-height: 34px;
   max-height: 34px;
-  margin: 4px 8px 2px 8px;
+  margin: 5px 8px 1px 8px;
   padding: 0 10px;
   border: none;
-  background: transparent;
+  background: rgba(0, 0, 0, 0.025);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1172,7 +1172,7 @@ body {
   user-select: none;
   box-sizing: border-box;
   flex-shrink: 0;
-  color: #5f6368;
+  color: #475569;
   transition: background-color 0.15s ease, color 0.15s ease;
   outline: none;
 }
@@ -1260,11 +1260,78 @@ body {
   display: none !important;
 }
 
-/* Voci interne al gruppo */
+/* Voci interne al gruppo: Albero Gerarchico Padre-Figlio con Filetto Guida e Rientro */
 .nav-group-items {
   display: flex;
   flex-direction: column;
-  gap: 0;
+  position: relative;
+  margin: 2px 10px 6px 20px;
+  padding: 4px 0 4px 6px;
+  border-left: 2px solid #cbd5e1;
+  background: rgba(241, 245, 249, 0.45);
+  border-radius: 0 10px 10px 0;
+  gap: 2px;
+}
+
+/* Voce Figlia (Sub-item) con visual hierarchy evidente */
+.nav-group-items .nav-item {
+  position: relative;
+  height: 34px !important;
+  min-height: 34px !important;
+  max-height: 34px !important;
+  margin: 1px 4px 1px 8px !important;
+  padding: 0 10px 0 8px !important;
+  border-radius: 8px !important;
+  font-size: 12.5px !important;
+  font-weight: 500;
+  gap: 8px !important;
+  color: #475569;
+}
+
+/* Connettore a ramo orizzontale continuo (Tree Branch Line ├──) */
+.nav-group-items .nav-item::before {
+  content: "";
+  position: absolute;
+  left: -14px;
+  top: 50%;
+  width: 10px;
+  height: 2px;
+  background: #cbd5e1;
+  border-radius: 1px;
+  pointer-events: none;
+  transition: background-color 0.15s ease, width 0.15s ease;
+}
+
+.nav-group-items .nav-item:hover {
+  background-color: rgba(37, 99, 235, 0.08) !important;
+  color: #1e40af !important;
+}
+
+.nav-group-items .nav-item:hover::before {
+  background: #94a3b8;
+  width: 12px;
+}
+
+.nav-group-items .nav-item.active {
+  background-color: #e0edff !important;
+  color: #1d4ed8 !important;
+  font-weight: 700 !important;
+}
+
+.nav-group-items .nav-item.active::before {
+  background: #2563eb;
+  width: 12px;
+  height: 2.5px;
+}
+
+.nav-group-items .nav-item .nav-icon {
+  font-size: 15px !important;
+  width: 20px !important;
+  height: 20px !important;
+}
+
+.nav-group-items .nav-item .nav-label {
+  font-size: 12.5px !important;
 }
 
 /* Sezione Fissa in Basso a Sinistra: Sistema & Configurazione */
