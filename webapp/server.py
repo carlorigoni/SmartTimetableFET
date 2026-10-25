@@ -1059,6 +1059,20 @@ class EurarioHandler(BaseHTTPRequestHandler):
                 self._json(400, {"error": str(e)})
             return
 
+        elif path == "/api/auth/users/reopen":
+            admin = self._require_admin()
+            if not admin:
+                return
+            if not body or not body.get("email"):
+                self._json(400, {"error": "Email mancante"})
+                return
+            try:
+                u = auth_manager.reopen_user(body["email"], admin_email=admin.get("email"), ip=client_ip)
+                self._json(200, {"ok": True, "user": u})
+            except Exception as e:
+                self._json(400, {"error": str(e)})
+            return
+
         elif path == "/api/auth/access_logs/clear":
             admin = self._require_admin()
             if not admin:

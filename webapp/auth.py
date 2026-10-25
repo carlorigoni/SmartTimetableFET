@@ -413,7 +413,16 @@ class AuthManager:
             if is_admin:
                 u["status"] = "approved"
                 u["role"] = "admin"
-            if u["status"] == "approved":
+            elif u.get("status") == "rejected":
+                # L'UTENTE ERA STATO REVOCATO / RIFIUTATO IN PASSATO:
+                # Il nuovo tentativo di accesso riattiva lo stato 'pending',
+                # aggiorna la data di richiesta e notifica l'amministratore!
+                u["status"] = "pending"
+                u["created_at"] = now_iso
+                u["approved_at"] = None
+                u["was_previously_rejected"] = True
+                is_new_request = True
+            elif u.get("status") == "approved":
                 u["last_login"] = now_iso
             self._save()
 
@@ -509,19 +518,50 @@ class AuthManager:
                 "message": "Richiesta inviata all'amministratore con successo."
             }
         else:
-            user = dict(self.config["users"][clean_email])
+            user = self.config["users"][clean_email]
             if clean_name and (user.get("name") == clean_email.split("@")[0] or not user.get("name")):
-                self.config["users"][clean_email]["name"] = clean_name
-                self._save()
                 user["name"] = clean_name
-            self.log_access("REQUEST_ACCESS_REPEAT", clean_email, user.get("role", "editor"), "INFO", ip, user_agent, f"Richiesta ripetuta (stato attuale: {user.get('status')})")
-            return {
-                "ok": True,
-                "status": user.get("status", "pending"),
-                "user": user,
-                "is_new_request": False,
-                "message": f"Account già registrato con stato: {user.get('status')}"
-            }
+
+            # Se l'utente era stato revocato/rifiutato in passato, o sollecita l'accesso:
+            if user.get("status") == "rejected":
+                user["status"] = "pending"
+                user["created_at"] = now_iso
+                user["approved_at"] = None
+                user["was_previously_rejected"] = True
+                self._save()
+                if not is_admin:
+                    self._notify_admin_email(user)
+                self.log_access("REQUEST_ACCESS_RENEW", clean_email, user.get("role", "editor"), "INFO", ip, user_agent, f"Richiesta di riabilitazione accesso per utente precedentemente revocato ({clean_name})")
+                return {
+                    "ok": True,
+                    "status": "pending",
+                    "user": user,
+                    "is_new_request": True,
+                    "message": "Richiesta di riabilitazione inviata all'amministratore con successo."
+                }
+            elif user.get("status") == "pending":
+                user["created_at"] = now_iso
+                self._save()
+                if not is_admin:
+                    self._notify_admin_email(user)
+                self.log_access("REQUEST_ACCESS_REPEAT", clean_email, user.get("role", "editor"), "INFO", ip, user_agent, f"Sollecito richiesta accesso per {clean_name}")
+                return {
+                    "ok": True,
+                    "status": "pending",
+                    "user": user,
+                    "is_new_request": True,
+                    "message": "Richiesta rinnovata: in attesa di autorizzazione da parte dell'amministratore."
+                }
+            else:
+                self._save()
+                self.log_access("REQUEST_ACCESS_APPROVED", clean_email, user.get("role", "editor"), "INFO", ip, user_agent, f"Richiesta accesso da account già autorizzato ({clean_name})")
+                return {
+                    "ok": True,
+                    "status": "approved",
+                    "user": user,
+                    "is_new_request": False,
+                    "message": f"Account già registrato con stato: {user.get('status')}"
+                }
 
     # --- USER APPROVAL / REJECTION ACTIONS ---
 
@@ -671,6 +711,8 @@ Eurario Automated Security Notification
             raise ValueError("Impossibile eliminare l'amministratore principale")
         if email in self.config["users"]:
             del self.config["users"][email]
+            if "school_memberships" in self.config and email in self.config["school_memberships"]:
+                del self.config["school_memberships"][email]
             for tok, s in list(self.sessions.items()):
                 if s.get("email") == email:
                     del self.sessions[tok]
@@ -678,6 +720,24 @@ Eurario Automated Security Notification
             self.log_access("USER_DELETED", email, "-", "SUCCESS", ip, "-", f"Account eliminato da {admin_email or 'admin'}")
             return True
         return False
+
+    def reopen_user(self, email, admin_email=None, ip=None):
+        """
+        Consente all'amministratore di riaprire/riabilitare un utente precedentemente revocato
+        o rifiutato, rimettendolo subito nella scheda 'Richieste in Attesa'.
+        """
+        self._load()
+        email = (email or "").lower().strip()
+        if email not in self.config["users"]:
+            raise ValueError("Utente non trovato")
+        u = self.config["users"][email]
+        u["status"] = "pending"
+        u["created_at"] = get_local_now().isoformat()
+        u["approved_at"] = None
+        u["was_previously_rejected"] = True
+        self._save()
+        self.log_access("USER_REOPENED", email, u.get("role", "editor"), "SUCCESS", ip, "-", f"Utente rimesso in attesa di sblocco da {admin_email or 'admin'}")
+        return u
 
     def update_config(self, new_cfg):
         if "google_client_id" in new_cfg:

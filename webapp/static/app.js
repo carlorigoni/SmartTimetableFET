@@ -1446,6 +1446,7 @@ function renderUsersUI() {
   const users = currentUsersData.users || [];
   const pending = users.filter(u => u.status === 'pending');
   const approved = users.filter(u => u.status === 'approved');
+  const rejected = users.filter(u => u.status === 'rejected');
 
   // Badges
   const pBadge = document.getElementById('modalPendingCountBadge');
@@ -1478,7 +1479,10 @@ function renderUsersUI() {
           <div class="user-card-left" style="display:flex;align-items:center;gap:12px;">
             ${u.picture ? `<img src="${u.picture}" class="user-card-avatar" alt="Avatar" style="width:38px;height:38px;border-radius:50%;" />` : `<div class="user-card-avatar" style="width:38px;height:38px;display:flex;align-items:center;justify-content:center;background:var(--bg-hover);border-radius:50%;font-size:18px;">👤</div>`}
             <div class="user-card-info">
-              <div class="user-card-name" style="font-weight:700;font-size:13.5px;color:var(--text-main);">${escapeHtml(u.name || u.email)}</div>
+              <div class="user-card-name" style="font-weight:700;font-size:13.5px;color:var(--text-main);display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+                ${escapeHtml(u.name || u.email)}
+                ${u.was_previously_rejected ? `<span class="badge badge-warn" style="font-size:10px;background:#fef3c7;color:#b45309;border:1px solid #f59e0b;padding:1px 6px;">🔄 Riattivazione (già revocato)</span>` : ''}
+              </div>
               <div class="user-card-email" style="font-size:12px;color:var(--text-muted);font-family:var(--font-mono);">${escapeHtml(u.email)}</div>
               <div class="user-card-meta" style="font-size:11px;color:var(--text-sub);margin-top:2px;">${isEn ? 'Requested on:' : 'Richiesto il:'} ${reqDate}</div>
             </div>
@@ -1514,28 +1518,29 @@ function renderUsersUI() {
 
   // Tab 2: Approved Users
   const approvedContainer = document.getElementById('approvedUsersList');
+  let approvedHtml = '';
   if (approved.length === 0) {
-    approvedContainer.innerHTML = `<div style="text-align:center;padding:24px;color:#64748b;">${isEn ? 'No approved users.' : 'Nessun utente approvato.'}</div>`;
+    approvedHtml = `<div style="text-align:center;padding:24px;color:#64748b;">${isEn ? 'No approved users.' : 'Nessun utente approvato.'}</div>`;
   } else {
-    approvedContainer.innerHTML = approved.map(u => {
+    approvedHtml = approved.map(u => {
       const isMainAdmin = (u.email === currentUsersData.admin_email);
       const lastLoginDate = u.last_login ? new Date(u.last_login).toLocaleString(isEn ? 'en-US' : 'it-IT') : 'N/D';
       return `
-      <div class="user-item-card">
-        <div class="user-card-left">
-          ${u.picture ? `<img src="${u.picture}" class="user-card-avatar" alt="Avatar" />` : `<div class="user-card-avatar">👤</div>`}
+      <div class="user-item-card" style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px;padding:10px 14px;border:1px solid var(--border);border-radius:10px;background:var(--bg-card);">
+        <div class="user-card-left" style="display:flex;align-items:center;gap:12px;">
+          ${u.picture ? `<img src="${u.picture}" class="user-card-avatar" alt="Avatar" style="width:38px;height:38px;border-radius:50%;" />` : `<div class="user-card-avatar" style="width:38px;height:38px;display:flex;align-items:center;justify-content:center;background:var(--bg-hover);border-radius:50%;font-size:18px;">👤</div>`}
           <div class="user-card-info">
-            <div class="user-card-name">
+            <div class="user-card-name" style="font-weight:700;font-size:13px;color:var(--text-main);">
               ${escapeHtml(u.name || u.email)}
-              <span class="badge ${u.role === 'admin' ? 'badge-primary' : (u.role === 'editor' ? 'badge-info' : 'badge-sec')}" style="font-size:10px;">
+              <span class="badge ${u.role === 'admin' ? 'badge-primary' : (u.role === 'editor' ? 'badge-info' : 'badge-sec')}" style="font-size:10px;margin-left:4px;">
                 ${u.role.toUpperCase()}
               </span>
             </div>
-            <div class="user-card-email">${escapeHtml(u.email)}</div>
-            <div class="user-card-meta">${isEn ? 'Last login:' : 'Ultimo accesso:'} ${lastLoginDate}</div>
+            <div class="user-card-email" style="font-size:11.5px;color:var(--text-muted);font-family:var(--font-mono);">${escapeHtml(u.email)}</div>
+            <div class="user-card-meta" style="font-size:10.5px;color:var(--text-sub);">${isEn ? 'Last login:' : 'Ultimo accesso:'} ${lastLoginDate}</div>
           </div>
         </div>
-        <div class="user-card-actions">
+        <div class="user-card-actions" style="display:flex;gap:6px;align-items:center;">
           ${isMainAdmin ? `<span style="font-size:11.5px;color:#16a34a;font-weight:700;">${isEn ? 'Primary Administrator' : 'Amministratore Principale'}</span>` : `
             <button class="btn btn-sm btn-outline-warning" onclick="revokeUser('${escapeHtml(u.email)}')">${isEn ? '⛔ Revoke' : '⛔ Revoca'}</button>
             <button class="btn btn-sm btn-outline-danger" onclick="deleteUser('${escapeHtml(u.email)}')">🗑️</button>
@@ -1544,6 +1549,40 @@ function renderUsersUI() {
       </div>`;
     }).join('');
   }
+
+  // Sezione Utenti Revocati o Disabilitati
+  if (rejected.length > 0) {
+    approvedHtml += `
+      <div style="margin-top:24px;border-top:1px dashed var(--border);padding-top:16px;">
+        <div style="font-size:13px;font-weight:700;color:var(--danger,#dc2626);margin-bottom:10px;display:flex;align-items:center;gap:6px;">
+          <span>🚫</span> <span>${isEn ? 'Revoked / Disabled Users' : 'Utenti Revocati o Disabilitati'} (${rejected.length})</span>
+        </div>
+        ${rejected.map(u => {
+          return `
+            <div class="user-item-card" style="opacity:0.9;border-left:4px solid #dc2626;display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px;padding:10px 14px;background:var(--bg-hover);border-radius:8px;">
+              <div class="user-card-left" style="display:flex;align-items:center;gap:10px;">
+                <div class="user-card-avatar" style="width:34px;height:34px;background:#fee2e2;color:#dc2626;display:flex;align-items:center;justify-content:center;border-radius:50%;font-size:16px;">🚫</div>
+                <div class="user-card-info">
+                  <div class="user-card-name" style="font-size:13px;font-weight:700;color:var(--text-main);">${escapeHtml(u.name || u.email)}</div>
+                  <div class="user-card-email" style="font-size:11.5px;color:var(--text-muted);font-family:var(--font-mono);">${escapeHtml(u.email)}</div>
+                </div>
+              </div>
+              <div class="user-card-actions" style="display:flex;gap:6px;align-items:center;">
+                <button class="btn btn-sm btn-sec" onclick="reopenUser('${escapeHtml(u.email)}')">
+                  🔄 ${isEn ? 'Re-open Request' : 'Rimetti in Attesa'}
+                </button>
+                <button class="btn btn-sm btn-outline-danger" onclick="deleteUser('${escapeHtml(u.email)}')">
+                  🗑️ ${isEn ? 'Delete' : 'Elimina'}
+                </button>
+              </div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    `;
+  }
+
+  approvedContainer.innerHTML = approvedHtml;
 }
 
 async function approveUser(email) {
@@ -1608,6 +1647,26 @@ async function revokeUser(email) {
     await loadUsersList();
   } catch (e) {
     showToast('Errore: ' + e.message, 'error');
+  }
+}
+
+async function reopenUser(email) {
+  try {
+    const res = await fetch('/api/auth/users/reopen', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      showToast(data.error || 'Errore durante la riapertura della richiesta', 'error');
+      return;
+    }
+    showToast(`Utente ${email} rimesso nelle Richieste in Attesa!`, 'ok');
+    await loadUsersList();
+    switchAccessTab('pending');
+  } catch (e) {
+    showToast('Errore di connessione: ' + e.message, 'error');
   }
 }
 
