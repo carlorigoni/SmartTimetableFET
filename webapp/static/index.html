@@ -21,14 +21,14 @@
     })();
   </script>
   <!-- Favicon & Branding Eurario (Safari macOS, Chrome, Edge, iOS, Android) -->
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=1.7.0">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png?v=1.7.0">
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png?v=1.7.0">
-  <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png?v=1.7.0">
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=1.7.0">
-  <link rel="mask-icon" href="/safari-pinned-tab.svg?v=1.7.0" color="#1B2A4A">
-  <link rel="shortcut icon" href="/favicon.ico?v=1.7.0">
-  <link rel="stylesheet" href="styles.css?v=1.7.1">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=1.8.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png?v=1.8.0">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png?v=1.8.0">
+  <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png?v=1.8.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=1.8.0">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg?v=1.8.0" color="#1B2A4A">
+  <link rel="shortcut icon" href="/favicon.ico?v=1.8.0">
+  <link rel="stylesheet" href="styles.css?v=1.8.0">
   <!-- Google Identity Services OAuth -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
@@ -247,7 +247,7 @@
             <span id="statusIndicatorDot" class="status-indicator-dot dot-green"></span>
             <span id="statusIndicatorText" class="status-indicator-text">FET 7.12</span>
           </span>
-          <span id="sidebarVerTag" class="footer-ver-tag" title="Versione Eurario">v1.7.0</span>
+          <span id="sidebarVerTag" class="footer-ver-tag" title="Versione Eurario">v1.8.0</span>
           <button class="footer-info-btn" onclick="openAboutModal()" title="Crediti, Mentore e Info Legali" aria-label="Informazioni e crediti">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
               <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
@@ -290,7 +290,35 @@
           <span>◀</span> <span id="navBackText">Indietro</span>
         </button>
         <span id="pageTitle" class="topbar-title">Dashboard</span>
-        <span id="instBadge" class="badge badge-info">Eurario</span>
+
+        <!-- Selettore Multi-Scuola (Dropdown Istituti) -->
+        <div class="school-selector-dropdown" id="schoolSelectorDropdown">
+          <button type="button" id="btnSchoolToggle" class="topbar-btn school-pill-btn" onclick="toggleSchoolMenu(event)" title="Cambia Istituto Scolastico" aria-label="Selettore istituto">
+            <span class="school-icon">🏫</span>
+            <span id="currentSchoolName" class="school-name-text">Liceo & Tecnico</span>
+            <span id="currentSchoolTrialBadge" class="badge-trial-pill" style="display:none;" title="Istituto in prova (stampe filigranate)">In Prova</span>
+            <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor" style="opacity:0.7;">
+              <path d="M7 10l5 5 5-5z"/>
+            </svg>
+          </button>
+          <div id="schoolMenuPopup" class="topbar-popup-menu school-popup-menu" style="display:none;">
+            <div class="school-popup-header">
+              <span style="font-weight:700;font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;">I Miei Istituti</span>
+            </div>
+            <div id="schoolMenuList" class="school-menu-items">
+              <!-- Elenco generato dinamicamente da app.js -->
+            </div>
+            <div class="school-popup-divider"></div>
+            <button type="button" class="topbar-popup-item school-action-item" onclick="openCreateSchoolModal()">
+              <span>➕</span> <span style="font-weight:600;">Registra Nuovo Istituto...</span>
+            </button>
+            <button type="button" id="btnSuperAdminConsole" class="topbar-popup-item school-action-item superadmin-item" style="display:none;" onclick="openSuperAdminModal()">
+              <span>⭐</span> <span style="font-weight:700;color:var(--warning-dark,#b45309);">Console SuperAdmin</span>
+            </button>
+          </div>
+        </div>
+
+        <span id="instBadge" class="badge badge-info" style="display:none;">Eurario</span>
       </div>
       <div class="topbar-right">
         <!-- Selettore Lingua ITA / ENG -->
@@ -344,13 +372,24 @@
       </div>
     </header>
 
+    <!-- Banner Informativo Modalità di Prova (Trial) -->
+    <div id="trialWarningBanner" class="trial-warning-banner" style="display:none;">
+      <div class="trial-banner-content">
+        <span class="trial-banner-icon">⚠️</span>
+        <div class="trial-banner-text">
+          <b>Modalità di Prova Attiva:</b> Tutte le funzioni di calcolo euristico FET e composizione orario sono complete e funzionanti al 100%. Le stampe ufficiali ad alta risoluzione (PDF e Word) includono la filigrana dimostrativa fino all'attivazione tecnica da parte dell'amministratore.
+        </div>
+        <button class="btn-trial-action" onclick="openTrialInfoModal()">Maggiori Info</button>
+      </div>
+    </div>
+
     <main class="content-body" id="mainContent">
       <!-- I contenuti delle singole viste vengono renderizzati dinamicamente da app.js -->
     </main>
 
     <footer class="app-page-footer">
       <div>
-        <b>Eurario FET Suite</b> &mdash; <span data-i18n="footer.version">Versione</span> <span id="pageFooterVer" class="badge-ver">v1.7.0</span> &bull; <span data-i18n="footer.author">Autore</span>: <b>Carlo Rigoni</b> &bull; <span data-i18n="footer.engine">Motore</span>: <b>FET 7.12.0</b> &bull; <a href="javascript:void(0)" onclick="openAboutModal()" style="color:var(--primary);text-decoration:none;font-weight:600;" data-i18n="footer.credits">Crediti & Note Legali</a>
+        <b>Eurario FET Suite</b> &mdash; <span data-i18n="footer.version">Versione</span> <span id="pageFooterVer" class="badge-ver">v1.8.0</span> &bull; <span data-i18n="footer.author">Autore</span>: <b>Carlo Rigoni</b> &bull; <span data-i18n="footer.engine">Motore</span>: <b>FET 7.12.0</b> &bull; <a href="javascript:void(0)" onclick="openAboutModal()" style="color:var(--primary);text-decoration:none;font-weight:600;" data-i18n="footer.credits">Crediti & Note Legali</a>
       </div>
       <div style="font-size:11.5px;color:var(--text-muted);">
         <span data-i18n="footer.heuristic">Algoritmo euristico</span>: <a href="https://lalescu.ro/liviu/fet/" target="_blank" rel="noopener" style="color:var(--primary);text-decoration:none;font-weight:600;">FET Free Timetabling Software</a> &bull; <span data-i18n="footer.ai_credit">AI Pair Programming</span>: Google DeepMind Antigravity
@@ -890,7 +929,141 @@
     </div>
   </div>
 
-  <script src="i18n.js?v=1.7.1"></script>
-  <script src="app.js?v=1.7.1"></script>
+  <!-- Modal Registra Nuovo Istituto (Multi-Scuola) -->
+  <div id="createSchoolModal" class="modal-backdrop" role="dialog" aria-modal="true" style="display:none;" onclick="if(event.target===this) closeCreateSchoolModal()">
+    <div class="modal-dialog" style="max-width: 520px;">
+      <div class="modal-header">
+        <div class="modal-title" style="display:flex;align-items:center;gap:10px;">
+          <span style="font-size:24px;">🏫</span>
+          <div>
+            <div style="font-size:16px;font-weight:700;color:var(--text-main);">Registra Nuovo Istituto</div>
+            <div style="font-size:11.5px;color:var(--text-muted);">Crea un nuovo spazio isolato per il tuo orario scolastico</div>
+          </div>
+        </div>
+        <button class="modal-close" onclick="closeCreateSchoolModal()" title="Chiudi">✕</button>
+      </div>
+
+      <div class="modal-body" style="gap:14px;">
+        <div class="modal-notice" style="display:flex;align-items:flex-start;gap:10px;">
+          <span style="font-size:18px;">✨</span>
+          <div style="font-size:12px;color:var(--text-main);line-height:1.4;">
+            Il nuovo istituto verrà creato immediatamente in <b>Modalità di Prova</b>: potrai inserire dati, definire vincoli e calcolare orari con il motore FET. Le stampe ufficiali ad alta risoluzione verranno sbloccate dopo l'approvazione tecnica da parte del SuperAdmin.
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label style="font-size:12px;font-weight:600;margin-bottom:4px;display:block;">Nome Istituto Scolastico *</label>
+          <input type="text" id="newSchoolName" class="form-input" placeholder="Es. Liceo Scientifico &quot;Galileo Galilei&quot;" style="width:100%;" required>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div class="form-group">
+            <label style="font-size:12px;font-weight:600;margin-bottom:4px;display:block;">Città / Comune</label>
+            <input type="text" id="newSchoolCity" class="form-input" placeholder="Es. Padova, Milano, Roma..." style="width:100%;">
+          </div>
+          <div class="form-group">
+            <label style="font-size:12px;font-weight:600;margin-bottom:4px;display:block;">Nazione</label>
+            <input type="text" id="newSchoolCountry" class="form-input" value="Italia" style="width:100%;">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label style="font-size:12px;font-weight:600;margin-bottom:4px;display:block;">Anno Scolastico</label>
+          <input type="text" id="newSchoolYear" class="form-input" value="2026/2027" style="width:100%;">
+        </div>
+
+        <div class="form-group">
+          <label style="font-size:12px;font-weight:600;margin-bottom:4px;display:block;">Note / Recapito Referente Commissione Orario</label>
+          <textarea id="newSchoolNotes" class="form-input" rows="2" placeholder="Indicare eventuali recapiti o note per la configurazione..." style="width:100%;resize:vertical;"></textarea>
+        </div>
+      </div>
+
+      <div class="modal-footer" style="display:flex;justify-content:flex-end;gap:10px;">
+        <button class="btn btn-sec" onclick="closeCreateSchoolModal()">Annulla</button>
+        <button id="btnSubmitCreateSchool" class="btn btn-primary" onclick="submitCreateSchool()">
+          🚀 Registra ed Entra
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Console SuperAdmin (Gestione Scuole e Approvazioni) -->
+  <div id="superAdminModal" class="modal-backdrop" role="dialog" aria-modal="true" style="display:none;" onclick="if(event.target===this) closeSuperAdminModal()">
+    <div class="modal-dialog" style="max-width: 860px;">
+      <div class="modal-header">
+        <div class="modal-title" style="display:flex;align-items:center;gap:10px;">
+          <span style="font-size:24px;">⭐</span>
+          <div>
+            <div style="font-size:16px;font-weight:700;color:var(--text-main);">Console SuperAdmin &mdash; Gestione Piattaforma Eurario</div>
+            <div style="font-size:11.5px;color:var(--text-muted);">Registro globale istituti, approvazione modalità di prova e monitoraggio</div>
+          </div>
+        </div>
+        <button class="modal-close" onclick="closeSuperAdminModal()" title="Chiudi">✕</button>
+      </div>
+
+      <div class="modal-body" style="gap:14px;max-height:calc(85vh - 130px);overflow-y:auto;">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-size:13px;font-weight:700;color:var(--text-main);">Istituti Registrati sulla Piattaforma (<span id="superAdminTotalCount">0</span>)</span>
+          <button class="btn btn-sm btn-sec" onclick="loadSuperAdminSchools(true)">🔄 Aggiorna</button>
+        </div>
+
+        <div class="table-responsive" style="max-height:420px;overflow-y:auto;border:1px solid var(--border);border-radius:8px;">
+          <table class="data-table" style="width:100%;font-size:12px;margin:0;">
+            <thead>
+              <tr>
+                <th>Istituto</th>
+                <th>Sede / Anno</th>
+                <th>Creatore / Owner</th>
+                <th>Stato</th>
+                <th style="text-align:right;">Azioni Tecniche</th>
+              </tr>
+            </thead>
+            <tbody id="superAdminSchoolsTbody">
+              <!-- Riempito dinamicamente da app.js -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="modal-footer" style="display:flex;justify-content:flex-end;">
+        <button class="btn btn-primary" onclick="closeSuperAdminModal()">Chiudi</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Info Modalità di Prova -->
+  <div id="trialInfoModal" class="modal-backdrop" role="dialog" aria-modal="true" style="display:none;" onclick="if(event.target===this) closeTrialInfoModal()">
+    <div class="modal-dialog" style="max-width: 540px;">
+      <div class="modal-header">
+        <div class="modal-title" style="display:flex;align-items:center;gap:10px;">
+          <span style="font-size:24px;">ℹ️</span>
+          <div>
+            <div style="font-size:16px;font-weight:700;color:var(--text-main);">Modalità di Prova Eurario</div>
+            <div style="font-size:11.5px;color:var(--text-muted);">Come funziona la valutazione tecnica per i nuovi istituti</div>
+          </div>
+        </div>
+        <button class="modal-close" onclick="closeTrialInfoModal()" title="Chiudi">✕</button>
+      </div>
+
+      <div class="modal-body" style="gap:12px;font-size:12.5px;line-height:1.5;color:var(--text-main);">
+        <p>Eurario consente a qualsiasi istituto scolastico di verificare immediatamente la velocità e l'efficacia del motore di calcolo FET senza alcuna limitazione funzionale:</p>
+        <ul style="padding-left:20px;margin:6px 0;">
+          <li><b>Nessun limite</b> sul numero di docenti, classi, materie o vincoli complessi.</li>
+          <li><b>Motore FET 7.12.0 completo:</b> generazione rapida, swapper euristico, rilevamento colli di bottiglia e report Advisor attivi.</li>
+          <li><b>Griglia orario interattiva:</b> visualizzazione tabellone docenti, classi e aule navigabile a schermo.</li>
+        </ul>
+        <div class="modal-notice" style="margin-top:6px;">
+          <b>Sblocco Stampe Ufficiali:</b> Nella versione in prova, le stampe PDF A3/A4 e i documenti Word (.docx) presentano una filigrana identificativa <i>"Eurario - Versione Dimostrativa"</i>. Per sbloccare le stampe ufficiali senza filigrana, contatta l'amministratore di sistema o attendi l'approvazione tecnica.
+        </div>
+      </div>
+
+      <div class="modal-footer" style="display:flex;justify-content:flex-end;">
+        <button class="btn btn-primary" onclick="closeTrialInfoModal()">Ho Capito</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="i18n.js?v=1.8.0"></script>
+  <script src="app.js?v=1.8.0"></script>
 </body>
 </html>

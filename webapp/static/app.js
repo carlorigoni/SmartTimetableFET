@@ -22,7 +22,7 @@ let pollSolverTimer = null;
 let currentSolverRunning = false;
 
 // --- VERSIONE E IDENTITÀ APPLICATIVA ---
-const APP_VERSION = '1.7.1';
+const APP_VERSION = '1.8.0';
 
 // Dizionario completo di traduzione materie scolastiche Italiano -> Inglese
 const SUBJECT_TRANSLATIONS_JS = {
@@ -190,7 +190,9 @@ function toggleLangMenu(event) {
   if (event) event.stopPropagation();
   const menu = document.getElementById('langMenuPopup');
   const themeMenu = document.getElementById('themeMenuPopup');
+  const schoolMenu = document.getElementById('schoolMenuPopup');
   if (themeMenu) themeMenu.style.display = 'none';
+  if (schoolMenu) schoolMenu.style.display = 'none';
   if (!menu) return;
   menu.style.display = menu.style.display === 'none' ? 'flex' : 'none';
 }
@@ -213,7 +215,9 @@ function toggleThemeMenu(event) {
   if (event) event.stopPropagation();
   const menu = document.getElementById('themeMenuPopup');
   const langMenu = document.getElementById('langMenuPopup');
+  const schoolMenu = document.getElementById('schoolMenuPopup');
   if (langMenu) langMenu.style.display = 'none';
+  if (schoolMenu) schoolMenu.style.display = 'none';
   if (!menu) return;
   menu.style.display = menu.style.display === 'none' ? 'flex' : 'none';
 }
@@ -231,6 +235,7 @@ function setAppTheme(theme) {
 document.addEventListener('click', (e) => {
   const langDropdown = document.getElementById('langSelectorDropdown');
   const themeDropdown = document.getElementById('themeSelectorDropdown');
+  const schoolDropdown = document.getElementById('schoolSelectorDropdown');
   if (langDropdown && !langDropdown.contains(e.target)) {
     const m = document.getElementById('langMenuPopup');
     if (m) m.style.display = 'none';
@@ -239,7 +244,362 @@ document.addEventListener('click', (e) => {
     const m = document.getElementById('themeMenuPopup');
     if (m) m.style.display = 'none';
   }
+  if (schoolDropdown && !schoolDropdown.contains(e.target)) {
+    const m = document.getElementById('schoolMenuPopup');
+    if (m) m.style.display = 'none';
+  }
 });
+
+// --- GESTIONE MULTI-SCUOLA (TENANTS) & CONSOLE SUPERADMIN ---
+let currentSchool = null;
+let mySchools = [];
+
+function toggleSchoolMenu(event) {
+  if (event) event.stopPropagation();
+  const menu = document.getElementById('schoolMenuPopup');
+  const langMenu = document.getElementById('langMenuPopup');
+  const themeMenu = document.getElementById('themeMenuPopup');
+  if (langMenu) langMenu.style.display = 'none';
+  if (themeMenu) themeMenu.style.display = 'none';
+  if (!menu) return;
+  menu.style.display = menu.style.display === 'none' ? 'flex' : 'none';
+}
+
+async function loadMySchools() {
+  try {
+    const res = await fetch('/api/schools/my');
+    if (!res.ok) return;
+    const data = await res.json();
+    mySchools = data.schools || [];
+    currentSchool = data.current_school || null;
+    const activeId = data.active_school_id || (currentSchool ? currentSchool.id : 'default');
+
+    // Aggiorna indicatore scuola in topbar
+    const nameEl = document.getElementById('currentSchoolName');
+    if (nameEl && currentSchool) {
+      nameEl.innerText = currentSchool.name || 'Istituto';
+      nameEl.title = currentSchool.name || 'Istituto';
+    }
+
+    // Badge Trial e Banner di Avviso
+    const trialBadge = document.getElementById('currentSchoolTrialBadge');
+    const trialBanner = document.getElementById('trialWarningBanner');
+    const isTrial = currentSchool && currentSchool.status === 'trial';
+    if (trialBadge) trialBadge.style.display = isTrial ? 'inline-block' : 'none';
+    if (trialBanner) trialBanner.style.display = isTrial ? 'block' : 'none';
+
+    // Toggle Console SuperAdmin
+    const saBtn = document.getElementById('btnSuperAdminConsole');
+    if (saBtn) {
+      saBtn.style.display = data.is_superadmin ? 'flex' : 'none';
+    }
+
+    // Popola lista istituti nel menu a tendina
+    const listEl = document.getElementById('schoolMenuList');
+    if (listEl) {
+      if (mySchools.length === 0) {
+        listEl.innerHTML = `<div style="padding:10px;font-size:12px;color:var(--text-muted);text-align:center;">Nessun istituto trovato</div>`;
+      } else {
+        listEl.innerHTML = mySchools.map(s => {
+          const isActive = s.id === activeId;
+          const isSchTrial = s.status === 'trial';
+          const locStr = [s.city, s.country].filter(Boolean).join(', ');
+          const subText = [locStr, s.school_year].filter(Boolean).join(' • ');
+          return `
+            <button type="button" class="school-menu-item ${isActive ? 'active' : ''}" onclick="switchSchool('${escapeHtml(s.id)}')">
+              <div class="school-item-info">
+                <div class="school-item-name">
+                  ${escapeHtml(s.name)}
+                  ${isSchTrial ? '<span class="badge-trial-pill" style="margin-left:4px;">In Prova</span>' : ''}
+                </div>
+                ${subText ? `<div class="school-item-sub">${escapeHtml(subText)}</div>` : ''}
+              </div>
+              ${isActive ? '<span class="popup-check">✓</span>' : ''}
+            </button>
+          `;
+        }).join('');
+      }
+    }
+  } catch (err) {
+    console.error('Errore caricamento scuole utente:', err);
+  }
+}
+
+async function switchSchool(schoolId) {
+  try {
+    const menu = document.getElementById('schoolMenuPopup');
+    if (menu) menu.style.display = 'none';
+    showToast('Caricamento istituto in corso...');
+    const res = await fetch('/api/schools/switch', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ school_id: schoolId })
+    });
+    const data = await res.json();
+    if (data.success) {
+      await loadMySchools();
+      await refreshAppState();
+      navigate(currentView || 'dashboard', false);
+      showToast(`Passato a: ${data.school ? data.school.name : schoolId}`);
+    } else {
+      alert(data.error || 'Impossibile passare alla scuola selezionata.');
+    }
+  } catch (err) {
+    console.error('Errore switch scuola:', err);
+    alert('Errore di connessione durante il cambio istituto.');
+  }
+}
+
+function openCreateSchoolModal() {
+  const menu = document.getElementById('schoolMenuPopup');
+  if (menu) menu.style.display = 'none';
+  const modal = document.getElementById('createSchoolModal');
+  if (modal) {
+    document.getElementById('newSchoolName').value = '';
+    document.getElementById('newSchoolCity').value = '';
+    document.getElementById('newSchoolNotes').value = '';
+    modal.style.display = 'flex';
+  }
+}
+
+function closeCreateSchoolModal() {
+  const modal = document.getElementById('createSchoolModal');
+  if (modal) modal.style.display = 'none';
+}
+
+async function submitCreateSchool() {
+  const name = (document.getElementById('newSchoolName').value || '').trim();
+  const city = (document.getElementById('newSchoolCity').value || '').trim();
+  const country = (document.getElementById('newSchoolCountry').value || 'Italia').trim();
+  const school_year = (document.getElementById('newSchoolYear').value || '2026/2027').trim();
+  const notes = (document.getElementById('newSchoolNotes').value || '').trim();
+
+  if (!name) {
+    alert('Inserisci il nome del nuovo Istituto Scolastico.');
+    return;
+  }
+
+  const btn = document.getElementById('btnSubmitCreateSchool');
+  if (btn) btn.disabled = true;
+
+  try {
+    const res = await fetch('/api/schools/create', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, city, country, school_year, notes })
+    });
+    const data = await res.json();
+    if (data.success) {
+      closeCreateSchoolModal();
+      showToast('Nuovo istituto creato con successo!');
+      await loadMySchools();
+      await refreshAppState();
+      navigate('dashboard', false);
+    } else {
+      alert(data.error || 'Errore durante la registrazione del nuovo istituto.');
+    }
+  } catch (err) {
+    console.error('Errore creazione scuola:', err);
+    alert('Errore di connessione durante la creazione del nuovo istituto.');
+  } finally {
+    if (btn) btn.disabled = false;
+  }
+}
+
+function openTrialInfoModal() {
+  const modal = document.getElementById('trialInfoModal');
+  if (modal) modal.style.display = 'flex';
+}
+
+function closeTrialInfoModal() {
+  const modal = document.getElementById('trialInfoModal');
+  if (modal) modal.style.display = 'none';
+}
+
+function openSuperAdminModal() {
+  const menu = document.getElementById('schoolMenuPopup');
+  if (menu) menu.style.display = 'none';
+  const modal = document.getElementById('superAdminModal');
+  if (modal) {
+    modal.style.display = 'flex';
+    loadSuperAdminSchools();
+  }
+}
+
+function closeSuperAdminModal() {
+  const modal = document.getElementById('superAdminModal');
+  if (modal) modal.style.display = 'none';
+}
+
+async function loadSuperAdminSchools(showNotice = false) {
+  try {
+    const res = await fetch('/api/superadmin/schools');
+    if (!res.ok) {
+      if (res.status === 403) alert('Accesso negato: riservato al SuperAdmin.');
+      return;
+    }
+    const data = await res.json();
+    const schools = data.schools || [];
+    const countEl = document.getElementById('superAdminTotalCount');
+    if (countEl) countEl.innerText = schools.length;
+
+    const tbody = document.getElementById('superAdminSchoolsTbody');
+    if (!tbody) return;
+
+    if (schools.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--text-muted);">Nessun istituto presente</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = schools.map(s => {
+      let statusBadge = '<span class="status-badge-trial">In Prova (Trial)</span>';
+      if (s.status === 'active') {
+        statusBadge = '<span class="status-badge-active">Attivo / Completo</span>';
+      } else if (s.status === 'suspended') {
+        statusBadge = '<span class="status-badge-suspended">Sospeso</span>';
+      }
+
+      const isDefault = s.id === 'default';
+      const isTrial = s.status === 'trial';
+      const isSuspended = s.status === 'suspended';
+
+      let actionButtons = `
+        <button class="btn btn-sm btn-sec" onclick="switchSchool('${escapeHtml(s.id)}'); closeSuperAdminModal();" title="Passa a questo istituto" style="padding:2px 8px;font-size:11px;">
+          🚪 Entra
+        </button>
+      `;
+
+      if (isTrial) {
+        actionButtons += `
+          <button class="btn btn-sm btn-primary" onclick="approveSchoolAsAdmin('${escapeHtml(s.id)}')" title="Approva e sblocca stampe ufficiali senza filigrana" style="padding:2px 8px;font-size:11px;margin-left:4px;">
+            ✅ Approva
+          </button>
+        `;
+      } else if (!isDefault && !isSuspended) {
+        actionButtons += `
+          <button class="btn btn-sm btn-sec" onclick="suspendSchoolAsAdmin('${escapeHtml(s.id)}')" title="Sospendi accesso per questo istituto" style="padding:2px 8px;font-size:11px;margin-left:4px;color:#b91c1c;">
+            ⏸️ Sospendi
+          </button>
+        `;
+      } else if (isSuspended) {
+        actionButtons += `
+          <button class="btn btn-sm btn-primary" onclick="reactivateSchoolAsAdmin('${escapeHtml(s.id)}')" title="Riattiva istituto" style="padding:2px 8px;font-size:11px;margin-left:4px;">
+            ▶️ Riattiva
+          </button>
+        `;
+      }
+
+      if (!isDefault) {
+        actionButtons += `
+          <button class="btn btn-sm btn-sec" onclick="deleteSchoolAsAdmin('${escapeHtml(s.id)}', '${escapeHtml(s.name)}')" title="Elimina istituto e dati isolati" style="padding:2px 8px;font-size:11px;margin-left:4px;color:#b91c1c;">
+            🗑️
+          </button>
+        `;
+      }
+
+      return `
+        <tr>
+          <td>
+            <b>${escapeHtml(s.name)}</b>
+            ${isDefault ? '<span class="badge badge-info" style="margin-left:4px;font-size:9.5px;">Predefinito</span>' : ''}
+            <div style="font-size:10.5px;color:var(--text-muted);font-family:var(--font-mono);">${escapeHtml(s.id)}</div>
+          </td>
+          <td>${escapeHtml(s.city || '-')}, ${escapeHtml(s.country || 'Italia')}<br><small style="color:var(--text-muted);">${escapeHtml(s.school_year || '-')}</small></td>
+          <td>${escapeHtml(s.owner_email || 'admin')}</td>
+          <td>${statusBadge}</td>
+          <td style="text-align:right;white-space:nowrap;">${actionButtons}</td>
+        </tr>
+      `;
+    }).join('');
+
+    if (showNotice) showToast('Elenco istituti aggiornato');
+  } catch (err) {
+    console.error('Errore caricamento scuole superadmin:', err);
+  }
+}
+
+async function approveSchoolAsAdmin(schoolId) {
+  if (!confirm(`Vuoi approvare ufficialmente questo Istituto?\nVerranno sbloccate tutte le stampe ufficiali ad alta risoluzione senza filigrana.`)) return;
+  try {
+    const res = await fetch('/api/superadmin/schools/approve', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ school_id: schoolId })
+    });
+    const data = await res.json();
+    if (data.success) {
+      showToast('Istituto approvato con successo!');
+      loadSuperAdminSchools();
+      loadMySchools();
+    } else {
+      alert(data.error || 'Errore durante l\'approvazione.');
+    }
+  } catch (err) {
+    alert('Errore di connessione.');
+  }
+}
+
+async function suspendSchoolAsAdmin(schoolId) {
+  if (!confirm(`Vuoi sospendere questo Istituto?`)) return;
+  try {
+    const res = await fetch('/api/superadmin/schools/suspend', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ school_id: schoolId })
+    });
+    const data = await res.json();
+    if (data.success) {
+      showToast('Istituto sospeso.');
+      loadSuperAdminSchools();
+      loadMySchools();
+    } else {
+      alert(data.error || 'Errore durante la sospensione.');
+    }
+  } catch (err) {
+    alert('Errore di connessione.');
+  }
+}
+
+async function reactivateSchoolAsAdmin(schoolId) {
+  try {
+    const res = await fetch('/api/superadmin/schools/reactivate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ school_id: schoolId })
+    });
+    const data = await res.json();
+    if (data.success) {
+      showToast('Istituto riattivato.');
+      loadSuperAdminSchools();
+      loadMySchools();
+    } else {
+      alert(data.error || 'Errore durante la riattivazione.');
+    }
+  } catch (err) {
+    alert('Errore di connessione.');
+  }
+}
+
+async function deleteSchoolAsAdmin(schoolId, schoolName) {
+  if (!confirm(`Sei sicuro di voler eliminare definitivamente l'istituto "${schoolName}" e tutti i suoi dati?\nQuesta azione non può essere annullata.`)) return;
+  try {
+    const res = await fetch('/api/superadmin/schools/delete', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ school_id: schoolId })
+    });
+    const data = await res.json();
+    if (data.success) {
+      showToast('Istituto eliminato con successo.');
+      loadSuperAdminSchools();
+      loadMySchools();
+    } else {
+      alert(data.error || 'Errore durante l\'eliminazione.');
+    }
+  } catch (err) {
+    alert('Errore di connessione.');
+  }
+}
 
 // --- AUTENTICAZIONE & CONTROLLO ACCESSI (GOOGLE OAUTH & WHITELIST APPROVAL) ---
 let currentUser = null;
@@ -1546,9 +1906,16 @@ async function refreshAppState() {
   try {
     const res = await fetch('/api/summary');
     stateData.summary = await res.json();
-    if (stateData.summary && stateData.summary.institution) {
+    if (currentSchool && currentSchool.name) {
+      const b = document.getElementById('instBadge');
+      if (b) b.innerText = currentSchool.name;
+      const sName = document.getElementById('currentSchoolName');
+      if (sName) sName.innerText = currentSchool.name;
+    } else if (stateData.summary && stateData.summary.institution) {
       const b = document.getElementById('instBadge');
       if (b) b.innerText = stateData.summary.institution;
+      const sName = document.getElementById('currentSchoolName');
+      if (sName) sName.innerText = stateData.summary.institution;
     }
     refreshDiagnosticsBadge();
   } catch (e) {
@@ -1559,6 +1926,7 @@ async function refreshAppState() {
 async function loadInitialData() {
   initSidebarResponsive();
   window.addEventListener('resize', handleSidebarResize);
+  await loadMySchools();
   await refreshAppState();
   checkSoftwareUpdates();
   navigate('dashboard');

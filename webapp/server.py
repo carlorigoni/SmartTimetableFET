@@ -33,7 +33,14 @@ ROOT_DIR = os.path.dirname(BASE_DIR)
 if ROOT_DIR not in sys.path:
     sys.path.insert(0, ROOT_DIR)
 
-from webapp.database import db, parse_organico_docx_content
+from webapp.database import (
+    db,
+    parse_organico_docx_content,
+    get_db,
+    set_current_school_id,
+    get_current_school_id
+)
+from webapp.schools import school_manager
 from webapp.fet_engine import generate_fet_xml
 from webapp.auth import auth_manager, get_local_now, SERVER_TZ_NAME
 from webapp.validator import TimetablePreValidator
@@ -87,7 +94,7 @@ def fetch_google_doc_docx_bytes(url):
     except Exception as e:
         raise ValueError(f"Impossibile scaricare il Google Doc: {e}")
 
-APP_VERSION = "1.7.1"
+APP_VERSION = "1.8.0"
 FET_VERSION = "7.12.0"
 APP_AUTHOR = "Carlo Rigoni"
 APP_MENTOR = "Federico Rettore"
@@ -337,6 +344,44 @@ class EurarioHandler(BaseHTTPRequestHandler):
             return None
         return user
 
+    def _require_superadmin(self):
+        user = self._require_auth()
+        if not user:
+            return None
+        if not user.get("is_superadmin"):
+            self._json(403, {"error": "Operazione riservata al SuperAdmin di Eurario", "code": "SUPERADMIN_REQUIRED"})
+            return None
+        return user
+
+    def _resolve_school_id(self, query=None):
+        # 1. Header esplicito X-School-Id
+        hdr = self.headers.get("X-School-Id")
+        if hdr and school_manager.get_school(hdr):
+            return hdr.strip()
+        # 2. Query param ?school_id=
+        if query and query.get("school_id"):
+            q_sid = query["school_id"][0].strip()
+            if school_manager.get_school(q_sid):
+                return q_sid
+        # 3. Sessione utente loggato
+        user = self._get_current_user()
+        if user and user.get("active_school_id"):
+            s_sid = str(user["active_school_id"]).strip()
+            if school_manager.get_school(s_sid):
+                return s_sid
+        # 4. Fallback predefinito
+        return "default"
+
+    def _setup_request_school(self, query=None):
+        sid = self._resolve_school_id(query=query)
+        set_current_school_id(sid)
+        return sid
+
+    def _is_current_school_trial(self):
+        sid = get_current_school_id()
+        sch = school_manager.get_school(sid)
+        return (sch.get("status") == "trial") if sch else False
+
     def _read_json(self):
         try:
             cl = int(self.headers.get("Content-Length", 0))
@@ -409,6 +454,7 @@ class EurarioHandler(BaseHTTPRequestHandler):
         parsed = urlparse(self.path)
         path = parsed.path
         query = parse_qs(parsed.query)
+        self._setup_request_school(query)
 
         # --- STATIC FILES ---
         if path == "/" or path == "/index.html":
@@ -459,10 +505,13 @@ class EurarioHandler(BaseHTTPRequestHandler):
             user = self._get_current_user()
             if user:
                 pending_count = auth_manager.list_users()["pending_count"] if user.get("role") == "admin" else 0
+                active_sid = get_current_school_id()
+                curr_school = school_manager.get_school(active_sid) or school_manager.get_school("default")
                 self._json(200, {
                     "authenticated": True,
                     "user": user,
-                    "pending_count": pending_count
+                    "pending_count": pending_count,
+                    "current_school": curr_school
                 })
             else:
                 self._json(200, {
@@ -470,6 +519,37 @@ class EurarioHandler(BaseHTTPRequestHandler):
                     "google_client_id": auth_manager.config.get("google_client_id", "")
                 })
             return
+
+        elif path == "/api/schools/my":
+            user = self._get_current_user()
+            is_super = bool(user and user.get("is_superadmin"))
+            email = user.get("email") if user else None
+            mems = {email: auth_manager.get_user_memberships(email)} if email else None
+            schools = school_manager.list_schools_for_user(email, is_superadmin=is_super, memberships=mems)
+            active_sid = get_current_school_id()
+            curr_school = school_manager.get_school(active_sid) or school_manager.get_school("default")
+            self._json(200, {
+                "schools": schools,
+                "current_school": curr_school,
+                "active_school_id": active_sid,
+                "is_superadmin": is_super
+            })
+            return
+
+        elif path == "/api/schools/current":
+            active_sid = get_current_school_id()
+            curr_school = school_manager.get_school(active_sid) or school_manager.get_school("default")
+            self._json(200, curr_school)
+            return
+
+        elif path == "/api/superadmin/schools":
+            user = self._require_superadmin()
+            if not user:
+                return
+            schools = school_manager.list_all_schools()
+            self._json(200, {"schools": schools, "count": len(schools)})
+            return
+
         elif path == "/api/auth/users":
             if not self._require_admin():
                 return
@@ -516,7 +596,8 @@ class EurarioHandler(BaseHTTPRequestHandler):
                 "show_rooms": query.get("show_rooms", ["1"])[0] in ("1", "true", "yes"),
                 "include_subgroups": query.get("include_subgroups", ["1"])[0] in ("1", "true", "yes"),
                 "classes": classes_param,
-                "lang": req_lang
+                "lang": req_lang,
+                "is_trial": self._is_current_school_trial()
             }
             html_content = generate_classes_print_html(db.get_all(), options)
             html_bytes = html_content.encode("utf-8")
@@ -538,7 +619,8 @@ class EurarioHandler(BaseHTTPRequestHandler):
                 "paper_size": query.get("paper_size", ["A3"])[0],
                 "show_rooms": query.get("show_rooms", ["0"])[0] in ("1", "true", "yes"),
                 "highlight_disp": query.get("highlight_disp", ["1"])[0] in ("1", "true", "yes"),
-                "lang": req_lang
+                "lang": req_lang,
+                "is_trial": self._is_current_school_trial()
             }
             html_content = generate_teachers_master_print_html(db.get_all(), options)
             html_bytes = html_content.encode("utf-8")
@@ -560,7 +642,8 @@ class EurarioHandler(BaseHTTPRequestHandler):
                 "paper_size": query.get("paper_size", ["A3"])[0],
                 "show_rooms": query.get("show_rooms", ["0"])[0] in ("1", "true", "yes"),
                 "highlight_disp": query.get("highlight_disp", ["1"])[0] in ("1", "true", "yes"),
-                "lang": req_lang
+                "lang": req_lang,
+                "is_trial": self._is_current_school_trial()
             }
             docx_bytes = generate_teachers_master_docx(db.get_all(), options)
             date_clean = (options["validity_date"] or "bozza").replace("/", "-")
@@ -771,7 +854,7 @@ class EurarioHandler(BaseHTTPRequestHandler):
         elif path.startswith("/api/snapshots/") and path.endswith("/download_fet"):
             parts = path.split("/")
             sid = parts[3]
-            fet_path = os.path.join(SNAPSHOTS_DIR, f"{sid}.fet")
+            fet_path = os.path.join(db.snapshots_dir, f"{sid}.fet")
             if os.path.exists(fet_path):
                 self._serve_file(fet_path, "application/xml; charset=utf-8", f"{sid}.fet")
             else:
@@ -783,6 +866,8 @@ class EurarioHandler(BaseHTTPRequestHandler):
     def do_POST(self):
         parsed = urlparse(self.path)
         path = parsed.path
+        query = parse_qs(parsed.query)
+        self._setup_request_school(query)
         body = self._read_json()
 
         # --- AUTH POST ENDPOINTS ---
@@ -906,6 +991,121 @@ class EurarioHandler(BaseHTTPRequestHandler):
             try:
                 auth_manager.send_test_email()
                 self._json(200, {"ok": True, "message": "Email di test inviata con successo!"})
+            except Exception as e:
+                self._json(400, {"error": str(e)})
+            return
+
+        # --- MULTI-SCUOLA (TENANTS) & SUPERADMIN API ---
+        elif path == "/api/schools/switch":
+            if not body or not body.get("school_id"):
+                self._json(400, {"error": "Parametro school_id mancante"})
+                return
+            target_sid = str(body["school_id"]).strip()
+            target_school = school_manager.get_school(target_sid)
+            if not target_school:
+                self._json(404, {"error": "Istituto non trovato"})
+                return
+            tok = self._get_session_token()
+            if tok:
+                auth_manager.set_session_school(tok, target_sid)
+            set_current_school_id(target_sid)
+            self._json(200, {
+                "success": True,
+                "active_school_id": target_sid,
+                "school": target_school
+            })
+            return
+
+        elif path == "/api/schools/create":
+            user = self._require_auth()
+            if not user:
+                return
+            if not body or not body.get("name"):
+                self._json(400, {"error": "Nome dell'Istituto obbligatorio"})
+                return
+            try:
+                name = body.get("name")
+                city = body.get("city", "")
+                country = body.get("country", "Italia")
+                school_year = body.get("school_year", "2026/2027")
+                notes = body.get("notes", "")
+                new_sch = school_manager.create_school(
+                    name=name,
+                    city=city,
+                    country=country,
+                    school_year=school_year,
+                    owner_email=user["email"],
+                    notes=notes
+                )
+                auth_manager.add_user_to_school(user["email"], new_sch["id"], role="owner", status="approved")
+                tok = self._get_session_token()
+                if tok:
+                    auth_manager.set_session_school(tok, new_sch["id"])
+                set_current_school_id(new_sch["id"])
+                new_db = get_db(new_sch["id"])
+                new_db.data["institution"] = new_sch["name"]
+                new_db.save()
+                self._json(200, {
+                    "success": True,
+                    "school": new_sch,
+                    "message": "Istituto registrato con successo in Modalità di Prova."
+                })
+            except Exception as e:
+                self._json(400, {"error": str(e)})
+            return
+
+        elif path == "/api/superadmin/schools/approve":
+            user = self._require_superadmin()
+            if not user:
+                return
+            if not body or not body.get("school_id"):
+                self._json(400, {"error": "ID istituto mancante"})
+                return
+            try:
+                res = school_manager.approve_school(body["school_id"], admin_email=user["email"])
+                self._json(200, {"success": True, "school": res})
+            except Exception as e:
+                self._json(400, {"error": str(e)})
+            return
+
+        elif path == "/api/superadmin/schools/suspend":
+            user = self._require_superadmin()
+            if not user:
+                return
+            if not body or not body.get("school_id"):
+                self._json(400, {"error": "ID istituto mancante"})
+                return
+            try:
+                res = school_manager.suspend_school(body["school_id"], admin_email=user["email"])
+                self._json(200, {"success": True, "school": res})
+            except Exception as e:
+                self._json(400, {"error": str(e)})
+            return
+
+        elif path == "/api/superadmin/schools/reactivate":
+            user = self._require_superadmin()
+            if not user:
+                return
+            if not body or not body.get("school_id"):
+                self._json(400, {"error": "ID istituto mancante"})
+                return
+            try:
+                res = school_manager.reactivate_school(body["school_id"], admin_email=user["email"])
+                self._json(200, {"success": True, "school": res})
+            except Exception as e:
+                self._json(400, {"error": str(e)})
+            return
+
+        elif path == "/api/superadmin/schools/delete":
+            user = self._require_superadmin()
+            if not user:
+                return
+            if not body or not body.get("school_id"):
+                self._json(400, {"error": "ID istituto mancante"})
+                return
+            try:
+                ok = school_manager.delete_school(body["school_id"])
+                self._json(200, {"success": ok})
             except Exception as e:
                 self._json(400, {"error": str(e)})
             return
@@ -1488,6 +1688,8 @@ class EurarioHandler(BaseHTTPRequestHandler):
     def do_DELETE(self):
         parsed = urlparse(self.path)
         path = parsed.path
+        query = parse_qs(parsed.query)
+        self._setup_request_school(query)
 
         if not self._require_auth():
             return
@@ -1543,6 +1745,8 @@ class EurarioHandler(BaseHTTPRequestHandler):
     def do_PUT(self):
         parsed = urlparse(self.path)
         path = parsed.path
+        query = parse_qs(parsed.query)
+        self._setup_request_school(query)
         body = self._read_json()
 
         if not self._require_auth():
@@ -1613,7 +1817,9 @@ class EurarioHandler(BaseHTTPRequestHandler):
                 pass
 
         os.makedirs(SOLVER_DIR, exist_ok=True)
-        all_data = db.get_all()
+        target_sid = get_current_school_id()
+        target_db = get_db(target_sid)
+        all_data = target_db.get_all()
         xml_content = generate_fet_xml(all_data, include_timetable=False)
         input_file = os.path.join(SOLVER_DIR, "input_run.fet")
         output_dir = os.path.join(SOLVER_DIR, "output")
@@ -1795,11 +2001,11 @@ class EurarioHandler(BaseHTTPRequestHandler):
                             log_solver_msg(f"🎉 FET terminato con successo! File generato: {os.path.basename(candidates[0])}")
                             try:
                                 with open(candidates[0], "r", encoding="utf-8", errors="ignore") as rf:
-                                    db.save_solved_timetable_xml(rf.read())
+                                    target_db.save_solved_timetable_xml(rf.read())
                                 log_solver_msg("Orario salvato e matrici visuali aggiornate!")
                                 solver_state["has_timetable"] = True
                                 if locked_acts:
-                                    new_tt = db.data.get("timetable", {})
+                                    new_tt = target_db.data.get("timetable", {})
                                     verified = sum(1 for la in locked_acts if new_tt.get(la["id"], {}).get("day") == la["day"] and new_tt.get(la["id"], {}).get("hour") == la["hour"])
                                     log_solver_msg(f"🔒 Verifica ore fissate: {verified}/{len(locked_acts)} attività preservate al 100% nelle posizioni richieste!")
                                     for la in locked_acts:

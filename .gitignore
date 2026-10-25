@@ -44,6 +44,7 @@ timetables/
 webapp/data/solver_run/
 webapp/data/access_logs.json
 webapp/data/snapshots/
+webapp/data/tenants/
 
 # Docker compose local volume (if created in root)
 /data/

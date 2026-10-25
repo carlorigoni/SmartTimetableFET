@@ -560,6 +560,7 @@ def generate_classes_print_html(data, options=None):
     raw_lang = options.get("lang", "it") if options else "it"
     is_en = str(raw_lang).strip().lower() in ("en", "eng", "english")
     lang = "en" if is_en else "it"
+    is_trial = bool(options.get("is_trial", False))
 
     institution = data.get("institution", 'Liceo & Tecnico "Pico De Paperis" - Paperopoli')
     subjects_list = [s["name"] for s in data.get("subjects", [])]
@@ -666,6 +667,26 @@ def generate_classes_print_html(data, options=None):
     margin-right: 8px;
   }}
   .btn-toolbar-sec:hover {{ background: #334155; }}
+
+  /* Watermark Demo/Trial */
+  .watermark-box {{
+    position: absolute;
+    top: 52%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-24deg);
+    font-size: 54px;
+    font-weight: 900;
+    color: rgba(220, 38, 38, 0.18);
+    text-transform: uppercase;
+    letter-spacing: 5px;
+    pointer-events: none;
+    z-index: 999;
+    white-space: nowrap;
+    border: 6px dashed rgba(220, 38, 38, 0.24);
+    padding: 16px 40px;
+    border-radius: 12px;
+    text-align: center;
+  }}
 
   /* Struttura orizzontale A4 Landscape */
   .booklet {{
@@ -953,7 +974,10 @@ function switchPrintLang(newLang) {{
 <body>
 
 <div class="no-print">
-  <h2>{'🖨️ Print Class Timetable' if is_en else '🖨️ Stampa Orario per Classe'} &mdash; {len(classes_to_print)} {'Classes (A4 Landscape)' if is_en else 'Classi (A4 Orizzontale)'}</h2>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <h2>{'🖨️ Print Class Timetable' if is_en else '🖨️ Stampa Orario per Classe'} &mdash; {len(classes_to_print)} {'Classes (A4 Landscape)' if is_en else 'Classi (A4 Orizzontale)'}</h2>
+    {f'<span style="background:#dc2626;color:#ffffff;font-weight:700;padding:3px 10px;border-radius:4px;font-size:11px;letter-spacing:0.02em;">⚠️ VERSIONE DIMOSTRATIVA</span>' if is_trial else ''}
+  </div>
   <div style="display:flex;align-items:center;gap:6px;">
     <div style="display:inline-flex;border:1px solid #475569;border-radius:4px;overflow:hidden;margin-right:6px;">
       <button class="btn-toolbar" style="padding:4px 8px;font-size:11px;background:{'#2563eb' if not is_en else '#334155'};border-radius:0;" onclick="switchPrintLang('it')" title="Visualizza in Italiano">🇮🇹 ITA</button>
@@ -986,6 +1010,7 @@ function switchPrintLang(newLang) {{
 
         html_out.append(f"""
   <div class="sheet-page">
+    {f'<div class="watermark-box">EURARIO &mdash; VERSIONE DIMOSTRATIVA</div>' if is_trial else ''}
     <div class="header-box">
       <div class="header-left">
         <h1>{class_title_prefix} {escape(classe)} <span class="sub-tag">{escape(sub_desc)}</span></h1>
@@ -1121,6 +1146,7 @@ def generate_teachers_master_print_html(data, options=None):
     raw_lang = options.get("lang", "it") if options else "it"
     is_en = str(raw_lang).strip().lower() in ("en", "eng", "english")
     lang = "en" if is_en else "it"
+    is_trial = bool(options.get("is_trial", False))
 
     institution = data.get("institution", 'Liceo & Tecnico "Pico De Paperis" - Paperopoli')
     days = data.get("days", ["Lun", "Mar", "Mer", "Gio", "Ven"])
@@ -1355,6 +1381,25 @@ def generate_teachers_master_print_html(data, options=None):
     font-size: 8.5px;
   }}
 
+  .watermark-master {{
+    position: fixed;
+    top: 52%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-24deg);
+    font-size: 64px;
+    font-weight: 900;
+    color: rgba(220, 38, 38, 0.16);
+    text-transform: uppercase;
+    letter-spacing: 6px;
+    pointer-events: none;
+    z-index: 9999;
+    white-space: nowrap;
+    border: 8px dashed rgba(220, 38, 38, 0.22);
+    padding: 20px 50px;
+    border-radius: 16px;
+    text-align: center;
+  }}
+
   /* Bande verticali alternate per giorno */
   .day-band-light {{ background-color: #ffffff; }}
   .day-band-alt {{ background-color: #f1f5f9; }}
@@ -1505,7 +1550,10 @@ function copyTableForGoogleDocs() {{
 <body>
 
 <div class="no-print">
-  <h2>{'📄 Faculty Master Timetable' if is_en else '📄 Tabellone Generale Orario Docenti'} &mdash; {'Format' if is_en else 'Formato'} {paper_size} ({len(sorted_teachers)} {'Teachers' if is_en else 'Docenti'})</h2>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <h2>{'📄 Faculty Master Timetable' if is_en else '📄 Tabellone Generale Orario Docenti'} &mdash; {'Format' if is_en else 'Formato'} {paper_size} ({len(sorted_teachers)} {'Teachers' if is_en else 'Docenti'})</h2>
+    {f'<span style="background:#dc2626;color:#ffffff;font-weight:700;padding:3px 10px;border-radius:4px;font-size:11px;letter-spacing:0.02em;">⚠️ VERSIONE DIMOSTRATIVA</span>' if is_trial else ''}
+  </div>
   <div style="display:flex;gap:6px;align-items:center;">
     <div style="display:inline-flex;border:1px solid #475569;border-radius:4px;overflow:hidden;margin-right:6px;">
       <button class="btn-toolbar" style="padding:4px 8px;font-size:11px;background:{'#2563eb' if not is_en else '#334155'};border-radius:0;" onclick="switchPrintLang('it')" title="Visualizza in Italiano">🇮🇹 ITA</button>
@@ -1519,6 +1567,7 @@ function copyTableForGoogleDocs() {{
 </div>
 
 <div class="master-wrap">
+  {f'<div class="watermark-master">EURARIO &mdash; VERSIONE DIMOSTRATIVA</div>' if is_trial else ''}
   <div class="header-banner">
     <h1>{escape(institution)} &mdash; {'Faculty Master Timetable' if lang == 'en' else 'Tabellone Orario Docenti'}</h1>
     <div class="meta">
@@ -1639,6 +1688,7 @@ def generate_teachers_master_docx(data, options=None):
     raw_lang = options.get("lang", "it") if options else "it"
     is_en = str(raw_lang).strip().lower() in ("en", "eng", "english")
     lang = "en" if is_en else "it"
+    is_trial = bool(options.get("is_trial", False))
 
     institution = data.get("institution", 'Liceo & Tecnico "Pico De Paperis" - Paperopoli')
     days = data.get("days", ["Lun", "Mar", "Mer", "Gio", "Ven"])
@@ -1677,11 +1727,27 @@ def generate_teachers_master_docx(data, options=None):
     hour_w = int((total_printable - teacher_w - tot_w) / tot_active_hours)
 
     xml_parts = []
-    doc_title = f"{institution} — {'Faculty Master Timetable' if lang == 'en' else 'Tabellone Orario Docenti'} ({'Effective from' if lang == 'en' else 'Valido dal'} {validity_date})"
+    trial_tag = " [VERSIONE DIMOSTRATIVA]" if is_trial else ""
+    doc_title = f"{institution} — {'Faculty Master Timetable' if lang == 'en' else 'Tabellone Orario Docenti'}{trial_tag} ({'Effective from' if lang == 'en' else 'Valido dal'} {validity_date})"
+    trial_banner_xml = """    <w:p>
+      <w:pPr>
+        <w:jc w:val="center"/>
+        <w:spacing w:before="0" w:after="120"/>
+      </w:pPr>
+      <w:r>
+        <w:rPr>
+          <w:b/>
+          <w:color w:val="DC2626"/>
+          <w:sz w:val="24"/>
+        </w:rPr>
+        <w:t>*** EURARIO — VERSIONE DIMOSTRATIVA IN PROVA ***</w:t>
+      </w:r>
+    </w:p>
+""" if is_trial else ""
     xml_parts.append(f"""<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
   <w:body>
-    <w:p>
+{trial_banner_xml}    <w:p>
       <w:pPr>
         <w:jc w:val="left"/>
         <w:spacing w:before="0" w:after="80"/>

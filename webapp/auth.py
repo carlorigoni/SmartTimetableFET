@@ -53,9 +53,11 @@ SMTP_PORT_ENV = int(os.environ.get("SMTP_PORT", "587"))
 
 class AuthManager:
     def __init__(self):
-        self.sessions = {}  # token -> {email, created_at, expires_at}
+        self.sessions = {}  # token -> {email, created_at, expires_at, is_passcode_auth, active_school_id}
         self.config = {
             "admin_email": DEFAULT_ADMIN_EMAIL,
+            "superadmins": [DEFAULT_ADMIN_EMAIL],
+            "school_memberships": {},  # email -> { school_id: { role, status, added_at } }
             "google_client_id": DEFAULT_GOOGLE_CLIENT_ID,
             "emergency_passcode": os.environ.get("ADMIN_PASSCODE", "admin2026"),
             "smtp": {
@@ -90,6 +92,10 @@ class AuthManager:
                     if isinstance(data, dict):
                         # Merge configuration
                         self.config["admin_email"] = data.get("admin_email", self.config["admin_email"]).lower().strip()
+                        self.config["superadmins"] = [s.lower().strip() for s in data.get("superadmins", [self.config["admin_email"]])]
+                        if self.config["admin_email"] not in self.config["superadmins"]:
+                            self.config["superadmins"].append(self.config["admin_email"])
+                        self.config["school_memberships"] = data.get("school_memberships", {})
                         self.config["google_client_id"] = data.get("google_client_id", self.config["google_client_id"]).strip()
                         self.config["emergency_passcode"] = data.get("emergency_passcode", self.config["emergency_passcode"])
                         self.config["smtp"] = {**self.config["smtp"], **data.get("smtp", {})}
@@ -185,13 +191,28 @@ class AuthManager:
         self.log_access("LOGS_CLEARED", admin_email or "admin", "admin", "INFO", ip, "-", "Registro accessi azzerato dall'amministratore")
         return True
 
-    # --- SESSION MANAGEMENT ---
+    # --- SESSION MANAGEMENT & ROLES ---
 
-    def create_session(self, email):
+    def is_superadmin(self, email, is_passcode_auth=False):
+        """Restituisce True se l'utente ha privilegi globali di SuperAdmin della piattaforma."""
+        if is_passcode_auth:
+            return True
+        clean = (email or "").lower().strip()
+        if not clean:
+            return False
+        admin_clean = self.config.get("admin_email", "").lower().strip()
+        if clean == admin_clean:
+            return True
+        superadmins = [s.lower().strip() for s in self.config.get("superadmins", [])]
+        return clean in superadmins
+
+    def create_session(self, email, is_passcode_auth=False, active_school_id="default"):
         token = secrets.token_urlsafe(32)
         now = time.time()
         self.sessions[token] = {
             "email": email.lower().strip(),
+            "is_passcode_auth": bool(is_passcode_auth),
+            "active_school_id": str(active_school_id or "default").strip(),
             "created_at": now,
             "expires_at": now + (86400 * 30)  # 30 giorni
         }
@@ -208,8 +229,53 @@ class AuthManager:
         self._load()
         user = self.config["users"].get(email)
         if not user:
-            return None
-        return dict(user)
+            # Fallback se autenticato via passcode ma record utente non presente
+            user = {
+                "email": email,
+                "name": "Super Amministratore",
+                "role": "admin",
+                "status": "approved",
+                "picture": "",
+                "created_at": get_local_now().isoformat()
+            }
+        u = dict(user)
+        is_passcode = bool(sess.get("is_passcode_auth", False))
+        u["is_superadmin"] = self.is_superadmin(email, is_passcode)
+        u["active_school_id"] = sess.get("active_school_id", "default")
+        return u
+
+    def set_session_school(self, token, school_id):
+        if token and token in self.sessions:
+            self.sessions[token]["active_school_id"] = str(school_id or "default").strip()
+            return True
+        return False
+
+    def get_user_memberships(self, email):
+        self._load()
+        clean = (email or "").lower().strip()
+        return self.config.get("school_memberships", {}).get(clean, {})
+
+    def add_user_to_school(self, email, school_id, role="editor", status="approved"):
+        self._load()
+        clean = (email or "").lower().strip()
+        if not clean or not school_id:
+            return
+        mems = self.config.setdefault("school_memberships", {})
+        user_mems = mems.setdefault(clean, {})
+        user_mems[school_id] = {
+            "role": role,
+            "status": status,
+            "added_at": get_local_now().isoformat()
+        }
+        self._save()
+
+    def remove_user_from_school(self, email, school_id):
+        self._load()
+        clean = (email or "").lower().strip()
+        mems = self.config.setdefault("school_memberships", {})
+        if clean in mems and school_id in mems[clean]:
+            del mems[clean][school_id]
+            self._save()
 
     def destroy_session(self, token, ip=None, user_agent=None):
         if token in self.sessions:
@@ -340,10 +406,19 @@ class AuthManager:
             raise ValueError("Passcode di emergenza errato")
 
         admin_email = self.config["admin_email"]
-        session_token = self.create_session(admin_email)
-        user = dict(self.config["users"][admin_email])
+        session_token = self.create_session(admin_email, is_passcode_auth=True)
+        user = dict(self.config["users"].get(admin_email, {
+            "email": admin_email,
+            "name": "Super Amministratore",
+            "role": "admin",
+            "status": "approved"
+        }))
+        user["is_superadmin"] = True
+        user["active_school_id"] = "default"
         user["last_login"] = get_local_now().isoformat()
-        self._save()
+        if admin_email in self.config["users"]:
+            self.config["users"][admin_email]["last_login"] = user["last_login"]
+            self._save()
         self.log_access("EMERGENCY_LOGIN", admin_email, "admin", "SUCCESS", ip, user_agent, "Accesso riuscito con passcode master")
         return {
             "session_token": session_token,

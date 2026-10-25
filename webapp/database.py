@@ -360,9 +360,22 @@ DEFAULT_BLOCK_RULES = [
 
 
 class Database:
-    def __init__(self):
+    def __init__(self, school_id="default"):
         self.lock = threading.RLock()
-        os.makedirs(DATA_DIR, exist_ok=True)
+        self.school_id = str(school_id or "default").strip() or "default"
+        if self.school_id == "default":
+            self.data_dir = DATA_DIR
+            self.project_file = PROJECT_FILE
+            self.solved_file = SOLVED_FILE
+            self.snapshots_dir = SNAPSHOTS_DIR
+        else:
+            self.data_dir = os.path.join(DATA_DIR, "tenants", self.school_id)
+            self.project_file = os.path.join(self.data_dir, "current_project.json")
+            self.solved_file = os.path.join(self.data_dir, "solved_timetable.fet")
+            self.snapshots_dir = os.path.join(self.data_dir, "snapshots")
+
+        os.makedirs(self.data_dir, exist_ok=True)
+        os.makedirs(self.snapshots_dir, exist_ok=True)
         self.data = self._init_data()
 
     def _init_data(self):
@@ -373,25 +386,61 @@ class Database:
         demo_proj = os.path.join(DATA_DIR, "demo_paperopoli.json")
         demo_solved_file = os.path.join(DATA_DIR, "demo_solved_timetable.fet")
 
-        if not os.path.exists(PROJECT_FILE):
+        if self.school_id != "default" and not os.path.exists(self.project_file):
+            try:
+                from webapp.schools import school_manager
+                sinfo = school_manager.get_school(self.school_id)
+                inst_name = sinfo.get("name") if sinfo else self.school_id
+            except Exception:
+                inst_name = self.school_id
+            data = {
+                "institution": inst_name,
+                "comments": f"Configurazione orario {inst_name}",
+                "days": ["Lun", "Mar", "Mer", "Gio", "Ven"],
+                "hours": ["1", "2", "INT1", "3", "4", "INT2", "5", "6", "7", "8"],
+                "teachers": [],
+                "subjects": [],
+                "buildings": [
+                    {"name": "Centrale", "short_code": "C", "comments": "Sede Centrale"}
+                ],
+                "rooms": [],
+                "classes": [],
+                "groups": [],
+                "activities": [],
+                "constraints": copy.deepcopy(DEFAULT_CONSTRAINTS),
+                "day_hours": copy.deepcopy(DEFAULT_DAY_HOURS),
+                "parameters": copy.deepcopy(DEFAULT_PARAMETERS),
+                "teacher_availability": {},
+                "room_availability": {},
+                "extra_time_constraints": [],
+                "extra_space_constraints": [],
+                "locked_activities": [],
+                "timetable": {},
+                "has_timetable": False,
+                "config_name": "Configurazione Iniziale"
+            }
+            self._save_to_disk(data)
+            return data
+
+        if not os.path.exists(self.project_file):
             if os.path.exists(seed_proj):
                 try:
-                    shutil.copyfile(seed_proj, PROJECT_FILE)
-                    if os.path.exists(seed_solved_file) and not os.path.exists(SOLVED_FILE):
-                        shutil.copyfile(seed_solved_file, SOLVED_FILE)
+                    shutil.copyfile(seed_proj, self.project_file)
+                    if os.path.exists(seed_solved_file) and not os.path.exists(self.solved_file):
+                        shutil.copyfile(seed_solved_file, self.solved_file)
                 except Exception as e:
                     print("Notice: cannot copy seed_data:", e)
             elif os.path.exists(demo_proj):
                 try:
-                    shutil.copyfile(demo_proj, PROJECT_FILE)
-                    if os.path.exists(demo_solved_file) and not os.path.exists(SOLVED_FILE):
-                        shutil.copyfile(demo_solved_file, SOLVED_FILE)
+                    shutil.copyfile(demo_proj, self.project_file)
+                    if os.path.exists(demo_solved_file) and not os.path.exists(self.solved_file):
+                        shutil.copyfile(demo_solved_file, self.solved_file)
                 except Exception as e:
                     print("Notice: cannot copy demo_paperopoli:", e)
 
-        if os.path.exists(PROJECT_FILE):
+        if os.path.exists(self.project_file):
             try:
-                with open(PROJECT_FILE, "r", encoding="utf-8") as f:
+                with open(self.project_file, "r", encoding="utf-8") as f:
                     data = json.load(f)
                     data = normalize_legacy_gym_rooms(data)
             except Exception:
@@ -506,17 +555,17 @@ class Database:
             data["classes"].sort(key=lambda c: natural_class_sort_key(c["name"]))
 
         # Assicura cartella snapshots e file orario risolto
-        os.makedirs(SNAPSHOTS_DIR, exist_ok=True)
-        if not os.path.exists(SOLVED_FILE) and os.path.exists(seed_solved_file):
+        os.makedirs(self.snapshots_dir, exist_ok=True)
+        if not os.path.exists(self.solved_file) and os.path.exists(seed_solved_file) and self.school_id == "default":
             try:
-                shutil.copyfile(seed_solved_file, SOLVED_FILE)
+                shutil.copyfile(seed_solved_file, self.solved_file)
             except Exception:
                 pass
 
-        # Se esiste SOLVED_FILE ma l'orario non è presente nel dizionario, caricalo
-        if os.path.exists(SOLVED_FILE) and (not data.get("has_timetable") or not data.get("timetable")):
+        # Se esiste il file orario risolto ma l'orario non è presente nel dizionario, caricalo
+        if os.path.exists(self.solved_file) and (not data.get("has_timetable") or not data.get("timetable")):
             try:
-                solved_parsed = parse_fet_xml(SOLVED_FILE)
+                solved_parsed = parse_fet_xml(self.solved_file)
                 if solved_parsed.get("timetable"):
                     data["timetable"] = solved_parsed["timetable"]
                     data["has_timetable"] = True
@@ -536,7 +585,7 @@ class Database:
                 print("Notice: auto-sync disposizioni on init:", e_disp)
 
         # Se non esistono ancora snapshot, crea lo snapshot baseline iniziale
-        existing_snaps = [f for f in os.listdir(SNAPSHOTS_DIR) if f.endswith(".json")]
+        existing_snaps = [f for f in os.listdir(self.snapshots_dir) if f.endswith(".json")]
         if not existing_snaps:
             try:
                 now = get_local_now()
@@ -557,11 +606,11 @@ class Database:
                     "stats": stats,
                     "data": copy.deepcopy(data)
                 }
-                with open(os.path.join(SNAPSHOTS_DIR, f"{sid}.json"), "w", encoding="utf-8") as sf:
+                with open(os.path.join(self.snapshots_dir, f"{sid}.json"), "w", encoding="utf-8") as sf:
                     json.dump(record, sf, ensure_ascii=False, indent=2)
-                if os.path.exists(SOLVED_FILE):
+                if os.path.exists(self.solved_file):
                     import shutil
-                    shutil.copyfile(SOLVED_FILE, os.path.join(SNAPSHOTS_DIR, f"{sid}.fet"))
+                    shutil.copyfile(self.solved_file, os.path.join(self.snapshots_dir, f"{sid}.fet"))
             except Exception as e:
                 print("Errore creazione snapshot baseline:", e)
 
@@ -570,7 +619,7 @@ class Database:
 
     def _save_to_disk(self, data):
         try:
-            with open(PROJECT_FILE, "w", encoding="utf-8") as f:
+            with open(self.project_file, "w", encoding="utf-8") as f:
                 json.dump(data, f, ensure_ascii=False, indent=2)
         except Exception as e:
             print("Errore salvataggio project.json:", e)
@@ -703,9 +752,9 @@ class Database:
                 "block_rules": []
             }
             self._save_to_disk(self.data)
-            if os.path.exists(SOLVED_FILE):
+            if os.path.exists(self.solved_file):
                 try:
-                    os.remove(SOLVED_FILE)
+                    os.remove(self.solved_file)
                 except Exception:
                     pass
             self.create_snapshot("Reset: Foglio Bianco", "Progetto azzerato a struttura vuota pronto per una nuova scuola.")
@@ -737,7 +786,7 @@ class Database:
             self._save_to_disk(self.data)
             if os.path.exists(demo_fet):
                 try:
-                    shutil.copyfile(demo_fet, SOLVED_FILE)
+                    shutil.copyfile(demo_fet, self.solved_file)
                 except Exception as e:
                     print("Could not copy demo solved timetable:", e)
             self.create_snapshot(snap_name, snap_desc)
@@ -881,7 +930,7 @@ class Database:
                 result.append(t_copy)
             return result
 
-    def add_teacher(self, name, comments="", cdc="", target_hours=18, max_days=5, min_days=4, contract_type="intera", short_name="", is_coe=False):
+    def add_teacher(self, name, comments="", cdc="", target_hours=18, max_days=5, min_days=4, contract_type="intera", short_name="", is_coe=False, custom_disp_hours=None):
         with self.lock:
             name = name.strip()
             if not any(t["name"].lower() == name.lower() for t in self.data["teachers"]):
@@ -898,9 +947,9 @@ class Database:
                     ctype = "intera"
                 sn = (short_name or "").strip().upper() or compute_short_name(name)
                 custom_disp = None
-                if "custom_disp_hours" in teacher_dict:
-                    raw_disp = teacher_dict["custom_disp_hours"]
-                    if raw_disp is not None and str(raw_disp).strip() not in ("", "null", "auto"):
+                if custom_disp_hours is not None:
+                    raw_disp = custom_disp_hours
+                    if str(raw_disp).strip() not in ("", "null", "auto"):
                         try:
                             custom_disp = max(0, int(raw_disp))
                         except (ValueError, TypeError):
@@ -2636,7 +2685,7 @@ class Database:
             self._save_to_disk(self.data)
             try:
                 xml_full = generate_fet_xml(self.data, include_timetable=True, exclude_disposizioni=False)
-                with open(SOLVED_FILE, "w", encoding="utf-8") as f:
+                with open(self.solved_file, "w", encoding="utf-8") as f:
                     f.write(xml_full)
             except Exception as e_fet:
                 pass
@@ -2657,11 +2706,11 @@ class Database:
             self._save_to_disk(self.data)
             try:
                 xml_full = generate_fet_xml(self.data, include_timetable=True, exclude_disposizioni=False)
-                with open(SOLVED_FILE, "w", encoding="utf-8") as f:
+                with open(self.solved_file, "w", encoding="utf-8") as f:
                     f.write(xml_full)
             except Exception:
                 try:
-                    with open(SOLVED_FILE, "w", encoding="utf-8") as f:
+                    with open(self.solved_file, "w", encoding="utf-8") as f:
                         f.write(xml_content)
                 except Exception:
                     pass
@@ -2897,11 +2946,11 @@ class Database:
         """
         Ritorna l'elenco di tutte le configurazioni e snapshot salvati, ordinati dal più recente.
         """
-        os.makedirs(SNAPSHOTS_DIR, exist_ok=True)
+        os.makedirs(self.snapshots_dir, exist_ok=True)
         items = []
-        for fname in os.listdir(SNAPSHOTS_DIR):
+        for fname in os.listdir(self.snapshots_dir):
             if fname.endswith(".json") and not fname.startswith("."):
-                fpath = os.path.join(SNAPSHOTS_DIR, fname)
+                fpath = os.path.join(self.snapshots_dir, fname)
                 try:
                     with open(fpath, "r", encoding="utf-8") as f:
                         meta = json.load(f)
@@ -2926,7 +2975,7 @@ class Database:
         in un file snapshot persistente nel database interno.
         """
         with self.lock:
-            os.makedirs(SNAPSHOTS_DIR, exist_ok=True)
+            os.makedirs(self.snapshots_dir, exist_ok=True)
             now = get_local_now()
             sid = f"snap_{now.strftime('%Y%m%d_%H%M%S')}"
             snap_name = (name or "").strip() or f"Configurazione del {now.strftime('%d/%m/%Y %H:%M')}"
@@ -2949,14 +2998,14 @@ class Database:
                 "data": copy.deepcopy(self.data)
             }
             
-            jpath = os.path.join(SNAPSHOTS_DIR, f"{sid}.json")
+            jpath = os.path.join(self.snapshots_dir, f"{sid}.json")
             with open(jpath, "w", encoding="utf-8") as f:
                 json.dump(record, f, ensure_ascii=False, indent=2)
                 
-            if os.path.exists(SOLVED_FILE):
+            if os.path.exists(self.solved_file):
                 try:
                     import shutil
-                    shutil.copyfile(SOLVED_FILE, os.path.join(SNAPSHOTS_DIR, f"{sid}.fet"))
+                    shutil.copyfile(self.solved_file, os.path.join(self.snapshots_dir, f"{sid}.fet"))
                 except Exception:
                     pass
                     
@@ -2984,7 +3033,7 @@ class Database:
         Rinomina uno snapshot salvato o ne modifica la descrizione.
         """
         with self.lock:
-            jpath = os.path.join(SNAPSHOTS_DIR, f"{snapshot_id}.json")
+            jpath = os.path.join(self.snapshots_dir, f"{snapshot_id}.json")
             if not os.path.exists(jpath):
                 return False
             try:
@@ -3004,7 +3053,7 @@ class Database:
         Esegue il rollback / ripristino di uno snapshot come configurazione attiva corrente.
         """
         with self.lock:
-            jpath = os.path.join(SNAPSHOTS_DIR, f"{snapshot_id}.json")
+            jpath = os.path.join(self.snapshots_dir, f"{snapshot_id}.json")
             if not os.path.exists(jpath):
                 return False
             try:
@@ -3024,11 +3073,11 @@ class Database:
                     self.sync_disposizioni_activities()
                 self._save_to_disk(self.data)
                 
-                snap_fet = os.path.join(SNAPSHOTS_DIR, f"{snapshot_id}.fet")
+                snap_fet = os.path.join(self.snapshots_dir, f"{snapshot_id}.fet")
                 if os.path.exists(snap_fet):
                     try:
                         import shutil
-                        shutil.copyfile(snap_fet, SOLVED_FILE)
+                        shutil.copyfile(snap_fet, self.solved_file)
                     except Exception:
                         pass
                 return True
@@ -3041,8 +3090,8 @@ class Database:
         Elimina uno snapshot e il relativo file .fet dall'archivio.
         """
         with self.lock:
-            jpath = os.path.join(SNAPSHOTS_DIR, f"{snapshot_id}.json")
-            fpath = os.path.join(SNAPSHOTS_DIR, f"{snapshot_id}.fet")
+            jpath = os.path.join(self.snapshots_dir, f"{snapshot_id}.json")
+            fpath = os.path.join(self.snapshots_dir, f"{snapshot_id}.fet")
             ok = False
             if os.path.exists(jpath):
                 try:
@@ -3061,7 +3110,7 @@ class Database:
         """
         Ritorna il contenuto JSON completo di uno snapshot per il download.
         """
-        jpath = os.path.join(SNAPSHOTS_DIR, f"{snapshot_id}.json")
+        jpath = os.path.join(self.snapshots_dir, f"{snapshot_id}.json")
         if os.path.exists(jpath):
             with open(jpath, "r", encoding="utf-8") as f:
                 return f.read()
@@ -3072,7 +3121,7 @@ class Database:
         Importa uno snapshot da un file JSON o FET caricato da computer.
         """
         with self.lock:
-            os.makedirs(SNAPSHOTS_DIR, exist_ok=True)
+            os.makedirs(self.snapshots_dir, exist_ok=True)
             now = get_local_now()
             sid = f"snap_imp_{now.strftime('%Y%m%d_%H%M%S')}"
             clean_name = os.path.splitext(os.path.basename(filename))[0] if filename else f"Import_{now.strftime('%d%m_%H%M')}"
@@ -3101,7 +3150,7 @@ class Database:
                         "stats": stats,
                         "data": raw_data
                     }
-                    jpath = os.path.join(SNAPSHOTS_DIR, f"{sid}.json")
+                    jpath = os.path.join(self.snapshots_dir, f"{sid}.json")
                     with open(jpath, "w", encoding="utf-8") as f:
                         json.dump(record, f, ensure_ascii=False, indent=2)
                     return record
@@ -3126,7 +3175,7 @@ class Database:
                         "stats": stats,
                         "data": parsed_fet
                     }
-                    jpath = os.path.join(SNAPSHOTS_DIR, f"{sid}.json")
+                    jpath = os.path.join(self.snapshots_dir, f"{sid}.json")
                     with open(jpath, "w", encoding="utf-8") as f:
                         json.dump(record, f, ensure_ascii=False, indent=2)
                     with open(os.path.join(SNAPSHOTS_DIR, f"{sid}.fet"), "w", encoding="utf-8") as ff:
@@ -3608,4 +3657,51 @@ def parse_organico_docx_content(content_bytes_or_path):
     return teachers
 
 
-db = Database()
+# --- GESTIONE MULTI-SCUOLA & PROXY TRASPARENTE ---
+
+_request_context = threading.local()
+
+def set_current_school_id(sid):
+    """Imposta l'ID della scuola attiva per il thread corrente."""
+    _request_context.school_id = str(sid or "default").strip() or "default"
+
+def get_current_school_id():
+    """Restituisce l'ID della scuola attiva per il thread corrente (default: 'default')."""
+    return getattr(_request_context, "school_id", "default")
+
+_db_instances = {}
+_db_instances_lock = threading.RLock()
+
+def get_db(school_id=None):
+    """Restituisce l'istanza isolata del Database per la scuola specificata."""
+    sid = str(school_id or "default").strip() or "default"
+    with _db_instances_lock:
+        if sid not in _db_instances:
+            _db_instances[sid] = Database(school_id=sid)
+        return _db_instances[sid]
+
+class DynamicDBProxy:
+    """
+    Proxy trasparente per Database.
+    Inoltra dinamicamente tutte le chiamate e gli attributi all'istanza
+    Database corrispondente alla scuola attiva nel thread corrente.
+    Garantisce il 100% di retrocompatibilità e isolamento per scuola.
+    """
+    def _target(self):
+        sid = get_current_school_id()
+        return get_db(sid)
+
+    def __getattr__(self, name):
+        return getattr(self._target(), name)
+
+    def __setattr__(self, name, value):
+        if name in ("_target",):
+            super().__setattr__(name, value)
+        else:
+            setattr(self._target(), name, value)
+
+    def __repr__(self):
+        return repr(self._target())
+
+# Singleton trasparente: se usato direttamente punta alla scuola corrente del thread
+db = DynamicDBProxy()
