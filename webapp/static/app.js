@@ -22,7 +22,7 @@ let pollSolverTimer = null;
 let currentSolverRunning = false;
 
 // --- VERSIONE E IDENTITÀ APPLICATIVA ---
-const APP_VERSION = '1.5.3';
+const APP_VERSION = '1.5.4';
 
 // Helper traduzione i18n universale
 function _t(key, fallback = '') {
@@ -433,6 +433,9 @@ async function openAccessManagementModal() {
   const modal = document.getElementById('accessModal');
   if (!modal) return;
   modal.style.display = 'flex';
+  if (window.I18N && typeof window.I18N.applyStaticTranslations === 'function') {
+    window.I18N.applyStaticTranslations(modal);
+  }
   switchAccessTab('pending');
   await loadUsersList();
 }
@@ -461,19 +464,20 @@ function switchAccessTab(tab) {
 }
 
 async function loadAccessLogs() {
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
   const tbody = document.getElementById('accessLogsTbody');
   if (!tbody) return;
-  tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--text-muted);">Caricamento registro accessi in corso...</td></tr>';
+  tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--text-muted);">${isEn ? 'Loading access audit log...' : 'Caricamento registro accessi in corso...'}</td></tr>`;
   try {
     const res = await fetch('/api/auth/access_logs?limit=250');
     if (!res.ok) {
-      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:20px;color:#dc2626;">Errore durante il caricamento del registro accessi</td></tr>';
+      tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:20px;color:#dc2626;">${isEn ? 'Error loading access log' : 'Errore durante il caricamento del registro accessi'}</td></tr>`;
       return;
     }
     const data = await res.json();
     const logs = data.logs || [];
     if (logs.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--text-muted);">Nessun evento di accesso registrato finora.</td></tr>';
+      tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--text-muted);">${isEn ? 'No access events recorded yet.' : 'Nessun evento di accesso registrato finora.'}</td></tr>`;
       return;
     }
     tbody.innerHTML = logs.map(l => {
@@ -504,41 +508,44 @@ async function loadAccessLogs() {
       </tr>`;
     }).join('');
   } catch (e) {
-    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:20px;color:#dc2626;">Errore caricamento: ${escapeHtml(e.message)}</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:20px;color:#dc2626;">${isEn ? 'Load error: ' : 'Errore caricamento: '} ${escapeHtml(e.message)}</td></tr>`;
   }
 }
 
 async function clearAccessLogs() {
-  if (!confirm('Sei sicuro di voler azzerare il registro cronologico degli accessi?')) return;
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
+  if (!confirm(isEn ? 'Are you sure you want to clear the access event log?' : 'Sei sicuro di voler azzerare il registro cronologico degli accessi?')) return;
   try {
     const res = await fetch('/api/auth/access_logs/clear', { method: 'POST' });
     const data = await res.json();
     if (!res.ok) {
-      showToast(data.error || 'Errore azzeramento registro', 'error');
+      showToast(data.error || (isEn ? 'Error clearing audit log' : 'Errore azzeramento registro'), 'error');
       return;
     }
-    showToast('Registro accessi azzerato con successo', 'ok');
+    showToast(isEn ? 'Access log cleared successfully' : 'Registro accessi azzerato con successo', 'ok');
     loadAccessLogs();
   } catch (e) {
-    showToast('Errore azzeramento: ' + e.message, 'error');
+    showToast((isEn ? 'Error clearing log: ' : 'Errore azzeramento: ') + e.message, 'error');
   }
 }
 
 async function loadUsersList() {
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
   try {
     const res = await fetch('/api/auth/users');
     if (!res.ok) {
-      showToast('Errore caricamento utenti', 'error');
+      showToast(isEn ? 'Error loading users list' : 'Errore caricamento utenti', 'error');
       return;
     }
     currentUsersData = await res.json();
     renderUsersUI();
   } catch (e) {
-    showToast('Errore di connessione: ' + e.message, 'error');
+    showToast((isEn ? 'Connection error: ' : 'Errore di connessione: ') + e.message, 'error');
   }
 }
 
 function renderUsersUI() {
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
   const users = currentUsersData.users || [];
   const pending = users.filter(u => u.status === 'pending');
   const approved = users.filter(u => u.status === 'approved');
@@ -556,12 +563,13 @@ function renderUsersUI() {
     pendingContainer.innerHTML = `
       <div style="text-align:center;padding:32px 16px;color:#64748b;">
         <div style="font-size:36px;margin-bottom:8px;">✅</div>
-        <b>Nessuna richiesta di accesso in attesa.</b>
-        <p style="font-size:12px;margin-top:4px;">Tutti i docenti che hanno effettuato il login sono già stati autorizzati.</p>
+        <b>${isEn ? 'No pending access requests.' : 'Nessuna richiesta di accesso in attesa.'}</b>
+        <p style="font-size:12px;margin-top:4px;">${isEn ? 'All teachers who signed in have already been authorized.' : 'Tutti i docenti che hanno effettuato il login sono già stati autorizzati.'}</p>
       </div>`;
   } else {
     pendingContainer.innerHTML = pending.map(u => {
       const emailSafe = btoa(unescape(encodeURIComponent(u.email))).replace(/=/g, '');
+      const reqDate = u.created_at ? new Date(u.created_at).toLocaleString(isEn ? 'en-US' : 'it-IT') : 'N/D';
       return `
       <div class="user-item-card" id="user-card-${emailSafe}">
         <div class="user-card-left">
@@ -569,17 +577,17 @@ function renderUsersUI() {
           <div class="user-card-info">
             <div class="user-card-name">${escapeHtml(u.name || u.email)}</div>
             <div class="user-card-email">${escapeHtml(u.email)}</div>
-            <div class="user-card-meta">Richiesto il: ${u.created_at ? new Date(u.created_at).toLocaleString('it-IT') : 'N/D'}</div>
+            <div class="user-card-meta">${isEn ? 'Requested on:' : 'Richiesto il:'} ${reqDate}</div>
           </div>
         </div>
         <div class="user-card-actions">
           <select id="role-select-${emailSafe}" class="form-input" style="padding:4px 8px;font-size:12px;width:auto;">
-            <option value="editor" selected>Editor (Modifica orario)</option>
-            <option value="viewer">Viewer (Sola lettura)</option>
-            <option value="admin">Amministratore</option>
+            <option value="editor" selected>${isEn ? 'Editor (Edit timetable)' : 'Editor (Modifica orario)'}</option>
+            <option value="viewer">${isEn ? 'Viewer (Read-only)' : 'Viewer (Sola lettura)'}</option>
+            <option value="admin">${isEn ? 'Administrator' : 'Amministratore'}</option>
           </select>
-          <button class="btn btn-sm btn-success" onclick="approveUser('${escapeHtml(u.email)}')">✅ Sblocca Accesso</button>
-          <button class="btn btn-sm btn-danger" onclick="rejectUser('${escapeHtml(u.email)}')">❌ Rifiuta</button>
+          <button class="btn btn-sm btn-success" onclick="approveUser('${escapeHtml(u.email)}')">${isEn ? '✅ Approve Access' : '✅ Sblocca Accesso'}</button>
+          <button class="btn btn-sm btn-danger" onclick="rejectUser('${escapeHtml(u.email)}')">${isEn ? '❌ Reject' : '❌ Rifiuta'}</button>
         </div>
       </div>
     `;
@@ -589,10 +597,11 @@ function renderUsersUI() {
   // Tab 2: Approved Users
   const approvedContainer = document.getElementById('approvedUsersList');
   if (approved.length === 0) {
-    approvedContainer.innerHTML = `<div style="text-align:center;padding:24px;color:#64748b;">Nessun utente approvato.</div>`;
+    approvedContainer.innerHTML = `<div style="text-align:center;padding:24px;color:#64748b;">${isEn ? 'No approved users.' : 'Nessun utente approvato.'}</div>`;
   } else {
     approvedContainer.innerHTML = approved.map(u => {
       const isMainAdmin = (u.email === currentUsersData.admin_email);
+      const lastLoginDate = u.last_login ? new Date(u.last_login).toLocaleString(isEn ? 'en-US' : 'it-IT') : 'N/D';
       return `
       <div class="user-item-card">
         <div class="user-card-left">
@@ -605,12 +614,12 @@ function renderUsersUI() {
               </span>
             </div>
             <div class="user-card-email">${escapeHtml(u.email)}</div>
-            <div class="user-card-meta">Ultimo accesso: ${u.last_login ? new Date(u.last_login).toLocaleString('it-IT') : 'N/D'}</div>
+            <div class="user-card-meta">${isEn ? 'Last login:' : 'Ultimo accesso:'} ${lastLoginDate}</div>
           </div>
         </div>
         <div class="user-card-actions">
-          ${isMainAdmin ? `<span style="font-size:11.5px;color:#16a34a;font-weight:700;">Amministratore Principale</span>` : `
-            <button class="btn btn-sm btn-outline-warning" onclick="revokeUser('${escapeHtml(u.email)}')">⛔ Revoca</button>
+          ${isMainAdmin ? `<span style="font-size:11.5px;color:#16a34a;font-weight:700;">${isEn ? 'Primary Administrator' : 'Amministratore Principale'}</span>` : `
+            <button class="btn btn-sm btn-outline-warning" onclick="revokeUser('${escapeHtml(u.email)}')">${isEn ? '⛔ Revoke' : '⛔ Revoca'}</button>
             <button class="btn btn-sm btn-outline-danger" onclick="deleteUser('${escapeHtml(u.email)}')">🗑️</button>
           `}
         </div>
@@ -1477,7 +1486,8 @@ function renderUpdateStatus(data) {
   const curVer = APP_VERSION;
   if (verTag) verTag.innerText = `v${curVer}`;
 
-  if (data.update_available) {
+    const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
+    if (data.update_available) {
     // 🔔 Aggiornamento disponibile su Docker Hub! Pallino arancione lampeggiante
     if (dot) {
       dot.className = 'status-indicator-dot dot-orange-blinking';
@@ -1487,7 +1497,7 @@ function renderUpdateStatus(data) {
     }
     if (badge) {
       badge.classList.add('status-update-available');
-      badge.title = `Nuova versione v${data.remote_version} disponibile su Docker Hub! Clicca per dettagli e comando di aggiornamento.`;
+      badge.title = isEn ? `New version v${data.remote_version} available on Docker Hub! Click to view update.` : `Nuova versione v${data.remote_version} disponibile su Docker Hub! Clicca per dettagli e comando di aggiornamento.`;
       badge.setAttribute('aria-label', `Nuova versione v${data.remote_version} disponibile`);
     }
     if (aboutVerStatus) {
@@ -1503,7 +1513,7 @@ function renderUpdateStatus(data) {
     }
     if (badge) {
       badge.classList.remove('status-update-available');
-      badge.title = `SmartTimetable v${curVer} • Suite FET 7.12 C++ Attivo (Nessun aggiornamento in sospeso)`;
+      badge.title = isEn ? 'Check application & FET updates' : 'Verifica aggiornamenti applicazione e FET';
       badge.removeAttribute('aria-label');
     }
     if (aboutVerStatus) {
@@ -1513,11 +1523,7 @@ function renderUpdateStatus(data) {
 }
 
 function handleFooterBadgeClick() {
-  if (latestUpdateInfo && latestUpdateInfo.update_available) {
-    openUpdateModal();
-  } else {
-    openAboutModal();
-  }
+  openUpdateModal();
 }
 
 function openUpdateModal() {
@@ -3157,6 +3163,19 @@ function setDiagnosticsTab(tab) {
   renderDiagnosticsContent();
 }
 
+function formatFeasibilityStatus(st, isEn) {
+  if (!isEn || !st) return st;
+  const map = {
+    'OTTIMO': 'EXCELLENT',
+    'BUONO': 'GOOD',
+    'ATTENZIONE': 'WARNING',
+    'CRITICO': 'CRITICAL',
+    'RISOLTO': 'SOLVED',
+    'NON RISOLTO': 'NOT SOLVED'
+  };
+  return map[st.toUpperCase()] || st;
+}
+
 function renderDiagnosticsContent() {
   const container = document.getElementById('mainContent');
   if (!currentDiagReport) return;
@@ -3205,7 +3224,7 @@ function renderDiagnosticsContent() {
         <div>
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;flex-wrap:wrap;">
             <h2 style="margin:0;font-size:18px;font-weight:800;color:var(--text-main);">${scoreTitle}</h2>
-            <span class="badge ${scoreBadge}">${rep.status}</span>
+            <span class="badge ${scoreBadge}">${formatFeasibilityStatus(rep.status, isEn)}</span>
           </div>
           <p style="margin:0;font-size:13px;color:var(--text-muted);">
             ${isEn 
@@ -3227,7 +3246,7 @@ function renderDiagnosticsContent() {
         <div class="stat-val" style="color: ${scoreClass === 'ok' ? '#10b981' : (scoreClass === 'warn' ? '#f59e0b' : '#ef4444')};">
           ${score} / 100
         </div>
-        <div class="stat-box-link"><span>${isEn ? 'Status:' : 'Stato:'} <b>${rep.status}</b></span></div>
+        <div class="stat-box-link"><span>${isEn ? 'Status:' : 'Stato:'} <b>${formatFeasibilityStatus(rep.status, isEn)}</b></span></div>
       </div>
       <div class="stat-box">
         <div class="stat-lbl">${isEn ? 'Blocking Conflicts' : 'Conflitti Bloccanti'}</div>
@@ -9750,14 +9769,14 @@ async function renderParameters() {
 
           <div class="form-group">
             <label class="form-label">
-              ORARIO_SEDE_CENTRALE <span class="param-help-icon" title="${isEn ? 'Class start and end times for the Main Building' : 'Orario d\'inizio e fine lezioni per la Sede Centrale'}">i</span>
+              ${isEn ? 'MAIN_BUILDING_HOURS' : 'ORARIO_SEDE_CENTRALE'} <span class="param-help-icon" title="${isEn ? 'Class start and end times for the Main Building' : 'Orario d\'inizio e fine lezioni per la Sede Centrale'}">i</span>
             </label>
             <input type="text" id="param_ORARIO_SEDE_CENTRALE" class="form-input" value="${escapeHtml(params.ORARIO_SEDE_CENTRALE || '8:00 - 13:00 / 14:00 - 16:00')}">
           </div>
 
           <div class="form-group">
             <label class="form-label">
-              ORARIO_SEDE_SUCCURSALE <span class="param-help-icon" title="${isEn ? 'Class start and end times for the Branch Building' : 'Orario d\'inizio e fine lezioni per la Sede Succursale'}">i</span>
+              ${isEn ? 'BRANCH_BUILDING_HOURS' : 'ORARIO_SEDE_SUCCURSALE'} <span class="param-help-icon" title="${isEn ? 'Class start and end times for the Branch Building' : 'Orario d\'inizio e fine lezioni per la Sede Succursale'}">i</span>
             </label>
             <input type="text" id="param_ORARIO_SEDE_SUCCURSALE" class="form-input" value="${escapeHtml(params.ORARIO_SEDE_SUCCURSALE || '8:05 - 13:05 / 14:05 - 16:05')}">
           </div>
