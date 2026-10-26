@@ -6,6 +6,7 @@ Persiste i dati su JSON/SQLite e mantiene la compatibilità bidirezionale con FE
 import os
 import re
 import io
+import csv
 import json
 import copy
 import shutil
@@ -3703,6 +3704,384 @@ class Database:
 
             self._save_to_disk(self.data)
             return True
+
+    def analyze_cattedre_alignment(self, text=None, file_bytes=None, filename=""):
+        """
+        Analizza una tabella cattedre (fornita come testo CSV/TSV o file Excel .xlsx / CSV)
+        e confronta tipologia di cattedra (COE, Spezzone, Part-Time, Intera), ore e giorni
+        con i docenti attualmente presenti nel database.
+        Restituisce un diff dettagliato con 'to_update', 'unchanged', 'not_found' e 'summary'.
+        """
+        records = parse_cattedre_text_or_file(text=text, file_bytes=file_bytes, filename=filename)
+        if not records:
+            return {
+                "success": False,
+                "error": "Nessuna riga valida trovata nel file o testo fornito. Assicurati che contenga le colonne: Docente, Ore, Tipo di Cattedra, Orario su giorni."
+            }
+
+        with self.lock:
+            teachers_by_name = {}
+            for t in self.data["teachers"]:
+                t_name = t["name"].strip()
+                teachers_by_name[t_name.lower()] = t
+
+            to_update = []
+            unchanged = []
+            not_found = []
+
+            for rec in records:
+                raw_name = rec["name"].strip()
+                if not raw_name:
+                    continue
+
+                # Match con il database
+                t_obj = teachers_by_name.get(raw_name.lower())
+                if not t_obj:
+                    # Prova normalizzazione spazi
+                    clean_name = " ".join(raw_name.split()).lower()
+                    for k, v in teachers_by_name.items():
+                        if " ".join(k.split()) == clean_name:
+                            t_obj = v
+                            break
+
+                if not t_obj:
+                    # Prova inversione Nome Cognome <-> Cognome Nome
+                    parts = raw_name.split()
+                    if len(parts) == 2:
+                        rev_name = f"{parts[1]} {parts[0]}".lower()
+                        t_obj = teachers_by_name.get(rev_name)
+
+                if not t_obj:
+                    not_found.append({
+                        "name": raw_name,
+                        "cdc": rec.get("cdc", ""),
+                        "hours": rec.get("target_hours"),
+                        "contract_type": rec.get("contract_type", "intera"),
+                        "days": rec.get("max_days")
+                    })
+                    continue
+
+                actual_name = t_obj["name"]
+                cur_ctype = t_obj.get("contract_type")
+                if not cur_ctype:
+                    cur_ctype = "coe" if t_obj.get("is_coe") else ("part_time" if t_obj.get("target_hours", 18) < 18 else "intera")
+                elif cur_ctype == "standard":
+                    cur_ctype = "intera"
+
+                cur_hours = int(t_obj.get("target_hours", 18))
+                cur_days = t_obj.get("max_days")
+                cur_cdc = t_obj.get("cdc", "").strip()
+
+                new_ctype = rec.get("contract_type", "intera")
+                rec_hours = rec.get("target_hours")
+                new_hours = rec_hours if rec_hours is not None else cur_hours
+                new_days = rec.get("max_days")
+                new_cdc = rec.get("cdc", "").strip()
+
+                type_diff = (new_ctype != cur_ctype)
+                hours_diff = (rec_hours is not None and new_hours != cur_hours)
+                days_diff = (new_days is not None and new_days != cur_days)
+                cdc_diff = bool(new_cdc and new_cdc != cur_cdc)
+
+                effective_days = new_days if new_days is not None else cur_days
+
+                diff_entry = {
+                    "name": actual_name,
+                    "file_name": raw_name,
+                    "cur_ctype": cur_ctype,
+                    "new_ctype": new_ctype,
+                    "type_diff": type_diff,
+                    "cur_hours": cur_hours,
+                    "new_hours": new_hours,
+                    "hours_diff": hours_diff,
+                    "cur_days": cur_days,
+                    "new_days": effective_days,
+                    "days_diff": days_diff,
+                    "cur_cdc": cur_cdc,
+                    "new_cdc": new_cdc,
+                    "cdc_diff": cdc_diff
+                }
+
+                if type_diff or hours_diff or days_diff:
+                    to_update.append(diff_entry)
+                else:
+                    unchanged.append(diff_entry)
+
+            return {
+                "success": True,
+                "summary": {
+                    "total_file_rows": len(records),
+                    "to_update_count": len(to_update),
+                    "unchanged_count": len(unchanged),
+                    "not_found_count": len(not_found)
+                },
+                "to_update": to_update,
+                "unchanged": unchanged,
+                "not_found": not_found
+            }
+
+    def apply_cattedre_alignment(self, updates_to_apply, create_snapshot=True, snapshot_name=None, update_cdc=False):
+        """
+        Applica le modifiche confermate alla tipologia di cattedra, ore e giorni orario dei docenti.
+        Crea automaticamente uno snapshot di sicurezza per consentire rollback.
+        """
+        with self.lock:
+            if create_snapshot:
+                snap_title = snapshot_name or f"Allineamento Cattedre - {get_local_now().strftime('%d/%m/%Y %H:%M')}"
+                self.create_snapshot(snap_title, "Snapshot di sicurezza generato automaticamente prima dell'allineamento tipologia cattedre (Excel/CSV).")
+
+            teachers_dict = {t["name"].lower().strip(): t for t in self.data["teachers"]}
+            applied_count = 0
+            applied_names = []
+
+            for upd in updates_to_apply:
+                name = upd.get("name", "").strip()
+                t = teachers_dict.get(name.lower())
+                if not t:
+                    parts = name.split()
+                    if len(parts) == 2:
+                        t = teachers_dict.get(f"{parts[1]} {parts[0]}".lower())
+                if not t:
+                    continue
+
+                new_ctype = upd.get("new_ctype")
+                if new_ctype:
+                    if new_ctype == "standard":
+                        new_ctype = "intera"
+                    t["contract_type"] = new_ctype
+                    t["is_coe"] = (new_ctype == "coe")
+
+                if upd.get("new_hours") is not None:
+                    t["target_hours"] = int(upd["new_hours"])
+
+                if upd.get("new_days") is not None:
+                    n_days = int(upd["new_days"])
+                    t["max_days"] = n_days
+                    if "min_days" not in t or t["min_days"] > n_days:
+                        t["min_days"] = max(1, n_days - 1)
+
+                if update_cdc and upd.get("new_cdc"):
+                    t["cdc"] = upd["new_cdc"].strip()
+
+                applied_count += 1
+                applied_names.append(t["name"])
+
+            self._save_to_disk(self.data)
+
+            # Ricalcola le disposizioni per i docenti modificati
+            for t_name in applied_names:
+                try:
+                    self.sync_disposizioni_activities(t_name)
+                except Exception as e_disp:
+                    logger.warning(f"Errore sync disposizioni per {t_name}: {e_disp}")
+
+            if self.data.get("has_timetable"):
+                try:
+                    self.place_disposizioni_in_timetable()
+                except Exception:
+                    pass
+
+            return {
+                "success": True,
+                "applied_count": applied_count,
+                "applied_teachers": applied_names
+            }
+
+
+def parse_xlsx_bytes(b_data):
+    """
+    Estrae tutte le righe di testo dal primo foglio di un file Excel (.xlsx).
+    Implementato al 100% con la libreria standard (zipfile + xml.etree.ElementTree),
+    garantendo zero dipendenze esterne.
+    """
+    rows = []
+    try:
+        with zipfile.ZipFile(io.BytesIO(b_data)) as z:
+            shared_strings = []
+            if "xl/sharedStrings.xml" in z.namelist():
+                tree = ET.fromstring(z.read("xl/sharedStrings.xml"))
+                ns = {"x": "http://schemas.openxmlformats.org/spreadsheetml/2006/main"}
+                si_list = tree.findall(".//x:si", ns) or tree.findall(".//{*}si")
+                for si in si_list:
+                    t_list = si.findall(".//x:t", ns) or si.findall(".//{*}t")
+                    shared_strings.append("".join(t.text or "" for t in t_list))
+
+            sheet_path = "xl/worksheets/sheet1.xml"
+            if sheet_path not in z.namelist():
+                sheets = [n for n in z.namelist() if n.startswith("xl/worksheets/sheet") and n.endswith(".xml")]
+                sheet_path = sheets[0] if sheets else None
+
+            if not sheet_path:
+                return rows
+
+            sheet_tree = ET.fromstring(z.read(sheet_path))
+            ns = {"x": "http://schemas.openxmlformats.org/spreadsheetml/2006/main"}
+            row_elems = sheet_tree.findall(".//x:row", ns) or sheet_tree.findall(".//{*}row")
+
+            def col_letter_to_index(col_str):
+                idx = 0
+                for char in col_str.upper():
+                    idx = idx * 26 + (ord(char) - ord("A") + 1)
+                return idx - 1
+
+            for row_el in row_elems:
+                cell_map = {}
+                cells = row_el.findall(".//x:c", ns) or row_el.findall(".//{*}c")
+                for c in cells:
+                    ref = c.attrib.get("r", "")
+                    col_match = re.match(r"^([A-Z]+)", ref)
+                    col_idx = col_letter_to_index(col_match.group(1)) if col_match else len(cell_map)
+                    c_type = c.attrib.get("t", "")
+                    v_el = c.find(".//x:v", ns) if c.find(".//x:v", ns) is not None else c.find(".//{*}v")
+                    val = v_el.text if v_el is not None and v_el.text is not None else ""
+
+                    if c_type == "s" and val.isdigit():
+                        s_idx = int(val)
+                        val = shared_strings[s_idx] if s_idx < len(shared_strings) else val
+                    elif c_type == "inlineStr":
+                        is_t = c.find(".//{*}t")
+                        if is_t is not None and is_t.text:
+                            val = is_t.text
+
+                    cell_map[col_idx] = val
+
+                if cell_map:
+                    max_c = max(cell_map.keys())
+                    row_vals = [cell_map.get(i, "").strip() for i in range(max_c + 1)]
+                    if any(row_vals):
+                        rows.append(row_vals)
+    except Exception as e:
+        logger.error(f"Errore parsing XLSX: {e}")
+    return rows
+
+
+def parse_cattedre_matrix(rows):
+    """
+    Riconosce le intestazioni e restituisce una lista di record normalizzati:
+    [{ "cdc": ..., "name": ..., "target_hours": ..., "contract_type": ..., "max_days": ..., "raw": ... }]
+    """
+    if not rows:
+        return []
+
+    header_idx = -1
+    col_map = {"cdc": -1, "docente": -1, "ore": -1, "tipo": -1, "giorni": -1}
+
+    for r_i, r in enumerate(rows[:5]):
+        r_low = [str(c).strip().lower() for c in r]
+        has_doc = any("docente" in c or "insegnante" in c or "nominativo" in c or c == "nome" for c in r_low)
+        has_type_or_ore = any("tipo" in c or "cattedra" in c or "ore" in c for c in r_low)
+        if has_doc or has_type_or_ore:
+            header_idx = r_i
+            for c_i, c in enumerate(r_low):
+                if any(k in c for k in ("classe di concorso", "cdc", "disciplina")):
+                    col_map["cdc"] = c_i
+                elif any(k in c for k in ("docente", "insegnante", "nominativo", "cognome")):
+                    col_map["docente"] = c_i
+                elif any(k in c for k in ("tipo di cattedra", "tipo cattedra", "tipologia", "contratto", "tipo")):
+                    col_map["tipo"] = c_i
+                elif any(k in c for k in ("orario su giorni", "giorni", "max giorni", "gg")):
+                    col_map["giorni"] = c_i
+                elif any(k in c for k in ("ore", "cattedra", "target")) and col_map["ore"] == -1:
+                    col_map["ore"] = c_i
+            break
+
+    data_rows = rows[header_idx + 1:] if header_idx >= 0 else rows
+    if col_map["docente"] == -1:
+        col_map = {"cdc": 0, "docente": 1, "ore": 3, "tipo": 4, "giorni": 5}
+
+    records = []
+    for r in data_rows:
+        if not r or not any(str(c).strip() for c in r):
+            continue
+
+        doc_name = str(r[col_map["docente"]]).strip() if col_map["docente"] < len(r) else ""
+        if not doc_name or doc_name.lower() in ("docente", "insegnante", "cognome e nome", "totale"):
+            continue
+
+        cdc = str(r[col_map["cdc"]]).strip() if 0 <= col_map["cdc"] < len(r) else ""
+
+        ore_val = None
+        if 0 <= col_map["ore"] < len(r):
+            ore_str = str(r[col_map["ore"]]).strip()
+            m_ore = re.search(r"\d+", ore_str)
+            if m_ore:
+                ore_val = int(m_ore.group(0))
+
+        raw_type = str(r[col_map["tipo"]]).strip().lower() if 0 <= col_map["tipo"] < len(r) else ""
+        if "coe" in raw_type or "c.o.e" in raw_type:
+            ctype = "coe"
+        elif "part" in raw_type or "p.t" in raw_type or raw_type == "pt":
+            ctype = "part_time"
+        elif "spezz" in raw_type:
+            ctype = "spezzone"
+        elif "intera" in raw_type or "standard" in raw_type:
+            ctype = "intera"
+        elif ore_val is not None and ore_val >= 18:
+            ctype = "intera"
+        elif ore_val is not None and ore_val < 18 and raw_type == "":
+            ctype = "spezzone"
+        else:
+            ctype = "intera"
+
+        giorni_val = None
+        if 0 <= col_map["giorni"] < len(r):
+            gg_str = str(r[col_map["giorni"]]).strip()
+            m_gg = re.search(r"\d+", gg_str)
+            if m_gg:
+                giorni_val = int(m_gg.group(0))
+
+        records.append({
+            "name": doc_name,
+            "cdc": cdc,
+            "target_hours": ore_val,
+            "contract_type": ctype,
+            "max_days": giorni_val,
+            "raw": r
+        })
+
+    return records
+
+
+def parse_cattedre_text_or_file(text=None, file_bytes=None, filename=""):
+    """
+    Riconosce se l'input è un file Excel (.xlsx), CSV, TSV o testo incollato,
+    estrae le righe e restituisce i record parsed.
+    """
+    rows = []
+    if file_bytes:
+        is_zip = file_bytes[:4] == b"PK\x03\x04"
+        if filename.lower().endswith(".xlsx") or is_zip:
+            rows = parse_xlsx_bytes(file_bytes)
+        else:
+            try:
+                text_content = file_bytes.decode("utf-8")
+            except UnicodeDecodeError:
+                text_content = file_bytes.decode("latin-1", errors="ignore")
+            text = text_content
+
+    if not rows and text:
+        clean_text = text.strip()
+        lines = [l for l in clean_text.splitlines() if l.strip()]
+        if lines:
+            first_line = lines[0]
+            delimiter = ","
+            if "\t" in first_line:
+                delimiter = "\t"
+            elif ";" in first_line:
+                delimiter = ";"
+            elif "," in first_line:
+                delimiter = ","
+            else:
+                try:
+                    dialect = csv.Sniffer().sniff("\n".join(lines[:5]))
+                    delimiter = dialect.delimiter
+                except Exception:
+                    delimiter = ","
+
+            reader = csv.reader(io.StringIO(clean_text), delimiter=delimiter)
+            rows = [r for r in reader if any(str(c).strip() for c in r)]
+
+    return parse_cattedre_matrix(rows)
 
 
 def parse_organico_docx_content(content_bytes_or_path):

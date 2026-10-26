@@ -22,7 +22,7 @@ let pollSolverTimer = null;
 let currentSolverRunning = false;
 
 // --- VERSIONE E IDENTITÀ APPLICATIVA ---
-const APP_VERSION = '1.8.7';
+const APP_VERSION = '1.8.8';
 
 // --- OPTIMISTIC CONCURRENCY CONTROL (OCC) & FETCH INTERCEPTOR ---
 window.CURRENT_DATA_VERSION = null;
@@ -5107,6 +5107,9 @@ async function renderTeachers() {
     <div class="toolbar" style="margin-bottom:10px;">
       <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;flex:1;">
         <input type="text" id="teacherSearch" class="search-input" placeholder="${isEn ? '🔍 Search teacher, short name, CDC, subject or class...' : '🔍 Cerca docente, nome breve, CDC, materia o classe...'}" oninput="applyTeacherFilters()" style="flex:1;min-width:240px;">
+        <button class="btn btn-outline" onclick="openAllineaCattedreModal()" title="${isEn ? 'Align teacher contract types (COE, Spezzoni, Part-Time, Full-Time, Hours and Days) from an Excel or CSV sheet' : 'Allinea la tipologia di cattedra dei docenti (COE, Spezzoni, Part-Time, Intera, Ore e Giorni) da foglio Excel o CSV'}" style="font-weight:700;border:1.5px solid #059669;color:#059669;background:var(--bg-main);white-space:nowrap;padding:7px 14px;">
+          📊 ${isEn ? 'Align Contract Types (Excel / CSV)' : 'Allinea Tipologia Cattedre (Excel / CSV)'}
+        </button>
         <button class="btn btn-outline" onclick="openAggiornaOrganicoModal()" title="${isEn ? 'Update faculty roster by comparing with a Word (.docx) or Google Doc' : 'Aggiorna l\'organico docenti confrontandolo con un file Word (.docx) o Google Doc'}" style="font-weight:700;border:1.5px solid var(--primary);color:var(--primary);background:var(--bg-main);white-space:nowrap;padding:7px 14px;">
           🔄 ${isEn ? 'Update Faculty (Docx / Google Doc)' : 'Aggiorna Organico (Docx / Google Doc)'}
         </button>
@@ -6328,6 +6331,416 @@ async function submitApplyOrganico() {
     if (typeof loadSnapshotsList === 'function') loadSnapshotsList();
   } catch (err) {
     alert('Errore: ' + err.message);
+  }
+}
+
+// ============================================================================
+// 4.2 ALLINEAMENTO TIPOLOGIA CATTEDRE DOCENTI (EXCEL / CSV)
+// ============================================================================
+let cattedreAnalysisData = null;
+let activeCattedreTab = 'upload'; // 'upload' | 'paste'
+let selectedCattedreFile = null;
+
+function openAllineaCattedreModal() {
+  cattedreAnalysisData = null;
+  activeCattedreTab = 'upload';
+  selectedCattedreFile = null;
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
+
+  showModal(`
+    <div class="modal-dialog" style="max-width:960px;width:95vw;max-height:92vh;">
+      <div class="modal-header">
+        <div class="modal-title">
+          📊 ${isEn ? 'Align Faculty Contract Types & Hours (Excel / CSV)' : 'Allinea Tipologia Cattedre Docenti (Excel / CSV)'}
+        </div>
+        <button class="modal-close" onclick="closeModal()">×</button>
+      </div>
+      <div class="modal-body" style="padding:18px 22px;">
+        <div class="info-banner-blue" style="margin-bottom:16px;">
+          📋 <b>${isEn ? 'Faculty Alignment Tool:' : 'Allineamento Tipologie Cattedre:'}</b> ${isEn 
+            ? 'Import or paste your faculty table with columns: <i>CDC, Teacher, Classes, Hours, Contract Type, Days</i>. Eurario will detect exact legal posts (<b>COE</b>, <b>Spezzoni</b>, <b>Part-Time</b>, <b>Full-Time</b>, hours and days per week) and show a detailed preview before applying changes.' 
+            : 'Carica un file Excel (.xlsx), CSV o incolla la tabella con le colonne: <i>Classe di Concorso, Docente, Classi, Ore, Tipo di Cattedra, Orario su giorni</i>.<br>Il sistema identificherà con esattezza le cattedre <b>COE</b>, <b>Spezzoni</b>, <b>Part-Time</b> o <b>Intere</b>, allineando ore e giorni settimanali e presentandoti un\'anteprima selettiva prima di salvare.'}
+        </div>
+
+        <!-- Download Modello o Esportazione -->
+        <div style="background:var(--bg-main);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+          <div>
+            <div style="font-weight:700;font-size:13px;color:var(--text-main);">📥 ${isEn ? 'Excel / CSV Templates' : 'Modello Cattedre & Esportazione'}</div>
+            <div style="font-size:11.5px;color:var(--text-muted);">${isEn ? 'Download a sample CSV structure or export current faculty posts' : 'Scarica il modello di esempio CSV o esporta l\'elenco attuale dei docenti'}</div>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <a href="/api/teachers/align_cattedre/template_csv" download="Modello_Allineamento_Cattedre.csv" class="btn btn-sm btn-outline" style="text-decoration:none;display:inline-flex;align-items:center;gap:6px;font-weight:700;border-color:#059669;color:#059669;">
+              📥 ${isEn ? 'Download Sample CSV' : 'Scarica Modello Esempio (.csv)'}
+            </a>
+            <a href="/api/teachers/align_cattedre/template_csv?current=1" download="Docenti_Cattedre_Attuali.csv" class="btn btn-sm btn-sec" style="text-decoration:none;display:inline-flex;align-items:center;gap:6px;">
+              📄 ${isEn ? 'Export Current Teachers (.csv)' : 'Esporta Cattedre Attuali (.csv)'}
+            </a>
+          </div>
+        </div>
+
+        <!-- Selettore Sorgente -->
+        <div class="segmented-control" style="margin-bottom:16px;">
+          <button class="segmented-btn ${activeCattedreTab === 'upload' ? 'active' : ''}" id="tabBtnCattedreUpload" onclick="switchCattedreSourceTab('upload')">
+            📁 ${isEn ? 'Upload Excel (.xlsx) / CSV' : 'Carica File Excel (.xlsx) o CSV'}
+          </button>
+          <button class="segmented-btn ${activeCattedreTab === 'paste' ? 'active' : ''}" id="tabBtnCattedrePaste" onclick="switchCattedreSourceTab('paste')">
+            📋 ${isEn ? 'Paste Table from Excel / CSV' : 'Incolla Tabella da Excel / Testo'}
+          </button>
+        </div>
+
+        <!-- Tab 1: Upload File -->
+        <div id="cattedreUploadPanel" style="display:${activeCattedreTab === 'upload' ? 'block' : 'none'};">
+          <div style="border:2px dashed var(--border);border-radius:var(--radius-md);padding:24px;text-align:center;background:var(--bg-card);transition:border-color 0.2s;" id="cattedreDropZone" ondragover="event.preventDefault();this.style.borderColor='#059669';" ondragleave="this.style.borderColor='var(--border)';" ondrop="handleCattedreFileDrop(event)">
+            <div style="font-size:32px;margin-bottom:8px;">📊</div>
+            <div style="font-weight:700;font-size:14px;color:var(--text-main);margin-bottom:4px;">
+              ${isEn ? 'Drag & drop your Excel (.xlsx) or CSV file here, or click to browse' : 'Trascina qui il file Excel (.xlsx) o CSV, oppure clicca per selezionarlo'}
+            </div>
+            <div style="font-size:12px;color:var(--text-muted);margin-bottom:14px;">
+              ${isEn ? 'Supports .xlsx, .xls and .csv files with columns: CDC, Teacher, Classes, Hours, Contract Type, Days' : 'Supporta file con colonne: <i>Classe di Concorso, Docente, Classi, Ore, Tipo di Cattedra, Orario su giorni</i>'}
+            </div>
+            <input type="file" id="cattedreFileInput" accept=".xlsx,.xls,.csv,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" style="display:none;" onchange="onCattedreFileSelected(this)">
+            <button type="button" class="btn btn-sec" onclick="document.getElementById('cattedreFileInput').click()">
+              📂 ${isEn ? 'Choose File from Computer...' : 'Scegli File dal Computer...'}
+            </button>
+            <div id="selectedCattedreFileName" style="margin-top:10px;font-size:12.5px;font-weight:700;color:#059669;display:none;"></div>
+          </div>
+        </div>
+
+        <!-- Tab 2: Incolla Testo -->
+        <div id="cattedrePastePanel" style="display:${activeCattedreTab === 'paste' ? 'block' : 'none'};">
+          <label style="font-size:12px;font-weight:600;margin-bottom:6px;display:block;color:var(--text-main);">
+            ${isEn ? 'Paste table rows directly (copied from Excel or CSV format):' : 'Incolla direttamente le righe della tabella (copiate da Excel o in formato CSV):'}
+          </label>
+          <textarea id="cattedrePasteTextarea" class="form-input" style="width:100%;height:150px;font-family:var(--font-mono);font-size:11.5px;line-height:1.4;" placeholder="Classe di Concorso,Docente,Classi,Ore,Tipo di Cattedra,Orario su giorni&#10;A011 - Discipline Letterarie,Baston Michela,1C(4)...,14,PART TIME,4&#10;A015 - Discipline Sanitarie,Di Zane Alessia,3G(4)...,8,COE,&#10;A021 - Geografia,Funaro Pascale,2B(3)...,13,SPEZZONE,&#10;A026 - Matematica,Rigoni Carlo,2L(4)...,18,,"></textarea>
+        </div>
+
+        <!-- Pulsante Analizza -->
+        <div style="margin-top:14px;text-align:right;">
+          <button type="button" class="btn btn-primary" id="btnAnalyzeCattedre" onclick="analyzeCattedreAlignment()" style="background:#059669;border-color:#047857;font-weight:700;padding:8px 20px;">
+            🔍 ${isEn ? 'Analyze Contract Types & Hours' : 'Analizza Tabella Cattedre'}
+          </button>
+        </div>
+
+        <!-- Contenitore Diff & Risultati -->
+        <div id="cattedreDiffContainer" style="display:none;"></div>
+      </div>
+
+      <div class="modal-footer" id="cattedreModalFooter" style="display:none;padding:14px 22px;border-top:1px solid var(--border);justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;background:var(--bg-main);">
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <label style="font-size:12px;font-weight:600;display:flex;align-items:center;gap:6px;cursor:pointer;">
+            <input type="checkbox" id="chkCattedreSnapshot" checked />
+            <span>🛡️ ${isEn ? 'Create automatic safety snapshot before applying' : 'Crea snapshot di sicurezza automatico prima di salvare'}</span>
+          </label>
+          <label style="font-size:12px;font-weight:600;display:flex;align-items:center;gap:6px;cursor:pointer;">
+            <input type="checkbox" id="chkCattedreUpdateCdc" />
+            <span>🏷️ ${isEn ? 'Also update Teaching Subject Class (CDC) from file' : 'Aggiorna anche la Classe di Concorso (CDC) indicata nel foglio'}</span>
+          </label>
+        </div>
+        <div style="display:flex;gap:10px;">
+          <button type="button" class="btn btn-sec" onclick="closeModal()">${isEn ? 'Cancel' : 'Annulla'}</button>
+          <button type="button" class="btn btn-primary" id="btnApplyCattedre" onclick="applyCattedreAlignment()" style="background:#059669;border-color:#047857;font-weight:700;padding:8px 20px;">
+            💾 ${isEn ? 'Apply Selected Changes' : 'Applica Modifiche Selezionate'}
+          </button>
+        </div>
+      </div>
+    </div>
+  `);
+}
+
+function switchCattedreSourceTab(tab) {
+  activeCattedreTab = tab;
+  document.getElementById('tabBtnCattedreUpload')?.classList.toggle('active', tab === 'upload');
+  document.getElementById('tabBtnCattedrePaste')?.classList.toggle('active', tab === 'paste');
+  const upPanel = document.getElementById('cattedreUploadPanel');
+  if (upPanel) upPanel.style.display = (tab === 'upload') ? 'block' : 'none';
+  const pastePanel = document.getElementById('cattedrePastePanel');
+  if (pastePanel) pastePanel.style.display = (tab === 'paste') ? 'block' : 'none';
+}
+
+function handleCattedreFileDrop(e) {
+  e.preventDefault();
+  const dt = e.dataTransfer;
+  if (dt && dt.files && dt.files.length > 0) {
+    selectedCattedreFile = dt.files[0];
+    showSelectedCattedreFileName(selectedCattedreFile.name);
+  }
+}
+
+function onCattedreFileSelected(input) {
+  if (input && input.files && input.files.length > 0) {
+    selectedCattedreFile = input.files[0];
+    showSelectedCattedreFileName(selectedCattedreFile.name);
+  }
+}
+
+function showSelectedCattedreFileName(name) {
+  const el = document.getElementById('selectedCattedreFileName');
+  if (el) {
+    el.innerText = `📄 ${name}`;
+    el.style.display = 'block';
+  }
+}
+
+function toggleAllCattedreCheckboxes(checked) {
+  document.querySelectorAll('.cattedre-upd-chk').forEach(cb => {
+    cb.checked = checked;
+  });
+  updateCattedreApplyButtonCount();
+}
+
+function updateCattedreApplyButtonCount() {
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
+  const count = document.querySelectorAll('.cattedre-upd-chk:checked').length;
+  const btn = document.getElementById('btnApplyCattedre');
+  if (btn) {
+    btn.innerText = isEn ? `💾 Apply Selected Changes (${count})` : `💾 Applica Modifiche Selezionate (${count})`;
+    btn.disabled = (count === 0);
+  }
+}
+
+async function analyzeCattedreAlignment() {
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
+  const btn = document.getElementById('btnAnalyzeCattedre');
+  if (btn) {
+    btn.disabled = true;
+    btn.innerText = isEn ? 'Analyzing...' : 'Analisi in corso...';
+  }
+
+  try {
+    let payload = {};
+    if (activeCattedreTab === 'upload') {
+      if (!selectedCattedreFile) {
+        alert(isEn ? 'Please select an Excel (.xlsx) or CSV file first.' : 'Seleziona prima un file Excel (.xlsx) o CSV da analizzare.');
+        if (btn) { btn.disabled = false; btn.innerText = isEn ? '🔍 Analyze Contract Types & Hours' : '🔍 Analizza Tabella Cattedre'; }
+        return;
+      }
+      const b64 = await readFileAsBase64(selectedCattedreFile);
+      payload = { file_base64: b64, filename: selectedCattedreFile.name };
+    } else {
+      const text = (document.getElementById('cattedrePasteTextarea')?.value || '').trim();
+      if (!text) {
+        alert(isEn ? 'Please paste your table content first.' : 'Incolla prima il testo o la tabella da analizzare.');
+        if (btn) { btn.disabled = false; btn.innerText = isEn ? '🔍 Analyze Contract Types & Hours' : '🔍 Analizza Tabella Cattedre'; }
+        return;
+      }
+      payload = { text: text };
+    }
+
+    const res = await fetch('/api/teachers/align_cattedre/analyze', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    if (!res.ok || !data.success) {
+      throw new Error(data.error || (isEn ? 'Analysis failed' : 'Analisi fallita'));
+    }
+
+    cattedreAnalysisData = data;
+    renderCattedreDiffView(data);
+  } catch (err) {
+    alert((isEn ? 'Analysis error: ' : 'Errore durante l\'analisi: ') + err.message);
+  } finally {
+    if (btn) {
+      btn.disabled = false;
+      btn.innerText = isEn ? '🔍 Analyze Contract Types & Hours' : '🔍 Analizza Tabella Cattedre';
+    }
+  }
+}
+
+function renderCattedreDiffView(data) {
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
+  const container = document.getElementById('cattedreDiffContainer');
+  if (!container) return;
+
+  const toUpdate = data.to_update || [];
+  const unchanged = data.unchanged || [];
+  const notFound = data.not_found || [];
+
+  function formatCtypeBadge(ctype) {
+    if (ctype === 'coe') return `<span class="badge" style="background:#ccfbf1;color:#0f766e;border:1px solid #14b8a6;font-weight:700;">🏫 COE</span>`;
+    if (ctype === 'part_time') return `<span class="badge" style="background:#f3e8ff;color:#6b21a8;border:1px solid #c084fc;font-weight:700;">⏳ Part-Time</span>`;
+    if (ctype === 'spezzone') return `<span class="badge" style="background:#ffedd5;color:#c2410c;border:1px solid #fb923c;font-weight:700;">🧩 Spezzone</span>`;
+    return `<span class="badge" style="background:#f1f5f9;color:#334155;border:1px solid #cbd5e1;font-weight:700;">🏛️ Intera</span>`;
+  }
+
+  container.style.display = 'block';
+  container.innerHTML = `
+    <div style="border-top:1px solid var(--border);padding-top:16px;margin-top:16px;">
+      <!-- Statistiche di Sintesi -->
+      <div style="display:grid;grid-template-columns:repeat(3, 1fr);gap:10px;margin-bottom:16px;">
+        <div style="background:#ecfdf5;border:1px solid #a7f3d0;border-radius:var(--radius-md);padding:10px 14px;">
+          <div style="font-size:11px;font-weight:700;color:#065f46;text-transform:uppercase;">✏️ ${isEn ? 'To Update' : 'Da Aggiornare'}</div>
+          <div style="font-size:24px;font-weight:800;color:#047857;margin-top:2px;">${toUpdate.length}</div>
+          <div style="font-size:11px;color:#065f46;">${isEn ? 'with detected changes' : 'con variazioni tipologia/ore/giorni'}</div>
+        </div>
+        <div style="background:#f8fafc;border:1px solid var(--border);border-radius:var(--radius-md);padding:10px 14px;">
+          <div style="font-size:11px;font-weight:700;color:var(--text-sub);text-transform:uppercase;">✓ ${isEn ? 'Already Aligned' : 'Già Allineati'}</div>
+          <div style="font-size:24px;font-weight:800;color:var(--text-main);margin-top:2px;">${unchanged.length}</div>
+          <div style="font-size:11px;color:var(--text-muted);">${isEn ? 'no changes needed' : 'dati già identici'}</div>
+        </div>
+        <div style="background:${notFound.length > 0 ? '#fffbeb' : '#f8fafc'};border:1px solid ${notFound.length > 0 ? '#fde68a' : 'var(--border)'};border-radius:var(--radius-md);padding:10px 14px;">
+          <div style="font-size:11px;font-weight:700;color:${notFound.length > 0 ? '#92400e' : 'var(--text-sub)'};text-transform:uppercase;">❓ ${isEn ? 'Not in Database' : 'Non in Elenco'}</div>
+          <div style="font-size:24px;font-weight:800;color:${notFound.length > 0 ? '#b45309' : 'var(--text-muted)'};margin-top:2px;">${notFound.length}</div>
+          <div style="font-size:11px;color:${notFound.length > 0 ? '#92400e' : 'var(--text-muted)'};">${isEn ? 'names not found' : 'nominativi non presenti nel db'}</div>
+        </div>
+      </div>
+
+      <!-- Tabella dei docenti con modifiche rilevate -->
+      ${toUpdate.length > 0 ? `
+        <div style="border:1px solid var(--border);border-radius:var(--radius-md);overflow:hidden;margin-bottom:14px;background:var(--bg-card);">
+          <div style="padding:10px 14px;background:#f0fdf4;border-bottom:1px solid #bbf7d0;display:flex;justify-content:space-between;align-items:center;">
+            <div style="font-weight:700;color:#166534;font-size:13.5px;display:flex;align-items:center;gap:6px;">
+              <span>✏️ ${isEn ? 'Faculty Variations to Apply' : 'Variazioni Cattedra Rilevate'} (${toUpdate.length})</span>
+            </div>
+            <label style="font-size:12px;font-weight:600;color:#166534;cursor:pointer;display:flex;align-items:center;gap:4px;">
+              <input type="checkbox" id="chkAllCattedreUpdates" checked onchange="toggleAllCattedreCheckboxes(this.checked)">
+              ${isEn ? 'Select All' : 'Seleziona tutti'}
+            </label>
+          </div>
+          <div style="max-height:280px;overflow:auto;">
+            <table class="data-table" style="font-size:12px;">
+              <thead>
+                <tr>
+                  <th style="width:40px;text-align:center;">${isEn ? 'Apply' : 'Applica'}</th>
+                  <th>${isEn ? 'Teacher' : 'Docente'}</th>
+                  <th style="width:110px;">CDC</th>
+                  <th style="width:230px;">${isEn ? 'Contract Type' : 'Tipologia Cattedra'}</th>
+                  <th style="width:120px;text-align:center;">${isEn ? 'Hours' : 'Ore'}</th>
+                  <th style="width:120px;text-align:center;">${isEn ? 'Days per week' : 'Giorni Orario'}</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${toUpdate.map((u, idx) => {
+                  return `
+                    <tr>
+                      <td style="text-align:center;">
+                        <input type="checkbox" class="cattedre-upd-chk" data-idx="${idx}" checked onchange="updateCattedreApplyButtonCount()">
+                      </td>
+                      <td style="font-weight:700;color:var(--text-main);">
+                        ${escapeHtml(u.name)}
+                        ${u.file_name && u.file_name.toLowerCase() !== u.name.toLowerCase() ? `<span style="font-size:10px;color:var(--text-muted);display:block;font-weight:normal;">(${escapeHtml(u.file_name)})</span>` : ''}
+                      </td>
+                      <td style="font-size:11px;color:var(--text-muted);">
+                        ${escapeHtml(u.new_cdc || u.cur_cdc || '-')}
+                        ${u.cdc_diff ? `<span style="color:#059669;font-weight:bold;margin-left:2px;">*</span>` : ''}
+                      </td>
+                      <td>
+                        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+                          ${formatCtypeBadge(u.cur_ctype)}
+                          <span style="font-weight:bold;color:${u.type_diff ? '#059669' : 'var(--text-muted)'};">➔</span>
+                          <span style="${u.type_diff ? 'box-shadow:0 0 0 2px #10b981;border-radius:6px;' : ''}">${formatCtypeBadge(u.new_ctype)}</span>
+                        </div>
+                      </td>
+                      <td style="text-align:center;">
+                        <span style="color:var(--text-muted);">${u.cur_hours}h</span>
+                        <span style="font-weight:bold;color:${u.hours_diff ? '#059669' : 'var(--text-muted)'};"> ➔ </span>
+                        <b style="color:${u.hours_diff ? '#059669' : 'var(--text-main)'};">${u.new_hours}h</b>
+                      </td>
+                      <td style="text-align:center;">
+                        <span style="color:var(--text-muted);">${u.cur_days ? u.cur_days + ' gg' : '-'}</span>
+                        <span style="font-weight:bold;color:${u.days_diff ? '#059669' : 'var(--text-muted)'};"> ➔ </span>
+                        <b style="color:${u.days_diff ? '#059669' : 'var(--text-main)'};">${u.new_days ? u.new_days + ' gg' : '-'}</b>
+                      </td>
+                    </tr>
+                  `;
+                }).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      ` : `
+        <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:var(--radius-md);padding:14px;text-align:center;color:#166534;margin-bottom:14px;font-weight:600;">
+          ✅ ${isEn ? 'All faculty members in the file are already perfectly aligned with the database!' : 'Tutti i docenti nel file risultano già perfettamente allineati con il database! Nessuna modifica necessaria.'}
+        </div>
+      `}
+
+      <!-- Docenti Invariati (Sezione collassabile) -->
+      ${unchanged.length > 0 ? `
+        <details style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-md);padding:10px 14px;margin-bottom:12px;">
+          <summary style="font-size:12.5px;font-weight:700;color:var(--text-muted);cursor:pointer;">
+            ✓ ${isEn ? `Show ${unchanged.length} already aligned teachers` : `Mostra i ${unchanged.length} docenti già allineati`}
+          </summary>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;">
+            ${unchanged.map(u => `
+              <span style="background:var(--bg-main);border:1px solid var(--border);padding:3px 8px;border-radius:6px;font-size:11px;color:var(--text-main);">
+                <b>${escapeHtml(u.name)}</b> (${u.cur_hours}h, ${escapeHtml(u.cur_ctype.toUpperCase())}${u.cur_days ? ', ' + u.cur_days + 'gg' : ''})
+              </span>
+            `).join('')}
+          </div>
+        </details>
+      ` : ''}
+
+      <!-- Docenti non trovati -->
+      ${notFound.length > 0 ? `
+        <details style="background:#fffbeb;border:1px solid #fde68a;border-radius:var(--radius-md);padding:10px 14px;margin-bottom:12px;">
+          <summary style="font-size:12.5px;font-weight:700;color:#92400e;cursor:pointer;">
+            ⚠️ ${isEn ? `${notFound.length} teachers in file not found in database` : `${notFound.length} nominativi presenti nel file ma non trovati nel database`}
+          </summary>
+          <div style="margin-top:8px;font-size:11.5px;color:#78350f;">
+            ${isEn ? 'These names are present in your file but do not exist in the faculty list (check spelling or add them from Faculty roster):' : 'Questi docenti compaiono nel foglio ma non esistono nell\'elenco docenti della scuola (verifica l\'ortografia o aggiungili da Organico):'}
+            <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;">
+              ${notFound.map(n => `<span style="background:#fff;border:1px solid #fcd34d;padding:2px 8px;border-radius:6px;font-weight:600;">${escapeHtml(n.name)}</span>`).join('')}
+            </div>
+          </div>
+        </details>
+      ` : ''}
+    </div>
+  `;
+
+  const footer = document.getElementById('cattedreModalFooter');
+  if (footer) footer.style.display = 'flex';
+  updateCattedreApplyButtonCount();
+}
+
+async function applyCattedreAlignment() {
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
+  if (!cattedreAnalysisData || !cattedreAnalysisData.to_update) return;
+
+  const checkboxes = document.querySelectorAll('.cattedre-upd-chk:checked');
+  const selectedUpdates = [];
+  checkboxes.forEach(cb => {
+    const idx = parseInt(cb.dataset.idx, 10);
+    if (!isNaN(idx) && cattedreAnalysisData.to_update[idx]) {
+      selectedUpdates.push(cattedreAnalysisData.to_update[idx]);
+    }
+  });
+
+  if (selectedUpdates.length === 0) {
+    alert(isEn ? 'No teacher selected for alignment.' : 'Nessun docente selezionato per l\'allineamento.');
+    return;
+  }
+
+  const createSnap = document.getElementById('chkCattedreSnapshot')?.checked ?? true;
+  const updateCdc = document.getElementById('chkCattedreUpdateCdc')?.checked ?? false;
+  const btn = document.getElementById('btnApplyCattedre');
+  if (btn) {
+    btn.disabled = true;
+    btn.innerText = isEn ? 'Saving...' : 'Salvataggio in corso...';
+  }
+
+  try {
+    const res = await fetch('/api/teachers/align_cattedre/apply', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        updates: selectedUpdates,
+        create_snapshot: createSnap,
+        update_cdc: updateCdc
+      })
+    });
+    const data = await res.json();
+    if (!res.ok || !data.success) {
+      throw new Error(data.error || (isEn ? 'Error applying changes' : 'Errore durante il salvataggio'));
+    }
+
+    closeModal();
+    showToast(isEn ? `Aligned contract types and hours for ${data.applied_count} teachers!` : `Allineamento completato con successo per ${data.applied_count} docenti!`, 'ok');
+    await renderTeachers();
+  } catch (err) {
+    alert((isEn ? 'Error: ' : 'Errore: ') + err.message);
+  } finally {
+    if (btn) btn.disabled = false;
   }
 }
 

@@ -97,7 +97,7 @@ def fetch_google_doc_docx_bytes(url):
     except Exception as e:
         raise ValueError(f"Impossibile scaricare il Google Doc: {e}")
 
-APP_VERSION = "1.8.7"
+APP_VERSION = "1.8.8"
 FET_VERSION = "7.12.0"
 APP_AUTHOR = "Carlo Rigoni"
 APP_MENTOR = "Federico Rettore"
@@ -739,6 +739,49 @@ class EurarioHandler(BaseHTTPRequestHandler):
             self._send_cors()
             self.end_headers()
             self.wfile.write(docx_bytes)
+            return
+
+        elif path == "/api/teachers/align_cattedre/template_csv":
+            use_current = query.get("current", ["0"])[0] in ("1", "true", "yes")
+            import io, csv
+            out = io.StringIO()
+            writer = csv.writer(out)
+            writer.writerow(["Classe di Concorso", "Docente", "Classi", "Ore", "Tipo di Cattedra", "Orario su giorni"])
+            if use_current:
+                teachers = db.get_teachers()
+                for t in teachers:
+                    raw_type = t.get("contract_type", "intera")
+                    if raw_type == "part_time":
+                        type_str = "PART TIME"
+                    elif raw_type == "coe" or t.get("is_coe"):
+                        type_str = "COE"
+                    elif raw_type == "spezzone":
+                        type_str = "SPEZZONE"
+                    else:
+                        type_str = "INTERA" if t.get("target_hours", 18) >= 18 else ""
+                    writer.writerow([
+                        t.get("cdc", ""),
+                        t.get("name", ""),
+                        t.get("comments", ""),
+                        t.get("target_hours", 18),
+                        type_str,
+                        t.get("max_days", "") or ""
+                    ])
+            else:
+                writer.writerow(["A011 - Discipline Letterarie e Latino", "Baston Michela", "1C(4) Italiano - 1C(3) Latino - 1C(3) Storia - 3D(4) Italiano", 14, "PART TIME", 4])
+                writer.writerow(["A015 - Discipline Sanitarie", "Di Zane Alessia", "3G(4) - 4G(4)", 8, "COE", ""])
+                writer.writerow(["A021 - Geografia", "Funaro Pascale", "2B(3) - 1F(3) - 2F(3) - 1G(2) - 1H(2)", 13, "SPEZZONE", ""])
+                writer.writerow(["A026 - Matematica", "Rigoni Carlo", "2L(4) - 3G(3) - 3H(3) - POT(8)", 18, "", ""])
+
+            csv_bytes = out.getvalue().encode("utf-8")
+            filename = "Docenti_Cattedre_Attuali.csv" if use_current else "Modello_Allineamento_Cattedre.csv"
+            self.send_response(200)
+            self.send_header("Content-Type", "text/csv; charset=utf-8")
+            self.send_header("Content-Length", str(len(csv_bytes)))
+            self.send_header("Content-Disposition", f'attachment; filename="{filename}"')
+            self._send_cors()
+            self.end_headers()
+            self.wfile.write(csv_bytes)
             return
 
         # Tutti gli altri endpoint /api/ richiedono autenticazione
@@ -2034,6 +2077,45 @@ class EurarioHandler(BaseHTTPRequestHandler):
                     sync_activities=body.get("sync_activities", False)
                 )
                 self._json(200, {"success": True, "result": res, "summary": db.get_summary()})
+            except Exception as e:
+                self._json(500, {"error": str(e)})
+
+        elif path == "/api/teachers/align_cattedre/analyze":
+            if not body:
+                self._json(400, {"error": "Nessun dato fornito per l'analisi"})
+                return
+            try:
+                text_content = body.get("text")
+                file_b64 = body.get("file_base64")
+                filename = body.get("filename", "")
+                file_bytes = None
+                if file_b64:
+                    import base64
+                    if "," in file_b64:
+                        file_b64 = file_b64.split(",", 1)[1]
+                    file_bytes = base64.b64decode(file_b64)
+
+                res = db.analyze_cattedre_alignment(text=text_content, file_bytes=file_bytes, filename=filename)
+                self._json(200 if res.get("success") else 400, res)
+            except Exception as e:
+                self._json(500, {"error": str(e)})
+
+        elif path == "/api/teachers/align_cattedre/apply":
+            if not body:
+                self._json(400, {"error": "Nessun dato di aggiornamento fornito"})
+                return
+            try:
+                updates = body.get("updates", [])
+                create_snap = body.get("create_snapshot", True)
+                snap_name = body.get("snapshot_name")
+                update_cdc = body.get("update_cdc", False)
+                res = db.apply_cattedre_alignment(
+                    updates_to_apply=updates,
+                    create_snapshot=create_snap,
+                    snapshot_name=snap_name,
+                    update_cdc=update_cdc
+                )
+                self._json(200 if res.get("success") else 400, res)
             except Exception as e:
                 self._json(500, {"error": str(e)})
 
