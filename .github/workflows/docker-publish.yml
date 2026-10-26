@@ -3,6 +3,8 @@ name: Build and Publish Docker Image
 on:
   push:
     branches: [ "main", "master" ]
+    tags:
+      - 'v*'
   workflow_dispatch:
 
 jobs:
@@ -32,6 +34,9 @@ jobs:
           images: carlorigoni/smarttimetablefet
           tags: |
             type=raw,value=latest
+            type=ref,event=tag
+            type=semver,pattern={{version}}
+            type=semver,pattern=v{{version}}
             type=sha
 
       - name: Build and push Docker image
