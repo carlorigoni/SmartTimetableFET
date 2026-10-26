@@ -468,8 +468,22 @@ class EurarioHandler(BaseHTTPRequestHandler):
             self.send_error(404, "File non trovato")
             return
         if not content_type:
-            content_type, _ = mimetypes.guess_type(file_path)
-            content_type = content_type or "application/octet-stream"
+            ext = os.path.splitext(file_path)[1].lower()
+            if ext == ".svg":
+                content_type = "image/svg+xml"
+            elif ext == ".ico":
+                content_type = "image/x-icon"
+            elif ext == ".png":
+                content_type = "image/png"
+            elif ext == ".css":
+                content_type = "text/css; charset=utf-8"
+            elif ext == ".js":
+                content_type = "application/javascript; charset=utf-8"
+            elif ext == ".json":
+                content_type = "application/json; charset=utf-8"
+            else:
+                content_type, _ = mimetypes.guess_type(file_path)
+                content_type = content_type or "application/octet-stream"
 
         with open(file_path, "rb") as f:
             content = f.read()
