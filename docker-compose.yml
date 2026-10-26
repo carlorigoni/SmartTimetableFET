@@ -1,0 +1,36 @@
+services:
+  eurario:
+    container_name: eurario
+    image: carlorigoni/eurario:latest
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - HOST=0.0.0.0
+      - PORT=8000
+      - PYTHONUNBUFFERED=1
+      - TZ=Europe/Rome
+      - ADMIN_EMAIL=admin@paperopoli.edu
+      # - GOOGLE_CLIENT_ID=tuo-client-id.apps.googleusercontent.com
+    volumes:
+      # Persistenza dati: database scolastico, orari risolti e snapshot
+      - ./data:/app/webapp/data
+      # Fuso orario italiano sincronizzato con l'host Ubuntu
+      - /etc/localtime:/etc/localtime:ro
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/summary"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+  # [Consigliato per Server Ubuntu] Aggiornamento automatico container all'uscita di nuove versioni Docker Hub
+  watchtower:
+    container_name: eurario_watchtower
+    image: containrrr/watchtower
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: --interval 3600 --cleanup eurario
+    profiles:
+      - auto-update

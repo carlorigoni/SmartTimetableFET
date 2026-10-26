@@ -1,0 +1,885 @@
+{
+  "site": {
+    "name": "Eurario",
+    "domain": "eurario.it",
+    "app_url": "https://app.eurario.it",
+    "demo_url": "https://app.eurario.it/#demo",
+    "repo_url": "https://github.com/carlorigoni/eurario",
+    "docker_hub": "https://hub.docker.com/r/carlorigoni/eurario",
+    "contact_email": "info@eurario.it",
+    "current_version": "v1.9.2",
+    "fet_version": "7.12.0",
+    "author": "Carlo Rigoni",
+    "mentor": "Federico Rettore"
+  },
+  "it": {
+    "nav": {
+      "features": "Funzionalità",
+      "why": "Perché Eurario",
+      "plans": "Piani & Cloud",
+      "install": "Installazione",
+      "faq": "Domande Frequenti",
+      "github": "GitHub",
+      "login_btn": "🔐 Accedi all'App",
+      "showcase": "Maschere & Demo"
+    },
+    "hero": {
+      "badge": "🎓 Suite Libera per la Scuola &bull; Motore FET 7.12",
+      "title_main": "L'Orario Scolastico Perfetto,",
+      "title_highlight": "Senza Stress e Senza Compromessi.",
+      "subtitle": "La piattaforma moderna concepita per le scuole: gestisce con precisione chirurgica cattedre esterne (COE), spezzoni, part-time e vincoli complessi, elaborata dall'infallibile solutore matematico FET.",
+      "cta_primary": "🚀 Accedi a Eurario",
+      "cta_secondary": "📖 Scopri le Funzionalità",
+      "docker_tagline": "Disponibile per Synology NAS, Docker e Server Ubuntu on-premise"
+    },
+    "mockup": {
+      "title": "app.eurario.it — Quadro Orario Generale",
+      "status": "● FET Solved",
+      "class_name": "Classe 3A • Liceo Scientifico",
+      "assigned": "100% Assegnato",
+      "days": [
+        "Ora",
+        "Lun",
+        "Mar",
+        "Mer",
+        "Gio",
+        "Ven"
+      ],
+      "subjects": {
+        "ita": "ITA",
+        "mat": "MAT",
+        "ing": "ING",
+        "sci": "SCI",
+        "disp": "DISP"
+      },
+      "footer_snap": "🛡️ Snapshot Sicuro: <b>Pre-Collegio v3</b>",
+      "footer_conflicts": "0 Ore Buche Conflitto"
+    },
+    "announcements": [
+      {
+        "badge": "Novità v1.9.2",
+        "date": "Ottobre 2026",
+        "text": "Allineamento intelligente cattedre docenti: caricamento multi-foglio Excel/CSV con anteprima variazioni per COE, Spezzoni e Part-Time."
+      }
+    ],
+    "pillars_header": {
+      "tag": "I Punti di Forza",
+      "title": "Pensato per la complessità della scuola italiana",
+      "subtitle": "Dalle cattedre COE con scuole esterne al giorno libero dei docenti part-time: tutto è integrato nativamente."
+    },
+    "pillars": [
+      {
+        "icon": "🇮🇹",
+        "title": "Modello Scolastico Italiano al 100%",
+        "desc": "Supporto nativo per Cattedre Orario Esterne (COE), spezzoni orario, part-time con giorni prestabiliti, compresenze di laboratorio, articolazioni linguistiche e ore a disposizione."
+      },
+      {
+        "icon": "⚡",
+        "title": "Motore Matematico FET 7.12",
+        "desc": "Sfrutta l'algoritmo euristico ad altissime prestazioni FET: genera orari completi per istituti complessi da oltre 150 docenti e 60 classi in pochi secondi."
+      },
+      {
+        "icon": "🛡️",
+        "title": "Sovranità dei Dati & GDPR",
+        "desc": "Architettura 100% on-premise su NAS Synology o VM scolastica. Nessun nominativo di docenti o studenti viene condiviso con cloud commerciali proprietari terzi."
+      },
+      {
+        "icon": "📊",
+        "title": "Advisor Vincoli & Relax Guidato",
+        "desc": "Diagnostica immediata dei colli di bottiglia e dei vincoli impossibili: ti suggerisce esattamente quali condizioni allentare per chiudere l'orario al 100%."
+      },
+      {
+        "icon": "📄",
+        "title": "Stampe Ufficiali Word (.docx) & PDF",
+        "desc": "Esporta quadri orario completi per il Collegio Docenti, orari per classe, griglie tabellari e layout tipografici pronti da affiggere all'albo e sul registro elettronico."
+      },
+      {
+        "icon": "🔄",
+        "title": "Snapshot & Rollback Sicuro",
+        "desc": "Crea istantanee di sicurezza automatiche prima di ogni modifica. Torna indietro a qualsiasi versione precedente con un solo clic senza paura di perdere il lavoro."
+      }
+    ],
+    "comparison_header": {
+      "tag": "Il Valore Aggiunto",
+      "title": "Perché passare a Eurario",
+      "subtitle": "Il confronto tra la gestione orario tradizionale e la moderna architettura di Eurario.",
+      "th_feature": "Aspetto",
+      "th_trad": "Metodo Tradizionale & Software Datati",
+      "th_eurario": "Con Eurario FET Suite"
+    },
+    "comparison": [
+      {
+        "feature": "Complessità Cattedre",
+        "traditional": "Calcolo manuale con Excel, spezzoni e COE spesso sbilanciati",
+        "eurario": "Riconoscimento e allineamento automatico da fogli Excel, Word (.docx) e CSV"
+      },
+      {
+        "feature": "Risoluzione Conflitti",
+        "traditional": "Tentativi per ore alla cieca senza capire quale vincolo blocchi",
+        "eurario": "Advisor visivo in tempo reale con identificazione mirata dei colli di bottiglia"
+      },
+      {
+        "feature": "Costi di Licenza",
+        "traditional": "Centinaia o migliaia di euro all'anno per licenze proprietarie",
+        "eurario": "100% Gratuito, Libero e Open-Source (GPL) per tutte le scuole"
+      },
+      {
+        "feature": "Privacy & Sicurezza",
+        "traditional": "Dati caricati su server cloud privati o esteri",
+        "eurario": "Installato nella rete dell'Istituto, totale conformità GDPR"
+      }
+    ],
+    "deployment_header": {
+      "tag": "Modalità di Utilizzo",
+      "title": "Due Strade per Adottare Eurario nella Tua Scuola",
+      "subtitle": "Scegli la totale indipendenza del Self-Hosted gratuito oppure la massima serenità del Cloud SaaS completamente gestito."
+    },
+    "deployment_plans": [
+      {
+        "id": "self_hosted",
+        "featured": false,
+        "badge_top": "",
+        "title": "Self-Hosted On-Premise",
+        "target": "Ideale per istituti con referenti IT interni, server scolastici o NAS Synology.",
+        "price": "0 €",
+        "price_sub": "Gratuito, libero e open-source per sempre",
+        "features": [
+          "Codice sorgente 100% Open Source (GPL)",
+          "Nessun canone di licenza né costi ricorrenti",
+          "Dati salvati in locale all'interno della rete scolastica",
+          "Deploy rapido su Docker, Synology NAS o Linux",
+          "Aggiornamenti gestiti autonomamente via Docker",
+          "Richiede un server locale e manutenzione a carico della scuola"
+        ],
+        "cta_text": "Vai alla Guida Docker",
+        "cta_link": "#installazione",
+        "cta_style": "btn-outline"
+      },
+      {
+        "id": "cloud_saas",
+        "featured": true,
+        "badge_top": "⭐ Consigliato per le Scuole &bull; Zero Pensieri",
+        "title": "Eurario Cloud Gestito (SaaS)",
+        "target": "Per dirigenti, DSGA e commissioni orario che non vogliono alcun onere tecnico o di manutenzione.",
+        "price": "Su Misura",
+        "price_sub": "Canone annuale istituzionale accessibile e trasparente",
+        "features": [
+          "Attivazione istantanea in 24h senza server né installazione",
+          "Istanza cloud dedicata con sottodominio riservato dell'Istituto",
+          "Backup quotidiani automatici, crittografati e ridondati",
+          "Aggiornamenti software e motore FET sempre inclusi e trasparenti",
+          "Conformità GDPR europea garantita (Datacenter UE ISO 27001)",
+          "Supporto tecnico prioritario e affiancamento per la Commissione Orario",
+          "Integrazione Google Workspace for Education pronta all'uso"
+        ],
+        "cta_text": "Richiedi Info & Preventivo Cloud",
+        "cta_link": "mailto:info@eurario.it?subject=Richiesta%20Informazioni%20Eurario%20Cloud%20SaaS",
+        "cta_style": "btn-emerald"
+      }
+    ],
+    "install_header": {
+      "tag": "Pronto all'Uso",
+      "title": "Installabile ovunque in pochi minuti",
+      "subtitle": "Nessuna configurazione complessa di database esterni o dipendenze: il container Docker include tutto il necessario.",
+      "box_title": "Avvio Rapido Docker (Linux, Mac, Synology NAS)",
+      "box_port": "Porta: 8000",
+      "copy_btn": "Copia",
+      "copied_msg": "Comando copiato negli appunti!",
+      "feat1": "✓ Supporto Synology Container Manager",
+      "feat2": "✓ Docker Compose integrato con Watchtower",
+      "feat3": "✓ Volume dati persistente e snapshot"
+    },
+    "faq_header": {
+      "tag": "Risposte Chiare",
+      "title": "Domande Frequenti",
+      "subtitle": "Tutto quello che c'è da sapere su licenze, privacy e operatività."
+    },
+    "faq": [
+      {
+        "q": "Eurario è davvero gratuito e open source?",
+        "a": "Sì, Eurario è un software libero distribuito con licenza Open Source. L'Istituto Scolastico può scaricarlo, installarlo e utilizzarlo liberamente senza canoni né costi ricorrenti."
+      },
+      {
+        "q": "Non abbiamo un tecnico o un server a scuola: come possiamo usare Eurario?",
+        "a": "Offriamo il servizio Eurario Cloud SaaS a canone annuale per gli Istituti che desiderano una soluzione chiavi in mano. Ci occupiamo noi di tutto: hosting sicuro su datacenter UE conformi GDPR, backup automatici quotidiani, aggiornamenti e supporto tecnico dedicato alla commissione orario, senza alcun onere di gestione tecnica per la scuola."
+      },
+      {
+        "q": "Come viene installata la versione Self-Hosted nella nostra scuola?",
+        "a": "Eurario è distribuito come immagine Docker pronta all'uso (`carlorigoni/eurario:latest`). Si installa in pochi minuti su un NAS Synology (tramite Container Manager), su un server Ubuntu o su un computer dell'Istituto."
+      },
+      {
+        "q": "Posso importare i dati dal registro elettronico o da file Excel?",
+        "a": "Assolutamente sì. Eurario include moduli di importazione ed esportazione per fogli Excel (.xlsx), CSV, tabelle HTML e file Word (.docx) con rilevamento automatico di cattedre, ore e classi."
+      },
+      {
+        "q": "Come funziona l'accesso per i membri della commissione orario?",
+        "a": "Eurario supporta l'autenticazione sicura tramite Google Workspace for Education (OAuth 2.0) con approvazione degli accessi da parte dell'amministratore, oltre a un passcode di emergenza locale."
+      }
+    ],
+    "footer": {
+      "desc": "Software libero per la gestione avanzata dell'orario scolastico italiano, disponibile Self-Hosted e in Cloud SaaS.",
+      "app_btn": "Accedi all'App",
+      "code_btn": "Codice Sorgente",
+      "credits": "Ideazione & Architettura: <b>Carlo Rigoni</b> &bull; Mentore dell'Orario: <b>Federico Rettore</b> &bull; Motore Euristico: <b>FET Free Software</b> &bull; AI Pair Programming: <b>Google DeepMind Antigravity</b>",
+      "gdpr": "Piattaforma on-premise conforme al Regolamento UE 2016/679 (GDPR)."
+    },
+    "showcase_header": {
+      "tag": "Tour Applicativo • Esempio Didattico",
+      "title": "Le Maschere di Eurario con la Scuola Demo di Paperopoli",
+      "subtitle": "Esplora le schermate operative reali basate sull'istituto di test «Liceo & Tecnico Pico De Paperis»: dal quadro orario settimanale alla gestione cattedre COE, dal compilatore FET alle stampe ufficiali."
+    },
+    "showcase_tabs": [
+      {
+        "id": "timetable",
+        "icon": "🗓️",
+        "label": "Orario Risolto"
+      },
+      {
+        "id": "teachers",
+        "icon": "👨‍🏫",
+        "label": "Docenti & Cattedre"
+      },
+      {
+        "id": "solver",
+        "icon": "⚡",
+        "label": "Compilatore FET"
+      },
+      {
+        "id": "diagnostics",
+        "icon": "🔍",
+        "label": "Advisor & Vincoli"
+      },
+      {
+        "id": "reports",
+        "icon": "📑",
+        "label": "Stampe DOCX/PDF"
+      }
+    ],
+    "showcase_views": {
+      "timetable": {
+        "title": "app.eurario.it — Orario Risolto • Classe 3A & Docenti",
+        "badge": "● 100% Risolto da FET",
+        "school": "Liceo & Tecnico «Pico De Paperis» • Paperopoli",
+        "description": "Visualizzazione dinamica dell'orario con evidenziazione automatica delle materie, aule speciali (Laboratorio Archimede, Palestra) e zero ore buche.",
+        "headers": [
+          "Ora",
+          "Lunedì",
+          "Martedì",
+          "Mercoledì",
+          "Giovedì",
+          "Venerdì"
+        ],
+        "rows": [
+          [
+            "1ª (08:00)",
+            "MAT • Paperon de' Paperoni",
+            "ITA • Pico De Paperis",
+            "ED.FIS • Battista (Palestra)",
+            "MECC • Dinamite Bla",
+            "ITA • Pico De Paperis"
+          ],
+          [
+            "2ª (09:00)",
+            "MAT • Paperon de' Paperoni",
+            "ITA • Pico De Paperis",
+            "ED.FIS • Battista (Palestra)",
+            "MECC • Dinamite Bla",
+            "MAT • Paperon de' Paperoni"
+          ],
+          [
+            "3ª (10:00)",
+            "FIS • Archimede Pitagorico",
+            "MECC • Dinamite Bla",
+            "MAT • Paperon de' Paperoni",
+            "MAT • Paperon de' Paperoni",
+            "FIS • Archimede Pitagorico"
+          ],
+          [
+            "4ª (11:00)",
+            "ITA • Pico De Paperis",
+            "LAB • Archimede (Lab Fis)",
+            "DISP • Paperino Paolino",
+            "FIS • Archimede Pitagorico",
+            "ING • Nonna Papera"
+          ],
+          [
+            "5ª (12:00)",
+            "ING • Nonna Papera",
+            "LAB • Archimede (Lab Fis)",
+            "ITA • Pico De Paperis",
+            "ING • Nonna Papera",
+            "FILO • Pico De Paperis"
+          ]
+        ],
+        "footer_note": "✓ 0 Conflitti • Paperino Paolino rispetta il Giovedì Libero da Part-Time • COE Paperone 12h Sede Centrale + 6h Esterna"
+      },
+      "teachers": {
+        "title": "app.eurario.it — Organico Docenti & Cattedre",
+        "badge": "8 Docenti Attivi",
+        "school": "Liceo & Tecnico «Pico De Paperis» • Paperopoli",
+        "description": "Configurazione chirugica di cattedre orario esterne (COE), spezzoni, part-time verticali con giorno libero protetto e ore a disposizione.",
+        "items": [
+          {
+            "name": "Archimede Pitagorico",
+            "subject": "Fisica & Tecnologie Applicate",
+            "type_badge": "Cattedra Intera (18h)",
+            "type_class": "badge-success",
+            "details": "18 Ore settimanali • 3 Classi (1A, 2A, 3A) • 4h Laboratorio in compresenza • Max 4 ore/die • Zero buchi"
+          },
+          {
+            "name": "Paperon de' Paperoni",
+            "subject": "Economia Aziendale & Diritto",
+            "type_badge": "Cattedra COE Esterna (12h + 6h)",
+            "type_class": "badge-warning",
+            "details": "12h Sede Paperopoli + 6h Ist. Tecnico Paperopoli Nord • Giorni a Paperopoli: Lun/Mer/Ven • Finestra di viaggio garantita"
+          },
+          {
+            "name": "Paperino Paolino",
+            "subject": "Laboratorio & Ore a Disposizione",
+            "type_badge": "Part-Time Verticale (10h)",
+            "type_class": "badge-info",
+            "details": "10 Ore contrattuali • Giorno Libero Vincolante: Giovedì • Disponibilità concentrata fascia mattutina 08:00 - 12:00"
+          },
+          {
+            "name": "Pico De Paperis",
+            "subject": "Italiano, Storia & Filosofia",
+            "type_badge": "Cattedra Intera (18h)",
+            "type_class": "badge-success",
+            "details": "18 Ore cattedra • Coordinatore Didattico • Accorpamento disciplinare Italiano + Storia biennio/triennio"
+          }
+        ]
+      },
+      "solver": {
+        "title": "app.eurario.it — Compilatore FET 7.12 in Tempo Reale",
+        "badge": "FET Engine 7.12.0",
+        "school": "Liceo & Tecnico «Pico De Paperis» • Paperopoli",
+        "description": "Algoritmo euristico multithread integrato: elabora la matrice spazio-temporale di vincoli e chiude orari al 100% in pochi secondi.",
+        "stats": [
+          {
+            "label": "Attività Collocate",
+            "value": "120 / 120 (100%)",
+            "color": "emerald"
+          },
+          {
+            "label": "Tempo di Calcolo",
+            "value": "1.34 secondi",
+            "color": "navy"
+          },
+          {
+            "label": "Vincoli Rispettati",
+            "value": "14 Hard / 8 Soft",
+            "color": "emerald"
+          },
+          {
+            "label": "Conflitti Residui",
+            "value": "0",
+            "color": "emerald"
+          }
+        ],
+        "console_output": [
+          "[FET 7.12] Inizializzazione matrice attività: 8 docenti, 5 classi, 3 plessi...",
+          "[FET 7.12] Applicazione vincolo COE: Paperon de' Paperoni vincolato su Lun/Mer/Ven...",
+          "[FET 7.12] Applicazione vincolo Part-Time: Paperino Paolino bloccato OFF il Giovedì...",
+          "[FET 7.12] Collocazione 120 attività didattiche in corso...",
+          "[FET 7.12] SUCCESSO! Soluzione ottimale trovata alla generazione #184 (1.34s). Orario completo al 100%!"
+        ]
+      },
+      "diagnostics": {
+        "title": "app.eurario.it — Advisor Intelligente & Diagnostica Vincoli",
+        "badge": "Salute Orario: 100%",
+        "school": "Liceo & Tecnico «Pico De Paperis» • Paperopoli",
+        "description": "Pre-validazione matematica: analizza in tempo reale i colli di bottiglia prima del calcolo per evitare blocchi o combinazioni impossibili.",
+        "checks": [
+          {
+            "status": "ok",
+            "title": "Bilanciamento Cattedre & Spezzoni",
+            "desc": "Tutte le 120 ore settimanali assegnate senza ore vacanti o spezzoni non coperti."
+          },
+          {
+            "status": "ok",
+            "title": "Vincoli Esterni COE Paperone",
+            "desc": "Nessuna sovrapposizione oraria tra la sede di Paperopoli e la scuola di completamento."
+          },
+          {
+            "status": "ok",
+            "title": "Giorno Libero Paperino Paolino",
+            "desc": "Giorno libero del Giovedì rigorosamente preservato (0 ore assegnate)."
+          },
+          {
+            "status": "ok",
+            "title": "Capienza & Turnazione Laboratori",
+            "desc": "Laboratorio di Fisica utilizzato da Archimede Pitagorico senza conflitti di turno."
+          }
+        ],
+        "advisor_tip": "💡 Advisor: Nessun vincolo contraddittorio rilevato. Il quadro didattico è matematicamente pronto per la compilazione rapida."
+      },
+      "reports": {
+        "title": "app.eurario.it — Esportazione Ufficiale & Tipografia",
+        "badge": "Word • PDF • Excel",
+        "school": "Liceo & Tecnico «Pico De Paperis» • Paperopoli",
+        "description": "Generazione con un clic di layout professionali per il Collegio Docenti, orari per classe da affiggere all'albo e file per il registro elettronico.",
+        "exports": [
+          {
+            "format": "DOCX",
+            "icon": "📝",
+            "title": "Quadro Orario Generale Docenti (Word)",
+            "desc": "Tabellone formattato modificabile con intestazione della scuola, pronto per la delibera del Collegio Docenti."
+          },
+          {
+            "format": "PDF",
+            "icon": "📄",
+            "title": "Orario per Classe (A4 Orizzontale)",
+            "desc": "Griglie ad alta leggibilità tipografica con colori per materia, ideali per la pubblicazione sul sito web e bacheca."
+          },
+          {
+            "format": "PDF",
+            "icon": "📑",
+            "title": "Tabellone Istituzionale A3",
+            "desc": "Visualizzazione d'insieme con compresenze e ore a disposizione per la portineria e la vicepresidenza."
+          },
+          {
+            "format": "CSV",
+            "icon": "📊",
+            "title": "Tracciato per Registro Elettronico",
+            "desc": "Importazione diretta nel registro elettronico scolastico (Spaggiari, Axios, Nuvola, MasterCom)."
+          }
+        ]
+      }
+    }
+  },
+  "en": {
+    "nav": {
+      "features": "Features",
+      "why": "Why Eurario",
+      "plans": "Plans & Cloud",
+      "install": "Installation",
+      "faq": "FAQ",
+      "github": "GitHub",
+      "login_btn": "🔐 Launch Web App",
+      "showcase": "Screens & Demo"
+    },
+    "hero": {
+      "badge": "🎓 Free Timetabling Suite for Schools &bull; Powered by FET 7.12",
+      "title_main": "The Flawless School Timetable,",
+      "title_highlight": "Zero Stress, Zero Compromises.",
+      "subtitle": "The modern timetabling platform designed for complex schools: handles shared allocations, part-time staff, multi-campus teachers, and intricate constraints with surgical precision via the battle-tested FET solver.",
+      "cta_primary": "🚀 Launch Eurario",
+      "cta_secondary": "📖 Explore Features",
+      "docker_tagline": "Available for Synology NAS, Docker, and Ubuntu on-premise servers"
+    },
+    "mockup": {
+      "title": "app.eurario.it — Master Timetable Grid",
+      "status": "● FET Solved",
+      "class_name": "Class 10A • Science High School",
+      "assigned": "100% Scheduled",
+      "days": [
+        "Period",
+        "Mon",
+        "Tue",
+        "Wed",
+        "Thu",
+        "Fri"
+      ],
+      "subjects": {
+        "ita": "LIT",
+        "mat": "MATH",
+        "ing": "ENG",
+        "sci": "SCI",
+        "disp": "FREE"
+      },
+      "footer_snap": "🛡️ Safe Snapshot: <b>Faculty Review v3</b>",
+      "footer_conflicts": "0 Window Hours / Gaps"
+    },
+    "announcements": [
+      {
+        "badge": "What's New in v1.9.2",
+        "date": "October 2026",
+        "text": "Intelligent teacher post alignment: multi-sheet Excel/CSV upload with live preview of changes for shared allocations and part-time staff."
+      }
+    ],
+    "pillars_header": {
+      "tag": "Key Strengths",
+      "title": "Built for Institutional Timetabling Complexity",
+      "subtitle": "From multi-site shared appointments to fixed free days for part-time faculty: natively integrated out of the box."
+    },
+    "pillars": [
+      {
+        "icon": "🏛️",
+        "title": "100% Adaptive Educational Framework",
+        "desc": "Native support for multi-campus teachers, fractional allocations, fixed part-time off-days, laboratory co-teaching, language divisions, and supervision duty periods."
+      },
+      {
+        "icon": "⚡",
+        "title": "FET 7.12 Mathematical Engine",
+        "desc": "Leverages the ultra-high performance FET heuristic algorithm: computes complete, conflict-free schedules for complex campuses with 150+ teachers and 60+ classes in seconds."
+      },
+      {
+        "icon": "🛡️",
+        "title": "Data Sovereignty & GDPR",
+        "desc": "100% on-premise architecture hosted on Synology NAS or internal school VM. Zero faculty or student information is ever sent to proprietary third-party commercial clouds."
+      },
+      {
+        "icon": "📊",
+        "title": "Constraint Advisor & Guided Relaxation",
+        "desc": "Instant diagnostics for schedule bottlenecks and contradictory constraints: precisely highlights which conditions to relax to achieve a 100% solved timetable."
+      },
+      {
+        "icon": "📄",
+        "title": "Official Word (.docx) & PDF Printouts",
+        "desc": "Export master schedules for academic boards, individual teacher agendas, class grids, and publication-ready typographic layouts for noticeboards and electronic portals."
+      },
+      {
+        "icon": "🔄",
+        "title": "Snapshots & Instant Safe Rollback",
+        "desc": "Automatic safety snapshots created prior to any major adjustment or solver run. Revert back to any previous state in a single click with zero fear of data loss."
+      }
+    ],
+    "comparison_header": {
+      "tag": "The Added Value",
+      "title": "Why Choose Eurario",
+      "subtitle": "Comparing traditional scheduling friction with Eurario's modern, automated architecture.",
+      "th_feature": "Aspect",
+      "th_trad": "Traditional Methods & Legacy Software",
+      "th_eurario": "With Eurario FET Suite"
+    },
+    "comparison": [
+      {
+        "feature": "Curriculum Complexity",
+        "traditional": "Manual Excel formulas prone to calculation errors and unbalanced part-time slots",
+        "eurario": "Automatic parsing and alignment from Excel (.xlsx), Word (.docx), and CSV tables"
+      },
+      {
+        "feature": "Conflict Resolution",
+        "traditional": "Hours of trial-and-error without insight into which rule is blocking the solver",
+        "eurario": "Real-time visual Advisor pinpoints exact mathematical bottlenecks and remedies"
+      },
+      {
+        "feature": "Licensing & Recurring Fees",
+        "traditional": "Hundreds or thousands of euros per year for proprietary, closed-source licenses",
+        "eurario": "100% Free and Open Source (GPL) for all educational institutions worldwide"
+      },
+      {
+        "feature": "Privacy & Security",
+        "traditional": "Institutional records stored on proprietary overseas cloud infrastructures",
+        "eurario": "Self-hosted within your school network, providing full GDPR compliance"
+      }
+    ],
+    "deployment_header": {
+      "tag": "Deployment Options",
+      "title": "Two Flexible Paths to Deploy Eurario",
+      "subtitle": "Choose full autonomy with free Self-Hosting or zero technical hassle with our Managed Cloud SaaS."
+    },
+    "deployment_plans": [
+      {
+        "id": "self_hosted",
+        "featured": false,
+        "badge_top": "",
+        "title": "Self-Hosted On-Premise",
+        "target": "Ideal for schools with internal IT administrators, local servers, or Synology NAS devices.",
+        "price": "$0",
+        "price_sub": "Free and open-source forever",
+        "features": [
+          "100% Free and Open-Source software (GPL)",
+          "No license fees or recurring subscriptions",
+          "Data stays strictly inside your local school network",
+          "Quick deployment on Docker, Synology NAS, or Linux",
+          "Updates handled independently via Docker Compose",
+          "Requires local server hardware and technical maintenance"
+        ],
+        "cta_text": "Explore Docker Guide",
+        "cta_link": "#installazione",
+        "cta_style": "btn-outline"
+      },
+      {
+        "id": "cloud_saas",
+        "featured": true,
+        "badge_top": "⭐ Recommended for Schools &bull; Turnkey",
+        "title": "Eurario Managed Cloud (SaaS)",
+        "target": "For school leadership and timetable teams who want a zero-maintenance, ready-to-use solution.",
+        "price": "Tailored",
+        "price_sub": "Transparent, budget-friendly annual institutional subscription",
+        "features": [
+          "Instant turnkey setup in 24 hours — no servers needed",
+          "Dedicated cloud instance on a private institution subdomain",
+          "Automated daily encrypted backups with full redundancy",
+          "Software updates and FET solver maintenance fully handled",
+          "Guaranteed EU GDPR compliance (EU ISO 27001 datacenters)",
+          "Priority technical support and direct onboarding assistance",
+          "Out-of-the-box Google Workspace for Education integration"
+        ],
+        "cta_text": "Request SaaS Details & Quote",
+        "cta_link": "mailto:info@eurario.it?subject=Inquiry%20Eurario%20Cloud%20SaaS",
+        "cta_style": "btn-emerald"
+      }
+    ],
+    "install_header": {
+      "tag": "Production Ready",
+      "title": "Deploy Anywhere in Minutes",
+      "subtitle": "Zero complex database setup or external dependencies: the container bundles everything needed.",
+      "box_title": "Docker Quickstart (Linux, macOS, Synology NAS)",
+      "box_port": "Port: 8000",
+      "copy_btn": "Copy",
+      "copied_msg": "Command copied to clipboard!",
+      "feat1": "✓ Synology Container Manager Ready",
+      "feat2": "✓ Integrated Docker Compose & Watchtower",
+      "feat3": "✓ Persistent data volumes & safety snapshots"
+    },
+    "faq_header": {
+      "tag": "Clear Answers",
+      "title": "Frequently Asked Questions",
+      "subtitle": "Everything you need to know about licensing, data privacy, and operations."
+    },
+    "faq": [
+      {
+        "q": "Is Eurario truly free and open source?",
+        "a": "Yes, Eurario is free software released under an Open Source license. Educational institutions can download, deploy, and operate it indefinitely with zero license fees or subscriptions."
+      },
+      {
+        "q": "We don't have dedicated IT staff or servers: can we still use Eurario?",
+        "a": "Yes! We offer a fully managed Eurario Cloud SaaS annual plan for schools seeking a turnkey experience. We take care of high-availability European hosting (GDPR compliant), daily encrypted backups, software updates, and dedicated technical onboarding for your timetable committee, with zero maintenance overhead for the school."
+      },
+      {
+        "q": "How is the Self-Hosted version deployed within our school?",
+        "a": "Eurario is packaged as a ready-to-run Docker image (`carlorigoni/eurario:latest`). It sets up in minutes on a Synology NAS (Container Manager), Ubuntu server, or local school workstation."
+      },
+      {
+        "q": "Can we import existing rosters from spreadsheets or registers?",
+        "a": "Absolutely. Eurario includes flexible import and export tools for Excel spreadsheets (.xlsx), CSV files, HTML tables, and Word documents (.docx) with automatic column and teacher recognition."
+      },
+      {
+        "q": "How is access secured for timetable committee members?",
+        "a": "Eurario supports secure single sign-on via Google Workspace for Education (OAuth 2.0) with administrator-managed access permissions, alongside a local emergency passcode."
+      }
+    ],
+    "footer": {
+      "desc": "Free and open-source suite for advanced institutional school timetabling, available Self-Hosted and as a Managed Cloud SaaS.",
+      "app_btn": "Open Web App",
+      "code_btn": "Source Code",
+      "credits": "Conception & Architecture: <b>Carlo Rigoni</b> &bull; Timetabling Mentor: <b>Federico Rettore</b> &bull; Heuristic Solver Engine: <b>FET Free Software</b> &bull; AI Pair Programming: <b>Google DeepMind Antigravity</b>",
+      "gdpr": "Self-hosted on-premise platform compliant with EU Regulation 2016/679 (GDPR)."
+    },
+    "showcase_header": {
+      "tag": "Application Tour • Live Sample Dataset",
+      "title": "Eurario Interfaces with the Duckburg Sample School",
+      "subtitle": "Explore actual operational screens loaded with the «Duckburg High & Tech Academy» demo: from the interactive master schedule to COE shared posts, from the FET compiler to official printouts."
+    },
+    "showcase_tabs": [
+      {
+        "id": "timetable",
+        "icon": "🗓️",
+        "label": "Solved Timetable"
+      },
+      {
+        "id": "teachers",
+        "icon": "👨‍🏫",
+        "label": "Faculty & Posts"
+      },
+      {
+        "id": "solver",
+        "icon": "⚡",
+        "label": "FET Compiler"
+      },
+      {
+        "id": "diagnostics",
+        "icon": "🔍",
+        "label": "Advisor & Checks"
+      },
+      {
+        "id": "reports",
+        "icon": "📑",
+        "label": "DOCX/PDF Reports"
+      }
+    ],
+    "showcase_views": {
+      "timetable": {
+        "title": "app.eurario.it — Master Timetable • Class 3A & Faculty",
+        "badge": "● 100% Solved by FET",
+        "school": "Duckburg High & Tech Academy • Duckburg",
+        "description": "Dynamic timetable view with automated subject color-coding, dedicated labs (Gyro's Physics Lab, Gymnasium), and zero gaps.",
+        "headers": [
+          "Period",
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday"
+        ],
+        "rows": [
+          [
+            "1st (08:00)",
+            "MATH • Scrooge McDuck",
+            "LIT • Ludwig Von Drake",
+            "PE • Battista (Gymnasium)",
+            "MECH • Dinamite Bla",
+            "LIT • Ludwig Von Drake"
+          ],
+          [
+            "2nd (09:00)",
+            "MATH • Scrooge McDuck",
+            "LIT • Ludwig Von Drake",
+            "PE • Battista (Gymnasium)",
+            "MECH • Dinamite Bla",
+            "MATH • Scrooge McDuck"
+          ],
+          [
+            "3rd (10:00)",
+            "SCI • Gyro Gearloose",
+            "MECH • Dinamite Bla",
+            "MATH • Scrooge McDuck",
+            "MATH • Scrooge McDuck",
+            "SCI • Gyro Gearloose"
+          ],
+          [
+            "4th (11:00)",
+            "LIT • Ludwig Von Drake",
+            "LAB • Gyro (Physics Lab)",
+            "DUTY • Donald Duck",
+            "SCI • Gyro Gearloose",
+            "ENG • Grandma Duck"
+          ],
+          [
+            "5th (12:00)",
+            "ENG • Grandma Duck",
+            "LAB • Gyro (Physics Lab)",
+            "LIT • Ludwig Von Drake",
+            "ENG • Grandma Duck",
+            "PHIL • Ludwig Von Drake"
+          ]
+        ],
+        "footer_note": "✓ 0 Conflicts • Donald Duck respects Part-Time Thursday Off-Day • Scrooge McDuck COE 12h Main + 6h North Tech"
+      },
+      "teachers": {
+        "title": "app.eurario.it — Faculty Roster & Teaching Appointments",
+        "badge": "8 Active Faculty",
+        "school": "Duckburg High & Tech Academy • Duckburg",
+        "description": "Surgical setup for shared external appointments (COE), fractional splits, vertical part-time schedules with protected off-days, and duty periods.",
+        "items": [
+          {
+            "name": "Gyro Gearloose",
+            "subject": "Physics & Applied Technologies",
+            "type_badge": "Full Post (18h)",
+            "type_class": "badge-success",
+            "details": "18 Weekly periods • 3 Classes (1A, 2A, 3A) • 4h Co-taught lab slots • Max 4 periods/day • Zero window gaps"
+          },
+          {
+            "name": "Scrooge McDuck",
+            "subject": "Business Economics & Law",
+            "type_badge": "Shared COE Post (12h + 6h)",
+            "type_class": "badge-warning",
+            "details": "12h Duckburg Main Campus + 6h North Duckburg Tech • Campus days: Mon/Wed/Fri • Inter-campus transit window preserved"
+          },
+          {
+            "name": "Donald Duck",
+            "subject": "Lab Support & On-Call Duty",
+            "type_badge": "Vertical Part-Time (10h)",
+            "type_class": "badge-info",
+            "details": "10 Contracted periods • Binding Off-Day: Thursday • Availability concentrated in morning sessions (08:00 - 12:00)"
+          },
+          {
+            "name": "Ludwig Von Drake",
+            "subject": "Literature, History & Philosophy",
+            "type_badge": "Full Post (18h)",
+            "type_class": "badge-success",
+            "details": "18 Teaching periods • Academic Dean • Combined Humanities curriculum for junior & senior grade blocks"
+          }
+        ]
+      },
+      "solver": {
+        "title": "app.eurario.it — Real-Time FET 7.12 Compiler Console",
+        "badge": "FET Engine 7.12.0",
+        "school": "Duckburg High & Tech Academy • Duckburg",
+        "description": "Embedded multithreaded heuristic solver: navigates complex space-time constraint matrices and delivers a 100% solved roster in seconds.",
+        "stats": [
+          {
+            "label": "Scheduled Activities",
+            "value": "120 / 120 (100%)",
+            "color": "emerald"
+          },
+          {
+            "label": "Computation Time",
+            "value": "1.34 seconds",
+            "color": "navy"
+          },
+          {
+            "label": "Constraints Met",
+            "value": "14 Hard / 8 Soft",
+            "color": "emerald"
+          },
+          {
+            "label": "Residual Conflicts",
+            "value": "0",
+            "color": "emerald"
+          }
+        ],
+        "console_output": [
+          "[FET 7.12] Initializing activity matrix: 8 teachers, 5 classes, 3 buildings...",
+          "[FET 7.12] Applying COE constraint: Scrooge McDuck locked to Mon/Wed/Fri...",
+          "[FET 7.12] Applying Part-Time rule: Donald Duck locked OFF on Thursdays...",
+          "[FET 7.12] Allocating 120 timetable slots...",
+          "[FET 7.12] SUCCESS! Optimal solution achieved at generation #184 (1.34s). 100% timetable solved!"
+        ]
+      },
+      "diagnostics": {
+        "title": "app.eurario.it — Smart Constraint Advisor & Diagnostics",
+        "badge": "Timetable Health: 100%",
+        "school": "Duckburg High & Tech Academy • Duckburg",
+        "description": "Mathematical pre-validation: continuously analyzes bottlenecks prior to execution to prevent deadlock states and contradictory rules.",
+        "checks": [
+          {
+            "status": "ok",
+            "title": "Faculty & Class Allocation Balance",
+            "desc": "All 120 weekly periods allocated with zero uncovered slots or orphaned split groups."
+          },
+          {
+            "status": "ok",
+            "title": "Scrooge McDuck Shared Appointment Rules",
+            "desc": "No overlapping periods between Duckburg Main Campus and completion partner school."
+          },
+          {
+            "status": "ok",
+            "title": "Donald Duck Off-Day Guarantee",
+            "desc": "Thursday free day contractually preserved with 0 periods assigned."
+          },
+          {
+            "status": "ok",
+            "title": "Specialized Lab Room Rotations",
+            "desc": "Physics Lab reserved for Gyro Gearloose with zero room allocation conflicts."
+          }
+        ],
+        "advisor_tip": "💡 Advisor: No contradictory constraints detected. The academic dataset is mathematically validated for rapid compilation."
+      },
+      "reports": {
+        "title": "app.eurario.it — Official Exports & Typography",
+        "badge": "Word • PDF • Excel",
+        "school": "Duckburg High & Tech Academy • Duckburg",
+        "description": "One-click generation of polished documents for faculty boards, class schedules for bulletin boards, and register-compatible data files.",
+        "exports": [
+          {
+            "format": "DOCX",
+            "icon": "📝",
+            "title": "Master Faculty Schedule (Word)",
+            "desc": "Editable formatted master board with school letterhead, ready for academic board ratification."
+          },
+          {
+            "format": "PDF",
+            "icon": "📄",
+            "title": "Class Schedules (A4 Landscape)",
+            "desc": "Typographically crisp grids with color-coded subjects, optimized for school websites and bulletin boards."
+          },
+          {
+            "format": "PDF",
+            "icon": "📑",
+            "title": "Master Wall Chart A3",
+            "desc": "Comprehensive overview highlighting co-teaching and duty hours for admin offices and reception."
+          },
+          {
+            "format": "CSV",
+            "icon": "📊",
+            "title": "School Information System Export",
+            "desc": "Direct export formatted for electronic school registers and institutional management portals."
+          }
+        ]
+      }
+    }
+  }
+}

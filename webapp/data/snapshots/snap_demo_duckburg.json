@@ -1,0 +1,2246 @@
+{
+  "id": "snap_demo_duckburg",
+  "name": "Snapshot Iniziale: Demo Duckburg (ENG)",
+  "description": "Demonstration timetable for Ludwig Von Drake High School (Duckburg) with 100% pre-solved timetable.",
+  "created_at": "2026-10-21 12:00:00",
+  "has_timetable": true,
+  "stats": {
+    "teachers_count": 8,
+    "classes_count": 5,
+    "activities_count": 86,
+    "rooms_count": 8,
+    "has_timetable": true
+  },
+  "data": {
+    "institution": "Ludwig Von Drake High School - Duckburg",
+    "comments": "Official Duckburg Demonstration Timetable",
+    "days": [
+      "Mon",
+      "Tue",
+      "Wed",
+      "Thu",
+      "Fri"
+    ],
+    "hours": [
+      "1",
+      "2",
+      "INT1",
+      "3",
+      "4",
+      "INT2",
+      "5",
+      "6",
+      "7",
+      "8"
+    ],
+    "day_hours_limit": {
+      "Mon": 6,
+      "Tue": 6,
+      "Wed": 6,
+      "Thu": 6,
+      "Fri": 6
+    },
+    "break_times": [
+      "Mon|INT1",
+      "Mon|INT2",
+      "Tue|INT1",
+      "Tue|INT2",
+      "Wed|INT1",
+      "Wed|INT2",
+      "Thu|INT1",
+      "Thu|INT2",
+      "Fri|INT1",
+      "Fri|INT2"
+    ],
+    "classes": [
+      {
+        "name": "1A",
+        "students": 24,
+        "comments": "Grade 9 - Freshman Science Academy"
+      },
+      {
+        "name": "2A",
+        "students": 22,
+        "comments": "Grade 10 - Sophomore Science Academy"
+      },
+      {
+        "name": "3A",
+        "students": 20,
+        "comments": "Grade 11 - Junior Science Academy"
+      },
+      {
+        "name": "4A",
+        "students": 21,
+        "comments": "Grade 12 - Senior Science Academy"
+      },
+      {
+        "name": "5A",
+        "students": 19,
+        "comments": "Grade 13 - Advanced Placement STEM"
+      }
+    ],
+    "teachers": [
+      {
+        "name": "Gyro Gearloose",
+        "short_name": "GYRO",
+        "cdc": "A020",
+        "target_hours": 18,
+        "contract_type": "intera",
+        "is_coe": false,
+        "pref_shift": "prime",
+        "pref_shift_weight": 85,
+        "free_day_1": "Fri",
+        "free_day_strict": false,
+        "comments": "Physics & Inventions Laboratory"
+      },
+      {
+        "name": "Scrooge McDuck",
+        "short_name": "SCRO",
+        "cdc": "A046",
+        "target_hours": 18,
+        "contract_type": "intera",
+        "is_coe": false,
+        "pref_shift": "prime",
+        "pref_shift_weight": 90,
+        "free_day_1": "Mon",
+        "free_day_strict": true,
+        "comments": "Corporate Finance & Wealth Management (Vault counting on Mondays)"
+      },
+      {
+        "name": "Ludwig Von Drake",
+        "short_name": "LUDW",
+        "cdc": "A019",
+        "target_hours": 18,
+        "contract_type": "intera",
+        "is_coe": false,
+        "pref_shift": "bilanciato",
+        "pref_shift_weight": 85,
+        "free_day_1": "",
+        "free_day_strict": false,
+        "comments": "World History & Universal Philosophy"
+      },
+      {
+        "name": "Donald Duck",
+        "short_name": "DONA",
+        "cdc": "A048",
+        "target_hours": 18,
+        "contract_type": "intera",
+        "is_coe": false,
+        "pref_shift": "ultime",
+        "pref_shift_weight": 85,
+        "free_day_1": "Wed",
+        "free_day_strict": false,
+        "comments": "Physical Education (dislikes 1st period morning alarms)"
+      },
+      {
+        "name": "Grandma Duck",
+        "short_name": "GRAN",
+        "cdc": "A050",
+        "target_hours": 18,
+        "contract_type": "intera",
+        "is_coe": false,
+        "pref_shift": "bilanciato",
+        "pref_shift_weight": 85,
+        "free_day_1": "Thu",
+        "free_day_strict": false,
+        "comments": "Natural Sciences, Chemistry & Agriculture"
+      },
+      {
+        "name": "Gladstone Gander",
+        "short_name": "GLAD",
+        "cdc": "A012",
+        "target_hours": 18,
+        "contract_type": "intera",
+        "is_coe": false,
+        "pref_shift": "bilanciato",
+        "pref_shift_weight": 85,
+        "free_day_1": "Tue",
+        "free_day_strict": false,
+        "comments": "Classical Literature & Rhetoric"
+      },
+      {
+        "name": "Hard Haid Moe",
+        "short_name": "MOE",
+        "cdc": "A026",
+        "target_hours": 18,
+        "contract_type": "intera",
+        "is_coe": false,
+        "pref_shift": "prime",
+        "pref_shift_weight": 85,
+        "free_day_1": "",
+        "free_day_strict": false,
+        "comments": "Mathematics & Geometry"
+      },
+      {
+        "name": "Duckworth",
+        "short_name": "DUCK",
+        "cdc": "A024",
+        "target_hours": 15,
+        "contract_type": "intera",
+        "is_coe": false,
+        "pref_shift": "none",
+        "pref_shift_weight": 85,
+        "free_day_1": "",
+        "free_day_strict": false,
+        "comments": "Foreign Languages & On-Duty Staff"
+      }
+    ],
+    "subjects": [
+      {
+        "name": "Language & Literature",
+        "comments": "Discipline Letterarie"
+      },
+      {
+        "name": "Mathematics",
+        "comments": "Scienze Matematiche"
+      },
+      {
+        "name": "Physics & Inventions",
+        "comments": "Fisica Sperimentale"
+      },
+      {
+        "name": "Natural Sciences & Botany",
+        "comments": "Scienze della Terra e Biologia"
+      },
+      {
+        "name": "History & Philosophy",
+        "comments": "Storia e Filosofia"
+      },
+      {
+        "name": "Economics & Law",
+        "comments": "Economia Politica e Finanza"
+      },
+      {
+        "name": "Physical Education",
+        "comments": "Educazione Fisica"
+      },
+      {
+        "name": "Foreign Languages",
+        "comments": "Lingua Straniera"
+      },
+      {
+        "name": "Art & Design",
+        "comments": "Disegno Tecnico e Storia dell'Arte"
+      }
+    ],
+    "rooms": [
+      {
+        "name": "Classroom 1A",
+        "capacity": 28,
+        "room_type": "standard",
+        "building": "Main Campus"
+      },
+      {
+        "name": "Classroom 2A",
+        "capacity": 28,
+        "room_type": "standard",
+        "building": "Main Campus"
+      },
+      {
+        "name": "Classroom 3A",
+        "capacity": 28,
+        "room_type": "standard",
+        "building": "Main Campus"
+      },
+      {
+        "name": "Classroom 4A",
+        "capacity": 28,
+        "room_type": "standard",
+        "building": "Main Campus"
+      },
+      {
+        "name": "Classroom 5A",
+        "capacity": 28,
+        "room_type": "standard",
+        "building": "Main Campus"
+      },
+      {
+        "name": "Inventions Lab",
+        "capacity": 30,
+        "room_type": "lab",
+        "building": "Main Campus"
+      },
+      {
+        "name": "Duckburg Gymnasium",
+        "capacity": 57,
+        "room_type": "gym",
+        "building": "Main Campus",
+        "max_concurrent": 2
+      },
+      {
+        "name": "Money Bin Auditorium",
+        "capacity": 100,
+        "room_type": "special",
+        "building": "Main Campus"
+      }
+    ],
+    "buildings": [
+      {
+        "name": "Main Campus"
+      },
+      {
+        "name": "West Annex"
+      }
+    ],
+    "activities": [
+      {
+        "id": "1",
+        "teachers": [
+          "Gladstone Gander"
+        ],
+        "students": [
+          "1A"
+        ],
+        "subject": "Language & Literature",
+        "duration": 2,
+        "total_hours": 4,
+        "room": "",
+        "active": true,
+        "comments": "Language & Literature for 1A"
+      },
+      {
+        "id": "2",
+        "teachers": [
+          "Gladstone Gander"
+        ],
+        "students": [
+          "1A"
+        ],
+        "subject": "Language & Literature",
+        "duration": 1,
+        "total_hours": 4,
+        "room": "",
+        "active": true,
+        "comments": "Language & Literature for 1A"
+      },
+      {
+        "id": "3",
+        "teachers": [
+          "Gladstone Gander"
+        ],
+        "students": [
+          "1A"
+        ],
+        "subject": "Language & Literature",
+        "duration": 1,
+        "total_hours": 4,
+        "room": "",
+        "active": true,
+        "comments": "Language & Literature for 1A"
+      },
+      {
+        "id": "4",
+        "teachers": [
+          "Gladstone Gander"
+        ],
+        "students": [
+          "2A"
+        ],
+        "subject": "Language & Literature",
+        "duration": 2,
+        "total_hours": 4,
+        "room": "",
+        "active": true,
+        "comments": "Language & Literature for 2A"
+      },
+      {
+        "id": "5",
+        "teachers": [
+          "Gladstone Gander"
+        ],
+        "students": [
+          "2A"
+        ],
+        "subject": "Language & Literature",
+        "duration": 1,
+        "total_hours": 4,
+        "room": "",
+        "active": true,
+        "comments": "Language & Literature for 2A"
+      },
+      {
+        "id": "6",
+        "teachers": [
+          "Gladstone Gander"
+        ],
+        "students": [
+          "2A"
+        ],
+        "subject": "Language & Literature",
+        "duration": 1,
+        "total_hours": 4,
+        "room": "",
+        "active": true,
+        "comments": "Language & Literature for 2A"
+      },
+      {
+        "id": "7",
+        "teachers": [
+          "Gladstone Gander"
+        ],
+        "students": [
+          "3A"
+        ],
+        "subject": "Language & Literature",
+        "duration": 2,
+        "total_hours": 4,
+        "room": "",
+        "active": true,
+        "comments": "Language & Literature for 3A"
+      },
+      {
+        "id": "8",
+        "teachers": [
+          "Gladstone Gander"
+        ],
+        "students": [
+          "3A"
+        ],
+        "subject": "Language & Literature",
+        "duration": 1,
+        "total_hours": 4,
+        "room": "",
+        "active": true,
+        "comments": "Language & Literature for 3A"
+      },
+      {
+        "id": "9",
+        "teachers": [
+          "Gladstone Gander"
+        ],
+        "students": [
+          "3A"
+        ],
+        "subject": "Language & Literature",
+        "duration": 1,
+        "total_hours": 4,
+        "room": "",
+        "active": true,
+        "comments": "Language & Literature for 3A"
+      },
+      {
+        "id": "10",
+        "teachers": [
+          "Gladstone Gander"
+        ],
+        "students": [
+          "4A"
+        ],
+        "subject": "Language & Literature",
+        "duration": 2,
+        "total_hours": 3,
+        "room": "",
+        "active": true,
+        "comments": "Language & Literature for 4A"
+      },
+      {
+        "id": "11",
+        "teachers": [
+          "Gladstone Gander"
+        ],
+        "students": [
+          "4A"
+        ],
+        "subject": "Language & Literature",
+        "duration": 1,
+        "total_hours": 3,
+        "room": "",
+        "active": true,
+        "comments": "Language & Literature for 4A"
+      },
+      {
+        "id": "12",
+        "teachers": [
+          "Gladstone Gander"
+        ],
+        "students": [
+          "5A"
+        ],
+        "subject": "Language & Literature",
+        "duration": 2,
+        "total_hours": 3,
+        "room": "",
+        "active": true,
+        "comments": "Language & Literature for 5A"
+      },
+      {
+        "id": "13",
+        "teachers": [
+          "Gladstone Gander"
+        ],
+        "students": [
+          "5A"
+        ],
+        "subject": "Language & Literature",
+        "duration": 1,
+        "total_hours": 3,
+        "room": "",
+        "active": true,
+        "comments": "Language & Literature for 5A"
+      },
+      {
+        "id": "14",
+        "teachers": [
+          "Hard Haid Moe"
+        ],
+        "students": [
+          "1A"
+        ],
+        "subject": "Mathematics",
+        "duration": 2,
+        "total_hours": 4,
+        "room": "",
+        "active": true,
+        "comments": "Mathematics for 1A"
+      },
+      {
+        "id": "15",
+        "teachers": [
+          "Hard Haid Moe"
+        ],
+        "students": [
+          "1A"
+        ],
+        "subject": "Mathematics",
+        "duration": 1,
+        "total_hours": 4,
+        "room": "",
+        "active": true,
+        "comments": "Mathematics for 1A"
+      },
+      {
+        "id": "16",
+        "teachers": [
+          "Hard Haid Moe"
+        ],
+        "students": [
+          "1A"
+        ],
+        "subject": "Mathematics",
+        "duration": 1,
+        "total_hours": 4,
+        "room": "",
+        "active": true,
+        "comments": "Mathematics for 1A"
+      },
+      {
+        "id": "17",
+        "teachers": [
+          "Hard Haid Moe"
+        ],
+        "students": [
+          "2A"
+        ],
+        "subject": "Mathematics",
+        "duration": 2,
+        "total_hours": 4,
+        "room": "",
+        "active": true,
+        "comments": "Mathematics for 2A"
+      },
+      {
+        "id": "18",
+        "teachers": [
+          "Hard Haid Moe"
+        ],
+        "students": [
+          "2A"
+        ],
+        "subject": "Mathematics",
+        "duration": 1,
+        "total_hours": 4,
+        "room": "",
+        "active": true,
+        "comments": "Mathematics for 2A"
+      },
+      {
+        "id": "19",
+        "teachers": [
+          "Hard Haid Moe"
+        ],
+        "students": [
+          "2A"
+        ],
+        "subject": "Mathematics",
+        "duration": 1,
+        "total_hours": 4,
+        "room": "",
+        "active": true,
+        "comments": "Mathematics for 2A"
+      },
+      {
+        "id": "20",
+        "teachers": [
+          "Hard Haid Moe"
+        ],
+        "students": [
+          "3A"
+        ],
+        "subject": "Mathematics",
+        "duration": 2,
+        "total_hours": 4,
+        "room": "",
+        "active": true,
+        "comments": "Mathematics for 3A"
+      },
+      {
+        "id": "21",
+        "teachers": [
+          "Hard Haid Moe"
+        ],
+        "students": [
+          "3A"
+        ],
+        "subject": "Mathematics",
+        "duration": 1,
+        "total_hours": 4,
+        "room": "",
+        "active": true,
+        "comments": "Mathematics for 3A"
+      },
+      {
+        "id": "22",
+        "teachers": [
+          "Hard Haid Moe"
+        ],
+        "students": [
+          "3A"
+        ],
+        "subject": "Mathematics",
+        "duration": 1,
+        "total_hours": 4,
+        "room": "",
+        "active": true,
+        "comments": "Mathematics for 3A"
+      },
+      {
+        "id": "23",
+        "teachers": [
+          "Hard Haid Moe"
+        ],
+        "students": [
+          "4A"
+        ],
+        "subject": "Mathematics",
+        "duration": 2,
+        "total_hours": 3,
+        "room": "",
+        "active": true,
+        "comments": "Mathematics for 4A"
+      },
+      {
+        "id": "24",
+        "teachers": [
+          "Hard Haid Moe"
+        ],
+        "students": [
+          "4A"
+        ],
+        "subject": "Mathematics",
+        "duration": 1,
+        "total_hours": 3,
+        "room": "",
+        "active": true,
+        "comments": "Mathematics for 4A"
+      },
+      {
+        "id": "25",
+        "teachers": [
+          "Hard Haid Moe"
+        ],
+        "students": [
+          "5A"
+        ],
+        "subject": "Mathematics",
+        "duration": 2,
+        "total_hours": 3,
+        "room": "",
+        "active": true,
+        "comments": "Mathematics for 5A"
+      },
+      {
+        "id": "26",
+        "teachers": [
+          "Hard Haid Moe"
+        ],
+        "students": [
+          "5A"
+        ],
+        "subject": "Mathematics",
+        "duration": 1,
+        "total_hours": 3,
+        "room": "",
+        "active": true,
+        "comments": "Mathematics for 5A"
+      },
+      {
+        "id": "27",
+        "teachers": [
+          "Gyro Gearloose"
+        ],
+        "students": [
+          "1A"
+        ],
+        "subject": "Physics & Inventions",
+        "duration": 2,
+        "total_hours": 3,
+        "room": "Inventions Lab",
+        "active": true,
+        "comments": "Physics & Inventions for 1A"
+      },
+      {
+        "id": "28",
+        "teachers": [
+          "Gyro Gearloose"
+        ],
+        "students": [
+          "1A"
+        ],
+        "subject": "Physics & Inventions",
+        "duration": 1,
+        "total_hours": 3,
+        "room": "Inventions Lab",
+        "active": true,
+        "comments": "Physics & Inventions for 1A"
+      },
+      {
+        "id": "29",
+        "teachers": [
+          "Gyro Gearloose"
+        ],
+        "students": [
+          "2A"
+        ],
+        "subject": "Physics & Inventions",
+        "duration": 2,
+        "total_hours": 3,
+        "room": "Inventions Lab",
+        "active": true,
+        "comments": "Physics & Inventions for 2A"
+      },
+      {
+        "id": "30",
+        "teachers": [
+          "Gyro Gearloose"
+        ],
+        "students": [
+          "2A"
+        ],
+        "subject": "Physics & Inventions",
+        "duration": 1,
+        "total_hours": 3,
+        "room": "Inventions Lab",
+        "active": true,
+        "comments": "Physics & Inventions for 2A"
+      },
+      {
+        "id": "31",
+        "teachers": [
+          "Gyro Gearloose"
+        ],
+        "students": [
+          "3A"
+        ],
+        "subject": "Physics & Inventions",
+        "duration": 2,
+        "total_hours": 4,
+        "room": "Inventions Lab",
+        "active": true,
+        "comments": "Physics & Inventions for 3A"
+      },
+      {
+        "id": "32",
+        "teachers": [
+          "Gyro Gearloose"
+        ],
+        "students": [
+          "3A"
+        ],
+        "subject": "Physics & Inventions",
+        "duration": 2,
+        "total_hours": 4,
+        "room": "Inventions Lab",
+        "active": true,
+        "comments": "Physics & Inventions for 3A"
+      },
+      {
+        "id": "33",
+        "teachers": [
+          "Gyro Gearloose"
+        ],
+        "students": [
+          "4A"
+        ],
+        "subject": "Physics & Inventions",
+        "duration": 2,
+        "total_hours": 4,
+        "room": "Inventions Lab",
+        "active": true,
+        "comments": "Physics & Inventions for 4A"
+      },
+      {
+        "id": "34",
+        "teachers": [
+          "Gyro Gearloose"
+        ],
+        "students": [
+          "4A"
+        ],
+        "subject": "Physics & Inventions",
+        "duration": 2,
+        "total_hours": 4,
+        "room": "Inventions Lab",
+        "active": true,
+        "comments": "Physics & Inventions for 4A"
+      },
+      {
+        "id": "35",
+        "teachers": [
+          "Gyro Gearloose"
+        ],
+        "students": [
+          "5A"
+        ],
+        "subject": "Physics & Inventions",
+        "duration": 2,
+        "total_hours": 4,
+        "room": "Inventions Lab",
+        "active": true,
+        "comments": "Physics & Inventions for 5A"
+      },
+      {
+        "id": "36",
+        "teachers": [
+          "Gyro Gearloose"
+        ],
+        "students": [
+          "5A"
+        ],
+        "subject": "Physics & Inventions",
+        "duration": 2,
+        "total_hours": 4,
+        "room": "Inventions Lab",
+        "active": true,
+        "comments": "Physics & Inventions for 5A"
+      },
+      {
+        "id": "37",
+        "teachers": [
+          "Grandma Duck"
+        ],
+        "students": [
+          "1A"
+        ],
+        "subject": "Natural Sciences & Botany",
+        "duration": 2,
+        "total_hours": 4,
+        "room": "",
+        "active": true,
+        "comments": "Natural Sciences & Botany for 1A"
+      },
+      {
+        "id": "38",
+        "teachers": [
+          "Grandma Duck"
+        ],
+        "students": [
+          "1A"
+        ],
+        "subject": "Natural Sciences & Botany",
+        "duration": 1,
+        "total_hours": 4,
+        "room": "",
+        "active": true,
+        "comments": "Natural Sciences & Botany for 1A"
+      },
+      {
+        "id": "39",
+        "teachers": [
+          "Grandma Duck"
+        ],
+        "students": [
+          "1A"
+        ],
+        "subject": "Natural Sciences & Botany",
+        "duration": 1,
+        "total_hours": 4,
+        "room": "",
+        "active": true,
+        "comments": "Natural Sciences & Botany for 1A"
+      },
+      {
+        "id": "40",
+        "teachers": [
+          "Grandma Duck"
+        ],
+        "students": [
+          "2A"
+        ],
+        "subject": "Natural Sciences & Botany",
+        "duration": 2,
+        "total_hours": 4,
+        "room": "",
+        "active": true,
+        "comments": "Natural Sciences & Botany for 2A"
+      },
+      {
+        "id": "41",
+        "teachers": [
+          "Grandma Duck"
+        ],
+        "students": [
+          "2A"
+        ],
+        "subject": "Natural Sciences & Botany",
+        "duration": 1,
+        "total_hours": 4,
+        "room": "",
+        "active": true,
+        "comments": "Natural Sciences & Botany for 2A"
+      },
+      {
+        "id": "42",
+        "teachers": [
+          "Grandma Duck"
+        ],
+        "students": [
+          "2A"
+        ],
+        "subject": "Natural Sciences & Botany",
+        "duration": 1,
+        "total_hours": 4,
+        "room": "",
+        "active": true,
+        "comments": "Natural Sciences & Botany for 2A"
+      },
+      {
+        "id": "43",
+        "teachers": [
+          "Grandma Duck"
+        ],
+        "students": [
+          "3A"
+        ],
+        "subject": "Natural Sciences & Botany",
+        "duration": 2,
+        "total_hours": 4,
+        "room": "",
+        "active": true,
+        "comments": "Natural Sciences & Botany for 3A"
+      },
+      {
+        "id": "44",
+        "teachers": [
+          "Grandma Duck"
+        ],
+        "students": [
+          "3A"
+        ],
+        "subject": "Natural Sciences & Botany",
+        "duration": 1,
+        "total_hours": 4,
+        "room": "",
+        "active": true,
+        "comments": "Natural Sciences & Botany for 3A"
+      },
+      {
+        "id": "45",
+        "teachers": [
+          "Grandma Duck"
+        ],
+        "students": [
+          "3A"
+        ],
+        "subject": "Natural Sciences & Botany",
+        "duration": 1,
+        "total_hours": 4,
+        "room": "",
+        "active": true,
+        "comments": "Natural Sciences & Botany for 3A"
+      },
+      {
+        "id": "46",
+        "teachers": [
+          "Grandma Duck"
+        ],
+        "students": [
+          "4A"
+        ],
+        "subject": "Natural Sciences & Botany",
+        "duration": 2,
+        "total_hours": 3,
+        "room": "",
+        "active": true,
+        "comments": "Natural Sciences & Botany for 4A"
+      },
+      {
+        "id": "47",
+        "teachers": [
+          "Grandma Duck"
+        ],
+        "students": [
+          "4A"
+        ],
+        "subject": "Natural Sciences & Botany",
+        "duration": 1,
+        "total_hours": 3,
+        "room": "",
+        "active": true,
+        "comments": "Natural Sciences & Botany for 4A"
+      },
+      {
+        "id": "48",
+        "teachers": [
+          "Grandma Duck"
+        ],
+        "students": [
+          "5A"
+        ],
+        "subject": "Natural Sciences & Botany",
+        "duration": 2,
+        "total_hours": 3,
+        "room": "",
+        "active": true,
+        "comments": "Natural Sciences & Botany for 5A"
+      },
+      {
+        "id": "49",
+        "teachers": [
+          "Grandma Duck"
+        ],
+        "students": [
+          "5A"
+        ],
+        "subject": "Natural Sciences & Botany",
+        "duration": 1,
+        "total_hours": 3,
+        "room": "",
+        "active": true,
+        "comments": "Natural Sciences & Botany for 5A"
+      },
+      {
+        "id": "50",
+        "teachers": [
+          "Ludwig Von Drake"
+        ],
+        "students": [
+          "1A"
+        ],
+        "subject": "History & Philosophy",
+        "duration": 2,
+        "total_hours": 2,
+        "room": "",
+        "active": true,
+        "comments": "History & Philosophy for 1A"
+      },
+      {
+        "id": "51",
+        "teachers": [
+          "Ludwig Von Drake"
+        ],
+        "students": [
+          "2A"
+        ],
+        "subject": "History & Philosophy",
+        "duration": 2,
+        "total_hours": 2,
+        "room": "",
+        "active": true,
+        "comments": "History & Philosophy for 2A"
+      },
+      {
+        "id": "52",
+        "teachers": [
+          "Ludwig Von Drake"
+        ],
+        "students": [
+          "3A"
+        ],
+        "subject": "History & Philosophy",
+        "duration": 2,
+        "total_hours": 4,
+        "room": "",
+        "active": true,
+        "comments": "History & Philosophy for 3A"
+      },
+      {
+        "id": "53",
+        "teachers": [
+          "Ludwig Von Drake"
+        ],
+        "students": [
+          "3A"
+        ],
+        "subject": "History & Philosophy",
+        "duration": 2,
+        "total_hours": 4,
+        "room": "",
+        "active": true,
+        "comments": "History & Philosophy for 3A"
+      },
+      {
+        "id": "54",
+        "teachers": [
+          "Ludwig Von Drake"
+        ],
+        "students": [
+          "4A"
+        ],
+        "subject": "History & Philosophy",
+        "duration": 2,
+        "total_hours": 5,
+        "room": "",
+        "active": true,
+        "comments": "History & Philosophy for 4A"
+      },
+      {
+        "id": "55",
+        "teachers": [
+          "Ludwig Von Drake"
+        ],
+        "students": [
+          "4A"
+        ],
+        "subject": "History & Philosophy",
+        "duration": 2,
+        "total_hours": 5,
+        "room": "",
+        "active": true,
+        "comments": "History & Philosophy for 4A"
+      },
+      {
+        "id": "56",
+        "teachers": [
+          "Ludwig Von Drake"
+        ],
+        "students": [
+          "4A"
+        ],
+        "subject": "History & Philosophy",
+        "duration": 1,
+        "total_hours": 5,
+        "room": "",
+        "active": true,
+        "comments": "History & Philosophy for 4A"
+      },
+      {
+        "id": "57",
+        "teachers": [
+          "Ludwig Von Drake"
+        ],
+        "students": [
+          "5A"
+        ],
+        "subject": "History & Philosophy",
+        "duration": 2,
+        "total_hours": 5,
+        "room": "",
+        "active": true,
+        "comments": "History & Philosophy for 5A"
+      },
+      {
+        "id": "58",
+        "teachers": [
+          "Ludwig Von Drake"
+        ],
+        "students": [
+          "5A"
+        ],
+        "subject": "History & Philosophy",
+        "duration": 2,
+        "total_hours": 5,
+        "room": "",
+        "active": true,
+        "comments": "History & Philosophy for 5A"
+      },
+      {
+        "id": "59",
+        "teachers": [
+          "Ludwig Von Drake"
+        ],
+        "students": [
+          "5A"
+        ],
+        "subject": "History & Philosophy",
+        "duration": 1,
+        "total_hours": 5,
+        "room": "",
+        "active": true,
+        "comments": "History & Philosophy for 5A"
+      },
+      {
+        "id": "60",
+        "teachers": [
+          "Scrooge McDuck"
+        ],
+        "students": [
+          "1A"
+        ],
+        "subject": "Economics & Law",
+        "duration": 2,
+        "total_hours": 3,
+        "room": "",
+        "active": true,
+        "comments": "Economics & Law for 1A"
+      },
+      {
+        "id": "61",
+        "teachers": [
+          "Scrooge McDuck"
+        ],
+        "students": [
+          "1A"
+        ],
+        "subject": "Economics & Law",
+        "duration": 1,
+        "total_hours": 3,
+        "room": "",
+        "active": true,
+        "comments": "Economics & Law for 1A"
+      },
+      {
+        "id": "62",
+        "teachers": [
+          "Scrooge McDuck"
+        ],
+        "students": [
+          "2A"
+        ],
+        "subject": "Economics & Law",
+        "duration": 2,
+        "total_hours": 3,
+        "room": "",
+        "active": true,
+        "comments": "Economics & Law for 2A"
+      },
+      {
+        "id": "63",
+        "teachers": [
+          "Scrooge McDuck"
+        ],
+        "students": [
+          "2A"
+        ],
+        "subject": "Economics & Law",
+        "duration": 1,
+        "total_hours": 3,
+        "room": "",
+        "active": true,
+        "comments": "Economics & Law for 2A"
+      },
+      {
+        "id": "64",
+        "teachers": [
+          "Scrooge McDuck"
+        ],
+        "students": [
+          "3A"
+        ],
+        "subject": "Economics & Law",
+        "duration": 2,
+        "total_hours": 4,
+        "room": "",
+        "active": true,
+        "comments": "Economics & Law for 3A"
+      },
+      {
+        "id": "65",
+        "teachers": [
+          "Scrooge McDuck"
+        ],
+        "students": [
+          "3A"
+        ],
+        "subject": "Economics & Law",
+        "duration": 2,
+        "total_hours": 4,
+        "room": "",
+        "active": true,
+        "comments": "Economics & Law for 3A"
+      },
+      {
+        "id": "66",
+        "teachers": [
+          "Scrooge McDuck"
+        ],
+        "students": [
+          "4A"
+        ],
+        "subject": "Economics & Law",
+        "duration": 2,
+        "total_hours": 4,
+        "room": "",
+        "active": true,
+        "comments": "Economics & Law for 4A"
+      },
+      {
+        "id": "67",
+        "teachers": [
+          "Scrooge McDuck"
+        ],
+        "students": [
+          "4A"
+        ],
+        "subject": "Economics & Law",
+        "duration": 2,
+        "total_hours": 4,
+        "room": "",
+        "active": true,
+        "comments": "Economics & Law for 4A"
+      },
+      {
+        "id": "68",
+        "teachers": [
+          "Scrooge McDuck"
+        ],
+        "students": [
+          "5A"
+        ],
+        "subject": "Economics & Law",
+        "duration": 2,
+        "total_hours": 4,
+        "room": "",
+        "active": true,
+        "comments": "Economics & Law for 5A"
+      },
+      {
+        "id": "69",
+        "teachers": [
+          "Scrooge McDuck"
+        ],
+        "students": [
+          "5A"
+        ],
+        "subject": "Economics & Law",
+        "duration": 2,
+        "total_hours": 4,
+        "room": "",
+        "active": true,
+        "comments": "Economics & Law for 5A"
+      },
+      {
+        "id": "70",
+        "teachers": [
+          "Donald Duck"
+        ],
+        "students": [
+          "1A"
+        ],
+        "subject": "Physical Education",
+        "duration": 2,
+        "total_hours": 2,
+        "room": "",
+        "active": true,
+        "comments": "Physical Education for 1A"
+      },
+      {
+        "id": "71",
+        "teachers": [
+          "Donald Duck"
+        ],
+        "students": [
+          "2A"
+        ],
+        "subject": "Physical Education",
+        "duration": 2,
+        "total_hours": 2,
+        "room": "",
+        "active": true,
+        "comments": "Physical Education for 2A"
+      },
+      {
+        "id": "72",
+        "teachers": [
+          "Donald Duck"
+        ],
+        "students": [
+          "3A"
+        ],
+        "subject": "Physical Education",
+        "duration": 2,
+        "total_hours": 2,
+        "room": "",
+        "active": true,
+        "comments": "Physical Education for 3A"
+      },
+      {
+        "id": "73",
+        "teachers": [
+          "Donald Duck"
+        ],
+        "students": [
+          "4A"
+        ],
+        "subject": "Physical Education",
+        "duration": 2,
+        "total_hours": 2,
+        "room": "",
+        "active": true,
+        "comments": "Physical Education for 4A"
+      },
+      {
+        "id": "74",
+        "teachers": [
+          "Donald Duck"
+        ],
+        "students": [
+          "5A"
+        ],
+        "subject": "Physical Education",
+        "duration": 2,
+        "total_hours": 2,
+        "room": "",
+        "active": true,
+        "comments": "Physical Education for 5A"
+      },
+      {
+        "id": "75",
+        "teachers": [
+          "Duckworth"
+        ],
+        "students": [
+          "1A"
+        ],
+        "subject": "Foreign Languages",
+        "duration": 2,
+        "total_hours": 3,
+        "room": "",
+        "active": true,
+        "comments": "Foreign Languages for 1A"
+      },
+      {
+        "id": "76",
+        "teachers": [
+          "Duckworth"
+        ],
+        "students": [
+          "1A"
+        ],
+        "subject": "Foreign Languages",
+        "duration": 1,
+        "total_hours": 3,
+        "room": "",
+        "active": true,
+        "comments": "Foreign Languages for 1A"
+      },
+      {
+        "id": "77",
+        "teachers": [
+          "Duckworth"
+        ],
+        "students": [
+          "2A"
+        ],
+        "subject": "Foreign Languages",
+        "duration": 2,
+        "total_hours": 3,
+        "room": "",
+        "active": true,
+        "comments": "Foreign Languages for 2A"
+      },
+      {
+        "id": "78",
+        "teachers": [
+          "Duckworth"
+        ],
+        "students": [
+          "2A"
+        ],
+        "subject": "Foreign Languages",
+        "duration": 1,
+        "total_hours": 3,
+        "room": "",
+        "active": true,
+        "comments": "Foreign Languages for 2A"
+      },
+      {
+        "id": "79",
+        "teachers": [
+          "Duckworth"
+        ],
+        "students": [
+          "3A"
+        ],
+        "subject": "Foreign Languages",
+        "duration": 2,
+        "total_hours": 3,
+        "room": "",
+        "active": true,
+        "comments": "Foreign Languages for 3A"
+      },
+      {
+        "id": "80",
+        "teachers": [
+          "Duckworth"
+        ],
+        "students": [
+          "3A"
+        ],
+        "subject": "Foreign Languages",
+        "duration": 1,
+        "total_hours": 3,
+        "room": "",
+        "active": true,
+        "comments": "Foreign Languages for 3A"
+      },
+      {
+        "id": "81",
+        "teachers": [
+          "Duckworth"
+        ],
+        "students": [
+          "4A"
+        ],
+        "subject": "Foreign Languages",
+        "duration": 2,
+        "total_hours": 3,
+        "room": "",
+        "active": true,
+        "comments": "Foreign Languages for 4A"
+      },
+      {
+        "id": "82",
+        "teachers": [
+          "Duckworth"
+        ],
+        "students": [
+          "4A"
+        ],
+        "subject": "Foreign Languages",
+        "duration": 1,
+        "total_hours": 3,
+        "room": "",
+        "active": true,
+        "comments": "Foreign Languages for 4A"
+      },
+      {
+        "id": "83",
+        "teachers": [
+          "Duckworth"
+        ],
+        "students": [
+          "5A"
+        ],
+        "subject": "Foreign Languages",
+        "duration": 2,
+        "total_hours": 3,
+        "room": "",
+        "active": true,
+        "comments": "Foreign Languages for 5A"
+      },
+      {
+        "id": "84",
+        "teachers": [
+          "Duckworth"
+        ],
+        "students": [
+          "5A"
+        ],
+        "subject": "Foreign Languages",
+        "duration": 1,
+        "total_hours": 3,
+        "room": "",
+        "active": true,
+        "comments": "Foreign Languages for 5A"
+      },
+      {
+        "id": "85",
+        "teachers": [
+          "Donald Duck"
+        ],
+        "students": [],
+        "subject": "Disposizione",
+        "duration": 1,
+        "total_hours": 1,
+        "room": "",
+        "active": true,
+        "comments": "Disposizione",
+        "custom_desc": "Sportello"
+      },
+      {
+        "id": "86",
+        "teachers": [
+          "Duckworth"
+        ],
+        "students": [],
+        "subject": "Disposizione",
+        "duration": 1,
+        "total_hours": 1,
+        "room": "",
+        "active": true,
+        "comments": "Disposizione",
+        "custom_desc": "Accoglienza"
+      }
+    ],
+    "teacher_availability": {
+      "Gyro Gearloose": [],
+      "Scrooge McDuck": [
+        "Mon|1",
+        "Mon|2",
+        "Mon|3",
+        "Mon|4",
+        "Mon|5",
+        "Mon|6"
+      ],
+      "Ludwig Von Drake": [],
+      "Donald Duck": [],
+      "Grandma Duck": [],
+      "Gladstone Gander": [],
+      "Hard Haid Moe": [],
+      "Duckworth": []
+    },
+    "class_availability": {
+      "1A": [
+        "Mon|7",
+        "Mon|8",
+        "Tue|7",
+        "Tue|8",
+        "Wed|7",
+        "Wed|8",
+        "Thu|7",
+        "Thu|8",
+        "Fri|7",
+        "Fri|8"
+      ],
+      "2A": [
+        "Mon|7",
+        "Mon|8",
+        "Tue|7",
+        "Tue|8",
+        "Wed|7",
+        "Wed|8",
+        "Thu|7",
+        "Thu|8",
+        "Fri|7",
+        "Fri|8"
+      ],
+      "3A": [
+        "Mon|7",
+        "Mon|8",
+        "Tue|7",
+        "Tue|8",
+        "Wed|7",
+        "Wed|8",
+        "Thu|7",
+        "Thu|8",
+        "Fri|7",
+        "Fri|8"
+      ],
+      "4A": [
+        "Mon|7",
+        "Mon|8",
+        "Tue|7",
+        "Tue|8",
+        "Wed|7",
+        "Wed|8",
+        "Thu|7",
+        "Thu|8",
+        "Fri|7",
+        "Fri|8"
+      ],
+      "5A": [
+        "Mon|7",
+        "Mon|8",
+        "Tue|7",
+        "Tue|8",
+        "Wed|7",
+        "Wed|8",
+        "Thu|7",
+        "Thu|8",
+        "Fri|7",
+        "Fri|8"
+      ]
+    },
+    "constraints": {
+      "TEACHERS_MAX_GAPS_DAY": {
+        "active": true,
+        "val": 1,
+        "weight": 100,
+        "name": "Docenti: Max ore buche al giorno",
+        "category": "Docenti",
+        "desc": "Numero massimo di ore libere tra le lezioni nella stessa giornata per i docenti."
+      },
+      "TEACHERS_MAX_GAPS_WEEK": {
+        "active": true,
+        "val": 1,
+        "weight": 100,
+        "name": "Docenti: Max ore buche a settimana",
+        "category": "Docenti",
+        "desc": "Numero massimo totale di ore buche settimanali per ciascun docente."
+      },
+      "TEACHERS_MAX_GAPS_DAY_DISP": {
+        "active": false,
+        "val": 1,
+        "weight": 100,
+        "name": "Docenti con D: Max ore buche al giorno",
+        "category": "Docenti",
+        "desc": "Limite ore buche giornaliere per docenti con ore a disposizione teoriche."
+      },
+      "TEACHERS_MAX_GAPS_WEEK_DISP": {
+        "active": false,
+        "val": 4,
+        "weight": 100,
+        "name": "Docenti con D: Max ore buche a settimana",
+        "category": "Docenti",
+        "desc": "Limite ore buche settimanali per docenti con ore a disposizione teoriche."
+      },
+      "TEACHERS_MAX_GAPS_WEEK_ITIN": {
+        "active": false,
+        "val": 3,
+        "weight": 100,
+        "name": "Docenti Itineranti: Max ore buche a settimana",
+        "category": "Docenti",
+        "desc": "Limite ore buche settimanali per docenti con cattedre su più plessi."
+      },
+      "TEACHERS_MAX_RIENTRI": {
+        "active": true,
+        "val": 1,
+        "weight": 100,
+        "name": "Docenti: Max rientri pomeridiani",
+        "category": "Docenti",
+        "desc": "Massimo numero di pomeriggi (ore 7 e 8) a settimana per docente."
+      },
+      "TEACHERS_MAX_HOURS_DAY": {
+        "active": false,
+        "val": 6,
+        "weight": 100,
+        "name": "Docenti: Max ore di lezione al giorno",
+        "category": "Docenti",
+        "desc": "Carico massimo giornaliero di ore di insegnamento per ciascun docente."
+      },
+      "TEACHERS_MIN_HOURS_DAY": {
+        "active": false,
+        "val": 2,
+        "weight": 100,
+        "name": "Docenti: Minimo ore al giorno",
+        "category": "Docenti",
+        "desc": "Minimo ore di servizio nei giorni di presenza a scuola (i giorni liberi restano a 0)."
+      },
+      "CLASSE_DOCENTE_PRIME_ULTIME": {
+        "active": false,
+        "val": 50,
+        "weight": 100,
+        "name": "Stessa classe e docente: Max % prime/ultime ore",
+        "category": "Docenti",
+        "desc": "Al massimo questa % delle ore settimanali alle prime o ultime ore della classe (es. 50 = metà)."
+      },
+      "DISPOSIZIONE_MIN_PER_ORA": {
+        "active": false,
+        "val": 1,
+        "weight": 100,
+        "name": "Disposizioni: Almeno N docenti per ora",
+        "category": "Docenti",
+        "desc": "Garantisce una riserva costante di docenti a disposizione per supplenze in ogni slot."
+      },
+      "STUDENTS_MAX_GAPS_DAY": {
+        "active": true,
+        "val": 0,
+        "weight": 100,
+        "name": "Classi: Max ore buche al giorno",
+        "category": "Classi",
+        "desc": "Le classi non devono avere ore buche tra le lezioni: orario compatto continuo."
+      },
+      "STUDENTS_MAX_GAPS_WEEK": {
+        "active": true,
+        "val": 0,
+        "weight": 100,
+        "name": "Classi: Max ore buche a settimana",
+        "category": "Classi",
+        "desc": "Nessuna ora buca nell'intera settimana scolastica per gli studenti."
+      },
+      "STUDENTS_MAX_RIENTRI": {
+        "active": true,
+        "val": 1,
+        "weight": 100,
+        "name": "Classi: Max rientri pomeridiani",
+        "category": "Classi",
+        "desc": "Massimo numero di pomeriggi (ore 7 e 8) a settimana per classe."
+      },
+      "STUDENTS_EARLY_BEGIN": {
+        "active": true,
+        "val": 0,
+        "weight": 100,
+        "name": "Classi: Ingressi alla 2ª ora",
+        "category": "Classi",
+        "desc": "0 = Tutte le classi entrano sempre alla 1ª ora della mattina (nessun ingresso tardivo)."
+      },
+      "STUDENTS_MAX_HOURS_DAY": {
+        "active": false,
+        "val": 7,
+        "weight": 100,
+        "name": "Classi: Max ore al giorno",
+        "category": "Classi",
+        "desc": "Limite assoluto al monte ore giornaliero per le classi."
+      },
+      "STUDENTS_MIN_HOURS_DAY": {
+        "active": false,
+        "val": 6,
+        "weight": 100,
+        "name": "Classi: Minimo ore al giorno",
+        "category": "Classi",
+        "desc": "Es. 6 = nessuna classe esce prima della 6ª ora (si adatta per classi con meno ore)."
+      },
+      "TEACHERS_MAX_BUILDING_CHANGES_DAY": {
+        "active": false,
+        "val": 1,
+        "weight": 100,
+        "name": "Docenti: Max cambi plesso al giorno",
+        "category": "Spostamenti",
+        "desc": "Massimo numero di spostamenti tra Centrale e Succursale nello stesso giorno."
+      },
+      "TEACHERS_MIN_GAPS_BUILDING_CHANGES": {
+        "active": true,
+        "val": 1,
+        "weight": 100,
+        "name": "Docenti: Ore libere per cambio plesso",
+        "category": "Spostamenti",
+        "desc": "Almeno 1 ora libera tra due lezioni in plessi diversi per consentire lo spostamento."
+      },
+      "TEACHERS_MAX_BUILDING_CHANGES_WEEK": {
+        "active": false,
+        "val": 3,
+        "weight": 100,
+        "name": "Docenti: Max cambi plesso a settimana",
+        "category": "Spostamenti",
+        "desc": "Massimo numero complessivo di spostamenti tra plessi nell'arco della settimana."
+      }
+    },
+    "extra_time_constraints": [],
+    "extra_space_constraints": [],
+    "locked_activities": [],
+    "timetable": {
+      "1": {
+        "day": "Mon",
+        "hour": "3",
+        "room": "Classroom 1A"
+      },
+      "2": {
+        "day": "Thu",
+        "hour": "4",
+        "room": "Classroom 1A"
+      },
+      "3": {
+        "day": "Tue",
+        "hour": "2",
+        "room": "Classroom 1A"
+      },
+      "4": {
+        "day": "Fri",
+        "hour": "1",
+        "room": "Classroom 2A"
+      },
+      "5": {
+        "day": "Wed",
+        "hour": "4",
+        "room": "Classroom 2A"
+      },
+      "6": {
+        "day": "Tue",
+        "hour": "1",
+        "room": "Classroom 2A"
+      },
+      "7": {
+        "day": "Fri",
+        "hour": "3",
+        "room": "Classroom 3A"
+      },
+      "8": {
+        "day": "Wed",
+        "hour": "5",
+        "room": "Classroom 3A"
+      },
+      "9": {
+        "day": "Thu",
+        "hour": "2",
+        "room": "Classroom 3A"
+      },
+      "10": {
+        "day": "Mon",
+        "hour": "5",
+        "room": "Classroom 4A"
+      },
+      "11": {
+        "day": "Thu",
+        "hour": "5",
+        "room": "Classroom 4A"
+      },
+      "12": {
+        "day": "Mon",
+        "hour": "1",
+        "room": "Classroom 5A"
+      },
+      "13": {
+        "day": "Wed",
+        "hour": "3",
+        "room": "Classroom 5A"
+      },
+      "14": {
+        "day": "Tue",
+        "hour": "3",
+        "room": "Classroom 1A"
+      },
+      "15": {
+        "day": "Thu",
+        "hour": "2",
+        "room": "Classroom 1A"
+      },
+      "16": {
+        "day": "Mon",
+        "hour": "6",
+        "room": "Classroom 1A"
+      },
+      "17": {
+        "day": "Mon",
+        "hour": "1",
+        "room": "Classroom 2A"
+      },
+      "18": {
+        "day": "Tue",
+        "hour": "5",
+        "room": "Classroom 2A"
+      },
+      "19": {
+        "day": "Wed",
+        "hour": "3",
+        "room": "Classroom 2A"
+      },
+      "20": {
+        "day": "Wed",
+        "hour": "1",
+        "room": "Classroom 3A"
+      },
+      "21": {
+        "day": "Thu",
+        "hour": "1",
+        "room": "Classroom 3A"
+      },
+      "22": {
+        "day": "Tue",
+        "hour": "6",
+        "room": "Classroom 3A"
+      },
+      "23": {
+        "day": "Mon",
+        "hour": "3",
+        "room": "Classroom 4A"
+      },
+      "24": {
+        "day": "Thu",
+        "hour": "3",
+        "room": "Classroom 4A"
+      },
+      "25": {
+        "day": "Fri",
+        "hour": "1",
+        "room": "Classroom 5A"
+      },
+      "26": {
+        "day": "Wed",
+        "hour": "4",
+        "room": "Classroom 5A"
+      },
+      "27": {
+        "day": "Wed",
+        "hour": "1",
+        "room": "Inventions Lab"
+      },
+      "28": {
+        "day": "Mon",
+        "hour": "5",
+        "room": "Inventions Lab"
+      },
+      "29": {
+        "day": "Thu",
+        "hour": "1",
+        "room": "Inventions Lab"
+      },
+      "30": {
+        "day": "Wed",
+        "hour": "6",
+        "room": "Inventions Lab"
+      },
+      "31": {
+        "day": "Tue",
+        "hour": "1",
+        "room": "Inventions Lab"
+      },
+      "32": {
+        "day": "Wed",
+        "hour": "3",
+        "room": "Inventions Lab"
+      },
+      "33": {
+        "day": "Mon",
+        "hour": "1",
+        "room": "Inventions Lab"
+      },
+      "34": {
+        "day": "Fri",
+        "hour": "1",
+        "room": "Inventions Lab"
+      },
+      "35": {
+        "day": "Thu",
+        "hour": "3",
+        "room": "Inventions Lab"
+      },
+      "36": {
+        "day": "Mon",
+        "hour": "3",
+        "room": "Inventions Lab"
+      },
+      "37": {
+        "day": "Wed",
+        "hour": "3",
+        "room": "Classroom 1A"
+      },
+      "38": {
+        "day": "Tue",
+        "hour": "1",
+        "room": "Classroom 1A"
+      },
+      "39": {
+        "day": "Thu",
+        "hour": "3",
+        "room": "Classroom 1A"
+      },
+      "40": {
+        "day": "Fri",
+        "hour": "3",
+        "room": "Classroom 2A"
+      },
+      "41": {
+        "day": "Wed",
+        "hour": "5",
+        "room": "Classroom 2A"
+      },
+      "42": {
+        "day": "Tue",
+        "hour": "2",
+        "room": "Classroom 2A"
+      },
+      "43": {
+        "day": "Mon",
+        "hour": "1",
+        "room": "Classroom 3A"
+      },
+      "44": {
+        "day": "Wed",
+        "hour": "6",
+        "room": "Classroom 3A"
+      },
+      "45": {
+        "day": "Tue",
+        "hour": "5",
+        "room": "Classroom 3A"
+      },
+      "46": {
+        "day": "Tue",
+        "hour": "3",
+        "room": "Classroom 4A"
+      },
+      "47": {
+        "day": "Fri",
+        "hour": "5",
+        "room": "Classroom 4A"
+      },
+      "48": {
+        "day": "Wed",
+        "hour": "1",
+        "room": "Classroom 5A"
+      },
+      "49": {
+        "day": "Thu",
+        "hour": "1",
+        "room": "Classroom 5A"
+      },
+      "50": {
+        "day": "Fri",
+        "hour": "1",
+        "room": "Classroom 1A"
+      },
+      "51": {
+        "day": "Mon",
+        "hour": "3",
+        "room": "Classroom 2A"
+      },
+      "52": {
+        "day": "Mon",
+        "hour": "5",
+        "room": "Classroom 3A"
+      },
+      "53": {
+        "day": "Thu",
+        "hour": "5",
+        "room": "Classroom 3A"
+      },
+      "54": {
+        "day": "Fri",
+        "hour": "3",
+        "room": "Classroom 4A"
+      },
+      "55": {
+        "day": "Tue",
+        "hour": "5",
+        "room": "Classroom 4A"
+      },
+      "56": {
+        "day": "Thu",
+        "hour": "4",
+        "room": "Classroom 4A"
+      },
+      "57": {
+        "day": "Tue",
+        "hour": "3",
+        "room": "Classroom 5A"
+      },
+      "58": {
+        "day": "Fri",
+        "hour": "5",
+        "room": "Classroom 5A"
+      },
+      "59": {
+        "day": "Thu",
+        "hour": "2",
+        "room": "Classroom 5A"
+      },
+      "60": {
+        "day": "Fri",
+        "hour": "3",
+        "room": "Classroom 1A"
+      },
+      "61": {
+        "day": "Wed",
+        "hour": "5",
+        "room": "Classroom 1A"
+      },
+      "62": {
+        "day": "Wed",
+        "hour": "1",
+        "room": "Classroom 2A"
+      },
+      "63": {
+        "day": "Tue",
+        "hour": "3",
+        "room": "Classroom 2A"
+      },
+      "64": {
+        "day": "Fri",
+        "hour": "1",
+        "room": "Classroom 3A"
+      },
+      "65": {
+        "day": "Thu",
+        "hour": "3",
+        "room": "Classroom 3A"
+      },
+      "66": {
+        "day": "Wed",
+        "hour": "3",
+        "room": "Classroom 4A"
+      },
+      "67": {
+        "day": "Thu",
+        "hour": "1",
+        "room": "Classroom 4A"
+      },
+      "68": {
+        "day": "Tue",
+        "hour": "1",
+        "room": "Classroom 5A"
+      },
+      "69": {
+        "day": "Thu",
+        "hour": "5",
+        "room": "Classroom 5A"
+      },
+      "70": {
+        "day": "Fri",
+        "hour": "5",
+        "room": "Duckburg Gymnasium"
+      },
+      "71": {
+        "day": "Mon",
+        "hour": "5",
+        "room": "Duckburg Gymnasium"
+      },
+      "72": {
+        "day": "Tue",
+        "hour": "3",
+        "room": "Duckburg Gymnasium"
+      },
+      "73": {
+        "day": "Tue",
+        "hour": "1",
+        "room": "Duckburg Gymnasium"
+      },
+      "74": {
+        "day": "Fri",
+        "hour": "3",
+        "room": "Duckburg Gymnasium"
+      },
+      "75": {
+        "day": "Mon",
+        "hour": "1",
+        "room": "Classroom 1A"
+      },
+      "76": {
+        "day": "Thu",
+        "hour": "1",
+        "room": "Classroom 1A"
+      },
+      "77": {
+        "day": "Thu",
+        "hour": "3",
+        "room": "Classroom 2A"
+      },
+      "78": {
+        "day": "Tue",
+        "hour": "4",
+        "room": "Classroom 2A"
+      },
+      "79": {
+        "day": "Mon",
+        "hour": "3",
+        "room": "Classroom 3A"
+      },
+      "80": {
+        "day": "Fri",
+        "hour": "5",
+        "room": "Classroom 3A"
+      },
+      "81": {
+        "day": "Wed",
+        "hour": "1",
+        "room": "Classroom 4A"
+      },
+      "82": {
+        "day": "Fri",
+        "hour": "6",
+        "room": "Classroom 4A"
+      },
+      "83": {
+        "day": "Tue",
+        "hour": "5",
+        "room": "Classroom 5A"
+      },
+      "84": {
+        "day": "Mon",
+        "hour": "5",
+        "room": "Classroom 5A"
+      },
+      "85": {
+        "day": "Tue",
+        "hour": "1",
+        "room": ""
+      },
+      "86": {
+        "day": "Fri",
+        "hour": "1",
+        "room": ""
+      }
+    },
+    "block_rules": [],
+    "has_timetable": true
+  }
+}

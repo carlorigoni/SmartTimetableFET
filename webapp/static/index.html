@@ -1,0 +1,1155 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Eurario - Gestione Orario Scolastico & Solver FET 7.12.0</title>
+  <!-- Prevenzione Flash Bianco (FOUC) & Rilevamento Istantaneo Tema e Lingua -->
+  <script>
+    (function() {
+      try {
+        const theme = localStorage.getItem('app_theme') || 'auto';
+        const isDark = theme === 'dark' || (theme === 'auto' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        if (isDark) document.documentElement.setAttribute('data-theme', 'dark');
+        else document.documentElement.setAttribute('data-theme', 'light');
+        document.documentElement.setAttribute('data-theme-setting', theme);
+
+        const savedLang = localStorage.getItem('app_lang');
+        const lang = savedLang || ((navigator.language || 'it').toLowerCase().startsWith('it') ? 'it' : 'en');
+        document.documentElement.setAttribute('lang', lang);
+      } catch (e) {}
+    })();
+  </script>
+  <!-- Favicon & Branding Eurario (Safari macOS, Chrome, Edge, iOS, Android) -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=1.9.2">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png?v=1.9.2">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png?v=1.9.2">
+  <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png?v=1.9.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=1.9.2">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg?v=1.9.2" color="#1B2A4A">
+  <link rel="shortcut icon" href="/favicon.ico?v=1.9.2">
+  <link rel="stylesheet" href="styles.css?v=1.9.2">
+  <!-- Google Identity Services OAuth -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+  <!-- WCAG 2.4.1: Salta al contenuto principale -->
+  <a href="#mainContent" class="skip-link" data-i18n="a11y.skip_to_content">Salta al contenuto principale</a>
+
+  <div class="app-container">
+    <!-- Sidebar Navigation Wrapper (Google Workspace / Classroom Pattern) -->
+    <div class="sidebar-wrapper collapsed" id="sidebarWrapper">
+      <aside class="sidebar collapsed" id="appSidebar">
+        <div class="sidebar-header">
+          <button id="sidebarHamburgerBtn" class="google-hamburger-btn" title="Comprimi o espandi menu (☰)" onclick="toggleSidebarPin()" aria-label="Menu principale">
+            <svg class="hamburger-svg" viewBox="0 0 24 24" width="22" height="22">
+              <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+            </svg>
+          </button>
+          <div class="sidebar-brand">
+            <img src="/eurario-mark.svg" alt="Eurario" class="sidebar-logo-img" width="28" height="28">
+            <div class="sidebar-titles">
+              <div class="sidebar-title">Eurario</div>
+              <div class="sidebar-subtitle">FET 7.12.0 Suite</div>
+            </div>
+          </div>
+          <button id="sidebarPinBtn" class="sidebar-pin-btn" title="Fissa aperto / Sblocca menu" onclick="toggleSidebarPin()" aria-label="Fissa menu">
+            <svg class="pin-svg" viewBox="0 0 24 24" width="18" height="18">
+              <path d="M16 9V4l1 0V2H7v2l1 0v5c0 1.66-1.34 3-3 3v2h5.97v7l1 1 1-1v-7H19v-2c-1.66 0-3-1.34-3-3z"/>
+            </svg>
+          </button>
+        </div>
+
+      <nav class="sidebar-nav">
+        <!-- Funzioni Principali Sempre Visibili -->
+        <a class="nav-item active" onclick="navigate('dashboard')" data-tooltip="Dashboard" title="Dashboard riassuntiva">
+          <span class="nav-icon">📊</span>
+          <span class="nav-label" data-i18n="nav.dashboard">Dashboard</span>
+        </a>
+        <a class="nav-item" onclick="navigate('timetable')" data-tooltip="Orario Risolto" title="Orario settimanale risolto">
+          <span class="nav-icon">🗓️</span>
+          <span class="nav-label" data-i18n="nav.timetable">Orario Risolto</span>
+        </a>
+        <a class="nav-item" onclick="navigate('solver')" data-tooltip="Compilatore FET" title="Compilatore FET 7.12.0 in tempo reale">
+          <span class="nav-icon">⚡</span>
+          <span class="nav-label" data-i18n="nav.solver">Compilatore FET</span>
+        </a>
+        <a class="nav-item" onclick="navigate('diagnostics')" data-tooltip="Diagnostica & Advisor" title="Pre-Validatore e Advisor Intelligente dei Vincoli">
+          <span class="nav-icon">🔍</span>
+          <span class="nav-label" data-i18n="nav.diagnostics">Diagnostica & Advisor</span>
+          <span id="navHealthBadge" class="badge badge-sm badge-ok" style="margin-left:auto;font-size:10px;padding:1px 6px;">100%</span>
+        </a>
+
+        <!-- Separatore visivo tra funzioni rapide e categorie con sottomenu -->
+        <div class="nav-rail-divider" aria-hidden="true"></div>
+
+        <!-- Gruppo 1: Report & Stampe (Comprimibile / Flyout Rail) -->
+        <div class="nav-group" id="navGroup-reports" data-group="reports">
+          <button type="button" class="nav-group-header"
+                  onclick="handleNavCategoryClick('reports', this, event)"
+                  onmouseenter="handleNavCategoryMouseEnter('reports', this, event)"
+                  onmouseleave="handleNavCategoryMouseLeave('reports', this, event)"
+                  onkeydown="handleNavCategoryKeyDown('reports', this, event)"
+                  data-tooltip="Report & Stampe" title="Report & Stampe" aria-expanded="false" aria-haspopup="true">
+            <span class="nav-group-icon">📑</span>
+            <span class="rail-submenu-indicator" aria-hidden="true" title="Contiene sottomenu">
+              <svg viewBox="0 0 24 24" width="7" height="7" fill="currentColor">
+                <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/>
+              </svg>
+            </span>
+            <span class="nav-group-title" data-i18n="nav.reports_group">Report & Stampe</span>
+            <svg class="nav-group-chevron" viewBox="0 0 24 24" width="16" height="16">
+              <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" fill="currentColor"/>
+            </svg>
+          </button>
+          <div class="nav-group-items">
+            <a class="nav-item" onclick="openPrintClassesModal()" data-tooltip="Orario per Classe (PDF)" title="Procedura 9: Orario per classe con articolazioni e intervalli (A4 Orizzontale / PDF)">
+              <span class="nav-icon">🖨️</span>
+              <span class="nav-label" data-i18n="nav.print_classes">Orario per Classe (PDF)</span>
+            </a>
+            <a class="nav-item" onclick="openPrintTeachersModal()" data-tooltip="Tabellone Docenti (A3)" title="Procedura 12: Tabellone completo docenti con bande verticali (A3 Orizzontale / PDF)">
+              <span class="nav-icon">📄</span>
+              <span class="nav-label" data-i18n="nav.print_teachers">Tabellone Docenti (A3)</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Gruppo 2: Anagrafiche & Cattedre (Comprimibile / Flyout Rail) -->
+        <div class="nav-group" id="navGroup-anagrafiche" data-group="anagrafiche">
+          <button type="button" class="nav-group-header"
+                  onclick="handleNavCategoryClick('anagrafiche', this, event)"
+                  onmouseenter="handleNavCategoryMouseEnter('anagrafiche', this, event)"
+                  onmouseleave="handleNavCategoryMouseLeave('anagrafiche', this, event)"
+                  onkeydown="handleNavCategoryKeyDown('anagrafiche', this, event)"
+                  data-tooltip="Anagrafiche & Cattedre" title="Anagrafiche & Cattedre" aria-expanded="true" aria-haspopup="true">
+            <span class="nav-group-icon">👥</span>
+            <span class="rail-submenu-indicator" aria-hidden="true" title="Contiene sottomenu">
+              <svg viewBox="0 0 24 24" width="7" height="7" fill="currentColor">
+                <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/>
+              </svg>
+            </span>
+            <span class="nav-group-title" data-i18n="nav.anagrafiche_group">Anagrafiche & Cattedre</span>
+            <svg class="nav-group-chevron" viewBox="0 0 24 24" width="16" height="16">
+              <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" fill="currentColor"/>
+            </svg>
+          </button>
+          <div class="nav-group-items">
+            <a class="nav-item" onclick="navigate('teachers')" data-tooltip="Docenti" title="Organico Docenti">
+              <span class="nav-icon">👨‍🏫</span>
+              <span class="nav-label" data-i18n="nav.teachers">Docenti</span>
+            </a>
+            <a class="nav-item" onclick="navigate('classes')" data-tooltip="Classi & Gruppi" title="Classi e Gruppi">
+              <span class="nav-icon">🎓</span>
+              <span class="nav-label" data-i18n="nav.classes">Classi & Gruppi</span>
+            </a>
+            <a class="nav-item" onclick="navigate('subjects')" data-tooltip="Materie" title="Discipline e Materie">
+              <span class="nav-icon">📚</span>
+              <span class="nav-label" data-i18n="nav.subjects">Materie</span>
+            </a>
+            <a class="nav-item" onclick="navigate('rooms')" data-tooltip="Plessi & Aule" title="Plessi scolastici e Aule">
+              <span class="nav-icon">🏫</span>
+              <span class="nav-label" data-i18n="nav.rooms">Plessi & Aule</span>
+            </a>
+            <a class="nav-item" onclick="navigate('activities')" data-tooltip="Attività / Cattedre" title="Attività di insegnamento e Cattedre">
+              <span class="nav-icon">📝</span>
+              <span class="nav-label" data-i18n="nav.activities">Attività / Cattedre</span>
+            </a>
+            <a class="nav-item" onclick="navigate('accorpamenti')" data-tooltip="Accorpamenti" title="Gestione Accorpamenti Macro-Materie (es. Italiano Latino Storia e Geo)">
+              <span class="nav-icon">🔗</span>
+              <span class="nav-label" data-i18n="nav.accorpamenti">Accorpamenti</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Gruppo 3: Vincoli & Regole (Comprimibile / Flyout Rail) -->
+        <div class="nav-group" id="navGroup-vincoli" data-group="vincoli">
+          <button type="button" class="nav-group-header"
+                  onclick="handleNavCategoryClick('vincoli', this, event)"
+                  onmouseenter="handleNavCategoryMouseEnter('vincoli', this, event)"
+                  onmouseleave="handleNavCategoryMouseLeave('vincoli', this, event)"
+                  onkeydown="handleNavCategoryKeyDown('vincoli', this, event)"
+                  data-tooltip="Vincoli & Regole" title="Vincoli & Regole" aria-expanded="false" aria-haspopup="true">
+            <span class="nav-group-icon">📐</span>
+            <span class="rail-submenu-indicator" aria-hidden="true" title="Contiene sottomenu">
+              <svg viewBox="0 0 24 24" width="7" height="7" fill="currentColor">
+                <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/>
+              </svg>
+            </span>
+            <span class="nav-group-title" data-i18n="nav.vincoli_group">Vincoli & Regole</span>
+            <svg class="nav-group-chevron" viewBox="0 0 24 24" width="16" height="16">
+              <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" fill="currentColor"/>
+            </svg>
+          </button>
+          <div class="nav-group-items">
+            <a class="nav-item" onclick="navigate('block_rules')" data-tooltip="Regole Blocchi & Sezioni" title="Regole di Suddivisione Blocchi Orari e Indirizzi Sezioni">
+              <span class="nav-icon">📐</span>
+              <span class="nav-label" data-i18n="nav.block_rules">Regole Blocchi & Sezioni</span>
+            </a>
+            <a class="nav-item" onclick="navigate('availability')" data-tooltip="Indisponibilità Griglia" title="Griglia disponibilità docenti e classi">
+              <span class="nav-icon">🚫</span>
+              <span class="nav-label" data-i18n="nav.availability">Indisponibilità Griglia</span>
+            </a>
+            <a class="nav-item" onclick="navigate('constraints')" data-tooltip="Vincoli Orario" title="Regole e vincoli di calcolo orario FET">
+              <span class="nav-icon">⚖️</span>
+              <span class="nav-label" data-i18n="nav.constraints">Vincoli Orario</span>
+            </a>
+          </div>
+        </div>
+      </nav>
+
+      <!-- Sezione Fissa in Basso a Sinistra: Sistema & Configurazione -->
+      <div class="sidebar-bottom-nav">
+        <div class="nav-rail-divider" aria-hidden="true"></div>
+        <div class="nav-group dropup-group" id="navGroup-system" data-group="system">
+          <button type="button" class="nav-group-header"
+                  onclick="handleNavCategoryClick('system', this, event)"
+                  onmouseenter="handleNavCategoryMouseEnter('system', this, event)"
+                  onmouseleave="handleNavCategoryMouseLeave('system', this, event)"
+                  onkeydown="handleNavCategoryKeyDown('system', this, event)"
+                  data-tooltip="Sistema & Configurazione" title="Sistema & Configurazione" aria-expanded="false" aria-haspopup="true">
+            <span class="nav-group-icon">⚙️</span>
+            <span class="rail-submenu-indicator" aria-hidden="true" title="Contiene sottomenu verso l'alto">
+              <svg viewBox="0 0 24 24" width="7" height="7" fill="currentColor">
+                <path d="M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z"/>
+              </svg>
+            </span>
+            <span class="nav-group-title" data-i18n="nav.system_group">Sistema & Configurazione</span>
+            <svg class="nav-group-chevron" viewBox="0 0 24 24" width="16" height="16">
+              <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" fill="currentColor"/>
+            </svg>
+          </button>
+          <div class="nav-group-items">
+            <a class="nav-item" onclick="navigate('parameters')" data-tooltip="Parametri Istituto" title="Parametri istituto, calendario settimanale, gestione Sabato e pause">
+              <span class="nav-icon">⚙️</span>
+              <span class="nav-label" data-i18n="nav.parameters">Parametri Istituto</span>
+            </a>
+            <a class="nav-item" onclick="navigate('snapshots')" data-tooltip="Backup & Snapshot" title="Archivio storico, punti di ripristino, import ed export file FET e JSON">
+              <span class="nav-icon">📦</span>
+              <span class="nav-label" data-i18n="nav.snapshots">Backup & Snapshot</span>
+            </a>
+            <a id="sidebarAccessMgmtItem" class="nav-item" style="display:none;" onclick="openAccessManagementModal()" data-tooltip="Gestione Accessi" title="Gestione accessi, ruoli e approvazione utenti Google OAuth">
+              <span class="nav-icon">👥</span>
+              <span class="nav-label" data-i18n="nav.access_mgmt">Gestione Accessi</span>
+              <span id="sidebarPendingBadge" class="badge-pending-count" style="display:none;margin-left:auto;">0</span>
+            </a>
+            <a class="nav-item" onclick="openAboutModal()" data-tooltip="Info & Crediti" title="Informazioni sul software, crediti FET e conformità GDPR">
+              <span class="nav-icon">ℹ️</span>
+              <span class="nav-label" data-i18n="nav.about">Info & Crediti</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer Compatto a Riga Singola di Stato (Altezza: 36px) -->
+      <div class="sidebar-footer">
+        <div class="sidebar-status-row">
+          <span id="sidebarStatusBadge" class="sidebar-status-badge" onclick="handleFooterBadgeClick()" title="Verifica aggiornamenti applicazione & FET">
+            <span id="statusIndicatorDot" class="status-indicator-dot dot-green"></span>
+            <span id="statusIndicatorText" class="status-indicator-text">FET 7.12</span>
+          </span>
+          <span id="sidebarVerTag" class="footer-ver-tag" title="Versione Eurario">v1.9.2</span>
+          <button class="footer-info-btn" onclick="openAboutModal()" title="Crediti, Mentore e Info Legali" aria-label="Informazioni e crediti">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </aside>
+    </div>
+
+    <!-- Backdrop per Menu Drawer Mobile (Overlay semi-trasparente che sfoca il contenuto principale) -->
+    <div id="sidebarBackdrop" class="sidebar-backdrop" onclick="closeMobileSidebar()"></div>
+
+    <!-- Floating Flyout Submenu Panel (Mini-Rail Mode: Hover con ritardo & Clic per bloccare) -->
+    <div id="railFlyoutPopover" class="rail-flyout-popover" role="region" aria-label="Sottomenu" style="display:none;"
+         onmouseenter="handleFlyoutMouseEnter()" onmouseleave="handleFlyoutMouseLeave()">
+      <div class="flyout-header">
+        <div class="flyout-title-wrap">
+          <span id="flyoutIcon" class="flyout-icon">👥</span>
+          <span id="flyoutTitle" class="flyout-title">Anagrafiche & Cattedre</span>
+        </div>
+        <div class="flyout-actions">
+          <span id="flyoutPinBadge" class="flyout-pin-badge" style="display:none;" title="Menu bloccato aperto con un clic">Bloccato 📌</span>
+          <button type="button" class="flyout-close-btn" onclick="closeRailFlyout(true)" title="Chiudi sottomenu (Esc)" aria-label="Chiudi sottomenu">✕</button>
+        </div>
+      </div>
+      <div id="flyoutItemsContainer" class="flyout-items-container"></div>
+    </div>
+
+  <!-- Main Content Area -->
+  <div class="main-wrapper">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button id="topbarHamburgerBtn" class="google-hamburger-btn topbar-hamburger-btn" onclick="toggleSidebarPin()" title="Menu principale (☰)" aria-label="Menu principale">
+          <svg class="hamburger-svg" viewBox="0 0 24 24" width="22" height="22">
+            <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+          </svg>
+        </button>
+        <button id="navBackBtn" class="nav-back-btn" onclick="navigateBack()" title="Torna alla schermata precedente" style="display:none;">
+          <span>◀</span> <span id="navBackText">Indietro</span>
+        </button>
+        <span id="pageTitle" class="topbar-title">Dashboard</span>
+
+        <!-- Selettore Multi-Scuola (Dropdown Istituti) -->
+        <div class="school-selector-dropdown" id="schoolSelectorDropdown">
+          <button type="button" id="btnSchoolToggle" class="topbar-btn school-pill-btn" onclick="toggleSchoolMenu(event)" title="Cambia Istituto Scolastico" aria-label="Selettore istituto" data-i18n-title="schools.selector_title">
+            <span class="school-icon">🏫</span>
+            <span id="currentSchoolName" class="school-name-text" data-i18n="schools.no_school">Nessun Istituto</span>
+            <span id="currentSchoolTrialBadge" class="badge-trial-pill" style="display:none;" title="Istituto in prova (stampe filigranate)" data-i18n="schools.trial_badge" data-i18n-title="schools.trial_badge_title">In Prova</span>
+            <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor" style="opacity:0.7;">
+              <path d="M7 10l5 5 5-5z"/>
+            </svg>
+          </button>
+          <div id="schoolMenuPopup" class="topbar-popup-menu school-popup-menu" style="display:none;">
+            <div class="school-popup-header">
+              <span style="font-weight:700;font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;" data-i18n="schools.my_schools">I Miei Istituti</span>
+            </div>
+            <div id="schoolMenuList" class="school-menu-items">
+              <!-- Elenco generato dinamicamente da app.js -->
+            </div>
+            <div class="school-popup-divider"></div>
+            <button type="button" class="topbar-popup-item school-action-item" onclick="openCreateSchoolModal()">
+              <span>➕</span> <span style="font-weight:600;" data-i18n="schools.register_new">Registra Nuovo Istituto...</span>
+            </button>
+            <button type="button" id="btnSuperAdminConsole" class="topbar-popup-item school-action-item superadmin-item" style="display:none;" onclick="openSuperAdminModal()">
+              <span>⭐</span> <span style="font-weight:700;color:var(--warning-dark,#b45309);" data-i18n="schools.superadmin_console">Console SuperAdmin</span>
+            </button>
+          </div>
+        </div>
+
+        <span id="instBadge" class="badge badge-info" style="display:none;">Eurario</span>
+      </div>
+      <div class="topbar-right">
+        <!-- Pulsante Notifica Richieste di Accesso in Attesa per l'Amministratore -->
+        <button type="button" id="topbarPendingBtn" class="topbar-btn topbar-pending-btn" onclick="openAccessManagementModal()" style="display:none;" title="Nuove richieste di accesso in attesa di approvazione" aria-label="Richieste di accesso in attesa">
+          <span class="bell-icon">🔔</span>
+          <span id="topbarPendingCount" class="badge-pending-count">1</span>
+          <span class="pending-btn-label" style="font-weight:700;font-size:11.5px;margin-left:4px;" data-i18n="schools.pending_requests_btn">Richieste in Attesa</span>
+        </button>
+
+        <!-- Selettore Lingua ITA / ENG -->
+        <div class="lang-selector-dropdown" id="langSelectorDropdown">
+          <button type="button" id="btnLangToggle" class="topbar-btn topbar-pill-btn" onclick="toggleLangMenu(event)" title="Seleziona lingua / Change language" aria-label="Language selector">
+            <span id="currentLangFlag">🇮🇹</span>
+            <span id="currentLangCode" style="font-weight:700;font-size:11.5px;letter-spacing:0.5px;">ITA</span>
+            <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor" style="opacity:0.7;">
+              <path d="M7 10l5 5 5-5z"/>
+            </svg>
+          </button>
+          <div id="langMenuPopup" class="topbar-popup-menu" style="display:none;">
+            <button type="button" class="topbar-popup-item" onclick="setAppLanguage('it')">
+              <span>🇮🇹</span> <span style="font-weight:600;">Italiano</span>
+              <span id="langCheck-it" class="popup-check">✓</span>
+            </button>
+            <button type="button" class="topbar-popup-item" onclick="setAppLanguage('en')">
+              <span>🇬🇧</span> <span style="font-weight:600;">English</span>
+              <span id="langCheck-en" class="popup-check" style="display:none;">✓</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Selettore Tema Chiaro / Scuro / Auto -->
+        <div class="theme-selector-dropdown" id="themeSelectorDropdown">
+          <button type="button" id="btnThemeToggle" class="topbar-btn topbar-icon-btn" onclick="toggleThemeMenu(event)" title="Tema: Chiaro, Scuro, Automatico" aria-label="Seleziona tema">
+            <span id="currentThemeIcon">💻</span>
+          </button>
+          <div id="themeMenuPopup" class="topbar-popup-menu" style="display:none;">
+            <button type="button" class="topbar-popup-item" onclick="setAppTheme('auto')">
+              <span>💻</span> <span data-i18n="theme.auto">Automatico (Sistema)</span>
+              <span id="themeCheck-auto" class="popup-check">✓</span>
+            </button>
+            <button type="button" class="topbar-popup-item" onclick="setAppTheme('light')">
+              <span>☀️</span> <span data-i18n="theme.light">Tema Chiaro</span>
+              <span id="themeCheck-light" class="popup-check" style="display:none;">✓</span>
+            </button>
+            <button type="button" class="topbar-popup-item" onclick="setAppTheme('dark')">
+              <span>🌙</span> <span data-i18n="theme.dark">Tema Scuro</span>
+              <span id="themeCheck-dark" class="popup-check" style="display:none;">✓</span>
+            </button>
+          </div>
+        </div>
+
+        <div id="topbarUserPill" class="user-pill" style="display:none;">
+          <img id="topbarUserAvatar" class="user-avatar" src="" alt="Avatar" style="display:none;" />
+          <span id="topbarUserName" class="user-name"></span>
+          <span id="topbarUserRole" class="badge badge-role"></span>
+          <button class="btn-logout" onclick="logout()" title="Disconnetti">🚪</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Banner Informativo Modalità di Prova (Trial) -->
+    <div id="trialWarningBanner" class="trial-warning-banner" style="display:none;">
+      <div class="trial-banner-content">
+        <span class="trial-banner-icon">⚠️</span>
+        <div class="trial-banner-text" data-i18n-html="schools.trial_banner_text">
+          <b>Modalità di Prova Attiva:</b> Tutte le funzioni di calcolo euristico FET e composizione orario sono complete e funzionanti al 100%. Le stampe ufficiali ad alta risoluzione (PDF e Word) includono la filigrana dimostrativa fino all'attivazione tecnica da parte dell'amministratore.
+        </div>
+        <button class="btn-trial-action" onclick="openTrialInfoModal()" data-i18n="schools.trial_banner_btn">Maggiori Info</button>
+      </div>
+    </div>
+
+    <main class="content-body" id="mainContent">
+      <!-- I contenuti delle singole viste vengono renderizzati dinamicamente da app.js -->
+    </main>
+
+    <footer class="app-page-footer">
+      <div>
+        <b>Eurario FET Suite</b> &mdash; <span data-i18n="footer.version">Versione</span> <span id="pageFooterVer" class="badge-ver">v1.9.2</span> &bull; <span data-i18n="footer.author">Autore</span>: <b>Carlo Rigoni</b> &bull; <span data-i18n="footer.engine">Motore</span>: <b>FET 7.12.0</b> &bull; <a href="javascript:void(0)" onclick="openAboutModal()" style="color:var(--primary);text-decoration:none;font-weight:600;" data-i18n="footer.credits">Crediti & Note Legali</a>
+      </div>
+      <div style="font-size:11.5px;color:var(--text-muted);">
+        <span data-i18n="footer.heuristic">Algoritmo euristico</span>: <a href="https://lalescu.ro/liviu/fet/" target="_blank" rel="noopener" style="color:var(--primary);text-decoration:none;font-weight:600;">FET Free Timetabling Software</a> &bull; <span data-i18n="footer.ai_credit">AI Pair Programming</span>: Google DeepMind Antigravity
+      </div>
+    </footer>
+    </div>
+  </div>
+
+  <!-- Fullscreen Auth / Login Screen -->
+  <div id="authScreen" class="auth-screen-overlay" style="display:none;">
+    <div class="auth-card">
+      <div class="auth-card-header">
+        <img src="/eurario-mark.svg" alt="Eurario" class="auth-card-logo-img" width="48" height="48" style="margin-bottom:8px;border-radius:10px;">
+        <h2>Eurario</h2>
+        <p class="auth-card-subtitle">Gestione Orario Scolastico &bull; Suite FET 7.12.0</p>
+      </div>
+
+      <!-- Auth State 1: Form Login / Richiesta Accesso -->
+      <div id="authStateLogin" class="auth-state">
+        <div class="auth-lead-box">
+          <div style="font-weight:700;font-size:13.5px;color:var(--text-main);margin-bottom:6px;display:flex;align-items:center;gap:8px;">
+            <span>🔐</span> <span data-i18n="auth.lead_title">Accesso con Account Google</span>
+          </div>
+          <div style="font-size:12.5px;color:var(--text-muted);line-height:1.5;" data-i18n="auth.lead_desc">
+            Accedi con il tuo account Google. Se è il tuo primo accesso, verrai autorizzato dall'amministratore e potrai essere assegnato al tuo istituto scolastico oppure abilitato a definirne uno nuovo.
+          </div>
+        </div>
+
+        <div id="googleBtnWrapper" class="google-btn-wrapper">
+          <div id="g_id_signin_placeholder"></div>
+          <div id="switchAccountWrap" style="margin-top:4px;">
+            <button type="button" class="btn-subtle-switch" onclick="switchGoogleAccount()" data-i18n="auth.switch_account_btn">
+              👤 Usa un altro account Google
+            </button>
+          </div>
+        </div>
+
+        <div id="authErrorMsg" class="auth-error-msg" style="display:none;"></div>
+
+        <!-- Indicatore Discreto Accesso Amministratore (Passcode) -->
+        <div class="auth-admin-indicator-wrap">
+          <button type="button" id="btnAdminTrigger" class="auth-admin-trigger-btn" onclick="toggleAdminPasscodeForm()" title="Accesso amministratore con passcode">
+            <span>🔒</span> <span data-i18n="auth.admin_trigger">Accesso Amministratore</span>
+          </button>
+
+          <div id="adminPasscodeForm" class="admin-passcode-flyout" style="display:none;">
+            <div style="font-size:11.5px;color:var(--text-muted);margin-bottom:8px;font-weight:600;" data-i18n="auth.admin_passcode_hint">
+              Inserisci il passcode master per accedere come Amministratore:
+            </div>
+            <div style="display:flex;gap:8px;">
+              <input type="password" id="emergencyPasscode" placeholder="Passcode..." data-i18n-placeholder="auth.passcode_placeholder" class="form-input" style="flex:1;font-size:12.5px;padding:6px 10px;" onkeydown="if(event.key==='Enter') submitEmergencyLogin()" />
+              <button class="btn btn-primary btn-sm" onclick="submitEmergencyLogin()" style="font-weight:700;white-space:nowrap;" data-i18n="auth.btn_admin_login">Accedi</button>
+              <button type="button" class="btn btn-sec btn-sm" onclick="toggleAdminPasscodeForm(false)" title="Chiudi">✕</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Auth State 2: Richiesta In Attesa (Pending) -->
+      <div id="authStatePending" class="auth-state" style="display:none;">
+        <div class="pending-icon-wrap">
+          <div class="pending-pulse">⏳</div>
+        </div>
+        <h3 class="pending-title" data-i18n="auth.pending_title">Richiesta di Accesso Inviata!</h3>
+        <div class="pending-user-card">
+          <img id="pendingAvatar" src="" class="pending-avatar" style="display:none;" />
+          <div>
+            <div id="pendingName" class="pending-name"></div>
+            <div id="pendingEmail" class="pending-email"></div>
+          </div>
+        </div>
+        <p class="pending-text" data-i18n-html="auth.pending_desc">
+          Il tuo account è stato registrato ed è in attesa di autorizzazione da parte dell'amministratore.<br>
+          Non appena autorizzato, verrai collegato al tuo istituto scolastico oppure potrai definirne uno nuovo.
+        </p>
+        <div class="pending-status-box">
+          <span class="auth-status-dot"></span> <span data-i18n="auth.pending_checking">In attesa di approvazione... (verifica automatica in corso)</span>
+        </div>
+        <div class="auth-actions-row">
+          <button class="btn btn-primary" onclick="checkAuthMe()" data-i18n="auth.btn_verify_now">🔄 Verifica Ora</button>
+          <button class="btn btn-sec" onclick="logout()" data-i18n="auth.btn_signout">Disconnetti</button>
+        </div>
+      </div>
+
+      <!-- Auth State 3: Richiesta Respinta (Rejected) -->
+      <div id="authStateRejected" class="auth-state" style="display:none;">
+        <div class="rejected-icon">🚫</div>
+        <h3 style="color:var(--danger, #dc2626);margin-bottom:8px;">Accesso Non Autorizzato</h3>
+        <p class="rejected-text">
+          La richiesta di accesso per l'account <b id="rejectedEmail"></b> è stata respinta o revocata dall'amministratore.
+        </p>
+        <button class="btn btn-primary" style="margin-top:16px;" onclick="logout()">Accedi con un altro account</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Gestione Accessi per l'Amministratore -->
+  <div id="accessModal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="accessModalTitle" style="display:none;">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-header" style="flex-direction:column;align-items:flex-start;gap:4px;position:relative;">
+        <div style="display:flex;align-items:center;justify-content:space-between;width:100%;">
+          <h3 id="accessModalTitle" class="modal-title" data-i18n="modals.access.title" style="margin:0;">👥 Gestione Accessi & Autorizzazioni Google OAuth</h3>
+          <button class="modal-close-btn" onclick="closeAccessManagementModal()">✕</button>
+        </div>
+        <div id="accessModalSubtitle" style="font-size:12px;color:var(--text-muted);line-height:1.4;"></div>
+      </div>
+      <div class="modal-body">
+        <!-- Barra di selezione scuola per SuperAdmin -->
+        <div id="accessSchoolFilterWrap" style="display:none;padding:10px 14px;background:var(--bg-hover);border-radius:8px;margin-bottom:12px;display:none;align-items:center;gap:10px;">
+          <span style="font-size:12px;font-weight:700;color:var(--text-main);white-space:nowrap;">🏫 Filtra per Istituto:</span>
+          <select id="accessSchoolFilterSelect" class="form-input" style="padding:4px 8px;font-size:12px;width:100%;max-width:360px;" onchange="handleSchoolFilterChange(this.value)">
+            <option value="">🌐 Tutti gli Istituti (Piattaforma Globale)</option>
+          </select>
+        </div>
+
+        <div class="access-tabs-nav">
+          <button class="access-tab-btn active" id="tabBtnPending" onclick="switchAccessTab('pending')">
+            <span data-i18n="modals.access.tab_pending">Richieste in Attesa</span> <span id="modalPendingCountBadge" class="badge-count">0</span>
+          </button>
+          <button class="access-tab-btn" id="tabBtnApproved" onclick="switchAccessTab('approved')">
+            <span id="tabApprovedTitleText" data-i18n="modals.access.tab_approved">Utenti Autorizzati</span> (<span id="modalApprovedCount">0</span>)
+          </button>
+          <button class="access-tab-btn" id="tabBtnSchoolSmtp" onclick="switchAccessTab('schoolsmtp')">
+            <span>📧</span> <span data-i18n="modals.access.tab_school_smtp">Email & SMTP Scuola</span>
+          </button>
+          <button class="access-tab-btn" id="tabBtnLogs" onclick="switchAccessTab('logs')" data-i18n="modals.access.tab_logs">
+            📜 Registro Accessi
+          </button>
+          <button class="access-tab-btn" id="tabBtnConfig" onclick="switchAccessTab('config')" data-i18n="modals.access.tab_config">
+            ⚙️ Impostazioni OAuth & Notifiche
+          </button>
+        </div>
+
+        <!-- Tab 1: In Attesa -->
+        <div id="tabPendingUsers" class="access-tab-content">
+          <div id="pendingUsersList" class="users-list-wrap">
+            <!-- Popolato via JS -->
+          </div>
+        </div>
+
+        <!-- Tab 2: Autorizzati -->
+        <div id="tabApprovedUsers" class="access-tab-content" style="display:none;">
+          <div id="approvedUsersList" class="users-list-wrap">
+            <!-- Popolato via JS -->
+          </div>
+        </div>
+
+        <!-- Tab 3: SMTP & Notifiche Scuola (Amministratori di Istituto & SuperAdmin) -->
+        <div id="tabSchoolSmtp" class="access-tab-content" style="display:none;">
+          <div class="config-section" style="padding:16px 20px;border:1px solid var(--border);border-radius:12px;background:var(--bg-card);margin-bottom:16px;">
+            <h4 style="font-size:14px;font-weight:700;color:var(--text-main);margin-bottom:6px;display:flex;align-items:center;gap:6px;">
+              <span>📧</span> <span id="schoolSmtpTitle">Server SMTP & Notifiche Istituto</span>
+            </h4>
+            <p class="section-desc" style="font-size:12px;color:var(--text-muted);margin-bottom:14px;line-height:1.5;">
+              Configura il server di posta in uscita dedicato a questo istituto scolastico (Google Workspace, Microsoft 365 o server SMTP della scuola). Consente l'invio autonomo di notifiche orario, avvisi ai docenti e report.
+            </p>
+
+            <div class="form-group" style="margin-bottom:14px;">
+              <label style="display:flex;align-items:center;gap:8px;font-weight:700;cursor:pointer;font-size:13px;">
+                <input type="checkbox" id="cfgSchoolSmtpEnabled" style="width:16px;height:16px;" />
+                <span>Abilita invio email per questo istituto</span>
+              </label>
+            </div>
+
+            <div style="display:grid;grid-template-columns:2fr 1fr;gap:12px;margin-bottom:12px;">
+              <div>
+                <label class="form-label" style="font-size:11.5px;font-weight:600;margin-bottom:4px;display:block;">Server SMTP (Host)</label>
+                <input type="text" id="cfgSchoolSmtpHost" class="form-input" placeholder="smtp.gmail.com oppure smtp.office365.com" style="width:100%;font-size:12px;" />
+              </div>
+              <div>
+                <label class="form-label" style="font-size:11.5px;font-weight:600;margin-bottom:4px;display:block;">Porta SMTP</label>
+                <input type="number" id="cfgSchoolSmtpPort" class="form-input" placeholder="587" value="587" style="width:100%;font-size:12px;" />
+              </div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+              <div>
+                <label class="form-label" style="font-size:11.5px;font-weight:600;margin-bottom:4px;display:block;">Email / Utente Mittente</label>
+                <input type="email" id="cfgSchoolSmtpUser" class="form-input" placeholder="orario@scuola.edu.it" style="width:100%;font-size:12px;" />
+              </div>
+              <div>
+                <label class="form-label" style="font-size:11.5px;font-weight:600;margin-bottom:4px;display:block;">Password / Password Applicazione</label>
+                <input type="password" id="cfgSchoolSmtpPass" class="form-input" placeholder="••••••••••••••••" style="width:100%;font-size:12px;" />
+              </div>
+            </div>
+
+            <div style="margin-bottom:18px;">
+              <label class="form-label" style="font-size:11.5px;font-weight:600;margin-bottom:4px;display:block;">Destinatario Notifiche / Email Referente</label>
+              <input type="email" id="cfgSchoolSmtpNotifyTo" class="form-input" placeholder="referente.orario@scuola.edu.it" style="width:100%;font-size:12px;" />
+              <span style="font-size:11px;color:var(--text-muted);margin-top:3px;display:block;">Indirizzo email su cui ricevere gli avvisi e le email di test di questo istituto.</span>
+            </div>
+
+            <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end;">
+              <button class="btn btn-sec btn-sm" onclick="testSchoolSmtpEmail()">📧 Invia Email di Test Scuola</button>
+              <button class="btn btn-primary btn-sm" onclick="saveSchoolSmtpConfig()">💾 Salva Configurazione SMTP Scuola</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 3: Configurazione -->
+        <div id="tabConfig" class="access-tab-content" style="display:none;">
+          <div class="config-section">
+            <h4 data-i18n="modals.access.oauth_title">🔑 Google OAuth 2.0 Client ID</h4>
+            <p class="section-desc" data-i18n="modals.access.oauth_desc">
+              Inserisci il <b>Client ID Web</b> generato nella <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener">Google Cloud Console</a> per consentire l'accesso ufficiale tramite Google.
+            </p>
+            <input type="text" id="cfgGoogleClientId" class="form-input" placeholder="es. 123456789-abcdef.apps.googleusercontent.com" />
+          </div>
+
+          <div class="config-section" style="margin-top:20px;">
+            <h4 data-i18n="modals.access.passcode_title">🛡️ Passcode di Emergenza Admin</h4>
+            <p class="section-desc" data-i18n="modals.access.passcode_desc">Passcode master per accedere come amministratore in caso di emergenza o per il primo setup.</p>
+            <input type="text" id="cfgEmergencyPasscode" class="form-input" placeholder="Passcode amministratore..." />
+          </div>
+
+          <div class="config-section" style="margin-top:20px;">
+            <h4 data-i18n="modals.access.smtp_title">📧 Notifiche Email su Nuova Richiesta (SMTP)</h4>
+            <p class="section-desc" data-i18n="modals.access.smtp_desc">Ricevi automaticamente un'email di avviso sull'indirizzo email dell'amministratore ogni volta che un utente richiede l'accesso.</p>
+            <label class="checkbox-label" style="margin-bottom:12px;display:flex;align-items:center;gap:8px;cursor:pointer;">
+              <input type="checkbox" id="cfgSmtpEnabled" /> <b data-i18n="modals.access.smtp_enable">Abilita notifica email immediata</b>
+            </label>
+            <div id="smtpFields" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+              <div>
+                <label class="form-label" data-i18n="modals.access.smtp_server">Server SMTP</label>
+                <input type="text" id="cfgSmtpHost" class="form-input" placeholder="smtp.gmail.com" />
+              </div>
+              <div>
+                <label class="form-label" data-i18n="modals.access.smtp_port">Porta SMTP</label>
+                <input type="number" id="cfgSmtpPort" class="form-input" placeholder="587" />
+              </div>
+              <div>
+                <label class="form-label" data-i18n="modals.access.smtp_user">Utente / Email Mittente</label>
+                <input type="text" id="cfgSmtpUser" class="form-input" placeholder="es. tuamail@gmail.com" />
+              </div>
+              <div>
+                <label class="form-label" data-i18n="modals.access.smtp_pass">Password Applicazione Google</label>
+                <input type="password" id="cfgSmtpPass" class="form-input" placeholder="Password app (16 caratteri)" />
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-top:24px;display:flex;justify-content:flex-end;gap:10px;">
+            <button class="btn btn-sec" onclick="testSmtpEmail()" data-i18n="modals.access.btn_test_smtp">📧 Invia Email di Test</button>
+            <button class="btn btn-primary" onclick="saveAccessConfig()" data-i18n="modals.access.btn_save_config">💾 Salva Impostazioni</button>
+          </div>
+        </div>
+
+        <!-- Tab 4: Registro Accessi (Audit Log per Admin) -->
+        <div id="tabLogs" class="access-tab-content" style="display:none;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;gap:10px;">
+            <div>
+              <div style="font-weight:700;font-size:13.5px;color:var(--primary-dark);" data-i18n="modals.access.logs_title">📜 Registro Cronologico degli Accessi</div>
+              <div style="font-size:11.5px;color:var(--text-muted);" data-i18n="modals.access.logs_desc">Tracciamento degli eventi di sicurezza: login riusciti, passcode master, richieste Google e revoche.</div>
+            </div>
+            <div style="display:flex;gap:8px;">
+              <button class="btn btn-sm btn-sec" onclick="loadAccessLogs()" data-i18n="modals.access.btn_refresh_logs">🔄 Aggiorna</button>
+              <button class="btn btn-sm btn-danger" onclick="clearAccessLogs()" data-i18n="modals.access.btn_clear_logs">🗑️ Svuota Registro</button>
+            </div>
+          </div>
+          <div class="table-responsive" style="max-height:420px;overflow-y:auto;border:1px solid var(--border-light);border-radius:var(--radius-sm);">
+            <table class="data-table" id="accessLogsTable" style="width:100%;font-size:11.5px;">
+              <thead>
+                <tr style="position:sticky;top:0;background:#f8fafc;z-index:2;">
+                  <th style="width:135px;" data-i18n="modals.access.th_datetime">Data & Ora</th>
+                  <th style="width:125px;" data-i18n="modals.access.th_event">Evento</th>
+                  <th data-i18n="modals.access.th_user">Utente / Email</th>
+                  <th style="width:70px;" data-i18n="modals.access.th_role">Ruolo</th>
+                  <th style="width:110px;" data-i18n="modals.access.th_ip">Indirizzo IP</th>
+                  <th style="width:85px;" data-i18n="modals.access.th_outcome">Esito</th>
+                  <th data-i18n="modals.access.th_details">Dettagli Operazione</th>
+                </tr>
+              </thead>
+              <tbody id="accessLogsTbody">
+                <!-- Popolato via JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Stampa Orario per Classe (Procedura 9) -->
+  <div id="printClassesModal" class="modal-backdrop" role="dialog" aria-modal="true" style="display:none;">
+    <div class="modal-dialog" style="max-width:680px;">
+      <div class="modal-header">
+        <div class="modal-title">
+          <span>🖨️</span> <span data-i18n="modals.print_classes.title">Stampa Orario per Classe (Procedura 9)</span>
+        </div>
+        <button class="modal-close" onclick="closePrintClassesModal()">✕</button>
+      </div>
+      <div class="modal-body" style="gap:14px;">
+        <div class="modal-notice" data-i18n="modals.print_classes.info_box">
+          Genera il fascicolo completo o l'orario di singole classi in formato <b>A4 Orizzontale</b> (1 classe per pagina).
+          Supporta nativamente la fusione delle classi articolate (es. 3A con 3AM/3AR) e gli intervalli scolastici.
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+          <div class="form-group">
+            <label class="form-label" style="font-weight:600;" data-i18n="modals.print_classes.valid_from">📅 Valido a partire da:</label>
+            <input type="text" id="printClassesDate" class="form-input" placeholder="GG/MM/AAAA" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" style="font-weight:600;" data-i18n="modals.print_classes.color_mode">🎨 Modalità Colore:</label>
+            <select id="printClassesColor" class="select-input">
+              <option value="color" selected data-i18n="modals.print_classes.color_full">🌈 A Colori (Sfondi pastello per materia)</option>
+              <option value="bw" data-i18n="modals.print_classes.color_bw">⚫ Bianco e Nero (Toner save / fotocopie)</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+          <div class="form-group">
+            <label class="form-label" style="font-weight:600;" data-i18n="modals.print_classes.cell_content">📝 Contenuto delle celle:</label>
+            <select id="printClassesContent" class="select-input">
+              <option value="materia_docente" selected data-i18n="modals.print_classes.content_both">Materia e Docente (Consigliato)</option>
+              <option value="materia" data-i18n="modals.print_classes.content_subject">Solo Materia</option>
+              <option value="docente" data-i18n="modals.print_classes.content_teacher">Solo Docente</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" style="font-weight:600;" data-i18n="modals.print_classes.language">🌐 Lingua Stampa / Document Language:</label>
+            <select id="printClassesLang" class="select-input">
+              <option value="it">🇮🇹 Italiano (ITA)</option>
+              <option value="en">🇬🇧 English (ENG)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group" style="padding-top:2px;">
+          <label style="display:flex;align-items:center;gap:8px;font-size:12.5px;cursor:pointer;">
+            <input type="checkbox" id="printClassesIncludeSubgroups" checked /> <b data-i18n="modals.print_classes.include_subgroups">Includi rami articolati (3AM, 3AR...)</b>
+          </label>
+        </div>
+
+        <!-- Selettore Classi -->
+        <div class="form-group" style="margin-top:4px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+            <label class="form-label" style="font-weight:600;margin:0;" data-i18n="modals.print_classes.select_classes">🎓 Selezione Classi da Stampare:</label>
+            <span id="printClassesSelectedCount" class="badge badge-info" style="font-size:11px;" data-i18n="modals.print_classes.all_classes">Tutte le classi</span>
+          </div>
+
+          <div class="quick-filter-bar">
+            <button class="btn btn-xs btn-sec" onclick="setPrintClassesFilter('all')" data-i18n="modals.print_classes.filter_all">Tutte</button>
+            <button class="btn btn-xs btn-sec" onclick="setPrintClassesFilter('1')" data-i18n="modals.print_classes.filter_1">Prime</button>
+            <button class="btn btn-xs btn-sec" onclick="setPrintClassesFilter('2')" data-i18n="modals.print_classes.filter_2">Seconde</button>
+            <button class="btn btn-xs btn-sec" onclick="setPrintClassesFilter('3')" data-i18n="modals.print_classes.filter_3">Terze</button>
+            <button class="btn btn-xs btn-sec" onclick="setPrintClassesFilter('4')" data-i18n="modals.print_classes.filter_4">Quarte</button>
+            <button class="btn btn-xs btn-sec" onclick="setPrintClassesFilter('5')" data-i18n="modals.print_classes.filter_5">Quinte</button>
+            <button class="btn btn-xs btn-sec" onclick="setPrintClassesFilter('none')" data-i18n="modals.print_classes.filter_none">Nessuna</button>
+            <input type="text" id="printClassesSearch" class="form-input" placeholder="🔍 Cerca..." data-i18n-placeholder="modals.print_classes.search_placeholder" style="max-width:110px;padding:2px 6px;font-size:11px;margin-left:auto;" oninput="filterPrintClassesSearch(this.value)" />
+          </div>
+
+          <div id="printClassesCheckboxesWrap" class="class-chips-container">
+            <!-- Popolato via JS con i metadati delle classi -->
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-sec" onclick="closePrintClassesModal()" data-i18n="common.cancel">Annulla</button>
+        <button class="btn btn-primary" onclick="submitPrintClasses()" data-i18n="modals.print_classes.submit_btn">🖨️ Apri Anteprima & Stampa PDF</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Tabellone Docenti A3 (Procedura 12) -->
+  <div id="printTeachersModal" class="modal-backdrop" role="dialog" aria-modal="true" style="display:none;">
+    <div class="modal-dialog" style="max-width:540px;">
+      <div class="modal-header">
+        <div class="modal-title">
+          <span>📄</span> <span data-i18n="modals.print_teachers.title">Tabellone Docenti A3 (Procedura 12)</span>
+        </div>
+        <button class="modal-close" onclick="closePrintTeachersModal()">✕</button>
+      </div>
+      <div class="modal-body" style="gap:14px;">
+        <div class="modal-notice" data-i18n="modals.print_teachers.info_box">
+          Genera il <b>Tabellone Generale Completo</b> di tutti i docenti dell'istituto in formato <b>A3 Orizzontale</b> (o A4 compatto).
+          Include bande verticali alternate per giorno ed eliminazione automatica delle ore vuote in coda.
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" style="font-weight:600;" data-i18n="modals.print_teachers.valid_from">📅 Valido a partire dal:</label>
+          <input type="text" id="printTeachersDate" class="form-input" placeholder="GG/MM/AAAA" />
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+          <div class="form-group">
+            <label class="form-label" style="font-weight:600;" data-i18n="modals.print_teachers.paper_size">📐 Formato Carta:</label>
+            <select id="printTeachersPaperSize" class="select-input">
+              <option value="A3" selected data-i18n="modals.print_teachers.paper_a3">📄 A3 Orizzontale (Consigliato per collegio / bacheca)</option>
+              <option value="A4" data-i18n="modals.print_teachers.paper_a4">📑 A4 Orizzontale (Compatto ad alta densità)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" style="font-weight:600;" data-i18n="modals.print_teachers.language">🌐 Lingua Stampa / Document Language:</label>
+            <select id="printTeachersLang" class="select-input">
+              <option value="it">🇮🇹 Italiano (ITA)</option>
+              <option value="en">🇬🇧 English (ENG)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group" style="padding-top:4px;">
+          <label style="display:flex;align-items:center;gap:8px;font-size:12.5px;cursor:pointer;">
+            <input type="checkbox" id="printTeachersShowRooms" /> <b data-i18n="modals.print_teachers.show_rooms">Mostra Aula nelle celle di lezione</b> <span style="font-size:11px;color:var(--text-muted);" data-i18n="modals.print_teachers.show_rooms_hint">(lasciare disattivato per far stare perfettamente i dati nelle caselle)</span>
+          </label>
+          <label style="display:flex;align-items:center;gap:8px;font-size:12.5px;cursor:pointer;margin-top:6px;">
+            <input type="checkbox" id="printTeachersHighlightDisp" checked /> <b data-i18n="modals.print_teachers.highlight_disp">Evidenzia Ore a Disposizione ("D" in giallo)</b>
+          </label>
+        </div>
+
+        <div class="modal-notice-info" data-i18n="modals.print_teachers.optimization_notice">
+          ⚡ <b>Ottimizzazione ore in coda attiva:</b> le colonne orarie non utilizzate dall'intero istituto (es. Lun/Mer/Gio a 6 ore) vengono escluse per massimizzare la larghezza delle lezioni senza sprecare spazio.
+        </div>
+      </div>
+      <div class="modal-footer" style="display:flex;justify-content:space-between;align-items:center;">
+        <button class="btn btn-sec" onclick="closePrintTeachersModal()" data-i18n="common.cancel">Annulla</button>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-sec btn-outline-primary" onclick="submitDownloadTeachersDocx()" data-i18n="modals.print_teachers.download_docx">
+            📥 Scarica Documento (.docx Google Docs)
+          </button>
+          <button class="btn btn-primary" onclick="submitPrintTeachers()" data-i18n="modals.print_teachers.submit_btn">
+            🖨️ Stampa / Anteprima A3
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Informazioni su Eurario & Crediti (Stato dell'arte) -->
+  <div id="aboutModal" class="modal-backdrop" role="dialog" aria-modal="true" style="display:none;" onclick="if(event.target===this) closeAboutModal()">
+    <div class="modal-dialog" style="max-width:640px;">
+      <div class="modal-header">
+        <div class="modal-title" style="display:flex;align-items:center;gap:12px;">
+          <img src="/eurario-mark.svg" alt="Eurario" width="32" height="32" style="border-radius:6px;">
+          <div>
+            <div style="font-size:16px;font-weight:700;color:var(--text-main);" data-i18n="modals.about.title">Eurario FET Suite</div>
+            <div style="font-size:11.5px;color:var(--text-muted);" data-i18n="modals.about.subtitle">Configurazione, Vincoli & Compilatore Orario FET 7.12.0</div>
+          </div>
+        </div>
+        <button class="modal-close" onclick="closeAboutModal()" title="Chiudi">✕</button>
+      </div>
+      <div class="modal-body" style="gap:14px;max-height:calc(85vh - 130px);overflow-y:auto;">
+        <!-- Banner Versione & Verifica Aggiornamenti -->
+        <div class="about-banner">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span id="aboutModalVer" class="badge badge-info" style="font-size:12px;padding:3px 8px;font-weight:700;">v1.9.2</span>
+            <span id="aboutUpdateStatusText" style="font-size:11.5px;color:var(--text-sub);" data-i18n="modals.about.stable_release">Release Stabile</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <button class="btn btn-sm btn-sec" onclick="openUpdateModal()" style="font-size:11px;padding:3px 8px;display:flex;align-items:center;gap:4px;cursor:pointer;">
+              <span>🚀</span> <span data-i18n="modals.about.check_updates">Verifica Aggiornamenti</span>
+            </button>
+            <div style="font-size:11.5px;color:var(--text-sub);" data-i18n="modals.about.engine">
+              Engine: <b>FET 7.12.0 Nativo</b>
+            </div>
+          </div>
+        </div>
+
+        <!-- Crediti Autore & Architettura -->
+        <div style="display:flex;flex-direction:column;gap:4px;">
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--text-sub);letter-spacing:0.5px;" data-i18n="modals.about.author_section">Ideazione & Architettura</div>
+          <div class="about-credit-card">
+            <div style="font-size:24px;">👨‍💻</div>
+            <div style="font-size:12.5px;color:var(--text-main);line-height:1.45;">
+              <div style="font-weight:700;font-size:13.5px;color:var(--primary);">Carlo Rigoni</div>
+              <div data-i18n="modals.about.author_role">Autore, Architetto del Software e Maintainer del progetto Eurario.</div>
+              <div style="font-size:11.5px;color:var(--text-sub);margin-top:2px;" data-i18n="modals.about.author_sub">Progettazione funzionale, adattamento alla scuola italiana, modello vincoli cattedre/disposizioni e integrazione procedurale.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mentore dell'Orario & Guida Metodologica -->
+        <div style="display:flex;flex-direction:column;gap:4px;">
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--text-sub);letter-spacing:0.5px;" data-i18n="modals.about.mentor_section">Mentore dell'Orario & Guida Metodologica</div>
+          <div class="about-credit-card">
+            <div style="font-size:24px;">🎓</div>
+            <div style="font-size:12.5px;color:var(--text-main);line-height:1.45;">
+              <div style="font-weight:700;font-size:13.5px;color:var(--primary);">Federico Rettore</div>
+              <div data-i18n="modals.about.mentor_desc">Mentore dell'Orario e guida metodologica per l'equilibratura dei carichi orari docenti, la gestione dei vincoli e delle articolazioni cattedre nella scuola secondaria italiana.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Crediti FET & Solutore -->
+        <div style="display:flex;flex-direction:column;gap:4px;">
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--text-sub);letter-spacing:0.5px;" data-i18n="modals.about.engine_section">Motore Euristico di Calcolo</div>
+          <div class="about-credit-card">
+            <div style="font-size:24px;">⚡</div>
+            <div style="font-size:12.5px;color:var(--text-main);line-height:1.45;">
+              <div style="font-weight:700;font-size:13.5px;color:var(--primary);">FET Free Timetabling Software (v7.12.0)</div>
+              <div data-i18n="modals.about.engine_desc">Solutore euristico ad altissima efficienza per orari scolastici complessi, ideato e sviluppato da <b>Liviu Lalescu</b> con il contributo della comunità internazionale FET (licenza GNU GPL v2/v3).</div>
+              <div style="margin-top:4px;">
+                <a href="https://lalescu.ro/liviu/fet/" target="_blank" rel="noopener" style="color:var(--primary);text-decoration:none;font-weight:600;font-size:11.5px;" data-i18n="modals.about.engine_site">🌐 Sito ufficiale FET Free Software</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- AI Pair Programming Antigravity -->
+        <div style="display:flex;flex-direction:column;gap:4px;">
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--text-sub);letter-spacing:0.5px;" data-i18n="modals.about.ai_section">AI Engineering & Pair Programming</div>
+          <div class="about-credit-card">
+            <div style="font-size:24px;">🤖</div>
+            <div style="font-size:12.5px;color:var(--text-main);line-height:1.45;">
+              <div style="font-weight:700;font-size:13.5px;color:var(--primary);">Google DeepMind Antigravity</div>
+              <div data-i18n="modals.about.ai_desc">Advanced Agentic Coding: ingegnerizzazione full-stack, interfaccia Google Classroom Material 3, Relaxation Engine diagnostico per i vincoli, parser Microsoft Word (.docx) e containerizzazione multi-arch.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Trattamento Dati & GDPR -->
+        <div class="modal-notice-info">
+          <div style="font-weight:700;display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+            <span>🛡️</span> <span data-i18n="modals.about.gdpr_title">Conformità GDPR (Reg. UE 2016/679) & Privacy by Design</span>
+          </div>
+          <div data-i18n="modals.about.gdpr_desc">Eurario opera <b>esclusivamente on-premise</b> all'interno della rete locale dell'Istituto, oppure su <b>macchina virtuale (VM) o VPS controllata</b>. Nessun dato dell'orario o anagrafico viene trasmesso a server cloud terzi. L'Istituto Scolastico o l'Ente che installa e utilizza il software agisce in via esclusiva come <b>Titolare del Trattamento dei Dati Personali</b> (Art. 4, n. 7 GDPR) ai sensi di legge.</div>
+        </div>
+
+        <!-- Collegamenti esterni -->
+        <div style="display:flex;gap:12px;justify-content:center;padding-top:4px;font-size:12px;">
+          <a href="https://github.com/carlorigoni/eurario" target="_blank" rel="noopener" style="color:var(--primary);text-decoration:none;font-weight:600;">GitHub Repository</a> &bull;
+          <a href="https://hub.docker.com/r/carlorigoni/eurario" target="_blank" rel="noopener" style="color:var(--primary);text-decoration:none;font-weight:600;">Docker Hub</a> &bull;
+          <a href="https://lalescu.ro/liviu/fet/" target="_blank" rel="noopener" style="color:var(--primary);text-decoration:none;font-weight:600;">FET Project</a>
+        </div>
+      </div>
+      <div class="modal-footer" style="justify-content:flex-end;">
+        <button class="btn btn-primary" onclick="closeAboutModal()" data-i18n="common.close">Chiudi</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Aggiornamento Software (Docker Hub & GitHub) -->
+  <div id="updateModal" class="modal-backdrop" role="dialog" aria-modal="true" style="display:none;" onclick="if(event.target===this) closeUpdateModal()">
+    <div class="modal-dialog" style="max-width: 580px;">
+      <div class="modal-header">
+        <div class="modal-title" style="display:flex;align-items:center;gap:12px;">
+          <span style="font-size:26px;">🚀</span>
+          <div>
+            <div style="font-size:16px;font-weight:700;color:var(--text-main);" data-i18n="modals.updates.title">Aggiornamento Eurario</div>
+            <div style="font-size:11.5px;color:var(--text-muted);" data-i18n="modals.updates.subtitle">Verifica immagini Docker Hub & Release Ufficiali</div>
+          </div>
+        </div>
+        <button class="modal-close" onclick="closeUpdateModal()" title="Chiudi">✕</button>
+      </div>
+
+      <div class="modal-body" style="gap:14px;max-height:calc(85vh - 130px);overflow-y:auto;">
+        <!-- Banner Stato Aggiornamento -->
+        <div id="updateStatusBanner" class="modal-notice" style="display: flex; align-items: flex-start; gap: 10px;">
+          <span id="updateBannerIcon" style="font-size: 20px;">🔍</span>
+          <div style="flex: 1;">
+            <div id="updateBannerTitle" style="font-weight: 700; color: var(--text-main);" data-i18n="modals.updates.checking_title">Verifica aggiornamenti in corso...</div>
+            <div id="updateBannerDesc" style="font-size: 12px; color: var(--text-muted); margin-top: 2px;" data-i18n="modals.updates.checking_desc">Confronto tra la versione locale e il repository su Docker Hub.</div>
+          </div>
+        </div>
+
+        <!-- Confronto Versioni -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div class="update-stat-card">
+            <div style="font-size: 11px; text-transform: uppercase; font-weight: 700; color: var(--text-sub); letter-spacing: 0.5px;" data-i18n="modals.updates.current_ver">Versione Corrente</div>
+            <div id="updateCurrentVer" style="font-size: 18px; font-weight: 800; color: var(--text-main); margin-top: 4px;">v1.9.2</div>
+            <div id="updateCurrentTag" style="font-size: 11px; color: var(--text-muted); margin-top: 2px;" data-i18n="modals.updates.current_tag">In esecuzione sul server</div>
+          </div>
+          <div class="update-stat-card">
+            <div style="font-size: 11px; text-transform: uppercase; font-weight: 700; color: var(--text-sub); letter-spacing: 0.5px;" data-i18n="modals.updates.remote_ver">Ultima su Docker Hub</div>
+            <div id="updateRemoteVer" style="font-size: 18px; font-weight: 800; color: var(--primary); margin-top: 4px;">--</div>
+            <div id="updateRemoteDate" style="font-size: 11px; color: var(--text-muted); margin-top: 2px;" data-i18n="modals.updates.remote_checking">Verifica...</div>
+          </div>
+        </div>
+
+        <!-- Guida all'Aggiornamento -->
+        <div id="updateGuideSection" style="display: flex; flex-direction: column; gap: 8px;">
+          <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; color: var(--text-sub); letter-spacing: 0.5px;" data-i18n="modals.updates.guide_title">
+            🛠️ Come Applicare l'Aggiornamento
+          </div>
+          <div class="about-credit-card" style="display:flex;flex-direction:column;gap:10px;">
+            <div style="font-size: 12.5px; color: var(--text-main); line-height: 1.45;">
+              <strong data-i18n="modals.updates.guide_watchtower">1. Aggiornamento Automatico con Watchtower:</strong><br>
+              <span data-i18n="modals.updates.guide_watchtower_desc">Se il tuo server Docker ha il container <em>containrrr/watchtower</em> configurato, l'immagine verrà aggiornata automaticamente all'orario impostato senza alcun intervento manuale.</span>
+            </div>
+            <div style="font-size: 12.5px; color: var(--text-main); line-height: 1.45;">
+              <strong data-i18n="modals.updates.guide_manual">2. Aggiornamento Manuale Immediato:</strong><br>
+              <span data-i18n="modals.updates.guide_manual_desc">Per aggiornare subito da terminale sul server o VPS, esegui nella cartella del progetto:</span>
+            </div>
+            <div style="position: relative; background: #0f172a; border-radius: 6px; padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%;">
+              <code id="dockerUpdateCmdText" style="color: #38bdf8; font-family: var(--font-mono); font-size: 12px; word-break: break-all;">docker compose pull && docker compose up -d</code>
+              <button id="btnCopyUpdateCmd" class="btn btn-sm btn-sec" onclick="copyDockerUpdateCmd()" style="background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.25); color: #fff; padding: 4px 10px; font-size: 11.5px; flex-shrink: 0; cursor: pointer;">
+                📋 <span data-i18n="modals.updates.copy_btn">Copia</span>
+              </button>
+            </div>
+            <div style="font-size: 11.5px; color: var(--text-muted); line-height: 1.4;" data-i18n="modals.updates.hint_security">
+              💡 <strong>Sicurezza Dati:</strong> Tutti i dati, i vincoli e gli orari generati risiedono nei volumi persistenti e non vengono sovrascritti durante gli aggiornamenti dell'immagine.
+            </div>
+          </div>
+        </div>
+
+        <!-- Sezione Ultimo Controllo -->
+        <div style="font-size: 11px; color: var(--text-sub); text-align: right; padding-top: 4px;">
+          <span data-i18n="modals.updates.last_check">Ultimo controllo:</span> <span id="updateLastCheckedTime">adesso</span>
+        </div>
+      </div>
+
+      <div class="modal-footer" style="display:flex;justify-content:space-between;align-items:center;">
+        <button id="btnForceCheckUpdate" class="btn btn-sec" onclick="checkUpdatesManually(true)" style="font-size: 12px;" data-i18n="modals.updates.check_now_btn">
+          🔄 Ricontrolla Ora
+        </button>
+        <button class="btn btn-primary" onclick="closeUpdateModal()" style="font-size: 12px;" data-i18n="common.close">
+          Chiudi
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Registra Nuovo Istituto (Multi-Scuola) -->
+  <div id="createSchoolModal" class="modal-backdrop" role="dialog" aria-modal="true" style="display:none;" onclick="if(event.target===this) closeCreateSchoolModal()">
+    <div class="modal-dialog" style="max-width: 520px;">
+      <div class="modal-header">
+        <div class="modal-title" style="display:flex;align-items:center;gap:10px;">
+          <span style="font-size:24px;">🏫</span>
+          <div>
+            <div style="font-size:16px;font-weight:700;color:var(--text-main);" data-i18n="modals.create_school.title">Registra Nuovo Istituto</div>
+            <div style="font-size:11.5px;color:var(--text-muted);" data-i18n="modals.create_school.subtitle">Crea un nuovo spazio isolato per il tuo orario scolastico</div>
+          </div>
+        </div>
+        <button class="modal-close" onclick="closeCreateSchoolModal()" title="Chiudi" data-i18n-title="common.close">✕</button>
+      </div>
+
+      <div class="modal-body" style="gap:14px;">
+        <div class="modal-notice" style="display:flex;align-items:flex-start;gap:10px;">
+          <span style="font-size:18px;">✨</span>
+          <div style="font-size:12px;color:var(--text-main);line-height:1.4;" data-i18n-html="modals.create_school.notice">
+            Il nuovo istituto verrà creato immediatamente in <b>Modalità di Prova</b>: potrai inserire dati, definire vincoli e calcolare orari con il motore FET. Le stampe ufficiali ad alta risoluzione verranno sbloccate dopo l'approvazione tecnica da parte del SuperAdmin.
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label style="font-size:12px;font-weight:600;margin-bottom:4px;display:block;" data-i18n="modals.create_school.name_label">Nome Istituto Scolastico *</label>
+          <input type="text" id="newSchoolName" class="form-input" placeholder="Es. Liceo Scientifico &quot;Galileo Galilei&quot;" data-i18n-placeholder="modals.create_school.name_placeholder" style="width:100%;" required>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div class="form-group">
+            <label style="font-size:12px;font-weight:600;margin-bottom:4px;display:block;" data-i18n="modals.create_school.city_label">Città / Comune</label>
+            <input type="text" id="newSchoolCity" class="form-input" placeholder="Es. Padova, Milano, Roma..." data-i18n-placeholder="modals.create_school.city_placeholder" style="width:100%;">
+          </div>
+          <div class="form-group">
+            <label style="font-size:12px;font-weight:600;margin-bottom:4px;display:block;" data-i18n="modals.create_school.country_label">Nazione</label>
+            <input type="text" id="newSchoolCountry" class="form-input" value="Italia" data-i18n-placeholder="modals.create_school.country_placeholder" style="width:100%;">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label style="font-size:12px;font-weight:600;margin-bottom:4px;display:block;" data-i18n="modals.create_school.code_label">Codice Meccanografico (se presente per l'Italia - univoco)</label>
+          <input type="text" id="newSchoolMeccanografico" class="form-input" placeholder="Es. PDIS017007 (Facoltativo)" data-i18n-placeholder="modals.create_school.code_placeholder" style="width:100%;text-transform:uppercase;">
+        </div>
+
+        <div class="form-group">
+          <label style="font-size:12px;font-weight:600;margin-bottom:4px;display:block;" data-i18n="modals.create_school.email_label">Email Ufficiale / Contatto Notifiche (Facoltativo)</label>
+          <input type="email" id="newSchoolContactEmail" class="form-input" placeholder="Es. segreteria@scuola.edu.it oppure orario@scuola.edu.it" data-i18n-placeholder="modals.create_school.email_placeholder" style="width:100%;">
+        </div>
+
+        <div class="form-group">
+          <label style="font-size:12px;font-weight:600;margin-bottom:4px;display:block;" data-i18n="modals.create_school.notes_label">Note / Recapito Referente Commissione Orario</label>
+          <textarea id="newSchoolNotes" class="form-input" rows="2" placeholder="Indicare eventuali recapiti o note per la configurazione..." data-i18n-placeholder="modals.create_school.notes_placeholder" style="width:100%;resize:vertical;"></textarea>
+        </div>
+      </div>
+
+      <div class="modal-footer" style="display:flex;justify-content:flex-end;gap:10px;">
+        <button class="btn btn-sec" onclick="closeCreateSchoolModal()" data-i18n="modals.create_school.cancel_btn">Annulla</button>
+        <button id="btnSubmitCreateSchool" class="btn btn-primary" onclick="submitCreateSchool()" data-i18n="modals.create_school.submit_btn">
+          🚀 Registra ed Entra
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Console SuperAdmin (Gestione Scuole e Approvazioni) -->
+  <div id="superAdminModal" class="modal-backdrop" role="dialog" aria-modal="true" style="display:none;" onclick="if(event.target===this) closeSuperAdminModal()">
+    <div class="modal-dialog" style="max-width: 860px;">
+      <div class="modal-header">
+        <div class="modal-title" style="display:flex;align-items:center;gap:10px;">
+          <span style="font-size:24px;">⭐</span>
+          <div>
+            <div style="font-size:16px;font-weight:700;color:var(--text-main);" data-i18n="superadmin.modal_title">Console SuperAdmin &mdash; Gestione Piattaforma Eurario</div>
+            <div style="font-size:11.5px;color:var(--text-muted);" data-i18n="superadmin.modal_subtitle">Registro globale istituti, approvazione modalità di prova e monitoraggio</div>
+          </div>
+        </div>
+        <button class="modal-close" onclick="closeSuperAdminModal()" title="Chiudi" data-i18n-title="common.close">✕</button>
+      </div>
+
+      <div class="modal-body" style="gap:14px;max-height:calc(85vh - 130px);overflow-y:auto;">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-size:13px;font-weight:700;color:var(--text-main);"><span data-i18n="superadmin.schools_title">Istituti Registrati sulla Piattaforma</span> (<span id="superAdminTotalCount">0</span>)</span>
+          <button class="btn btn-sm btn-sec" onclick="loadSuperAdminSchools(true)" data-i18n="superadmin.btn_refresh">🔄 Aggiorna</button>
+        </div>
+
+        <div class="table-responsive" style="max-height:420px;overflow-y:auto;border:1px solid var(--border);border-radius:8px;">
+          <table class="data-table" style="width:100%;font-size:12px;margin:0;">
+            <thead>
+              <tr>
+                <th data-i18n="superadmin.th_school">Istituto</th>
+                <th data-i18n="superadmin.th_location">Sede / Anno</th>
+                <th data-i18n="superadmin.th_owner">Creatore / Owner</th>
+                <th data-i18n="superadmin.th_status">Stato</th>
+                <th style="text-align:right;" data-i18n="superadmin.th_actions">Azioni Tecniche</th>
+              </tr>
+            </thead>
+            <tbody id="superAdminSchoolsTbody">
+              <!-- Riempito dinamicamente da app.js -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="modal-footer" style="display:flex;justify-content:flex-end;">
+        <button class="btn btn-primary" onclick="closeSuperAdminModal()" data-i18n="common.close">Chiudi</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Info Modalità di Prova -->
+  <div id="trialInfoModal" class="modal-backdrop" role="dialog" aria-modal="true" style="display:none;" onclick="if(event.target===this) closeTrialInfoModal()">
+    <div class="modal-dialog" style="max-width: 540px;">
+      <div class="modal-header">
+        <div class="modal-title" style="display:flex;align-items:center;gap:10px;">
+          <span style="font-size:24px;">ℹ️</span>
+          <div>
+            <div style="font-size:16px;font-weight:700;color:var(--text-main);" data-i18n="schools.trial_modal_title">Modalità di Prova Eurario</div>
+            <div style="font-size:11.5px;color:var(--text-muted);" data-i18n="schools.trial_modal_subtitle">Come funziona la valutazione tecnica per i nuovi istituti</div>
+          </div>
+        </div>
+        <button class="modal-close" onclick="closeTrialInfoModal()" title="Chiudi" data-i18n-title="common.close">✕</button>
+      </div>
+
+      <div class="modal-body" style="gap:12px;font-size:12.5px;line-height:1.5;color:var(--text-main);">
+        <p data-i18n="schools.trial_modal_desc">Eurario consente a qualsiasi istituto scolastico di verificare immediatamente la velocità e l'efficacia del motore di calcolo FET senza alcuna limitazione funzionale:</p>
+        <ul style="padding-left:20px;margin:6px 0;">
+          <li data-i18n-html="schools.trial_modal_li1"><b>Nessun limite</b> sul numero di docenti, classi, materie o vincoli complessi.</li>
+          <li data-i18n-html="schools.trial_modal_li2"><b>Motore FET 7.12.0 completo:</b> generazione rapida, swapper euristico, rilevamento colli di bottiglia e report Advisor attivi.</li>
+          <li data-i18n-html="schools.trial_modal_li3"><b>Griglia orario interattiva:</b> visualizzazione tabellone docenti, classi e aule navigabile a schermo.</li>
+        </ul>
+        <div class="modal-notice" style="margin-top:6px;" data-i18n-html="schools.trial_modal_unlock_desc">
+          <b>Sblocco Stampe Ufficiali:</b> Nella versione in prova, le stampe PDF A3/A4 e i documenti Word (.docx) presentano una filigrana identificativa <i>"Eurario - Versione Dimostrativa"</i>. Per sbloccare le stampe ufficiali senza filigrana, contatta l'amministratore di sistema o attendi l'approvazione tecnica.
+        </div>
+      </div>
+
+      <div class="modal-footer" style="display:flex;justify-content:flex-end;">
+        <button class="btn btn-primary" onclick="closeTrialInfoModal()" data-i18n="schools.understood">Ho Capito</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="i18n.js?v=1.9.2"></script>
+  <script src="app.js?v=1.9.2"></script>
+</body>
+</html>

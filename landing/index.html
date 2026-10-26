@@ -1,0 +1,1830 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Eurario &mdash; L'Orario Scolastico Perfetto con FET 7.12</title>
+  <meta name="description" content="Eurario è la suite libera e open source per l'orario scolastico italiano con motore solutore FET 7.12, disponibile Self-Hosted e in Cloud SaaS gestito.">
+  <meta name="theme-color" content="#1B2A4A">
+
+  <!-- Favicon Ufficiale Eurario -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%231B2A4A'/><rect x='10' y='10' width='11' height='44' rx='3' fill='%23F6F3EC'/><rect x='24' y='10' width='30' height='11' rx='3' fill='%23E4572E'/><rect x='24' y='26.5' width='22' height='11' rx='3' fill='%23F2B134'/><rect x='24' y='43' width='30' height='11' rx='3' fill='%232F7F86'/></svg>">
+
+  <!-- Font Plus Jakarta Sans & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-body: #f8fafc;
+      --bg-surface: #ffffff;
+      --bg-surface-alt: #f1f5f9;
+      --bg-card: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --text-subtle: #94a3b8;
+      --border-color: #e2e8f0;
+      --navbar-bg: rgba(255, 255, 255, 0.92);
+
+      --navy: #1B2A4A;
+      --navy-dark: #111c33;
+      --emerald: #059669;
+      --emerald-hover: #047857;
+      --emerald-light: #ecfdf5;
+      --amber: #d97706;
+      --amber-light: #fffbeb;
+      --coral: #E4572E;
+      --sand: #F6F3EC;
+
+      --slate-50: #f8fafc;
+      --slate-100: #f1f5f9;
+      --slate-200: #e2e8f0;
+      --slate-400: #94a3b8;
+      --slate-600: #475569;
+      --slate-700: #334155;
+      --slate-900: #0f172a;
+
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 22px;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+      --shadow-md: 0 6px 20px -4px rgba(27,42,74,0.08);
+      --shadow-lg: 0 14px 34px -8px rgba(27,42,74,0.12);
+    }
+
+    [data-theme="dark"] {
+      --bg-body: #0b1120;
+      --bg-surface: #131d33;
+      --bg-surface-alt: #0f172a;
+      --bg-card: #18233c;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-subtle: #64748b;
+      --border-color: #24324f;
+      --navbar-bg: rgba(11, 17, 32, 0.92);
+
+      --navy: #93c5fd;
+      --navy-dark: #070d18;
+      --emerald: #10b981;
+      --emerald-hover: #059669;
+      --emerald-light: rgba(16, 185, 129, 0.15);
+      --amber: #f59e0b;
+      --amber-light: rgba(245, 158, 11, 0.15);
+
+      --slate-50: #0b1120;
+      --slate-100: #0f172a;
+      --slate-200: #24324f;
+      --slate-400: #64748b;
+      --slate-600: #94a3b8;
+      --slate-700: #cbd5e1;
+      --slate-900: #f8fafc;
+
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
+      --shadow-md: 0 6px 20px -4px rgba(0,0,0,0.4);
+      --shadow-lg: 0 14px 34px -8px rgba(0,0,0,0.6);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg-body: #0b1120;
+        --bg-surface: #131d33;
+        --bg-surface-alt: #0f172a;
+        --bg-card: #18233c;
+        --text-main: #f8fafc;
+        --text-muted: #94a3b8;
+        --text-subtle: #64748b;
+        --border-color: #24324f;
+        --navbar-bg: rgba(11, 17, 32, 0.92);
+
+        --navy: #93c5fd;
+        --navy-dark: #070d18;
+        --emerald: #10b981;
+        --emerald-hover: #059669;
+        --emerald-light: rgba(16, 185, 129, 0.15);
+        --amber: #f59e0b;
+        --amber-light: rgba(245, 158, 11, 0.15);
+
+        --slate-50: #0b1120;
+        --slate-100: #0f172a;
+        --slate-200: #24324f;
+        --slate-400: #64748b;
+        --slate-600: #94a3b8;
+        --slate-700: #cbd5e1;
+        --slate-900: #f8fafc;
+      }
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      background-color: var(--slate-50);
+      color: var(--slate-900);
+      line-height: 1.6;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Container centrale */
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* NAVBAR */
+    .navbar {
+      position: sticky;
+      top: 0;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--slate-200);
+      z-index: 100;
+      transition: all 0.2s ease;
+    }
+    .nav-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 72px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: var(--navy);
+      font-weight: 800;
+      font-size: 20px;
+      letter-spacing: -0.5px;
+    }
+    .brand-mark {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 10px rgba(27,42,74,0.15);
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+    .nav-link {
+      text-decoration: none;
+      color: var(--slate-600);
+      font-size: 14px;
+      font-weight: 600;
+      transition: color 0.15s;
+    }
+    .nav-link:hover { color: var(--navy); }
+
+
+    /* THEME SWITCHER */
+    .theme-switch {
+      display: inline-flex;
+      align-items: center;
+      background: var(--slate-100);
+      border: 1px solid var(--slate-200);
+      border-radius: 99px;
+      padding: 3px;
+      gap: 2px;
+    }
+    .theme-btn {
+      border: none;
+      background: transparent;
+      padding: 5px 8px;
+      border-radius: 99px;
+      font-size: 13px;
+      color: var(--slate-600);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+    }
+    .theme-btn:hover {
+      color: var(--navy);
+    }
+    .theme-btn.active {
+      background: var(--bg-surface);
+      color: var(--navy);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    /* LANGUAGE SWITCHER */
+    .lang-switch {
+      display: inline-flex;
+      align-items: center;
+      background: var(--slate-100);
+      border: 1px solid var(--slate-200);
+      border-radius: 99px;
+      padding: 3px;
+      gap: 2px;
+    }
+    .lang-btn {
+      border: none;
+      background: transparent;
+      padding: 5px 11px;
+      border-radius: 99px;
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--slate-600);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      line-height: 1;
+    }
+    .lang-btn:hover {
+      color: var(--navy);
+    }
+    .lang-btn.active {
+      background: #fff;
+      color: var(--navy);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 22px;
+      border-radius: var(--radius-md);
+      font-weight: 700;
+      font-size: 14px;
+      text-decoration: none;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+    .btn-emerald {
+      background: var(--emerald);
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(5,150,105,0.3);
+    }
+    .btn-emerald:hover {
+      background: var(--emerald-hover);
+      transform: translateY(-1px);
+    }
+    .btn-navy {
+      background: var(--navy);
+      color: #fff;
+    }
+    .btn-navy:hover {
+      background: var(--navy-dark);
+      transform: translateY(-1px);
+    }
+    .btn-outline {
+      border: 1.5px solid var(--slate-200);
+      color: var(--slate-600);
+      background: #fff;
+    }
+    .btn-outline:hover {
+      border-color: var(--slate-400);
+      color: var(--slate-900);
+    }
+
+    /* HERO */
+    .hero {
+      padding: 80px 0 60px;
+      position: relative;
+    }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 48px;
+      align-items: center;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--emerald-light);
+      color: var(--emerald);
+      padding: 6px 14px;
+      border-radius: 99px;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 24px;
+    }
+    .hero-title {
+      font-size: 46px;
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -1px;
+      color: var(--navy);
+      margin-bottom: 20px;
+    }
+    .hero-title span {
+      background: linear-gradient(135deg, var(--emerald) 0%, var(--navy) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-subtitle {
+      font-size: 17px;
+      color: var(--slate-600);
+      line-height: 1.6;
+      margin-bottom: 32px;
+      max-width: 580px;
+    }
+    .hero-actions {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 32px;
+    }
+
+    /* MOCKUP APPLICATIVO HERO */
+    .mockup-window {
+      background: #fff;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--slate-200);
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+      transform: perspective(1000px) rotateY(-3deg) rotateX(2deg);
+      transition: transform 0.3s ease;
+    }
+    .mockup-window:hover {
+      transform: perspective(1000px) rotateY(0deg) rotateX(0deg);
+    }
+    .mockup-header {
+      background: var(--navy);
+      padding: 12px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .mockup-dots {
+      display: flex;
+      gap: 6px;
+    }
+    .mockup-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+    .mockup-body {
+      padding: 20px;
+      background: var(--slate-50);
+    }
+    .timetable-mini {
+      display: grid;
+      grid-template-columns: 45px repeat(5, 1fr);
+      gap: 6px;
+      font-size: 11px;
+    }
+    .mini-cell {
+      background: #fff;
+      border: 1px solid var(--slate-200);
+      border-radius: 4px;
+      padding: 8px 4px;
+      text-align: center;
+      font-weight: 600;
+      color: var(--navy);
+    }
+    .cell-header {
+      background: var(--navy);
+      color: #fff;
+      border: none;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .cell-ita { background: #fee2e2; color: #991b1b; }
+    .cell-mat { background: #dbeafe; color: #1e40af; }
+    .cell-ing { background: #fef3c7; color: #92400e; }
+    .cell-sci { background: #d1fae5; color: #065f46; }
+    .cell-disp { background: #f3e8ff; color: #6b21a8; font-style: italic; }
+
+    /* SEZIONI GENERALI */
+    .section {
+      padding: 90px 0;
+    }
+    .section-header {
+      text-align: center;
+      max-width: 760px;
+      margin: 0 auto 50px;
+    }
+    .section-tag {
+      color: var(--emerald);
+      font-weight: 800;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+      display: block;
+    }
+    .section-title {
+      font-size: 36px;
+      font-weight: 800;
+      color: var(--navy);
+      letter-spacing: -0.8px;
+      margin-bottom: 16px;
+    }
+    .section-subtitle {
+      font-size: 16px;
+      color: var(--slate-600);
+    }
+
+    /* I PILASTRI */
+    .pillars-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 28px;
+    }
+    .pillar-card {
+      background: #fff;
+      border-radius: var(--radius-md);
+      padding: 32px 28px;
+      border: 1px solid var(--slate-200);
+      box-shadow: var(--shadow-sm);
+      transition: all 0.25s ease;
+    }
+    .pillar-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-md);
+      border-color: rgba(5,150,105,0.4);
+    }
+    .pillar-icon {
+      font-size: 32px;
+      margin-bottom: 16px;
+      display: inline-block;
+    }
+    .pillar-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 10px;
+    }
+    .pillar-desc {
+      font-size: 14px;
+      color: var(--slate-600);
+      line-height: 1.6;
+    }
+
+    /* SHOWCASE TABS & MASCHERE DEMO PAPEROPOLI */
+    .showcase-nav {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 28px;
+    }
+    .showcase-tab-btn {
+      background: #fff;
+      border: 1.5px solid var(--slate-200);
+      color: var(--slate-600);
+      padding: 11px 22px;
+      border-radius: 99px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      box-shadow: var(--shadow-sm);
+    }
+    .showcase-tab-btn:hover {
+      border-color: var(--slate-400);
+      color: var(--navy);
+      transform: translateY(-1px);
+    }
+    .showcase-tab-btn.active {
+      background: var(--navy);
+      color: #fff;
+      border-color: var(--navy);
+      box-shadow: 0 4px 14px rgba(27,42,74,0.25);
+    }
+    .showcase-window {
+      background: #fff;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--slate-200);
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+    }
+    .showcase-topbar {
+      background: var(--navy);
+      padding: 14px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #fff;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .showcase-dots {
+      display: flex;
+      gap: 7px;
+    }
+    .showcase-dot {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+    }
+    .showcase-address {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12.5px;
+      color: rgba(255,255,255,0.85);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .showcase-badge-status {
+      background: var(--emerald);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 99px;
+    }
+    .showcase-pane {
+      display: none;
+      padding: 28px;
+      background: var(--slate-50);
+      animation: fadeIn 0.25s ease forwards;
+    }
+    .showcase-pane.active {
+      display: block;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .showcase-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      flex-wrap: wrap;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--slate-200);
+    }
+    .showcase-card-footer {
+      margin-top: 18px;
+      padding: 12px 16px;
+      background: #fff;
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius-sm);
+      font-size: 12.5px;
+      color: var(--slate-700);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    /* Griglia Orario Showcase */
+    .showcase-timetable-grid {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 6px;
+      min-width: 700px;
+    }
+    .showcase-timetable-grid th {
+      background: var(--navy);
+      color: #fff;
+      padding: 10px 12px;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-radius: 6px;
+      text-align: center;
+    }
+    .showcase-timetable-grid td {
+      background: #fff;
+      border: 1px solid var(--slate-200);
+      border-radius: 6px;
+      padding: 8px;
+      vertical-align: middle;
+    }
+    .showcase-timetable-grid td.cell-hour {
+      background: #f1f5f9;
+      font-weight: 700;
+      font-size: 11.5px;
+      text-align: center;
+      color: var(--navy);
+      width: 90px;
+    }
+    .cell-pill {
+      padding: 7px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      display: block;
+      text-align: center;
+      line-height: 1.35;
+    }
+    .cell-subj-mat { background: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; }
+    .cell-subj-ita { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+    .cell-subj-sci { background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
+    .cell-subj-ing { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+    .cell-subj-pe { background: #fce7f3; color: #9d174d; border: 1px solid #fbcfe8; }
+    .cell-subj-mecc { background: #ffedd5; color: #9a3412; border: 1px solid #fed7aa; }
+    .cell-subj-disp { background: #f3e8ff; color: #6b21a8; border: 1px solid #e9d5ff; font-style: italic; }
+
+    /* Docenti Showcase */
+    .teachers-showcase-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 16px;
+    }
+    .teacher-showcase-card {
+      background: #fff;
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius-md);
+      padding: 18px 20px;
+      box-shadow: var(--shadow-sm);
+    }
+    .type-pill {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+    .badge-success { background: #ecfdf5; color: #047857; }
+    .badge-warning { background: #fffbeb; color: #b45309; }
+    .badge-info { background: #eff6ff; color: #1d4ed8; }
+
+    /* Solver Showcase */
+    .solver-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 14px;
+    }
+    .solver-stat-box {
+      background: #fff;
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+    }
+    .solver-stat-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--slate-600);
+      margin-bottom: 4px;
+    }
+    .solver-stat-val {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+    .color-emerald { color: var(--emerald); }
+    .color-navy { color: var(--navy); }
+    .solver-terminal-log {
+      background: #0f172a;
+      color: #34d399;
+      font-family: 'JetBrains Mono', monospace;
+      padding: 20px;
+      border-radius: var(--radius-md);
+      font-size: 12.5px;
+      line-height: 1.7;
+      overflow-x: auto;
+    }
+    .solver-log-line {
+      margin-bottom: 4px;
+    }
+
+    /* Diagnostics Showcase */
+    .diagnostics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 16px;
+    }
+    .diagnostic-check-card {
+      background: #fff;
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius-md);
+      padding: 18px 20px;
+    }
+    .advisor-callout {
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      font-size: 13.5px;
+      color: #92400e;
+      font-weight: 600;
+    }
+
+    /* Reports Showcase */
+    .reports-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 16px;
+    }
+    .report-card {
+      background: #fff;
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius-md);
+      padding: 22px 20px;
+      transition: transform 0.2s ease;
+    }
+    .report-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-sm);
+    }
+    .report-format-pill {
+      background: var(--navy);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    /* CONFRONTO */
+    .compare-table {
+      width: 100%;
+      background: #fff;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--slate-200);
+      overflow: hidden;
+      border-collapse: collapse;
+      box-shadow: var(--shadow-sm);
+    }
+    .compare-table th {
+      background: var(--navy);
+      color: #fff;
+      padding: 16px 20px;
+      text-align: left;
+      font-size: 14px;
+      font-weight: 700;
+    }
+    .compare-table td {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--slate-200);
+      font-size: 13.5px;
+    }
+    .compare-table tr:last-child td { border-bottom: none; }
+    .col-feature { font-weight: 700; color: var(--navy); width: 22%; }
+    .col-trad { color: #dc2626; width: 39%; background: #fffaf0; }
+    .col-eurario { color: #047857; width: 39%; background: #f0fdf4; font-weight: 600; }
+
+    /* MODELLI DI ADOZIONE / SELF-HOSTED VS SAAS */
+    .plans-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 32px;
+      align-items: stretch;
+    }
+    .plan-card {
+      background: #fff;
+      border-radius: var(--radius-lg);
+      padding: 44px 32px 36px;
+      border: 1px solid var(--slate-200);
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      transition: all 0.25s ease;
+    }
+    .plan-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-md);
+    }
+    .plan-card.featured {
+      border: 2px solid var(--emerald);
+      box-shadow: 0 12px 36px -8px rgba(5,150,105,0.2);
+      background: linear-gradient(180deg, #ffffff 0%, #f0fdf4 100%);
+    }
+    .plan-badge-top {
+      position: absolute;
+      top: -14px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--emerald);
+      color: #fff;
+      font-size: 11.5px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      padding: 5px 16px;
+      border-radius: 99px;
+      box-shadow: 0 4px 10px rgba(5,150,105,0.3);
+      white-space: nowrap;
+    }
+    .plan-title {
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--navy);
+      margin-bottom: 8px;
+    }
+    .plan-target {
+      font-size: 13.5px;
+      color: var(--slate-600);
+      margin-bottom: 24px;
+      min-height: 40px;
+      line-height: 1.5;
+    }
+    .plan-price-box {
+      border-top: 1px solid var(--slate-200);
+      border-bottom: 1px solid var(--slate-200);
+      padding: 18px 0;
+      margin-bottom: 24px;
+    }
+    .plan-price-label {
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--navy);
+      letter-spacing: -0.5px;
+      line-height: 1.1;
+    }
+    .plan-price-sub {
+      font-size: 13px;
+      color: var(--slate-400);
+      margin-top: 4px;
+    }
+    .plan-features-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-bottom: 36px;
+      flex: 1;
+    }
+    .plan-feature-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 14px;
+      color: var(--slate-700);
+      line-height: 1.5;
+    }
+    .plan-feature-icon {
+      font-weight: 800;
+      font-size: 15px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .plan-feature-icon.icon-check {
+      color: var(--emerald);
+    }
+    .plan-feature-icon.icon-info {
+      color: var(--slate-400);
+    }
+
+    /* TERMINALE INSTALLAZIONE */
+    .terminal-box {
+      background: var(--navy-dark);
+      border-radius: var(--radius-lg);
+      padding: 30px;
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.1);
+      box-shadow: var(--shadow-lg);
+      margin-top: 40px;
+    }
+    .code-line {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      background: rgba(0,0,0,0.4);
+      padding: 12px 18px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: #34d399;
+      margin-top: 12px;
+      overflow-x: auto;
+    }
+
+    /* FAQ */
+    .faq-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    .faq-item {
+      background: #fff;
+      padding: 24px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--slate-200);
+    }
+    .faq-q {
+      font-size: 15.5px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 8px;
+    }
+    .faq-a {
+      font-size: 13.5px;
+      color: var(--slate-600);
+    }
+
+    /* FOOTER */
+    .footer {
+      background: var(--navy);
+      color: #fff;
+      padding: 60px 0 30px;
+      margin-top: 80px;
+    }
+    .footer-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+      padding-bottom: 30px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .footer-credits {
+      text-align: center;
+      padding-top: 24px;
+      font-size: 12.5px;
+      color: var(--slate-400);
+    }
+
+    @media (max-width: 900px) {
+      .hero-grid { grid-template-columns: 1fr; }
+      .hero-title { font-size: 34px; }
+      .faq-grid { grid-template-columns: 1fr; }
+      .nav-links { display: none; }
+      .lang-btn { padding: 4px 8px; font-size: 11.5px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="container nav-inner">
+      <a href="/" class="brand">
+        <div class="brand-mark">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="36" height="36">
+            <rect width="64" height="64" rx="14" fill="#1B2A4A"/>
+            <rect x="10" y="10" width="11" height="44" rx="3" fill="#F6F3EC"/>
+            <rect x="24" y="10" width="30" height="11" rx="3" fill="#E4572E"/>
+            <rect x="24" y="26.5" width="22" height="11" rx="3" fill="#F2B134"/>
+            <rect x="24" y="43" width="30" height="11" rx="3" fill="#2F7F86"/>
+          </svg>
+        </div>
+        <span>Eurario</span>
+      </a>
+      <div class="nav-links">
+        <a href="#funzionalita" class="nav-link" id="navLinkFeatures">Funzionalità</a>
+        <a href="#maschere" class="nav-link" id="navLinkShowcase">Maschere & Demo</a>
+        <a href="#confronto" class="nav-link" id="navLinkWhy">Perché Eurario</a>
+        <a href="#modelli" class="nav-link" id="navLinkPlans">Piani & Cloud</a>
+        <a href="#installazione" class="nav-link" id="navLinkInstall">Installazione</a>
+        <a href="#faq" class="nav-link" id="navLinkFaq">Domande Frequenti</a>
+        <a href="https://github.com/carlorigoni/eurario" target="_blank" class="nav-link">GitHub</a>
+      </div>
+      <div style="display:flex;gap:12px;align-items:center;">
+                <div class="theme-switch" role="group" aria-label="Theme Selector">
+          <button class="theme-btn" id="themeBtnLight" onclick="setTheme('light')" title="Tema Chiaro">☀️</button>
+          <button class="theme-btn" id="themeBtnDark" onclick="setTheme('dark')" title="Tema Scuro">🌙</button>
+          <button class="theme-btn active" id="themeBtnAuto" onclick="setTheme('auto')" title="Tema Automatico (Sistema)">💻</button>
+        </div>
+        <div class="lang-switch" role="group" aria-label="Language Selector">
+          <button class="lang-btn active" id="btnLangIt" onclick="setLanguage('it')">🇮🇹 IT</button>
+          <button class="lang-btn" id="btnLangEn" onclick="setLanguage('en')">🇬🇧 EN</button>
+        </div>
+        <a href="https://app.eurario.it" class="btn btn-emerald" id="navLoginBtn">
+          🔐 Accedi all'App
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO SECTION -->
+  <header class="hero">
+    <div class="container hero-grid">
+      <div>
+        <div class="hero-badge" id="heroBadge">
+          🎓 Suite Libera per la Scuola &bull; Motore FET 7.12
+        </div>
+        <h1 class="hero-title" id="heroTitle">
+          L'Orario Scolastico Perfetto, <br><span>Senza Stress e Senza Compromessi.</span>
+        </h1>
+        <p class="hero-subtitle" id="heroSubtitle">
+          La piattaforma moderna concepita per le scuole: gestisce con precisione chirurgica cattedre esterne (COE), spezzoni, part-time e vincoli complessi, elaborata dall'infallibile solutore matematico FET.
+        </p>
+        <div class="hero-actions">
+          <a href="https://app.eurario.it" class="btn btn-emerald" style="padding:14px 28px;font-size:15px;" id="heroCtaPrimary">
+            🚀 Accedi a Eurario
+          </a>
+          <a href="#funzionalita" class="btn btn-outline" style="padding:14px 24px;font-size:15px;" id="heroCtaSecondary">
+            📖 Scopri le Funzionalità
+          </a>
+        </div>
+        <div style="font-size:12.5px;color:var(--slate-400);display:flex;align-items:center;gap:8px;">
+          <span>🐳</span> Docker Hub: <code style="color:var(--navy);font-weight:700;">carlorigoni/eurario:<span id="liveVerTag">v1.9.2</span></code>
+        </div>
+      </div>
+
+      <!-- ANTEPRIMA VISIVA APPLICATIVO HERO -->
+      <div class="mockup-window">
+        <div class="mockup-header">
+          <div class="mockup-dots">
+            <div class="mockup-dot" style="background:#ef4444;"></div>
+            <div class="mockup-dot" style="background:#f59e0b;"></div>
+            <div class="mockup-dot" style="background:#10b981;"></div>
+          </div>
+          <div style="color:rgba(255,255,255,0.7);font-size:11px;font-family:monospace;" id="mockupTitle">
+            app.eurario.it &mdash; Quadro Orario Generale
+          </div>
+          <div style="color:#10b981;font-size:11px;font-weight:700;" id="mockupStatus">
+            ● FET Solved
+          </div>
+        </div>
+        <div class="mockup-body">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+            <div style="font-weight:700;color:var(--navy);" id="mockupClass">Classe 3A &bull; Liceo Scientifico</div>
+            <div style="font-size:10px;background:#ecfdf5;color:#047857;padding:2px 8px;border-radius:4px;font-weight:700;" id="mockupAssigned">100% Assegnato</div>
+          </div>
+          <div class="timetable-mini">
+            <div class="mini-cell cell-header" id="mockupDay0">Ora</div>
+            <div class="mini-cell cell-header" id="mockupDay1">Lun</div>
+            <div class="mini-cell cell-header" id="mockupDay2">Mar</div>
+            <div class="mini-cell cell-header" id="mockupDay3">Mer</div>
+            <div class="mini-cell cell-header" id="mockupDay4">Gio</div>
+            <div class="mini-cell cell-header" id="mockupDay5">Ven</div>
+
+            <div class="mini-cell" style="background:#f8fafc;color:#64748b;">1ª</div>
+            <div class="mini-cell cell-ita">ITA</div>
+            <div class="mini-cell cell-mat">MAT</div>
+            <div class="mini-cell cell-ing">ING</div>
+            <div class="mini-cell cell-sci">SCI</div>
+            <div class="mini-cell cell-ita">ITA</div>
+
+            <div class="mini-cell" style="background:#f8fafc;color:#64748b;">2ª</div>
+            <div class="mini-cell cell-ita">ITA</div>
+            <div class="mini-cell cell-mat">MAT</div>
+            <div class="mini-cell cell-sci">SCI</div>
+            <div class="mini-cell cell-ing">ING</div>
+            <div class="mini-cell cell-mat">MAT</div>
+
+            <div class="mini-cell" style="background:#f8fafc;color:#64748b;">3ª</div>
+            <div class="mini-cell cell-sci">SCI</div>
+            <div class="mini-cell cell-ing">ING</div>
+            <div class="mini-cell cell-ita">ITA</div>
+            <div class="mini-cell cell-mat">MAT</div>
+            <div class="mini-cell cell-sci">SCI</div>
+
+            <div class="mini-cell" style="background:#f8fafc;color:#64748b;">4ª</div>
+            <div class="mini-cell cell-mat">MAT</div>
+            <div class="mini-cell cell-disp">DISP</div>
+            <div class="mini-cell cell-ita">ITA</div>
+            <div class="mini-cell cell-sci">SCI</div>
+            <div class="mini-cell cell-ing">ING</div>
+          </div>
+          <div style="margin-top:12px;background:#fff;border:1px solid #e2e8f0;padding:8px 12px;border-radius:6px;font-size:11px;display:flex;justify-content:space-between;">
+            <span id="mockupFooterSnap">🛡️ Snapshot Sicuro: <b>Pre-Collegio v3</b></span>
+            <span style="color:#059669;font-weight:700;" id="mockupFooterConf">0 Ore Buche Conflitto</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- BANNER ANNUNCI DINAMICO -->
+  <div class="container" id="announcementContainer"></div>
+
+  <!-- I 6 PILASTRI DI EURARIO -->
+  <section class="section" id="funzionalita">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag" id="pillarsTag">I Punti di Forza</span>
+        <h2 class="section-title" id="pillarsTitle">Pensato per la complessità della scuola italiana</h2>
+        <p class="section-subtitle" id="pillarsSubtitle">Dalle cattedre COE con scuole esterne al giorno libero dei docenti part-time: tutto è integrato nativamente.</p>
+      </div>
+      <div class="pillars-grid" id="pillarsGrid"></div>
+    </div>
+  </section>
+
+  <!-- TOUR DELLE MASCHERE PRINCIPALI (DEMO PAPEROPOLI / DUCKBURG) -->
+  <section class="section" id="maschere" style="background:#f1f5f9;">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag" id="showcaseTag">Tour Applicativo • Esempio Didattico</span>
+        <h2 class="section-title" id="showcaseTitle">Le Maschere di Eurario con la Scuola Demo di Paperopoli</h2>
+        <p class="section-subtitle" id="showcaseSubtitle">Esplora le schermate operative reali basate sull'istituto di test «Liceo & Tecnico Pico De Paperis»: dal quadro orario settimanale alla gestione cattedre COE, dal compilatore FET alle stampe ufficiali.</p>
+      </div>
+
+      <!-- TABS SWITCHER -->
+      <div class="showcase-nav" id="showcaseTabsNav"></div>
+
+      <!-- FINESTRA BROWSER MOCKUP -->
+      <div class="showcase-window">
+        <div class="showcase-topbar">
+          <div class="showcase-dots">
+            <div class="showcase-dot" style="background:#ef4444;"></div>
+            <div class="showcase-dot" style="background:#f59e0b;"></div>
+            <div class="showcase-dot" style="background:#10b981;"></div>
+          </div>
+          <div class="showcase-address">
+            <span>🔒</span>
+            <span id="showcaseAddressBar">app.eurario.it/dashboard</span>
+          </div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.7);font-family:monospace;">
+            Eurario Suite 7.12
+          </div>
+        </div>
+
+        <!-- PANE 1: ORARIO RISOLTO -->
+        <div class="showcase-pane active" id="pane-timetable" data-tab="timetable"></div>
+
+        <!-- PANE 2: DOCENTI & CATTEDRE -->
+        <div class="showcase-pane" id="pane-teachers" data-tab="teachers"></div>
+
+        <!-- PANE 3: COMPILATORE FET -->
+        <div class="showcase-pane" id="pane-solver" data-tab="solver"></div>
+
+        <!-- PANE 4: DIAGNOSTICA & ADVISOR -->
+        <div class="showcase-pane" id="pane-diagnostics" data-tab="diagnostics"></div>
+
+        <!-- PANE 5: STAMPE DOCX / PDF -->
+        <div class="showcase-pane" id="pane-reports" data-tab="reports"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONFRONTO PRIMA / DOPO -->
+  <section class="section" id="confronto">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag" id="compareTag">Il Valore Aggiunto</span>
+        <h2 class="section-title" id="compareTitle">Perché passare a Eurario</h2>
+        <p class="section-subtitle" id="compareSubtitle">Il confronto tra la gestione orario tradizionale e la moderna architettura di Eurario.</p>
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="compare-table" id="compareTable">
+          <thead>
+            <tr>
+              <th class="col-feature" id="thFeature">Aspetto</th>
+              <th style="background:#7f1d1d;" id="thTrad">Metodo Tradizionale & Software Datati</th>
+              <th style="background:#065f46;" id="thEurario">Con Eurario FET Suite</th>
+            </tr>
+          </thead>
+          <tbody id="compareTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODELLI DI ADOZIONE / SELF-HOSTED VS SAAS CLOUD -->
+  <section class="section" id="modelli" style="background:#f1f5f9;">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag" id="deploymentTag">Modalità di Utilizzo</span>
+        <h2 class="section-title" id="deploymentTitle">Due Strade per Adottare Eurario nella Tua Scuola</h2>
+        <p class="section-subtitle" id="deploymentSubtitle">Scegli la totale indipendenza del Self-Hosted gratuito oppure la massima serenità del Cloud SaaS completamente gestito.</p>
+      </div>
+      <div class="plans-grid" id="plansGrid"></div>
+    </div>
+  </section>
+
+  <!-- INSTALLAZIONE & TECNOLOGIA DOCKER -->
+  <section class="section" id="installazione">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag" id="installTag">Pronto all'Uso</span>
+        <h2 class="section-title" id="installTitle">Installabile ovunque in pochi minuti</h2>
+        <p class="section-subtitle" id="installSubtitle">Nessuna configurazione complessa di database esterni o dipendenze: il container Docker include tutto il necessario.</p>
+      </div>
+
+      <div class="terminal-box">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <div style="font-weight:700;font-size:15px;display:flex;align-items:center;gap:8px;" id="installBoxTitle">
+            <span>🐳</span> Avvio Rapido Docker (Linux, Mac, Synology NAS)
+          </div>
+          <span style="font-size:12px;color:#94a3b8;" id="installBoxPort">Porta: 8000</span>
+        </div>
+        <div class="code-line">
+          <span>docker run -d --name eurario -p 8000:8000 carlorigoni/eurario:latest</span>
+          <button class="btn btn-outline" style="padding:4px 10px;font-size:11px;" id="installCopyBtn" onclick="copyDockerCmd()">Copia</button>
+        </div>
+        <div style="margin-top:16px;font-size:13px;color:#cbd5e1;display:flex;gap:20px;flex-wrap:wrap;">
+          <span id="installFeat1">✓ Supporto Synology Container Manager</span>
+          <span id="installFeat2">✓ Docker Compose integrato con Watchtower</span>
+          <span id="installFeat3">✓ Volume dati persistente e snapshot</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section" id="faq" style="background:#f1f5f9;">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag" id="faqTag">Risposte Chiare</span>
+        <h2 class="section-title" id="faqTitle">Domande Frequenti</h2>
+        <p class="section-subtitle" id="faqSubtitle">Tutto quello che c'è da sapere su licenze, privacy e operatività.</p>
+      </div>
+      <div class="faq-grid" id="faqGrid"></div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-inner">
+        <div>
+          <div style="font-weight:800;font-size:20px;letter-spacing:-0.5px;margin-bottom:6px;">Eurario FET Suite</div>
+          <div style="color:var(--slate-400);font-size:13px;" id="footerDesc">Software libero per la gestione avanzata dell'orario scolastico italiano, disponibile Self-Hosted e in Cloud SaaS.</div>
+        </div>
+        <div style="display:flex;gap:12px;align-items:center;">
+          <a href="https://app.eurario.it" class="btn btn-emerald" style="padding:8px 18px;font-size:13px;" id="footerAppBtn">Accedi all'App</a>
+          <a href="https://github.com/carlorigoni/eurario" target="_blank" class="btn btn-outline" style="padding:8px 18px;font-size:13px;color:#fff;border-color:rgba(255,255,255,0.2);background:transparent;" id="footerCodeBtn">Codice Sorgente</a>
+        </div>
+      </div>
+      <div class="footer-credits" id="footerCredits">
+        Ideazione & Architettura: <b>Carlo Rigoni</b> &bull; Mentore dell'Orario: <b>Federico Rettore</b> &bull; Motore Euristico: <b>FET Free Software</b> &bull; AI Pair Programming: <b>Google DeepMind Antigravity</b>
+      </div>
+      <div style="text-align:center;margin-top:8px;font-size:11.5px;color:#64748b;" id="footerGdpr">
+        Piattaforma on-premise conforme al Regolamento UE 2016/679 (GDPR).
+      </div>
+    </div>
+  </footer>
+
+  <!-- SCRIPT DI IDRATAZIONE DINAMICA E MULTILINGUA SOSTENIBILE -->
+  <script>
+    let siteData = null;
+    let currentTheme = auto;
+
+    function detectInitialTheme() {
+      try {
+        const saved = localStorage.getItem(eurario_theme);
+        if (saved && [light, dark, auto].includes(saved)) {
+          return saved;
+        }
+      } catch (e) {}
+      return auto;
+    }
+
+    function applyTheme(theme) {
+      currentTheme = theme;
+      try {
+        localStorage.setItem(eurario_theme, theme);
+      } catch (e) {}
+
+      if (theme === auto) {
+        document.documentElement.removeAttribute(data-theme);
+      } else {
+        document.documentElement.setAttribute(data-theme, theme);
+      }
+
+      const btnL = document.getElementById(themeBtnLight);
+      const btnD = document.getElementById(themeBtnDark);
+      const btnA = document.getElementById(themeBtnAuto);
+      if (btnL && btnD && btnA) {
+        btnL.classList.toggle(active, currentTheme === light);
+        btnD.classList.toggle(active, currentTheme === dark);
+        btnA.classList.toggle(active, currentTheme === auto);
+      }
+    }
+
+    function setTheme(theme) {
+      applyTheme(theme);
+    }
+
+    let currentLang = 'it';
+    let currentShowcaseTab = 'timetable';
+
+    function copyDockerCmd() {
+      const cmd = 'docker run -d --name eurario -p 8000:8000 carlorigoni/eurario:latest';
+      navigator.clipboard.writeText(cmd);
+      const msg = (siteData && siteData[currentLang] && siteData[currentLang].install_header && siteData[currentLang].install_header.copied_msg)
+        ? siteData[currentLang].install_header.copied_msg
+        : 'Comando copiato negli appunti!';
+      alert(msg);
+    }
+
+    function switchShowcaseTab(tabId) {
+      currentShowcaseTab = tabId;
+      document.querySelectorAll('.showcase-tab-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.tab === tabId);
+      });
+      document.querySelectorAll('.showcase-pane').forEach(pane => {
+        pane.classList.toggle('active', pane.dataset.tab === tabId);
+      });
+      const addrEl = document.getElementById('showcaseAddressBar');
+      if (addrEl) {
+        addrEl.textContent = `app.eurario.it/${tabId}`;
+      }
+    }
+
+    function detectInitialLang() {
+      try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlLang = urlParams.get('lang');
+        if (urlLang && (urlLang === 'en' || urlLang === 'it')) return urlLang;
+
+        const saved = localStorage.getItem('eurario_lang');
+        if (saved && (saved === 'en' || saved === 'it')) return saved;
+
+        const browser = (navigator.language || navigator.userLanguage || '').toLowerCase();
+        if (browser.startsWith('en')) return 'en';
+      } catch (e) {}
+      return 'it';
+    }
+
+    function setLanguage(lang) {
+      currentLang = (lang === 'en') ? 'en' : 'it';
+      try {
+        localStorage.setItem('eurario_lang', currentLang);
+      } catch (e) {}
+
+      document.documentElement.lang = currentLang;
+
+      const btnIt = document.getElementById('btnLangIt');
+      const btnEn = document.getElementById('btnLangEn');
+      if (btnIt && btnEn) {
+        btnIt.classList.toggle('active', currentLang === 'it');
+        btnEn.classList.toggle('active', currentLang === 'en');
+      }
+
+      try {
+        const url = new URL(window.location);
+        url.searchParams.set('lang', currentLang);
+        window.history.replaceState({}, '', url);
+      } catch (e) {}
+
+      renderContent();
+    }
+
+    function renderShowcasePanes(t) {
+      if (!t.showcase_views) return;
+      const views = t.showcase_views;
+
+      // Render tab buttons
+      const tabsNav = document.getElementById('showcaseTabsNav');
+      if (tabsNav && t.showcase_tabs) {
+        tabsNav.innerHTML = t.showcase_tabs.map(tab => `
+          <button class="showcase-tab-btn ${tab.id === currentShowcaseTab ? 'active' : ''}" data-tab="${tab.id}" onclick="switchShowcaseTab('${tab.id}')">
+            <span>${tab.icon}</span>
+            <span>${tab.label}</span>
+          </button>
+        `).join('');
+      }
+
+      // Pane 1: Timetable
+      const pTime = views.timetable;
+      if (pTime) {
+        const paneEl = document.getElementById('pane-timetable');
+        if (paneEl) {
+          paneEl.innerHTML = `
+            <div class="showcase-card-header">
+              <div>
+                <div style="font-weight:800;font-size:17px;color:var(--navy);margin-bottom:4px;">${pTime.title}</div>
+                <div style="font-size:13px;color:var(--slate-600);">${pTime.school} &bull; ${pTime.description}</div>
+              </div>
+              <span class="showcase-badge-status">${pTime.badge}</span>
+            </div>
+            <div style="overflow-x:auto;margin-top:16px;">
+              <table class="showcase-timetable-grid">
+                <thead>
+                  <tr>
+                    ${pTime.headers.map(h => `<th>${h}</th>`).join('')}
+                  </tr>
+                </thead>
+                <tbody>
+                  ${pTime.rows.map(row => `
+                    <tr>
+                      <td class="cell-hour">${row[0]}</td>
+                      ${row.slice(1).map(cell => {
+                        let cls = 'cell-subj-mat';
+                        if (cell.includes('FIS') || cell.includes('SCI')) cls = 'cell-subj-sci';
+                        else if (cell.includes('ITA') || cell.includes('LIT') || cell.includes('FILO') || cell.includes('PHIL')) cls = 'cell-subj-ita';
+                        else if (cell.includes('ING') || cell.includes('ENG')) cls = 'cell-subj-ing';
+                        else if (cell.includes('ED.FIS') || cell.includes('PE')) cls = 'cell-subj-pe';
+                        else if (cell.includes('MECC') || cell.includes('MECH')) cls = 'cell-subj-mecc';
+                        else if (cell.includes('DISP') || cell.includes('DUTY')) cls = 'cell-subj-disp';
+                        return `<td><div class="cell-pill ${cls}">${cell}</div></td>`;
+                      }).join('')}
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+            </div>
+            <div class="showcase-card-footer">
+              <span>${pTime.footer_note}</span>
+              <span style="font-weight:700;color:var(--emerald);">FET Status: Optimal Solution</span>
+            </div>
+          `;
+        }
+      }
+
+      // Pane 2: Teachers
+      const pTeach = views.teachers;
+      if (pTeach) {
+        const paneEl = document.getElementById('pane-teachers');
+        if (paneEl) {
+          paneEl.innerHTML = `
+            <div class="showcase-card-header">
+              <div>
+                <div style="font-weight:800;font-size:17px;color:var(--navy);margin-bottom:4px;">${pTeach.title}</div>
+                <div style="font-size:13px;color:var(--slate-600);">${pTeach.school} &bull; ${pTeach.description}</div>
+              </div>
+              <span class="showcase-badge-status">${pTeach.badge}</span>
+            </div>
+            <div class="teachers-showcase-grid" style="margin-top:16px;">
+              ${pTeach.items.map(item => `
+                <div class="teacher-showcase-card">
+                  <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:8px;">
+                    <div>
+                      <div style="font-weight:800;font-size:16px;color:var(--navy);">${item.name}</div>
+                      <div style="font-size:13px;color:var(--slate-600);">${item.subject}</div>
+                    </div>
+                    <span class="type-pill ${item.type_class}">${item.type_badge}</span>
+                  </div>
+                  <div style="font-size:12.5px;color:var(--slate-700);line-height:1.5;background:#f8fafc;padding:10px 12px;border-radius:6px;border:1px solid var(--slate-200);">
+                    ${item.details}
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+            <div class="showcase-card-footer">
+              <span>✓ Allineamento automatico cattedre da Excel (.xlsx) e Word (.docx)</span>
+              <span style="color:var(--emerald);font-weight:700;">Zero Cattedre Scoperte</span>
+            </div>
+          `;
+        }
+      }
+
+      // Pane 3: Solver
+      const pSolv = views.solver;
+      if (pSolv) {
+        const paneEl = document.getElementById('pane-solver');
+        if (paneEl) {
+          paneEl.innerHTML = `
+            <div class="showcase-card-header">
+              <div>
+                <div style="font-weight:800;font-size:17px;color:var(--navy);margin-bottom:4px;">${pSolv.title}</div>
+                <div style="font-size:13px;color:var(--slate-600);">${pSolv.school} &bull; ${pSolv.description}</div>
+              </div>
+              <span class="showcase-badge-status">${pSolv.badge}</span>
+            </div>
+            <div class="solver-stats-grid" style="margin-top:16px;">
+              ${pSolv.stats.map(s => `
+                <div class="solver-stat-box">
+                  <div class="solver-stat-label">${s.label}</div>
+                  <div class="solver-stat-val color-${s.color}">${s.value}</div>
+                </div>
+              `).join('')}
+            </div>
+            <div style="margin-top:14px;background:#e2e8f0;border-radius:99px;height:10px;overflow:hidden;">
+              <div style="background:var(--emerald);width:100%;height:100%;"></div>
+            </div>
+            <div class="solver-terminal-log" style="margin-top:16px;">
+              <div style="font-size:11.5px;color:#94a3b8;margin-bottom:8px;font-family:monospace;">● console stdout / fet_engine_run</div>
+              ${pSolv.console_output.map(line => `<div class="solver-log-line">${line}</div>`).join('')}
+            </div>
+            <div class="showcase-card-footer">
+              <span>Algoritmo euristico FET 7.12.0 con supporto multithreading CPU locale</span>
+              <span style="color:var(--emerald);font-weight:700;">Generazione Completata</span>
+            </div>
+          `;
+        }
+      }
+
+      // Pane 4: Diagnostics
+      const pDiag = views.diagnostics;
+      if (pDiag) {
+        const paneEl = document.getElementById('pane-diagnostics');
+        if (paneEl) {
+          paneEl.innerHTML = `
+            <div class="showcase-card-header">
+              <div>
+                <div style="font-weight:800;font-size:17px;color:var(--navy);margin-bottom:4px;">${pDiag.title}</div>
+                <div style="font-size:13px;color:var(--slate-600);">${pDiag.school} &bull; ${pDiag.description}</div>
+              </div>
+              <span class="showcase-badge-status">${pDiag.badge}</span>
+            </div>
+            <div class="diagnostics-grid" style="margin-top:16px;">
+              ${pDiag.checks.map(c => `
+                <div class="diagnostic-check-card">
+                  <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+                    <span style="font-size:18px;">✅</span>
+                    <span style="font-weight:700;font-size:14.5px;color:var(--navy);">${c.title}</span>
+                  </div>
+                  <p style="font-size:13px;color:var(--slate-600);line-height:1.5;">${c.desc}</p>
+                </div>
+              `).join('')}
+            </div>
+            <div class="advisor-callout" style="margin-top:16px;">
+              ${pDiag.advisor_tip}
+            </div>
+          `;
+        }
+      }
+
+      // Pane 5: Reports
+      const pRep = views.reports;
+      if (pRep) {
+        const paneEl = document.getElementById('pane-reports');
+        if (paneEl) {
+          paneEl.innerHTML = `
+            <div class="showcase-card-header">
+              <div>
+                <div style="font-weight:800;font-size:17px;color:var(--navy);margin-bottom:4px;">${pRep.title}</div>
+                <div style="font-size:13px;color:var(--slate-600);">${pRep.school} &bull; ${pRep.description}</div>
+              </div>
+              <span class="showcase-badge-status">${pRep.badge}</span>
+            </div>
+            <div class="reports-grid" style="margin-top:16px;">
+              ${pRep.exports.map(exp => `
+                <div class="report-card">
+                  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+                    <span style="font-size:28px;">${exp.icon}</span>
+                    <span class="report-format-pill">${exp.format}</span>
+                  </div>
+                  <div style="font-weight:700;font-size:15px;color:var(--navy);margin-bottom:6px;">${exp.title}</div>
+                  <p style="font-size:13px;color:var(--slate-600);line-height:1.5;">${exp.desc}</p>
+                </div>
+              `).join('')}
+            </div>
+            <div class="showcase-card-footer">
+              <span>Compatibile al 100% con Microsoft Word (.docx), Adobe Acrobat (PDF vettoriale) e fogli di calcolo</span>
+              <span style="color:var(--emerald);font-weight:700;">Pronto per l'Albo e Registro</span>
+            </div>
+          `;
+        }
+      }
+    }
+
+    function renderContent() {
+      if (!siteData) return;
+      const t = siteData[currentLang] || siteData['it'];
+      const site = siteData.site || {};
+
+      // Meta & Page Title
+      if (currentLang === 'en') {
+        document.title = "Eurario — The Flawless School Timetable with FET 7.12";
+        const desc = document.querySelector('meta[name="description"]');
+        if (desc) desc.setAttribute('content', "Eurario is the open-source school timetabling suite powered by FET 7.12, available both Self-Hosted and as a Turnkey Managed Cloud SaaS.");
+      } else {
+        document.title = "Eurario — L'Orario Scolastico Perfetto con FET 7.12";
+        const desc = document.querySelector('meta[name="description"]');
+        if (desc) desc.setAttribute('content', "Eurario è la suite libera e open source per l'orario scolastico italiano con motore solutore FET 7.12, disponibile Self-Hosted e in Cloud SaaS gestito.");
+      }
+
+      // Navbar
+      if (t.nav) {
+        const elFeatures = document.getElementById('navLinkFeatures');
+        if (elFeatures) elFeatures.textContent = t.nav.features;
+        const elShowcase = document.getElementById('navLinkShowcase');
+        if (elShowcase) elShowcase.textContent = t.nav.showcase;
+        const elWhy = document.getElementById('navLinkWhy');
+        if (elWhy) elWhy.textContent = t.nav.why;
+        const elPlans = document.getElementById('navLinkPlans');
+        if (elPlans) elPlans.textContent = t.nav.plans;
+        const elInstall = document.getElementById('navLinkInstall');
+        if (elInstall) elInstall.textContent = t.nav.install;
+        const elFaq = document.getElementById('navLinkFaq');
+        if (elFaq) elFaq.textContent = t.nav.faq;
+        const elLogin = document.getElementById('navLoginBtn');
+        if (elLogin) elLogin.textContent = t.nav.login_btn;
+      }
+
+      // Hero
+      if (t.hero) {
+        const hBadge = document.getElementById('heroBadge');
+        if (hBadge) hBadge.innerHTML = t.hero.badge;
+        const hTitle = document.getElementById('heroTitle');
+        if (hTitle) hTitle.innerHTML = `${t.hero.title_main} <br><span>${t.hero.title_highlight}</span>`;
+        const hSub = document.getElementById('heroSubtitle');
+        if (hSub) hSub.textContent = t.hero.subtitle;
+        const hCta1 = document.getElementById('heroCtaPrimary');
+        if (hCta1) hCta1.textContent = t.hero.cta_primary;
+        const hCta2 = document.getElementById('heroCtaSecondary');
+        if (hCta2) hCta2.textContent = t.hero.cta_secondary;
+      }
+
+      // Version tag
+      const verEl = document.getElementById('liveVerTag');
+      if (verEl && site.current_version) verEl.textContent = site.current_version;
+
+      // Mockup Hero
+      if (t.mockup) {
+        const mTitle = document.getElementById('mockupTitle');
+        if (mTitle) mTitle.textContent = t.mockup.title;
+        const mStatus = document.getElementById('mockupStatus');
+        if (mStatus) mStatus.textContent = t.mockup.status;
+        const mClass = document.getElementById('mockupClass');
+        if (mClass) mClass.textContent = t.mockup.class_name;
+        const mAssigned = document.getElementById('mockupAssigned');
+        if (mAssigned) mAssigned.textContent = t.mockup.assigned;
+
+        if (t.mockup.days && t.mockup.days.length === 6) {
+          for (let i = 0; i < 6; i++) {
+            const dEl = document.getElementById('mockupDay' + i);
+            if (dEl) dEl.textContent = t.mockup.days[i];
+          }
+        }
+        if (t.mockup.subjects) {
+          document.querySelectorAll('.cell-ita').forEach(el => el.textContent = t.mockup.subjects.ita);
+          document.querySelectorAll('.cell-mat').forEach(el => el.textContent = t.mockup.subjects.mat);
+          document.querySelectorAll('.cell-ing').forEach(el => el.textContent = t.mockup.subjects.ing);
+          document.querySelectorAll('.cell-sci').forEach(el => el.textContent = t.mockup.subjects.sci);
+          document.querySelectorAll('.cell-disp').forEach(el => el.textContent = t.mockup.subjects.disp);
+        }
+        const mSnap = document.getElementById('mockupFooterSnap');
+        if (mSnap) mSnap.innerHTML = t.mockup.footer_snap;
+        const mConf = document.getElementById('mockupFooterConf');
+        if (mConf) mConf.textContent = t.mockup.footer_conflicts;
+      }
+
+      // Announcements
+      const annContainer = document.getElementById('announcementContainer');
+      if (annContainer) {
+        if (t.announcements && t.announcements.length > 0) {
+          const a = t.announcements[0];
+          annContainer.innerHTML = `
+            <div style="background:#fff;border:1px solid var(--slate-200);border-radius:var(--radius-md);padding:14px 20px;display:flex;align-items:center;gap:14px;box-shadow:var(--shadow-sm);margin-bottom:20px;flex-wrap:wrap;">
+              <span style="background:var(--emerald-light);color:var(--emerald);padding:3px 10px;border-radius:99px;font-size:12px;font-weight:700;">${a.badge}</span>
+              <span style="font-size:13.5px;color:var(--slate-600);flex:1;">${a.text}</span>
+              <span style="font-size:12px;color:var(--slate-400);">${a.date}</span>
+            </div>
+          `;
+          annContainer.style.display = 'block';
+        } else {
+          annContainer.style.display = 'none';
+        }
+      }
+
+      // Pillars
+      if (t.pillars_header) {
+        const pTag = document.getElementById('pillarsTag');
+        if (pTag) pTag.textContent = t.pillars_header.tag;
+        const pTitle = document.getElementById('pillarsTitle');
+        if (pTitle) pTitle.textContent = t.pillars_header.title;
+        const pSub = document.getElementById('pillarsSubtitle');
+        if (pSub) pSub.textContent = t.pillars_header.subtitle;
+      }
+      const pillarsGrid = document.getElementById('pillarsGrid');
+      if (pillarsGrid && t.pillars) {
+        pillarsGrid.innerHTML = t.pillars.map(p => `
+          <div class="pillar-card">
+            <div class="pillar-icon">${p.icon}</div>
+            <h3 class="pillar-title">${p.title}</h3>
+            <p class="pillar-desc">${p.desc}</p>
+          </div>
+        `).join('');
+      }
+
+      // Showcase Maschere Demo Paperopoli / Duckburg
+      if (t.showcase_header) {
+        const sTag = document.getElementById('showcaseTag');
+        if (sTag) sTag.textContent = t.showcase_header.tag;
+        const sTitle = document.getElementById('showcaseTitle');
+        if (sTitle) sTitle.textContent = t.showcase_header.title;
+        const sSub = document.getElementById('showcaseSubtitle');
+        if (sSub) sSub.textContent = t.showcase_header.subtitle;
+      }
+      renderShowcasePanes(t);
+
+      // Comparison Table
+      if (t.comparison_header) {
+        const cTag = document.getElementById('compareTag');
+        if (cTag) cTag.textContent = t.comparison_header.tag;
+        const cTitle = document.getElementById('compareTitle');
+        if (cTitle) cTitle.textContent = t.comparison_header.title;
+        const cSub = document.getElementById('compareSubtitle');
+        if (cSub) cSub.textContent = t.comparison_header.subtitle;
+        const thFeature = document.getElementById('thFeature');
+        if (thFeature) thFeature.textContent = t.comparison_header.th_feature;
+        const thTrad = document.getElementById('thTrad');
+        if (thTrad) thTrad.textContent = t.comparison_header.th_trad;
+        const thEurario = document.getElementById('thEurario');
+        if (thEurario) thEurario.textContent = t.comparison_header.th_eurario;
+      }
+      const compBody = document.getElementById('compareTableBody');
+      if (compBody && t.comparison) {
+        compBody.innerHTML = t.comparison.map(c => `
+          <tr>
+            <td class="col-feature">${c.feature}</td>
+            <td class="col-trad">✕ ${c.traditional}</td>
+            <td class="col-eurario">✓ ${c.eurario}</td>
+          </tr>
+        `).join('');
+      }
+
+      // Deployment Plans (Self-Hosted vs Managed Cloud)
+      if (t.deployment_header) {
+        const dTag = document.getElementById('deploymentTag');
+        if (dTag) dTag.textContent = t.deployment_header.tag;
+        const dTitle = document.getElementById('deploymentTitle');
+        if (dTitle) dTitle.textContent = t.deployment_header.title;
+        const dSub = document.getElementById('deploymentSubtitle');
+        if (dSub) dSub.textContent = t.deployment_header.subtitle;
+      }
+      const plansContainer = document.getElementById('plansGrid');
+      if (plansContainer && t.deployment_plans) {
+        plansContainer.innerHTML = t.deployment_plans.map(p => `
+          <div class="plan-card ${p.featured ? 'featured' : ''}">
+            ${p.badge_top ? `<div class="plan-badge-top">${p.badge_top}</div>` : ''}
+            <h3 class="plan-title">${p.title}</h3>
+            <p class="plan-target">${p.target}</p>
+            <div class="plan-price-box">
+              <div class="plan-price-label">${p.price}</div>
+              <div class="plan-price-sub">${p.price_sub}</div>
+            </div>
+            <ul class="plan-features-list">
+              ${p.features.map(f => {
+                const isInfo = f.startsWith('Richiede') || f.startsWith('Requires');
+                return `
+                  <li class="plan-feature-item">
+                    <span class="plan-feature-icon ${isInfo ? 'icon-info' : 'icon-check'}">${isInfo ? 'ℹ' : '✓'}</span>
+                    <span>${f}</span>
+                  </li>
+                `;
+              }).join('')}
+            </ul>
+            <a href="${p.cta_link}" class="btn ${p.cta_style || 'btn-emerald'}" style="width:100%;text-align:center;padding:14px;font-size:14.5px;">
+              ${p.cta_text}
+            </a>
+          </div>
+        `).join('');
+      }
+
+      // Installation
+      if (t.install_header) {
+        const iTag = document.getElementById('installTag');
+        if (iTag) iTag.textContent = t.install_header.tag;
+        const iTitle = document.getElementById('installTitle');
+        if (iTitle) iTitle.textContent = t.install_header.title;
+        const iSub = document.getElementById('installSubtitle');
+        if (iSub) iSub.textContent = t.install_header.subtitle;
+        const iBoxTitle = document.getElementById('installBoxTitle');
+        if (iBoxTitle) iBoxTitle.innerHTML = `<span>🐳</span> ${t.install_header.box_title}`;
+        const iPort = document.getElementById('installBoxPort');
+        if (iPort) iPort.textContent = t.install_header.box_port;
+        const iCopy = document.getElementById('installCopyBtn');
+        if (iCopy) iCopy.textContent = t.install_header.copy_btn;
+        const iF1 = document.getElementById('installFeat1');
+        if (iF1) iF1.textContent = t.install_header.feat1;
+        const iF2 = document.getElementById('installFeat2');
+        if (iF2) iF2.textContent = t.install_header.feat2;
+        const iF3 = document.getElementById('installFeat3');
+        if (iF3) iF3.textContent = t.install_header.feat3;
+      }
+
+      // FAQ
+      if (t.faq_header) {
+        const fTag = document.getElementById('faqTag');
+        if (fTag) fTag.textContent = t.faq_header.tag;
+        const fTitle = document.getElementById('faqTitle');
+        if (fTitle) fTitle.textContent = t.faq_header.title;
+        const fSub = document.getElementById('faqSubtitle');
+        if (fSub) fSub.textContent = t.faq_header.subtitle;
+      }
+      const faqGrid = document.getElementById('faqGrid');
+      if (faqGrid && t.faq) {
+        faqGrid.innerHTML = t.faq.map(f => `
+          <div class="faq-item">
+            <div class="faq-q">${f.q}</div>
+            <div class="faq-a">${f.a}</div>
+          </div>
+        `).join('');
+      }
+
+      // Footer
+      if (t.footer) {
+        const fDesc = document.getElementById('footerDesc');
+        if (fDesc) fDesc.textContent = t.footer.desc;
+        const fAppBtn = document.getElementById('footerAppBtn');
+        if (fAppBtn) fAppBtn.textContent = t.footer.app_btn;
+        const fCodeBtn = document.getElementById('footerCodeBtn');
+        if (fCodeBtn) fCodeBtn.textContent = t.footer.code_btn;
+        const fCredits = document.getElementById('footerCredits');
+        if (fCredits) fCredits.innerHTML = t.footer.credits;
+        const fGdpr = document.getElementById('footerGdpr');
+        if (fGdpr) fGdpr.textContent = t.footer.gdpr;
+      }
+    }
+
+    async function initLanding() {
+      applyTheme(detectInitialTheme());
+      currentLang = detectInitialLang();
+      document.documentElement.lang = currentLang;
+
+      const btnIt = document.getElementById('btnLangIt');
+      const btnEn = document.getElementById('btnLangEn');
+      if (btnIt && btnEn) {
+        btnIt.classList.toggle('active', currentLang === 'it');
+        btnEn.classList.toggle('active', currentLang === 'en');
+      }
+
+      try {
+        const res = await fetch('content/site_data.json');
+        if (!res.ok) throw new Error('Data load error: ' + res.status);
+        siteData = await res.json();
+        renderContent();
+      } catch (err) {
+        console.warn('Fallback statico per contenuti landing:', err);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', initLanding);
+  </script>
+</body>
+</html>
