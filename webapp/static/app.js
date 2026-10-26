@@ -6531,9 +6531,15 @@ async function analyzeCattedreAlignment() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     });
-    const data = await res.json();
+    let data = {};
+    try {
+      data = await res.json();
+    } catch (_e) {
+      data = { error: `HTTP ${res.status}: ${res.statusText || 'Risposta del server non valida'}` };
+    }
     if (!res.ok || !data.success) {
-      throw new Error(data.error || (isEn ? 'Analysis failed' : 'Analisi fallita'));
+      const errMsg = data.error || data.message || data.detail || (Array.isArray(data.errors) ? data.errors.map(e => e.message || e).join(', ') : null) || (isEn ? 'Analysis failed' : 'Analisi fallita');
+      throw new Error(errMsg);
     }
 
     cattedreAnalysisData = data;
@@ -6729,9 +6735,15 @@ async function applyCattedreAlignment() {
         update_cdc: updateCdc
       })
     });
-    const data = await res.json();
+    let data = {};
+    try {
+      data = await res.json();
+    } catch (_e) {
+      data = { error: `HTTP ${res.status}: ${res.statusText || 'Risposta del server non valida'}` };
+    }
     if (!res.ok || !data.success) {
-      throw new Error(data.error || (isEn ? 'Error applying changes' : 'Errore durante il salvataggio'));
+      const errMsg = data.error || data.message || data.detail || (Array.isArray(data.errors) ? data.errors.map(e => e.message || e).join(', ') : null) || (isEn ? 'Error applying changes' : 'Errore durante il salvataggio');
+      throw new Error(errMsg);
     }
 
     closeModal();

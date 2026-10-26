@@ -97,7 +97,7 @@ def fetch_google_doc_docx_bytes(url):
     except Exception as e:
         raise ValueError(f"Impossibile scaricare il Google Doc: {e}")
 
-APP_VERSION = "1.8.8"
+APP_VERSION = "1.8.9"
 FET_VERSION = "7.12.0"
 APP_AUTHOR = "Carlo Rigoni"
 APP_MENTOR = "Federico Rettore"
@@ -2082,7 +2082,7 @@ class EurarioHandler(BaseHTTPRequestHandler):
 
         elif path == "/api/teachers/align_cattedre/analyze":
             if not body:
-                self._json(400, {"error": "Nessun dato fornito per l'analisi"})
+                self._json(400, {"success": False, "error": "Nessun dato fornito per l'analisi", "message": "Nessun dato fornito per l'analisi"})
                 return
             try:
                 text_content = body.get("text")
@@ -2096,13 +2096,18 @@ class EurarioHandler(BaseHTTPRequestHandler):
                     file_bytes = base64.b64decode(file_b64)
 
                 res = db.analyze_cattedre_alignment(text=text_content, file_bytes=file_bytes, filename=filename)
+                if not res.get("success") and not res.get("message"):
+                    res["message"] = res.get("error", "Analisi della tabella cattedre non riuscita")
                 self._json(200 if res.get("success") else 400, res)
             except Exception as e:
-                self._json(500, {"error": str(e)})
+                import traceback
+                traceback.print_exc()
+                err_msg = str(e).strip() or type(e).__name__
+                self._json(500, {"success": False, "error": err_msg, "message": err_msg})
 
         elif path == "/api/teachers/align_cattedre/apply":
             if not body:
-                self._json(400, {"error": "Nessun dato di aggiornamento fornito"})
+                self._json(400, {"success": False, "error": "Nessun dato di aggiornamento fornito", "message": "Nessun dato di aggiornamento fornito"})
                 return
             try:
                 updates = body.get("updates", [])
@@ -2115,9 +2120,14 @@ class EurarioHandler(BaseHTTPRequestHandler):
                     snapshot_name=snap_name,
                     update_cdc=update_cdc
                 )
+                if not res.get("success") and not res.get("message"):
+                    res["message"] = res.get("error", "Impossibile applicare le modifiche alle cattedre")
                 self._json(200 if res.get("success") else 400, res)
             except Exception as e:
-                self._json(500, {"error": str(e)})
+                import traceback
+                traceback.print_exc()
+                err_msg = str(e).strip() or type(e).__name__
+                self._json(500, {"success": False, "error": err_msg, "message": err_msg})
 
         elif path == "/api/timetable/place_disposizioni":
             try:

@@ -12,8 +12,13 @@ import copy
 import shutil
 import zipfile
 import threading
+import logging
+import unicodedata
+from html.parser import HTMLParser
 import xml.etree.ElementTree as ET
 from collections import defaultdict
+
+logger = logging.getLogger("eurario")
 from webapp.fet_engine import (
     parse_fet_xml,
     build_timetable_views,
@@ -3707,7 +3712,7 @@ class Database:
 
     def analyze_cattedre_alignment(self, text=None, file_bytes=None, filename=""):
         """
-        Analizza una tabella cattedre (fornita come testo CSV/TSV o file Excel .xlsx / CSV)
+        Analizza una tabella cattedre (fornita come testo CSV/TSV o file Excel .xlsx / CSV / HTML)
         e confronta tipologia di cattedra (COE, Spezzone, Part-Time, Intera), ore e giorni
         con i docenti attualmente presenti nel database.
         Restituisce un diff dettagliato con 'to_update', 'unchanged', 'not_found' e 'summary'.
@@ -3721,9 +3726,27 @@ class Database:
 
         with self.lock:
             teachers_by_name = {}
+            teachers_norm_map = {}
+            teachers_parts_map = {}
+            surname_map = defaultdict(list)
+
             for t in self.data["teachers"]:
                 t_name = t["name"].strip()
-                teachers_by_name[t_name.lower()] = t
+                t_low = t_name.lower()
+                teachers_by_name[t_low] = t
+
+                norm_t = normalize_teacher_name_for_matching(t_name)
+                if norm_t:
+                    teachers_norm_map[norm_t] = t
+                    parts = norm_t.split()
+                    if len(parts) >= 2:
+                        # Genera tutte le combinazioni per cognomi composti (es. Mario De Luca <-> De Luca Mario)
+                        for split_i in range(1, len(parts)):
+                            inv_1 = f"{' '.join(parts[split_i:])} {' '.join(parts[:split_i])}"
+                            teachers_parts_map[inv_1] = t
+                        # Mappa cognome se unico
+                        surname_map[parts[0]].append(t)
+                        surname_map[parts[-1]].append(t)
 
             to_update = []
             unchanged = []
@@ -3734,22 +3757,36 @@ class Database:
                 if not raw_name:
                     continue
 
-                # Match con il database
+                # 1. Match esatto case-insensitive
                 t_obj = teachers_by_name.get(raw_name.lower())
-                if not t_obj:
-                    # Prova normalizzazione spazi
-                    clean_name = " ".join(raw_name.split()).lower()
-                    for k, v in teachers_by_name.items():
-                        if " ".join(k.split()) == clean_name:
-                            t_obj = v
-                            break
 
+                # 2. Match normalizzato (senza accenti, spazi extra o parentesi)
                 if not t_obj:
-                    # Prova inversione Nome Cognome <-> Cognome Nome
-                    parts = raw_name.split()
-                    if len(parts) == 2:
-                        rev_name = f"{parts[1]} {parts[0]}".lower()
-                        t_obj = teachers_by_name.get(rev_name)
+                    norm_raw = normalize_teacher_name_for_matching(raw_name)
+                    t_obj = teachers_norm_map.get(norm_raw)
+
+                # 3. Match inversione Cognome/Nome o permutazioni
+                if not t_obj and norm_raw:
+                    t_obj = teachers_parts_map.get(norm_raw)
+                    if not t_obj:
+                        raw_p = norm_raw.split()
+                        if len(raw_p) >= 2:
+                            for split_i in range(1, len(raw_p)):
+                                inv_cand = f"{' '.join(raw_p[split_i:])} {' '.join(raw_p[:split_i])}"
+                                if inv_cand in teachers_norm_map:
+                                    t_obj = teachers_norm_map[inv_cand]
+                                    break
+                                elif inv_cand in teachers_by_name:
+                                    t_obj = teachers_by_name[inv_cand]
+                                    break
+
+                # 4. Match per cognome unico nel plesso
+                if not t_obj and norm_raw:
+                    raw_p = norm_raw.split()
+                    if raw_p:
+                        cands = surname_map.get(raw_p[0]) or surname_map.get(raw_p[-1])
+                        if cands and len(cands) == 1:
+                            t_obj = cands[0]
 
                 if not t_obj:
                     not_found.append({
@@ -3839,8 +3876,12 @@ class Database:
                 t = teachers_dict.get(name.lower())
                 if not t:
                     parts = name.split()
-                    if len(parts) == 2:
-                        t = teachers_dict.get(f"{parts[1]} {parts[0]}".lower())
+                    if len(parts) >= 2:
+                        for split_i in range(1, len(parts)):
+                            inv_n = f"{' '.join(parts[split_i:])} {' '.join(parts[:split_i])}".lower()
+                            if inv_n in teachers_dict:
+                                t = teachers_dict[inv_n]
+                                break
                 if not t:
                     continue
 
@@ -3888,150 +3929,313 @@ class Database:
             }
 
 
+def normalize_teacher_name_for_matching(name):
+    """Rimuove accenti, parentesi, punteggiatura e spazi multipli per facilitare il matching dei docenti."""
+    if not name:
+        return ""
+    # Rimuovi contenuto tra parentesi o quadre es. 'Rossi Mario (P.T.)' -> 'Rossi Mario'
+    n = re.sub(r"\(.*?\)", "", str(name))
+    n = re.sub(r"\[.*?\]", "", n)
+    # Rimuovi accenti con decomposizione NFD
+    n = "".join(c for c in unicodedata.normalize("NFD", n) if unicodedata.category(c) != "Mn")
+    # Pulisci caratteri speciali
+    n = re.sub(r"[^\w\s]", " ", n)
+    # Normalizza spazi
+    return " ".join(n.lower().split())
+
+
+class _SimpleHTMLTableParser(HTMLParser):
+    """Estrae righe e celle da una tabella HTML (<tr> e <td>/<th>) senza dipendenze esterne."""
+    def __init__(self):
+        super().__init__()
+        self.rows = []
+        self.cur_row = []
+        self.cur_cell = []
+        self.in_cell = False
+
+    def handle_starttag(self, tag, attrs):
+        if tag.lower() in ("td", "th"):
+            self.in_cell = True
+            self.cur_cell = []
+        elif tag.lower() == "tr":
+            self.cur_row = []
+
+    def handle_endtag(self, tag):
+        if tag.lower() in ("td", "th"):
+            self.in_cell = False
+            cell_txt = " ".join("".join(self.cur_cell).split())
+            self.cur_row.append(cell_txt)
+        elif tag.lower() == "tr":
+            if any(self.cur_row):
+                self.rows.append(self.cur_row)
+
+    def handle_data(self, data):
+        if self.in_cell:
+            self.cur_cell.append(data)
+
+
 def parse_xlsx_bytes(b_data):
     """
-    Estrae tutte le righe di testo dal primo foglio di un file Excel (.xlsx).
+    Estrae tutte le righe di testo da tutti i fogli di un file Excel (.xlsx).
     Implementato al 100% con la libreria standard (zipfile + xml.etree.ElementTree),
-    garantendo zero dipendenze esterne.
+    con tolleranza per case-sensitivity nei percorsi OpenXML e supporto multi-foglio.
     """
+    if not b_data or len(b_data) < 4 or b_data[:4] != b"PK\x03\x04":
+        return []
+
     rows = []
     try:
         with zipfile.ZipFile(io.BytesIO(b_data)) as z:
+            namelist = z.namelist()
+            namelist_lower = {n.lower(): n for n in namelist}
+
+            # 1. Shared Strings (case-insensitive)
             shared_strings = []
-            if "xl/sharedStrings.xml" in z.namelist():
-                tree = ET.fromstring(z.read("xl/sharedStrings.xml"))
-                ns = {"x": "http://schemas.openxmlformats.org/spreadsheetml/2006/main"}
-                si_list = tree.findall(".//x:si", ns) or tree.findall(".//{*}si")
-                for si in si_list:
-                    t_list = si.findall(".//x:t", ns) or si.findall(".//{*}t")
-                    shared_strings.append("".join(t.text or "" for t in t_list))
+            ss_key = None
+            for cand in ("xl/sharedstrings.xml", "xl/sharedStrings.xml"):
+                if cand.lower() in namelist_lower:
+                    ss_key = namelist_lower[cand.lower()]
+                    break
 
-            sheet_path = "xl/worksheets/sheet1.xml"
-            if sheet_path not in z.namelist():
-                sheets = [n for n in z.namelist() if n.startswith("xl/worksheets/sheet") and n.endswith(".xml")]
-                sheet_path = sheets[0] if sheets else None
+            if ss_key:
+                try:
+                    tree = ET.fromstring(z.read(ss_key))
+                    for si in tree.findall(".//{*}si"):
+                        shared_strings.append("".join(si.itertext()))
+                except Exception as e_ss:
+                    logger.debug(f"Errore lettura sharedStrings: {e_ss}")
 
-            if not sheet_path:
-                return rows
+            # 2. Percorsi Worksheet (in ordine da workbook.xml se presente)
+            sheet_paths = []
+            wb_key = namelist_lower.get("xl/workbook.xml")
+            wb_rels_key = namelist_lower.get("xl/_rels/workbook.xml.rels")
+            if wb_key and wb_rels_key:
+                try:
+                    wb_tree = ET.fromstring(z.read(wb_key))
+                    rels_tree = ET.fromstring(z.read(wb_rels_key))
+                    rel_map = {}
+                    for rel in rels_tree.findall(".//{*}Relationship"):
+                        r_id = rel.attrib.get("Id")
+                        r_target = rel.attrib.get("Target", "")
+                        if r_target:
+                            if not r_target.startswith("xl/"):
+                                r_target = "xl/" + r_target.lstrip("/")
+                            rel_map[r_id] = r_target
 
-            sheet_tree = ET.fromstring(z.read(sheet_path))
-            ns = {"x": "http://schemas.openxmlformats.org/spreadsheetml/2006/main"}
-            row_elems = sheet_tree.findall(".//x:row", ns) or sheet_tree.findall(".//{*}row")
+                    for sheet_el in wb_tree.findall(".//{*}sheet"):
+                        r_id = sheet_el.attrib.get("{http://schemas.openxmlformats.org/officeDocument/2006/relationships}id") or sheet_el.attrib.get("r:id")
+                        target = rel_map.get(r_id)
+                        if target and target.lower() in namelist_lower:
+                            sheet_paths.append(namelist_lower[target.lower()])
+                except Exception as e_wb:
+                    logger.debug(f"Errore scansione workbook.xml: {e_wb}")
+
+            # Fallback se non trovati tramite rels
+            if not sheet_paths:
+                for n_low, n_orig in sorted(namelist_lower.items()):
+                    if n_low.startswith("xl/worksheets/sheet") and n_low.endswith(".xml"):
+                        sheet_paths.append(n_orig)
+
+            if not sheet_paths:
+                for n_low, n_orig in sorted(namelist_lower.items()):
+                    if n_low.startswith("xl/worksheets/") and n_low.endswith(".xml"):
+                        sheet_paths.append(n_orig)
 
             def col_letter_to_index(col_str):
                 idx = 0
                 for char in col_str.upper():
                     idx = idx * 26 + (ord(char) - ord("A") + 1)
-                return idx - 1
+                return max(0, idx - 1)
 
-            for row_el in row_elems:
-                cell_map = {}
-                cells = row_el.findall(".//x:c", ns) or row_el.findall(".//{*}c")
-                for c in cells:
-                    ref = c.attrib.get("r", "")
-                    col_match = re.match(r"^([A-Z]+)", ref)
-                    col_idx = col_letter_to_index(col_match.group(1)) if col_match else len(cell_map)
-                    c_type = c.attrib.get("t", "")
-                    v_el = c.find(".//x:v", ns) if c.find(".//x:v", ns) is not None else c.find(".//{*}v")
-                    val = v_el.text if v_el is not None and v_el.text is not None else ""
+            first_header = None
+            for sp in sheet_paths:
+                try:
+                    sheet_tree = ET.fromstring(z.read(sp))
+                    row_elems = sheet_tree.findall(".//{*}row")
+                    for row_el in row_elems:
+                        cell_map = {}
+                        cells = row_el.findall(".//{*}c")
+                        for c in cells:
+                            ref = c.attrib.get("r", "")
+                            col_match = re.match(r"^([A-Z]+)", ref)
+                            col_idx = col_letter_to_index(col_match.group(1)) if col_match else len(cell_map)
+                            c_type = c.attrib.get("t", "")
+                            v_el = c.find(".//{*}v")
+                            val = v_el.text if (v_el is not None and v_el.text is not None) else ""
 
-                    if c_type == "s" and val.isdigit():
-                        s_idx = int(val)
-                        val = shared_strings[s_idx] if s_idx < len(shared_strings) else val
-                    elif c_type == "inlineStr":
-                        is_t = c.find(".//{*}t")
-                        if is_t is not None and is_t.text:
-                            val = is_t.text
+                            if c_type == "s" and val.isdigit():
+                                s_idx = int(val)
+                                val = shared_strings[s_idx] if 0 <= s_idx < len(shared_strings) else val
+                            elif c_type == "inlineStr":
+                                val = "".join(c.itertext()).strip()
+                            elif c_type == "b":
+                                val = "1" if val == "1" else "0"
 
-                    cell_map[col_idx] = val
+                            cell_map[col_idx] = val
 
-                if cell_map:
-                    max_c = max(cell_map.keys())
-                    row_vals = [cell_map.get(i, "").strip() for i in range(max_c + 1)]
-                    if any(row_vals):
-                        rows.append(row_vals)
+                        if cell_map:
+                            max_c = max(cell_map.keys())
+                            row_vals = [str(cell_map.get(i, "")).strip() for i in range(max_c + 1)]
+                            if any(row_vals):
+                                if first_header is None:
+                                    first_header = row_vals
+                                    rows.append(row_vals)
+                                elif row_vals == first_header:
+                                    # Salta intestazione duplicata su fogli successivi
+                                    continue
+                                else:
+                                    rows.append(row_vals)
+                except Exception as e_sheet:
+                    logger.debug(f"Errore lettura foglio {sp}: {e_sheet}")
     except Exception as e:
-        logger.error(f"Errore parsing XLSX: {e}")
+        logger.warning(f"Errore parsing XLSX: {e}")
     return rows
 
 
-def parse_cattedre_matrix(rows):
+def parse_cattedre_matrix(rows, filename=""):
     """
-    Riconosce le intestazioni e restituisce una lista di record normalizzati:
+    Riconosce con elevata tolleranza le intestazioni e restituisce una lista di record normalizzati:
     [{ "cdc": ..., "name": ..., "target_hours": ..., "contract_type": ..., "max_days": ..., "raw": ... }]
     """
     if not rows:
         return []
 
-    header_idx = -1
-    col_map = {"cdc": -1, "docente": -1, "ore": -1, "tipo": -1, "giorni": -1}
+    # 1. Trova l'intestazione più probabile analizzando le prime 10 righe
+    best_h_idx = -1
+    best_score = 0
+    best_col_map = {"cdc": -1, "docente": -1, "cognome": -1, "nome": -1, "ore": -1, "tipo": -1, "giorni": -1}
 
-    for r_i, r in enumerate(rows[:5]):
+    for r_i, r in enumerate(rows[:10]):
         r_low = [str(c).strip().lower() for c in r]
-        has_doc = any("docente" in c or "insegnante" in c or "nominativo" in c or c == "nome" for c in r_low)
-        has_type_or_ore = any("tipo" in c or "cattedra" in c or "ore" in c for c in r_low)
-        if has_doc or has_type_or_ore:
-            header_idx = r_i
-            for c_i, c in enumerate(r_low):
-                if any(k in c for k in ("classe di concorso", "cdc", "disciplina")):
-                    col_map["cdc"] = c_i
-                elif any(k in c for k in ("docente", "insegnante", "nominativo", "cognome")):
-                    col_map["docente"] = c_i
-                elif any(k in c for k in ("tipo di cattedra", "tipo cattedra", "tipologia", "contratto", "tipo")):
-                    col_map["tipo"] = c_i
-                elif any(k in c for k in ("orario su giorni", "giorni", "max giorni", "gg")):
-                    col_map["giorni"] = c_i
-                elif any(k in c for k in ("ore", "cattedra", "target")) and col_map["ore"] == -1:
-                    col_map["ore"] = c_i
-            break
+        col_map = {"cdc": -1, "docente": -1, "cognome": -1, "nome": -1, "ore": -1, "tipo": -1, "giorni": -1}
+        score = 0
 
-    data_rows = rows[header_idx + 1:] if header_idx >= 0 else rows
-    if col_map["docente"] == -1:
-        col_map = {"cdc": 0, "docente": 1, "ore": 3, "tipo": 4, "giorni": 5}
+        for c_i, c in enumerate(r_low):
+            if not c:
+                continue
+            # Tipo di cattedra
+            if any(k in c for k in ("tipo di cattedra", "tipo cattedra", "tipologia cattedra", "tipologia", "contratto", "regime", "stato giuridico")):
+                if col_map["tipo"] == -1:
+                    col_map["tipo"] = c_i
+                    score += 4
+            elif c in ("cattedra", "cattedre") or "cattedr" in c:
+                if col_map["tipo"] == -1:
+                    col_map["tipo"] = c_i
+                    score += 3
+            # Ore
+            elif any(k in c for k in ("ore settimanali", "monte ore", "n. ore", "n ore", "totale ore", "target ore", "ore", "orario", "h")) and not any(k in c for k in ("giorni", "gg")):
+                if col_map["ore"] == -1:
+                    col_map["ore"] = c_i
+                    score += 4
+            # Docente / Nominativo
+            elif any(k in c for k in ("docente", "insegnante", "nominativo", "professore", "docenti")):
+                if col_map["docente"] == -1:
+                    col_map["docente"] = c_i
+                    score += 5
+            elif c in ("cognome e nome", "nome e cognome"):
+                if col_map["docente"] == -1:
+                    col_map["docente"] = c_i
+                    score += 5
+            elif c == "cognome":
+                if col_map["cognome"] == -1:
+                    col_map["cognome"] = c_i
+                    score += 3
+            elif c == "nome":
+                if col_map["nome"] == -1:
+                    col_map["nome"] = c_i
+                    score += 3
+            # Giorni
+            elif any(k in c for k in ("orario su giorni", "max giorni", "numero giorni", "giorni", "gg")):
+                if col_map["giorni"] == -1:
+                    col_map["giorni"] = c_i
+                    score += 3
+            # Classe di concorso
+            elif any(k in c for k in ("classe di concorso", "classe concorso", "cdc", "disciplina", "materia", "insegnamento")):
+                if col_map["cdc"] == -1:
+                    col_map["cdc"] = c_i
+                    score += 3
+
+        if score > best_score:
+            best_score = score
+            best_h_idx = r_i
+            best_col_map = col_map
+
+    data_rows = rows[best_h_idx + 1:] if best_h_idx >= 0 else rows
+
+    # Fallback euristico posizionale se non è stata rilevata una riga di intestazione chiara
+    if best_score < 3 and data_rows:
+        first_r = [str(c).strip() for c in data_rows[0]]
+        for c_i, c in enumerate(first_r):
+            if best_col_map["ore"] == -1 and c.isdigit() and 1 <= int(c) <= 25:
+                best_col_map["ore"] = c_i
+            elif best_col_map["docente"] == -1 and len(c) > 3 and not c.isdigit():
+                best_col_map["docente"] = c_i
+
+    filename_lower = (filename or "").lower()
+    default_from_filename = "part_time" if ("part" in filename_lower or "p.t." in filename_lower) else ("spezzone" if "spezz" in filename_lower else None)
 
     records = []
     for r in data_rows:
         if not r or not any(str(c).strip() for c in r):
             continue
 
-        doc_name = str(r[col_map["docente"]]).strip() if col_map["docente"] < len(r) else ""
-        if not doc_name or doc_name.lower() in ("docente", "insegnante", "cognome e nome", "totale"):
+        doc_name = ""
+        if best_col_map["docente"] >= 0 and best_col_map["docente"] < len(r):
+            doc_name = str(r[best_col_map["docente"]]).strip()
+        elif best_col_map["cognome"] >= 0 and best_col_map["cognome"] < len(r):
+            cog = str(r[best_col_map["cognome"]]).strip()
+            nom = str(r[best_col_map["nome"]]).strip() if (0 <= best_col_map["nome"] < len(r)) else ""
+            doc_name = f"{cog} {nom}".strip()
+
+        if not doc_name:
             continue
 
-        cdc = str(r[col_map["cdc"]]).strip() if 0 <= col_map["cdc"] < len(r) else ""
+        low_doc = doc_name.lower()
+        if low_doc in ("docente", "insegnante", "cognome e nome", "totale", "totale complessivo", "resoconto"):
+            continue
+        if doc_name.isdigit():
+            continue
+
+        # Pulizia nome docente
+        clean_name = re.sub(r"\(.*?\)", "", doc_name)
+        clean_name = re.sub(r"\[.*?\]", "", clean_name).strip("*-# ")
+
+        cdc = str(r[best_col_map["cdc"]]).strip() if (0 <= best_col_map["cdc"] < len(r)) else ""
 
         ore_val = None
-        if 0 <= col_map["ore"] < len(r):
-            ore_str = str(r[col_map["ore"]]).strip()
+        if 0 <= best_col_map["ore"] < len(r):
+            ore_str = str(r[best_col_map["ore"]]).strip()
             m_ore = re.search(r"\d+", ore_str)
             if m_ore:
                 ore_val = int(m_ore.group(0))
 
-        raw_type = str(r[col_map["tipo"]]).strip().lower() if 0 <= col_map["tipo"] < len(r) else ""
-        if "coe" in raw_type or "c.o.e" in raw_type:
+        raw_type = str(r[best_col_map["tipo"]]).strip().lower() if (0 <= best_col_map["tipo"] < len(r)) else ""
+        combined_type_info = f"{raw_type} {doc_name.lower()} {cdc.lower()}"
+
+        if "coe" in combined_type_info or "c.o.e" in combined_type_info:
             ctype = "coe"
-        elif "part" in raw_type or "p.t" in raw_type or raw_type == "pt":
+        elif any(k in combined_type_info for k in ("part-time", "part time", "parttime", "p.t.", "pt")):
             ctype = "part_time"
-        elif "spezz" in raw_type:
+        elif "spezz" in combined_type_info:
             ctype = "spezzone"
-        elif "intera" in raw_type or "standard" in raw_type:
+        elif any(k in combined_type_info for k in ("intera", "standard", "completa", "full")):
             ctype = "intera"
         elif ore_val is not None and ore_val >= 18:
             ctype = "intera"
-        elif ore_val is not None and ore_val < 18 and raw_type == "":
-            ctype = "spezzone"
+        elif ore_val is not None and ore_val < 18:
+            ctype = default_from_filename or "spezzone"
         else:
             ctype = "intera"
 
         giorni_val = None
-        if 0 <= col_map["giorni"] < len(r):
-            gg_str = str(r[col_map["giorni"]]).strip()
+        if 0 <= best_col_map["giorni"] < len(r):
+            gg_str = str(r[best_col_map["giorni"]]).strip()
             m_gg = re.search(r"\d+", gg_str)
             if m_gg:
                 giorni_val = int(m_gg.group(0))
 
         records.append({
-            "name": doc_name,
+            "name": clean_name or doc_name,
             "cdc": cdc,
             "target_hours": ore_val,
             "contract_type": ctype,
@@ -4044,44 +4248,78 @@ def parse_cattedre_matrix(rows):
 
 def parse_cattedre_text_or_file(text=None, file_bytes=None, filename=""):
     """
-    Riconosce se l'input è un file Excel (.xlsx), CSV, TSV o testo incollato,
+    Riconosce se l'input è un file Excel (.xlsx), CSV, TSV, HTML table o testo incollato,
     estrae le righe e restituisce i record parsed.
     """
     rows = []
     if file_bytes:
-        is_zip = file_bytes[:4] == b"PK\x03\x04"
-        if filename.lower().endswith(".xlsx") or is_zip:
+        is_zip = len(file_bytes) >= 4 and file_bytes[:4] == b"PK\x03\x04"
+        if is_zip or filename.lower().endswith(".xlsx"):
             rows = parse_xlsx_bytes(file_bytes)
-        else:
-            try:
-                text_content = file_bytes.decode("utf-8")
-            except UnicodeDecodeError:
-                text_content = file_bytes.decode("latin-1", errors="ignore")
-            text = text_content
+
+        if not rows:
+            # Fallback se non è un vero zip o se il parsing zip non ha restituito righe
+            for enc in ("utf-8", "latin-1", "cp1252", "utf-16"):
+                try:
+                    text_content = file_bytes.decode(enc)
+                    if text_content and any(c.isalnum() for c in text_content[:200]):
+                        text = text_content
+                        break
+                except UnicodeDecodeError:
+                    continue
 
     if not rows and text:
         clean_text = text.strip()
-        lines = [l for l in clean_text.splitlines() if l.strip()]
-        if lines:
-            first_line = lines[0]
-            delimiter = ","
-            if "\t" in first_line:
-                delimiter = "\t"
-            elif ";" in first_line:
-                delimiter = ";"
-            elif "," in first_line:
+
+        # 1. Riconoscimento Tabella HTML (frequente in esportazioni da registri Argo, Axios, Spaggiari, Nuvola)
+        if "<table" in clean_text.lower() or "<tr" in clean_text.lower():
+            try:
+                parser = _SimpleHTMLTableParser()
+                parser.feed(clean_text)
+                if parser.rows:
+                    rows = parser.rows
+            except Exception as e_html:
+                logger.debug(f"Errore parsing tabella HTML: {e_html}")
+
+        # 2. Riconoscimento XML Spreadsheet 2003
+        if not rows and ("<workbook" in clean_text.lower() or "<ss:workbook" in clean_text.lower()):
+            try:
+                root_xml = ET.fromstring(clean_text)
+                for row_el in root_xml.findall(".//{*}Row"):
+                    row_vals = []
+                    for cell_el in row_el.findall(".//{*}Cell"):
+                        data_el = cell_el.find(".//{*}Data")
+                        row_vals.append("".join(data_el.itertext()).strip() if data_el is not None else "")
+                    if any(row_vals):
+                        rows.append(row_vals)
+            except Exception as e_xml03:
+                logger.debug(f"Errore parsing XML 2003: {e_xml03}")
+
+        # 3. Riconoscimento Delimitatore CSV / TSV / Semicolon / Pipe
+        if not rows:
+            lines = [l for l in clean_text.splitlines() if l.strip()]
+            if lines:
+                first_lines = "\n".join(lines[:5])
                 delimiter = ","
-            else:
-                try:
-                    dialect = csv.Sniffer().sniff("\n".join(lines[:5]))
-                    delimiter = dialect.delimiter
-                except Exception:
+                if "\t" in lines[0]:
+                    delimiter = "\t"
+                elif ";" in lines[0]:
+                    delimiter = ";"
+                elif "|" in lines[0]:
+                    delimiter = "|"
+                elif "," in lines[0]:
                     delimiter = ","
+                else:
+                    try:
+                        dialect = csv.Sniffer().sniff(first_lines)
+                        delimiter = dialect.delimiter
+                    except Exception:
+                        delimiter = ","
 
-            reader = csv.reader(io.StringIO(clean_text), delimiter=delimiter)
-            rows = [r for r in reader if any(str(c).strip() for c in r)]
+                reader = csv.reader(io.StringIO(clean_text), delimiter=delimiter)
+                rows = [r for r in reader if any(str(c).strip() for c in r)]
 
-    return parse_cattedre_matrix(rows)
+    return parse_cattedre_matrix(rows, filename=filename)
 
 
 def parse_organico_docx_content(content_bytes_or_path):
