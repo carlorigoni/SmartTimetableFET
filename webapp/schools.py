@@ -141,7 +141,7 @@ class SchoolManager:
             out.sort(key=lambda x: (0 if x["id"] == "default" else 1, x.get("name", "").lower()))
             return out
 
-    def create_school(self, name, city="", country="Italia", school_year="", owner_email="", notes="", meccanografico=""):
+    def create_school(self, name, city="", country="Italia", school_year="", owner_email="", notes="", meccanografico="", contact_email=""):
         """
         Crea un nuovo Istituto in stato 'trial' (Modalità di Prova).
         Genera la cartella isolata tenant e inizializza il database dedicato.
@@ -154,6 +154,7 @@ class SchoolManager:
 
             clean_country = (country or "Italia").strip()
             clean_mecc = (meccanografico or "").strip().upper()
+            clean_contact = (contact_email or "").strip().lower()
 
             # Controllo unicità Codice Meccanografico per scuole in Italia
             if clean_country.lower() in ("italia", "italy") and clean_mecc:
@@ -178,13 +179,22 @@ class SchoolManager:
                 "country": clean_country,
                 "school_year": (school_year or "").strip(),
                 "meccanografico": clean_mecc,
+                "contact_email": clean_contact,
                 "status": "trial",  # 'trial' = in prova con filigrana | 'active' = approvata dal superadmin
                 "owner_email": (owner_email or "").strip().lower(),
                 "created_at": datetime.now().isoformat(),
                 "approved_at": None,
                 "approved_by": None,
                 "notes": (notes or "").strip(),
-                "is_default": False
+                "is_default": False,
+                "smtp": {
+                    "enabled": False,
+                    "host": "smtp.gmail.com",
+                    "port": 587,
+                    "user": "",
+                    "password": "",
+                    "notify_to": clean_contact or (owner_email or "").strip().lower()
+                }
             }
 
             # Crea la cartella tenant dedicata
@@ -216,14 +226,67 @@ class SchoolManager:
                             if s2_mecc and s2_mecc == new_mecc:
                                 raise ValueError(f"Il codice meccanografico '{new_mecc}' è già associato all'istituto '{s2.get('name')}'.")
 
-            for k in ("name", "city", "country", "school_year", "meccanografico", "notes"):
+            for k in ("name", "city", "country", "school_year", "meccanografico", "notes", "contact_email", "smtp"):
                 if k in kwargs and kwargs[k] is not None:
                     if k == "meccanografico":
                         s[k] = str(kwargs[k]).strip().upper()
+                    elif k == "contact_email":
+                        s[k] = str(kwargs[k]).strip().lower()
+                    elif k == "smtp":
+                        if isinstance(kwargs[k], dict):
+                            cur_smtp = s.setdefault("smtp", {})
+                            cur_smtp.update(kwargs[k])
                     else:
                         s[k] = str(kwargs[k]).strip()
             self._save()
             return s
+
+    def send_school_test_email(self, school_id, admin_email=None):
+        """Invia un'email di test usando la configurazione SMTP specifica della scuola."""
+        s = self.get_school(school_id)
+        if not s:
+            raise ValueError(f"Istituto '{school_id}' non trovato.")
+        smtp_cfg = s.get("smtp", {})
+        if not smtp_cfg or not smtp_cfg.get("enabled"):
+            raise ValueError("L'invio email SMTP per questo istituto non è abilitato.")
+        
+        host = (smtp_cfg.get("host") or "").strip()
+        port = int(smtp_cfg.get("port") or 587)
+        user = (smtp_cfg.get("user") or "").strip()
+        pwd = (smtp_cfg.get("password") or "").strip()
+        to_email = (smtp_cfg.get("notify_to") or s.get("contact_email") or admin_email or "").strip()
+
+        if not host or not user or not pwd or not to_email:
+            raise ValueError("Configurazione incompleta: specifica Server SMTP, Utente/Mittente, Password e Destinatario notifiche.")
+
+        from email.message import EmailMessage
+        import ssl
+        import smtplib
+
+        sch_name = s.get("name", "Istituto Scolastico")
+        msg = EmailMessage()
+        msg["Subject"] = f"✅ [{sch_name}] Test Configurazione SMTP Riuscito!"
+        msg["From"] = user
+        msg["To"] = to_email
+
+        body = f"""Gentile Referente / Amministratore di {sch_name},
+
+Questo messaggio conferma che il server SMTP ({host}:{port}) per l'istituto '{sch_name}' è configurato e funzionante con successo.
+
+D'ora in poi le notifiche relative all'orario, agli accessi docenti e ai report di questo istituto potranno essere recapitate tramite questo canale ufficiale.
+
+---
+Eurario FET Suite & Timetable Management
+"""
+        msg.set_content(body)
+
+        context = ssl.create_default_context()
+        with smtplib.SMTP(host, port, timeout=12) as server:
+            server.starttls(context=context)
+            server.login(user, pwd)
+            server.send_message(msg)
+
+        return True
 
     def approve_school(self, school_id, admin_email=""):
         """Approva formalmente la scuola, sbloccando le stampe ufficiali ad alta risoluzione."""

@@ -97,7 +97,7 @@ def fetch_google_doc_docx_bytes(url):
     except Exception as e:
         raise ValueError(f"Impossibile scaricare il Google Doc: {e}")
 
-APP_VERSION = "1.8.6"
+APP_VERSION = "1.8.7"
 FET_VERSION = "7.12.0"
 APP_AUTHOR = "Carlo Rigoni"
 APP_MENTOR = "Federico Rettore"
@@ -808,11 +808,38 @@ class EurarioHandler(BaseHTTPRequestHandler):
                     st["city"] = sch.get("city", "")
                     st["country"] = sch.get("country", "Italia")
                     st["notes"] = sch.get("notes", "")
+                    st["contact_email"] = sch.get("contact_email", "") or st.get("contact_email", "")
                     if not st.get("meccanografico"):
                         st["meccanografico"] = sch.get("meccanografico", "")
                     if not st.get("institution"):
                         st["institution"] = sch.get("name", "")
             self._json(200, st)
+
+        elif path == "/api/schools/smtp":
+            admin = self._require_admin()
+            if not admin:
+                return
+            is_passcode = bool(admin.get("is_passcode_auth", False))
+            is_super = auth_manager.is_superadmin(admin.get("email"), is_passcode)
+            sid = query.get("school_id", [None])[0] or self._resolve_school_id(query)
+            if not is_super:
+                sid = self._resolve_school_id(query)
+            sch = school_manager.get_school(sid)
+            if not sch:
+                self._json(404, {"error": "Istituto non trovato"})
+                return
+            smtp_cfg = dict(sch.get("smtp", {}))
+            has_pwd = bool(smtp_cfg.get("password"))
+            smtp_cfg["password"] = "******" if has_pwd else ""
+            smtp_cfg["has_password"] = has_pwd
+            self._json(200, {
+                "ok": True,
+                "school_id": sid,
+                "school_name": sch.get("name"),
+                "contact_email": sch.get("contact_email", ""),
+                "smtp": smtp_cfg
+            })
+            return
 
         elif path == "/api/sections/percorsi":
             self._json(200, db.get_section_percorsi())
@@ -1220,6 +1247,55 @@ class EurarioHandler(BaseHTTPRequestHandler):
             try:
                 auth_manager.send_test_email()
                 self._json(200, {"ok": True, "message": "Email di test inviata con successo!"})
+            except Exception as e:
+                self._json(400, {"error": str(e)})
+            return
+
+        elif path == "/api/schools/smtp":
+            admin = self._require_admin()
+            if not admin:
+                return
+            is_passcode = bool(admin.get("is_passcode_auth", False))
+            is_super = auth_manager.is_superadmin(admin.get("email"), is_passcode)
+            sid = (body or {}).get("school_id") or self._resolve_school_id()
+            if not is_super:
+                sid = self._resolve_school_id()
+            sch = school_manager.get_school(sid)
+            if not sch:
+                self._json(404, {"error": "Istituto non trovato"})
+                return
+            smtp_in = (body or {}).get("smtp", {})
+            cur_smtp = sch.get("smtp", {})
+            pwd = smtp_in.get("password")
+            if pwd == "******" or not pwd:
+                pwd = cur_smtp.get("password", "")
+            smtp_save = {
+                "enabled": bool(smtp_in.get("enabled", False)),
+                "host": str(smtp_in.get("host", "smtp.gmail.com")).strip(),
+                "port": int(smtp_in.get("port") or 587),
+                "user": str(smtp_in.get("user", "")).strip(),
+                "password": pwd,
+                "notify_to": str(smtp_in.get("notify_to", "")).strip()
+            }
+            updates = {"smtp": smtp_save}
+            if "contact_email" in body:
+                updates["contact_email"] = str(body["contact_email"]).strip().lower()
+            school_manager.update_school_info(sid, **updates)
+            self._json(200, {"ok": True, "message": "Configurazione SMTP e contatto istituto salvati con successo!"})
+            return
+
+        elif path == "/api/schools/smtp/test":
+            admin = self._require_admin()
+            if not admin:
+                return
+            is_passcode = bool(admin.get("is_passcode_auth", False))
+            is_super = auth_manager.is_superadmin(admin.get("email"), is_passcode)
+            sid = (body or {}).get("school_id") or self._resolve_school_id()
+            if not is_super:
+                sid = self._resolve_school_id()
+            try:
+                school_manager.send_school_test_email(sid, admin_email=admin.get("email"))
+                self._json(200, {"ok": True, "message": "Email di test inviata con successo usando l'SMTP dell'istituto!"})
             except Exception as e:
                 self._json(400, {"error": str(e)})
             return
@@ -1754,6 +1830,8 @@ class EurarioHandler(BaseHTTPRequestHandler):
                     sch_updates["meccanografico"] = body["meccanografico"]
                 if "notes" in body:
                     sch_updates["notes"] = body["notes"]
+                if "contact_email" in body:
+                    sch_updates["contact_email"] = body["contact_email"]
 
                 if sch_updates and sid and sid != "none":
                     school_manager.update_school_info(sid, **sch_updates)

@@ -726,11 +726,39 @@ class AuthManager:
             }
 
         # Vista Globale SuperAdmin
+        from webapp.schools import school_manager
         users_list = []
         for em, u in users_dict.items():
             u_copy = dict(u)
             u_copy["is_superadmin"] = (em in super_emails)
-            u_copy["schools"] = list(mems.get(em, {}).keys())
+
+            # Dettaglio ricco di tutte le scuole associate all'utente e del relativo ruolo
+            user_mems_list = []
+            for sid, m_data in mems.get(em, {}).items():
+                sch = school_manager.get_school(sid)
+                sch_name = sch.get("name") if sch else sid
+                is_owner = bool(sch and (sch.get("owner_email") or "").lower().strip() == em)
+                role = "admin" if is_owner else m_data.get("role", "viewer")
+                user_mems_list.append({
+                    "school_id": sid,
+                    "school_name": sch_name,
+                    "role": role,
+                    "status": m_data.get("status", "approved"),
+                    "is_owner": is_owner
+                })
+            # Se è owner di una scuola che non è ancora esplicitamente in mems
+            for sid, sch in school_manager.schools.items():
+                if (sch.get("owner_email") or "").lower().strip() == em:
+                    if not any(m["school_id"] == sid for m in user_mems_list):
+                        user_mems_list.append({
+                            "school_id": sid,
+                            "school_name": sch.get("name", sid),
+                            "role": "admin",
+                            "status": "approved",
+                            "is_owner": True
+                        })
+            u_copy["school_memberships"] = user_mems_list
+            u_copy["schools"] = [m["school_id"] for m in user_mems_list]
             users_list.append(u_copy)
 
         users_list.sort(key=lambda u: (

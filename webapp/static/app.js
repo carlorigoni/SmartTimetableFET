@@ -22,7 +22,7 @@ let pollSolverTimer = null;
 let currentSolverRunning = false;
 
 // --- VERSIONE E IDENTITÀ APPLICATIVA ---
-const APP_VERSION = '1.8.6';
+const APP_VERSION = '1.8.7';
 
 // --- OPTIMISTIC CONCURRENCY CONTROL (OCC) & FETCH INTERCEPTOR ---
 window.CURRENT_DATA_VERSION = null;
@@ -550,6 +550,7 @@ async function submitCreateSchool() {
   const city = (document.getElementById('newSchoolCity').value || '').trim();
   const country = (document.getElementById('newSchoolCountry').value || (isEn ? 'United States' : 'Italia')).trim();
   const meccanografico = (document.getElementById('newSchoolMeccanografico')?.value || '').trim().toUpperCase();
+  const contact_email = (document.getElementById('newSchoolContactEmail')?.value || '').trim().toLowerCase();
   const notes = (document.getElementById('newSchoolNotes').value || '').trim();
 
   if (!name) {
@@ -564,7 +565,7 @@ async function submitCreateSchool() {
     const res = await fetch('/api/schools/create', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, city, country, meccanografico, notes })
+      body: JSON.stringify({ name, city, country, meccanografico, contact_email, notes })
     });
     const data = await res.json();
     if (data.success) {
@@ -1438,11 +1439,13 @@ function closeAccessManagementModal() {
 function switchAccessTab(tab) {
   document.getElementById('tabBtnPending')?.classList.toggle('active', tab === 'pending');
   document.getElementById('tabBtnApproved')?.classList.toggle('active', tab === 'approved');
+  document.getElementById('tabBtnSchoolSmtp')?.classList.toggle('active', tab === 'schoolsmtp');
   document.getElementById('tabBtnLogs')?.classList.toggle('active', tab === 'logs');
   document.getElementById('tabBtnConfig')?.classList.toggle('active', tab === 'config');
 
   document.getElementById('tabPendingUsers').style.display = (tab === 'pending') ? 'block' : 'none';
   document.getElementById('tabApprovedUsers').style.display = (tab === 'approved') ? 'block' : 'none';
+  if (document.getElementById('tabSchoolSmtp')) document.getElementById('tabSchoolSmtp').style.display = (tab === 'schoolsmtp') ? 'block' : 'none';
   if (document.getElementById('tabLogs')) document.getElementById('tabLogs').style.display = (tab === 'logs') ? 'block' : 'none';
   document.getElementById('tabConfig').style.display = (tab === 'config') ? 'block' : 'none';
 
@@ -1450,6 +1453,138 @@ function switchAccessTab(tab) {
     populateConfigFields();
   } else if (tab === 'logs') {
     loadAccessLogs();
+  } else if (tab === 'schoolsmtp') {
+    loadSchoolSmtpConfig();
+  }
+}
+
+async function loadSchoolSmtpConfig() {
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
+  const sid = selectedAccessSchoolFilter || (currentUsersData && currentUsersData.school_id) || (window.currentSchool && window.currentSchool.id) || 'default';
+  
+  const titleEl = document.getElementById('schoolSmtpTitle');
+  if (titleEl) {
+    const sName = (currentUsersData && currentUsersData.available_schools && currentUsersData.available_schools.find(s => s.id === sid)?.name)
+      || (window.currentSchool && window.currentSchool.name)
+      || sid;
+    titleEl.innerText = isEn ? `Email & SMTP Configuration — ${sName}` : `Server SMTP & Notifiche Istituto — ${sName}`;
+  }
+
+  try {
+    const res = await fetch(`/api/schools/smtp?school_id=${encodeURIComponent(sid)}`);
+    if (!res.ok) {
+      showToast(isEn ? 'Error loading school SMTP config' : 'Errore caricamento configurazione SMTP scuola', 'error');
+      return;
+    }
+    const data = await res.json();
+    const smtp = data.smtp || {};
+    
+    const enChk = document.getElementById('cfgSchoolSmtpEnabled');
+    if (enChk) enChk.checked = Boolean(smtp.enabled);
+    const hostInp = document.getElementById('cfgSchoolSmtpHost');
+    if (hostInp) hostInp.value = smtp.host || '';
+    const portInp = document.getElementById('cfgSchoolSmtpPort');
+    if (portInp) portInp.value = smtp.port || 587;
+    const userInp = document.getElementById('cfgSchoolSmtpUser');
+    if (userInp) userInp.value = smtp.user || '';
+    const passInp = document.getElementById('cfgSchoolSmtpPass');
+    if (passInp) passInp.value = smtp.has_password ? '••••••••' : '';
+    const notifyInp = document.getElementById('cfgSchoolSmtpNotifyTo');
+    if (notifyInp) notifyInp.value = smtp.notify_to || data.contact_email || '';
+  } catch (e) {
+    console.error('Error loading school smtp:', e);
+  }
+}
+
+async function saveSchoolSmtpConfig() {
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
+  const sid = selectedAccessSchoolFilter || (currentUsersData && currentUsersData.school_id) || (window.currentSchool && window.currentSchool.id) || 'default';
+
+  const enabled = document.getElementById('cfgSchoolSmtpEnabled')?.checked || false;
+  const host = (document.getElementById('cfgSchoolSmtpHost')?.value || '').trim();
+  const port = parseInt(document.getElementById('cfgSchoolSmtpPort')?.value || '587', 10);
+  const user = (document.getElementById('cfgSchoolSmtpUser')?.value || '').trim();
+  const rawPass = (document.getElementById('cfgSchoolSmtpPass')?.value || '').trim();
+  const notify_to = (document.getElementById('cfgSchoolSmtpNotifyTo')?.value || '').trim();
+
+  const password = rawPass.includes('••••') ? undefined : rawPass;
+
+  try {
+    const res = await fetch('/api/schools/smtp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        school_id: sid,
+        enabled,
+        host,
+        port,
+        user,
+        password,
+        notify_to,
+        contact_email: notify_to
+      })
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      showToast(data.error || (isEn ? 'Failed to save SMTP config' : 'Errore nel salvataggio SMTP'), 'error');
+      return;
+    }
+    showToast(isEn ? 'School SMTP configuration saved!' : 'Configurazione SMTP scuola salvata con successo!', 'ok');
+  } catch (e) {
+    showToast(e.message, 'error');
+  }
+}
+
+async function testSchoolSmtpEmail() {
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
+  const sid = selectedAccessSchoolFilter || (currentUsersData && currentUsersData.school_id) || (window.currentSchool && window.currentSchool.id) || 'default';
+
+  const notifyTo = (document.getElementById('cfgSchoolSmtpNotifyTo')?.value || '').trim();
+  showToast(isEn ? 'Sending test email...' : 'Invio email di test in corso...', 'info');
+
+  try {
+    const res = await fetch('/api/schools/smtp/test', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        school_id: sid,
+        admin_email: notifyTo || undefined
+      })
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      alert((isEn ? '❌ SMTP Test Failed:\n\n' : '❌ Test SMTP Fallito:\n\n') + (data.error || 'Errore sconosciuto'));
+      return;
+    }
+    alert((isEn ? '✅ SMTP Test Succeeded!\n\n' : '✅ Test SMTP Riuscito!\n\n') + (data.message || 'Email inviata con successo.'));
+  } catch (e) {
+    alert((isEn ? '❌ Connection Error:\n' : '❌ Errore di connessione:\n') + e.message);
+  }
+}
+
+async function quickAssignUserToSchool(email, schSelectId, roleSelectId) {
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
+  const schSelect = document.getElementById(schSelectId);
+  const roleSelect = document.getElementById(roleSelectId);
+  if (!schSelect || !roleSelect) return;
+  const schoolId = schSelect.value;
+  const role = roleSelect.value;
+
+  try {
+    const res = await fetch('/api/auth/users/add_to_school', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, school_id: schoolId, role })
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      showToast(data.error || (isEn ? 'Error assigning school' : 'Errore durante l\'assegnazione scuola'), 'error');
+      return;
+    }
+    showToast(isEn ? `User ${email} assigned with role ${role.toUpperCase()}!` : `Utente ${email} assegnato con ruolo ${role.toUpperCase()}!`, 'ok');
+    await loadUsersList(selectedAccessSchoolFilter || undefined);
+  } catch (e) {
+    showToast(e.message, 'error');
   }
 }
 
@@ -1709,43 +1844,88 @@ function renderUsersUI() {
       const isOwner = Boolean(u.is_school_owner);
       const lastLoginDate = u.last_login ? new Date(u.last_login).toLocaleString(isEn ? 'en-US' : 'it-IT') : 'N/D';
       const userSchoolId = u.school_id || targetSchoolId || '';
-      return `
-      <div class="user-item-card" style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px;padding:10px 14px;border:1px solid var(--border);border-radius:10px;background:var(--bg-card);">
-        <div class="user-card-left" style="display:flex;align-items:center;gap:12px;">
-          ${u.picture ? `<img src="${u.picture}" class="user-card-avatar" alt="Avatar" style="width:38px;height:38px;border-radius:50%;" />` : `<div class="user-card-avatar" style="width:38px;height:38px;display:flex;align-items:center;justify-content:center;background:var(--bg-hover);border-radius:50%;font-size:18px;">👤</div>`}
-          <div class="user-card-info">
-            <div class="user-card-name" style="font-weight:700;font-size:13px;color:var(--text-main);display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
-              ${escapeHtml(u.name || u.email)}
-              <span class="badge ${u.role === 'admin' ? 'badge-primary' : (u.role === 'editor' ? 'badge-info' : 'badge-sec')}" style="font-size:10px;">
-                ${u.role.toUpperCase()}
-              </span>
-              ${isOwner ? `<span class="badge badge-warn" style="font-size:10px;background:#fef3c7;color:#b45309;border:1px solid #f59e0b;padding:1px 6px;">👑 Creatore Scuola</span>` : ''}
-              ${isSuperUser ? `<span class="badge badge-primary" style="font-size:10px;background:#e0e7ff;color:#3730a3;border:1px solid #6366f1;padding:1px 6px;">🌟 SuperAdmin</span>` : ''}
+      const emailSafe = btoa(unescape(encodeURIComponent(u.email))).replace(/=/g, '');
+
+      let membershipsHtml = '';
+      if (isSuper && !isSchoolView && u.school_memberships) {
+        if (u.school_memberships.length === 0) {
+          membershipsHtml = `<div style="font-size:11px;color:#94a3b8;font-style:italic;margin-top:4px;">${isEn ? 'No assigned schools (Global platform user only)' : 'Nessun istituto assegnato (Solo utente piattaforma globale)'}</div>`;
+        } else {
+          membershipsHtml = `<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;align-items:center;">
+            <span style="font-size:11px;color:var(--text-muted);font-weight:600;">${isEn ? 'Schools:' : 'Istituti:'}</span>` +
+            u.school_memberships.map(m => {
+              const roleBadgeColor = m.role === 'admin' ? 'background:#dbeafe;color:#1e40af;border:1px solid #93c5fd' : (m.role === 'editor' ? 'background:#e0e7ff;color:#3730a3;border:1px solid #c7d2fe' : 'background:#f1f5f9;color:#475569;border:1px solid #cbd5e1');
+              return `<span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;background:#f8fafc;border:1px solid #e2e8f0;padding:2px 8px;border-radius:6px;">
+                <b>🏫 ${escapeHtml(m.school_name)}</b>
+                <span style="font-size:9.5px;padding:1px 5px;border-radius:4px;${roleBadgeColor};font-weight:700;">${escapeHtml(m.role.toUpperCase())}</span>
+                ${m.is_owner ? `<span title="Creatore Scuola" style="font-size:10px;">👑</span>` : ''}
+                <button type="button" onclick="removeUserFromSchool('${escapeHtml(u.email)}', '${escapeHtml(m.school_id)}')" style="background:none;border:none;cursor:pointer;color:#ef4444;font-size:11px;padding:0 2px;margin-left:2px;font-weight:bold;" title="${isEn ? 'Remove from ' + escapeHtml(m.school_name) : 'Rimuovi da ' + escapeHtml(m.school_name)}">✕</button>
+              </span>`;
+            }).join('') +
+          `</div>`;
+        }
+
+        if (currentUsersData.available_schools && currentUsersData.available_schools.length > 0) {
+          const availSchools = currentUsersData.available_schools;
+          membershipsHtml += `
+            <div style="margin-top:8px;padding-top:6px;border-top:1px dashed var(--border);display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
+              <span style="font-size:10.5px;font-weight:600;color:var(--text-muted);">➕ ${isEn ? 'Assign to school:' : 'Assegna a istituto:'}</span>
+              <select id="quick-sch-${emailSafe}" class="form-input" style="padding:2px 6px;font-size:11px;width:auto;">
+                ${availSchools.map(s => `<option value="${escapeHtml(s.id)}">🏫 ${escapeHtml(s.name)}</option>`).join('')}
+              </select>
+              <select id="quick-role-${emailSafe}" class="form-input" style="padding:2px 6px;font-size:11px;width:auto;">
+                <option value="editor">✏️ Editor</option>
+                <option value="viewer">👁️ Viewer</option>
+                <option value="admin">👑 Admin</option>
+              </select>
+              <button class="btn btn-xs btn-sec" onclick="quickAssignUserToSchool('${escapeHtml(u.email)}', 'quick-sch-${emailSafe}', 'quick-role-${emailSafe}')" style="font-size:10.5px;padding:2px 8px;">
+                ${isEn ? 'Assign' : 'Assegna'}
+              </button>
             </div>
-            <div class="user-card-email" style="font-size:11.5px;color:var(--text-muted);font-family:var(--font-mono);">${escapeHtml(u.email)}</div>
-            <div class="user-card-meta" style="font-size:10.5px;color:var(--text-sub);">${isEn ? 'Last login:' : 'Ultimo accesso:'} ${lastLoginDate}</div>
+          `;
+        }
+      }
+
+      return `
+      <div class="user-item-card" style="display:flex;flex-direction:column;gap:8px;margin-bottom:8px;padding:10px 14px;border:1px solid var(--border);border-radius:10px;background:var(--bg-card);">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+          <div class="user-card-left" style="display:flex;align-items:center;gap:12px;">
+            ${u.picture ? `<img src="${u.picture}" class="user-card-avatar" alt="Avatar" style="width:38px;height:38px;border-radius:50%;" />` : `<div class="user-card-avatar" style="width:38px;height:38px;display:flex;align-items:center;justify-content:center;background:var(--bg-hover);border-radius:50%;font-size:18px;">👤</div>`}
+            <div class="user-card-info">
+              <div class="user-card-name" style="font-weight:700;font-size:13px;color:var(--text-main);display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+                ${escapeHtml(u.name || u.email)}
+                <span class="badge ${u.role === 'admin' ? 'badge-primary' : (u.role === 'editor' ? 'badge-info' : 'badge-sec')}" style="font-size:10px;">
+                  ${u.role.toUpperCase()}
+                </span>
+                ${isOwner ? `<span class="badge badge-warn" style="font-size:10px;background:#fef3c7;color:#b45309;border:1px solid #f59e0b;padding:1px 6px;">👑 Creatore Scuola</span>` : ''}
+                ${isSuperUser ? `<span class="badge badge-primary" style="font-size:10px;background:#e0e7ff;color:#3730a3;border:1px solid #6366f1;padding:1px 6px;">🌟 SuperAdmin</span>` : ''}
+              </div>
+              <div class="user-card-email" style="font-size:11.5px;color:var(--text-muted);font-family:var(--font-mono);">${escapeHtml(u.email)}</div>
+              <div class="user-card-meta" style="font-size:10.5px;color:var(--text-sub);">${isEn ? 'Last login:' : 'Ultimo accesso:'} ${lastLoginDate}</div>
+            </div>
+          </div>
+          <div class="user-card-actions" style="display:flex;gap:8px;align-items:center;">
+            ${isSuperUser ? `<span style="font-size:11.5px;color:#4f46e5;font-weight:700;">${isEn ? 'Platform SuperAdmin' : 'SuperAdmin Piattaforma'}</span>` : `
+              ${(isSchoolView || userSchoolId) ? `
+                <div style="display:flex;align-items:center;gap:6px;">
+                  <span style="font-size:11px;color:var(--text-muted);font-weight:600;">${isEn ? 'Role:' : 'Ruolo:'}</span>
+                  <select class="form-input" style="padding:2px 8px;font-size:11.5px;font-weight:600;border-radius:6px;width:auto;" onchange="updateUserRole('${escapeHtml(u.email)}', this.value, '${escapeHtml(userSchoolId)}')">
+                    <option value="editor" ${u.role === 'editor' ? 'selected' : ''}>✏️ Editor</option>
+                    <option value="viewer" ${u.role === 'viewer' ? 'selected' : ''}>👁️ Viewer</option>
+                    <option value="admin" ${u.role === 'admin' ? 'selected' : ''}>👑 Admin</option>
+                  </select>
+                </div>
+                <button class="btn btn-sm btn-outline-danger" onclick="removeUserFromSchool('${escapeHtml(u.email)}', '${escapeHtml(userSchoolId)}')" title="${isEn ? 'Remove user from this school' : 'Rimuovi accesso a questa scuola'}">
+                  ❌ ${isEn ? 'Remove' : 'Rimuovi'}
+                </button>
+              ` : `
+                <button class="btn btn-sm btn-outline-warning" onclick="revokeUser('${escapeHtml(u.email)}')">${isEn ? '⛔ Revoke' : '⛔ Revoca'}</button>
+                <button class="btn btn-sm btn-outline-danger" onclick="deleteUser('${escapeHtml(u.email)}')">🗑️</button>
+              `}
+            `}
           </div>
         </div>
-        <div class="user-card-actions" style="display:flex;gap:8px;align-items:center;">
-          ${isSuperUser ? `<span style="font-size:11.5px;color:#4f46e5;font-weight:700;">${isEn ? 'Platform SuperAdmin' : 'SuperAdmin Piattaforma'}</span>` : `
-            <div style="display:flex;align-items:center;gap:6px;">
-              <span style="font-size:11px;color:var(--text-muted);font-weight:600;">${isEn ? 'Role:' : 'Ruolo:'}</span>
-              <select class="form-input" style="padding:2px 8px;font-size:11.5px;font-weight:600;border-radius:6px;width:auto;" onchange="updateUserRole('${escapeHtml(u.email)}', this.value, '${escapeHtml(userSchoolId)}')">
-                <option value="editor" ${u.role === 'editor' ? 'selected' : ''}>✏️ Editor</option>
-                <option value="viewer" ${u.role === 'viewer' ? 'selected' : ''}>👁️ Viewer</option>
-                <option value="admin" ${u.role === 'admin' ? 'selected' : ''}>👑 Admin</option>
-              </select>
-            </div>
-            ${userSchoolId ? `
-              <button class="btn btn-sm btn-outline-danger" onclick="removeUserFromSchool('${escapeHtml(u.email)}', '${escapeHtml(userSchoolId)}')" title="${isEn ? 'Remove user from this school' : 'Rimuovi accesso a questa scuola'}">
-                ❌ ${isEn ? 'Remove' : 'Rimuovi'}
-              </button>
-            ` : `
-              <button class="btn btn-sm btn-outline-warning" onclick="revokeUser('${escapeHtml(u.email)}')">${isEn ? '⛔ Revoke' : '⛔ Revoca'}</button>
-              <button class="btn btn-sm btn-outline-danger" onclick="deleteUser('${escapeHtml(u.email)}')">🗑️</button>
-            `}
-          `}
-        </div>
+        ${membershipsHtml}
       </div>`;
     }).join('');
   }
@@ -1813,7 +1993,7 @@ async function addUserToSchool(schoolId) {
     showToast(isEn ? `Teacher ${email} (${role.toUpperCase()}) added to school!` : `Docente ${email} (${role.toUpperCase()}) aggiunto alla scuola!`, 'ok');
     if (emailInput) emailInput.value = '';
     if (nameInput) nameInput.value = '';
-    await loadUsersList(schoolId);
+    await loadUsersList(selectedAccessSchoolFilter || schoolId);
   } catch (e) {
     alert((isEn ? 'Connection error: ' : 'Errore di connessione: ') + e.message);
   }
@@ -1837,7 +2017,7 @@ async function removeUserFromSchool(email, schoolId) {
       return;
     }
     showToast(isEn ? `User ${email} removed from this school` : `Utente ${email} rimosso dall'istituto`, 'ok');
-    await loadUsersList(schoolId);
+    await loadUsersList(selectedAccessSchoolFilter || undefined);
   } catch (e) {
     alert((isEn ? 'Connection error: ' : 'Errore di connessione: ') + e.message);
   }
@@ -1899,11 +2079,11 @@ async function updateUserRole(email, newRole, schoolId) {
     const data = await res.json();
     if (!res.ok) {
       showToast(data.error || (isEn ? 'Error updating user role' : 'Errore modifica ruolo'), 'error');
-      await loadUsersList(schoolId);
+      await loadUsersList(selectedAccessSchoolFilter || schoolId);
       return;
     }
     showToast(isEn ? `Role updated to ${newRole.toUpperCase()} for ${email}` : `Ruolo aggiornato a ${newRole.toUpperCase()} per ${email}`, 'ok');
-    await loadUsersList(schoolId);
+    await loadUsersList(selectedAccessSchoolFilter || schoolId);
   } catch (e) {
     showToast((isEn ? 'Connection error: ' : 'Errore di connessione: ') + e.message, 'error');
   }
@@ -11251,17 +11431,21 @@ async function renderParameters() {
         </div>
       </div>
 
-      <div style="display:grid;grid-template-columns:1.5fr 2fr 1.5fr;gap:14px;margin-top:10px;">
+      <div style="display:grid;grid-template-columns:1.2fr 1.5fr 1.5fr 1.2fr;gap:14px;margin-top:10px;">
         <div class="form-group">
-          <label class="form-label">${isEn ? 'School Code (MIM / Unique)' : 'Codice Meccanografico (Univoco per l\'Italia)'}</label>
-          <input type="text" id="cfgMeccanografico" class="form-input" value="${escapeHtml(cfg.meccanografico || (currentSchool ? currentSchool.meccanografico : ''))}" placeholder="${isEn ? 'e.g. PDIS017007 (Optional)' : 'es. PDIS017007 (Facoltativo)'}" style="text-transform:uppercase;font-weight:600;letter-spacing:0.5px;">
+          <label class="form-label">${isEn ? 'School Code (MIM / Unique)' : 'Codice Meccanografico'}</label>
+          <input type="text" id="cfgMeccanografico" class="form-input" value="${escapeHtml(cfg.meccanografico || (currentSchool ? currentSchool.meccanografico : ''))}" placeholder="${isEn ? 'e.g. PDIS017007' : 'es. PDIS017007'}" style="text-transform:uppercase;font-weight:600;letter-spacing:0.5px;">
         </div>
         <div class="form-group">
-          <label class="form-label">${isEn ? 'Notes / Timetable Committee Contact' : 'Note / Referente Commissione Orario'}</label>
+          <label class="form-label">📧 ${isEn ? 'Official Contact / Notification Email' : 'Email Contatto / Notifiche Ufficiale'}</label>
+          <input type="email" id="cfgContactEmail" class="form-input" value="${escapeHtml(cfg.contact_email || (currentSchool ? currentSchool.contact_email : ''))}" placeholder="${isEn ? 'e.g. info@school.edu' : 'es. pdis017007@istruzione.it'}">
+        </div>
+        <div class="form-group">
+          <label class="form-label">${isEn ? 'Notes / Timetable Committee Contact' : 'Note / Referente Commissione'}</label>
           <input type="text" id="cfgNotes" class="form-input" value="${escapeHtml(cfg.notes || (currentSchool ? currentSchool.notes : ''))}" placeholder="${isEn ? 'Contact or setup notes...' : 'Recapiti o note di configurazione...'}">
         </div>
         <div class="form-group">
-          <label class="form-label">${isEn ? 'FET Project Comments / Year' : 'Commenti Progetto / Anno Scolastico'}</label>
+          <label class="form-label">${isEn ? 'FET Project Comments / Year' : 'Commenti Progetto / Anno'}</label>
           <input type="text" id="cfgComments" class="form-input" value="${escapeHtml(cfg.comments || '')}" placeholder="${isEn ? 'e.g. S.Y. 2026/2027' : 'es. A.S. 2026/2027'}">
         </div>
       </div>
@@ -11554,6 +11738,7 @@ async function saveParametersSettings() {
   const city = (document.getElementById('cfgCity')?.value || '').trim();
   const country = (document.getElementById('cfgCountry')?.value || (isEn ? 'United States' : 'Italia')).trim();
   const meccanografico = (document.getElementById('cfgMeccanografico')?.value || '').trim().toUpperCase();
+  const contactEmail = (document.getElementById('cfgContactEmail')?.value || '').trim();
   const notes = (document.getElementById('cfgNotes')?.value || '').trim();
   const comments = document.getElementById('cfgComments').value.trim();
   const dayLimits = {};
@@ -11605,6 +11790,7 @@ async function saveParametersSettings() {
     city: city,
     country: country,
     meccanografico: meccanografico,
+    contact_email: contactEmail,
     notes: notes,
     comments: comments,
     days: activeDays,
@@ -11629,6 +11815,7 @@ async function saveParametersSettings() {
       window.currentSchool.city = city;
       window.currentSchool.country = country;
       window.currentSchool.meccanografico = meccanografico;
+      window.currentSchool.contact_email = contactEmail;
       window.currentSchool.notes = notes;
     }
     const sName = document.getElementById('currentSchoolName');

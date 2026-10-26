@@ -915,6 +915,7 @@ class Database:
                 "institution": self.data.get("institution", ""),
                 "comments": self.data.get("comments", ""),
                 "meccanografico": self.data.get("meccanografico", ""),
+                "contact_email": self.data.get("contact_email", ""),
                 "days": self.data.get("days", []),
                 "hours": self.data.get("hours", []),
                 "day_hours_limit": self.data.get("day_hours_limit", copy.deepcopy(DEFAULT_DAY_HOURS)),
@@ -934,6 +935,16 @@ class Database:
                 self.data["institution"] = settings["institution"]
             if "comments" in settings:
                 self.data["comments"] = settings["comments"]
+            if "contact_email" in settings:
+                self.data["contact_email"] = (settings["contact_email"] or "").strip().lower()
+                try:
+                    from webapp.schools import school_manager
+                    school_manager.update_school_info(
+                        self.school_id,
+                        contact_email=self.data["contact_email"]
+                    )
+                except Exception:
+                    pass
             if "meccanografico" in settings:
                 self.data["meccanografico"] = (settings["meccanografico"] or "").strip().upper()
                 try:

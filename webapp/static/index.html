@@ -21,14 +21,14 @@
     })();
   </script>
   <!-- Favicon & Branding Eurario (Safari macOS, Chrome, Edge, iOS, Android) -->
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=1.8.6">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png?v=1.8.6">
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png?v=1.8.6">
-  <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png?v=1.8.6">
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=1.8.6">
-  <link rel="mask-icon" href="/safari-pinned-tab.svg?v=1.8.6" color="#1B2A4A">
-  <link rel="shortcut icon" href="/favicon.ico?v=1.8.6">
-  <link rel="stylesheet" href="styles.css?v=1.8.6">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=1.8.7">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png?v=1.8.7">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png?v=1.8.7">
+  <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png?v=1.8.7">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=1.8.7">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg?v=1.8.7" color="#1B2A4A">
+  <link rel="shortcut icon" href="/favicon.ico?v=1.8.7">
+  <link rel="stylesheet" href="styles.css?v=1.8.7">
   <!-- Google Identity Services OAuth -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
@@ -247,7 +247,7 @@
             <span id="statusIndicatorDot" class="status-indicator-dot dot-green"></span>
             <span id="statusIndicatorText" class="status-indicator-text">FET 7.12</span>
           </span>
-          <span id="sidebarVerTag" class="footer-ver-tag" title="Versione Eurario">v1.8.6</span>
+          <span id="sidebarVerTag" class="footer-ver-tag" title="Versione Eurario">v1.8.7</span>
           <button class="footer-info-btn" onclick="openAboutModal()" title="Crediti, Mentore e Info Legali" aria-label="Informazioni e crediti">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
               <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
@@ -396,7 +396,7 @@
 
     <footer class="app-page-footer">
       <div>
-        <b>Eurario FET Suite</b> &mdash; <span data-i18n="footer.version">Versione</span> <span id="pageFooterVer" class="badge-ver">v1.8.6</span> &bull; <span data-i18n="footer.author">Autore</span>: <b>Carlo Rigoni</b> &bull; <span data-i18n="footer.engine">Motore</span>: <b>FET 7.12.0</b> &bull; <a href="javascript:void(0)" onclick="openAboutModal()" style="color:var(--primary);text-decoration:none;font-weight:600;" data-i18n="footer.credits">Crediti & Note Legali</a>
+        <b>Eurario FET Suite</b> &mdash; <span data-i18n="footer.version">Versione</span> <span id="pageFooterVer" class="badge-ver">v1.8.7</span> &bull; <span data-i18n="footer.author">Autore</span>: <b>Carlo Rigoni</b> &bull; <span data-i18n="footer.engine">Motore</span>: <b>FET 7.12.0</b> &bull; <a href="javascript:void(0)" onclick="openAboutModal()" style="color:var(--primary);text-decoration:none;font-weight:600;" data-i18n="footer.credits">Crediti & Note Legali</a>
       </div>
       <div style="font-size:11.5px;color:var(--text-muted);">
         <span data-i18n="footer.heuristic">Algoritmo euristico</span>: <a href="https://lalescu.ro/liviu/fet/" target="_blank" rel="noopener" style="color:var(--primary);text-decoration:none;font-weight:600;">FET Free Timetabling Software</a> &bull; <span data-i18n="footer.ai_credit">AI Pair Programming</span>: Google DeepMind Antigravity
@@ -519,6 +519,9 @@
           <button class="access-tab-btn" id="tabBtnApproved" onclick="switchAccessTab('approved')">
             <span id="tabApprovedTitleText" data-i18n="modals.access.tab_approved">Utenti Autorizzati</span> (<span id="modalApprovedCount">0</span>)
           </button>
+          <button class="access-tab-btn" id="tabBtnSchoolSmtp" onclick="switchAccessTab('schoolsmtp')">
+            <span>📧</span> <span data-i18n="modals.access.tab_school_smtp">Email & SMTP Scuola</span>
+          </button>
           <button class="access-tab-btn" id="tabBtnLogs" onclick="switchAccessTab('logs')" data-i18n="modals.access.tab_logs">
             📜 Registro Accessi
           </button>
@@ -538,6 +541,58 @@
         <div id="tabApprovedUsers" class="access-tab-content" style="display:none;">
           <div id="approvedUsersList" class="users-list-wrap">
             <!-- Popolato via JS -->
+          </div>
+        </div>
+
+        <!-- Tab 3: SMTP & Notifiche Scuola (Amministratori di Istituto & SuperAdmin) -->
+        <div id="tabSchoolSmtp" class="access-tab-content" style="display:none;">
+          <div class="config-section" style="padding:16px 20px;border:1px solid var(--border);border-radius:12px;background:var(--bg-card);margin-bottom:16px;">
+            <h4 style="font-size:14px;font-weight:700;color:var(--text-main);margin-bottom:6px;display:flex;align-items:center;gap:6px;">
+              <span>📧</span> <span id="schoolSmtpTitle">Server SMTP & Notifiche Istituto</span>
+            </h4>
+            <p class="section-desc" style="font-size:12px;color:var(--text-muted);margin-bottom:14px;line-height:1.5;">
+              Configura il server di posta in uscita dedicato a questo istituto scolastico (Google Workspace, Microsoft 365 o server SMTP della scuola). Consente l'invio autonomo di notifiche orario, avvisi ai docenti e report.
+            </p>
+
+            <div class="form-group" style="margin-bottom:14px;">
+              <label style="display:flex;align-items:center;gap:8px;font-weight:700;cursor:pointer;font-size:13px;">
+                <input type="checkbox" id="cfgSchoolSmtpEnabled" style="width:16px;height:16px;" />
+                <span>Abilita invio email per questo istituto</span>
+              </label>
+            </div>
+
+            <div style="display:grid;grid-template-columns:2fr 1fr;gap:12px;margin-bottom:12px;">
+              <div>
+                <label class="form-label" style="font-size:11.5px;font-weight:600;margin-bottom:4px;display:block;">Server SMTP (Host)</label>
+                <input type="text" id="cfgSchoolSmtpHost" class="form-input" placeholder="smtp.gmail.com oppure smtp.office365.com" style="width:100%;font-size:12px;" />
+              </div>
+              <div>
+                <label class="form-label" style="font-size:11.5px;font-weight:600;margin-bottom:4px;display:block;">Porta SMTP</label>
+                <input type="number" id="cfgSchoolSmtpPort" class="form-input" placeholder="587" value="587" style="width:100%;font-size:12px;" />
+              </div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+              <div>
+                <label class="form-label" style="font-size:11.5px;font-weight:600;margin-bottom:4px;display:block;">Email / Utente Mittente</label>
+                <input type="email" id="cfgSchoolSmtpUser" class="form-input" placeholder="orario@scuola.edu.it" style="width:100%;font-size:12px;" />
+              </div>
+              <div>
+                <label class="form-label" style="font-size:11.5px;font-weight:600;margin-bottom:4px;display:block;">Password / Password Applicazione</label>
+                <input type="password" id="cfgSchoolSmtpPass" class="form-input" placeholder="••••••••••••••••" style="width:100%;font-size:12px;" />
+              </div>
+            </div>
+
+            <div style="margin-bottom:18px;">
+              <label class="form-label" style="font-size:11.5px;font-weight:600;margin-bottom:4px;display:block;">Destinatario Notifiche / Email Referente</label>
+              <input type="email" id="cfgSchoolSmtpNotifyTo" class="form-input" placeholder="referente.orario@scuola.edu.it" style="width:100%;font-size:12px;" />
+              <span style="font-size:11px;color:var(--text-muted);margin-top:3px;display:block;">Indirizzo email su cui ricevere gli avvisi e le email di test di questo istituto.</span>
+            </div>
+
+            <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end;">
+              <button class="btn btn-sec btn-sm" onclick="testSchoolSmtpEmail()">📧 Invia Email di Test Scuola</button>
+              <button class="btn btn-primary btn-sm" onclick="saveSchoolSmtpConfig()">💾 Salva Configurazione SMTP Scuola</button>
+            </div>
           </div>
         </div>
 
@@ -788,7 +843,7 @@
         <!-- Banner Versione & Verifica Aggiornamenti -->
         <div class="about-banner">
           <div style="display:flex;align-items:center;gap:8px;">
-            <span id="aboutModalVer" class="badge badge-info" style="font-size:12px;padding:3px 8px;font-weight:700;">v1.8.6</span>
+            <span id="aboutModalVer" class="badge badge-info" style="font-size:12px;padding:3px 8px;font-weight:700;">v1.8.7</span>
             <span id="aboutUpdateStatusText" style="font-size:11.5px;color:var(--text-sub);" data-i18n="modals.about.stable_release">Release Stabile</span>
           </div>
           <div style="display:flex;align-items:center;gap:10px;">
@@ -902,7 +957,7 @@
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
           <div class="update-stat-card">
             <div style="font-size: 11px; text-transform: uppercase; font-weight: 700; color: var(--text-sub); letter-spacing: 0.5px;" data-i18n="modals.updates.current_ver">Versione Corrente</div>
-            <div id="updateCurrentVer" style="font-size: 18px; font-weight: 800; color: var(--text-main); margin-top: 4px;">v1.8.6</div>
+            <div id="updateCurrentVer" style="font-size: 18px; font-weight: 800; color: var(--text-main); margin-top: 4px;">v1.8.7</div>
             <div id="updateCurrentTag" style="font-size: 11px; color: var(--text-muted); margin-top: 2px;" data-i18n="modals.updates.current_tag">In esecuzione sul server</div>
           </div>
           <div class="update-stat-card">
@@ -999,6 +1054,11 @@
         </div>
 
         <div class="form-group">
+          <label style="font-size:12px;font-weight:600;margin-bottom:4px;display:block;" data-i18n="modals.create_school.email_label">Email Ufficiale / Contatto Notifiche (Facoltativo)</label>
+          <input type="email" id="newSchoolContactEmail" class="form-input" placeholder="Es. segreteria@scuola.edu.it oppure orario@scuola.edu.it" data-i18n-placeholder="modals.create_school.email_placeholder" style="width:100%;">
+        </div>
+
+        <div class="form-group">
           <label style="font-size:12px;font-weight:600;margin-bottom:4px;display:block;" data-i18n="modals.create_school.notes_label">Note / Recapito Referente Commissione Orario</label>
           <textarea id="newSchoolNotes" class="form-input" rows="2" placeholder="Indicare eventuali recapiti o note per la configurazione..." data-i18n-placeholder="modals.create_school.notes_placeholder" style="width:100%;resize:vertical;"></textarea>
         </div>
@@ -1089,7 +1149,7 @@
     </div>
   </div>
 
-  <script src="i18n.js?v=1.8.6"></script>
-  <script src="app.js?v=1.8.6"></script>
+  <script src="i18n.js?v=1.8.7"></script>
+  <script src="app.js?v=1.8.7"></script>
 </body>
 </html>
