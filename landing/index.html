@@ -7,6 +7,18 @@
   <meta name="description" content="Eurario è la suite libera e open source per l'orario scolastico italiano con motore solutore FET 7.12, disponibile Self-Hosted e in Cloud SaaS gestito.">
   <meta name="theme-color" content="#1B2A4A">
 
+  <!-- Immediate Theme Initializer to prevent Flash of Unstyled Theme (FOUT) -->
+  <script>
+    (function() {
+      try {
+        const saved = localStorage.getItem('eurario_theme');
+        if (saved === 'dark' || saved === 'light') {
+          document.documentElement.setAttribute('data-theme', saved);
+        }
+      } catch (e) {}
+    })();
+  </script>
+
   <!-- Favicon Ufficiale Eurario -->
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%231B2A4A'/><rect x='10' y='10' width='11' height='44' rx='3' fill='%23F6F3EC'/><rect x='24' y='10' width='30' height='11' rx='3' fill='%23E4572E'/><rect x='24' y='26.5' width='22' height='11' rx='3' fill='%23F2B134'/><rect x='24' y='43' width='30' height='11' rx='3' fill='%232F7F86'/></svg>">
 
@@ -16,26 +28,80 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 
   <style>
+    /* ==========================================================================
+       DESIGN SYSTEM & CSS VARIABLES
+       ========================================================================== */
     :root {
       --bg-body: #f8fafc;
       --bg-surface: #ffffff;
       --bg-surface-alt: #f1f5f9;
       --bg-card: #ffffff;
+      --bg-card-hover: #f8fafc;
       --text-main: #0f172a;
       --text-muted: #475569;
       --text-subtle: #94a3b8;
+      --text-title: #1B2A4A;
       --border-color: #e2e8f0;
       --navbar-bg: rgba(255, 255, 255, 0.92);
+      --header-bar-bg: #1B2A4A;
+      --footer-bg: #1B2A4A;
 
       --navy: #1B2A4A;
       --navy-dark: #111c33;
       --emerald: #059669;
       --emerald-hover: #047857;
       --emerald-light: #ecfdf5;
+      --emerald-badge-bg: #ecfdf5;
+      --emerald-badge-text: #047857;
       --amber: #d97706;
       --amber-light: #fffbeb;
+      --amber-badge-bg: #fffbeb;
+      --amber-badge-text: #b45309;
+      --blue-badge-bg: #eff6ff;
+      --blue-badge-text: #1d4ed8;
       --coral: #E4572E;
       --sand: #F6F3EC;
+
+      /* Subject pills (Light mode) */
+      --subj-mat-bg: #dbeafe;
+      --subj-mat-text: #1e40af;
+      --subj-mat-border: #bfdbfe;
+
+      --subj-ita-bg: #fee2e2;
+      --subj-ita-text: #991b1b;
+      --subj-ita-border: #fecaca;
+
+      --subj-sci-bg: #d1fae5;
+      --subj-sci-text: #065f46;
+      --subj-sci-border: #a7f3d0;
+
+      --subj-ing-bg: #fef3c7;
+      --subj-ing-text: #92400e;
+      --subj-ing-border: #fde68a;
+
+      --subj-pe-bg: #fce7f3;
+      --subj-pe-text: #9d174d;
+      --subj-pe-border: #fbcfe8;
+
+      --subj-mecc-bg: #ffedd5;
+      --subj-mecc-text: #9a3412;
+      --subj-mecc-border: #fed7aa;
+
+      --subj-disp-bg: #f3e8ff;
+      --subj-disp-text: #6b21a8;
+      --subj-disp-border: #e9d5ff;
+
+      /* Compare table */
+      --comp-trad-bg: #fffaf0;
+      --comp-trad-text: #dc2626;
+      --comp-eur-bg: #f0fdf4;
+      --comp-eur-text: #047857;
+
+      /* Plan & Advisor */
+      --plan-featured-bg: linear-gradient(180deg, #ffffff 0%, #f0fdf4 100%);
+      --advisor-bg: #fffbeb;
+      --advisor-border: #fde68a;
+      --advisor-text: #92400e;
 
       --slate-50: #f8fafc;
       --slate-100: #f1f5f9;
@@ -48,81 +114,189 @@
       --radius-sm: 8px;
       --radius-md: 14px;
       --radius-lg: 22px;
-      --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
       --shadow-md: 0 6px 20px -4px rgba(27,42,74,0.08);
       --shadow-lg: 0 14px 34px -8px rgba(27,42,74,0.12);
     }
 
+    /* ==========================================================================
+       DARK THEME SPECIFICATION
+       ========================================================================== */
     [data-theme="dark"] {
       --bg-body: #0b1120;
-      --bg-surface: #131d33;
-      --bg-surface-alt: #0f172a;
-      --bg-card: #18233c;
-      --text-main: #f8fafc;
+      --bg-surface: #111a2e;
+      --bg-surface-alt: #0e1626;
+      --bg-card: #152238;
+      --bg-card-hover: #1b2a45;
+      --text-main: #f1f5f9;
       --text-muted: #94a3b8;
       --text-subtle: #64748b;
-      --border-color: #24324f;
-      --navbar-bg: rgba(11, 17, 32, 0.92);
+      --text-title: #f8fafc;
+      --border-color: #233554;
+      --navbar-bg: rgba(11, 17, 32, 0.94);
+      --header-bar-bg: #152238;
+      --footer-bg: #070d18;
 
-      --navy: #93c5fd;
+      --navy: #38bdf8;
       --navy-dark: #070d18;
       --emerald: #10b981;
       --emerald-hover: #059669;
       --emerald-light: rgba(16, 185, 129, 0.15);
+      --emerald-badge-bg: rgba(16, 185, 129, 0.18);
+      --emerald-badge-text: #34d399;
       --amber: #f59e0b;
       --amber-light: rgba(245, 158, 11, 0.15);
+      --amber-badge-bg: rgba(245, 158, 11, 0.18);
+      --amber-badge-text: #fbbf24;
+      --blue-badge-bg: rgba(59, 130, 246, 0.18);
+      --blue-badge-text: #93c5fd;
+
+      /* Subject pills (Dark mode - translucent neon-soft) */
+      --subj-mat-bg: rgba(59, 130, 246, 0.18);
+      --subj-mat-text: #93c5fd;
+      --subj-mat-border: rgba(59, 130, 246, 0.35);
+
+      --subj-ita-bg: rgba(239, 68, 68, 0.18);
+      --subj-ita-text: #fca5a5;
+      --subj-ita-border: rgba(239, 68, 68, 0.35);
+
+      --subj-sci-bg: rgba(16, 185, 129, 0.18);
+      --subj-sci-text: #6ee7b7;
+      --subj-sci-border: rgba(16, 185, 129, 0.35);
+
+      --subj-ing-bg: rgba(245, 158, 11, 0.18);
+      --subj-ing-text: #fcd34d;
+      --subj-ing-border: rgba(245, 158, 11, 0.35);
+
+      --subj-pe-bg: rgba(236, 72, 153, 0.18);
+      --subj-pe-text: #f472b6;
+      --subj-pe-border: rgba(236, 72, 153, 0.35);
+
+      --subj-mecc-bg: rgba(249, 115, 22, 0.18);
+      --subj-mecc-text: #fdba74;
+      --subj-mecc-border: rgba(249, 115, 22, 0.35);
+
+      --subj-disp-bg: rgba(168, 85, 247, 0.18);
+      --subj-disp-text: #d8b4fe;
+      --subj-disp-border: rgba(168, 85, 247, 0.35);
+
+      /* Compare table */
+      --comp-trad-bg: rgba(239, 68, 68, 0.12);
+      --comp-trad-text: #f87171;
+      --comp-eur-bg: rgba(16, 185, 129, 0.14);
+      --comp-eur-text: #34d399;
+
+      /* Plan & Advisor */
+      --plan-featured-bg: linear-gradient(180deg, #152238 0%, rgba(5, 150, 105, 0.16) 100%);
+      --advisor-bg: rgba(245, 158, 11, 0.1);
+      --advisor-border: rgba(245, 158, 11, 0.25);
+      --advisor-text: #fcd34d;
 
       --slate-50: #0b1120;
-      --slate-100: #0f172a;
-      --slate-200: #24324f;
+      --slate-100: #0e1626;
+      --slate-200: #233554;
       --slate-400: #64748b;
       --slate-600: #94a3b8;
       --slate-700: #cbd5e1;
       --slate-900: #f8fafc;
 
-      --shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
-      --shadow-md: 0 6px 20px -4px rgba(0,0,0,0.4);
-      --shadow-lg: 0 14px 34px -8px rgba(0,0,0,0.6);
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
+      --shadow-md: 0 6px 20px -4px rgba(0,0,0,0.5);
+      --shadow-lg: 0 14px 34px -8px rgba(0,0,0,0.7);
     }
 
+    /* Auto mode: follow OS when user hasn't explicitly chosen light */
     @media (prefers-color-scheme: dark) {
       :root:not([data-theme="light"]) {
         --bg-body: #0b1120;
-        --bg-surface: #131d33;
-        --bg-surface-alt: #0f172a;
-        --bg-card: #18233c;
-        --text-main: #f8fafc;
+        --bg-surface: #111a2e;
+        --bg-surface-alt: #0e1626;
+        --bg-card: #152238;
+        --bg-card-hover: #1b2a45;
+        --text-main: #f1f5f9;
         --text-muted: #94a3b8;
         --text-subtle: #64748b;
-        --border-color: #24324f;
-        --navbar-bg: rgba(11, 17, 32, 0.92);
+        --text-title: #f8fafc;
+        --border-color: #233554;
+        --navbar-bg: rgba(11, 17, 32, 0.94);
+        --header-bar-bg: #152238;
+        --footer-bg: #070d18;
 
-        --navy: #93c5fd;
+        --navy: #38bdf8;
         --navy-dark: #070d18;
         --emerald: #10b981;
         --emerald-hover: #059669;
         --emerald-light: rgba(16, 185, 129, 0.15);
+        --emerald-badge-bg: rgba(16, 185, 129, 0.18);
+        --emerald-badge-text: #34d399;
         --amber: #f59e0b;
         --amber-light: rgba(245, 158, 11, 0.15);
+        --amber-badge-bg: rgba(245, 158, 11, 0.18);
+        --amber-badge-text: #fbbf24;
+        --blue-badge-bg: rgba(59, 130, 246, 0.18);
+        --blue-badge-text: #93c5fd;
+
+        --subj-mat-bg: rgba(59, 130, 246, 0.18);
+        --subj-mat-text: #93c5fd;
+        --subj-mat-border: rgba(59, 130, 246, 0.35);
+
+        --subj-ita-bg: rgba(239, 68, 68, 0.18);
+        --subj-ita-text: #fca5a5;
+        --subj-ita-border: rgba(239, 68, 68, 0.35);
+
+        --subj-sci-bg: rgba(16, 185, 129, 0.18);
+        --subj-sci-text: #6ee7b7;
+        --subj-sci-border: rgba(16, 185, 129, 0.35);
+
+        --subj-ing-bg: rgba(245, 158, 11, 0.18);
+        --subj-ing-text: #fcd34d;
+        --subj-ing-border: rgba(245, 158, 11, 0.35);
+
+        --subj-pe-bg: rgba(236, 72, 153, 0.18);
+        --subj-pe-text: #f472b6;
+        --subj-pe-border: rgba(236, 72, 153, 0.35);
+
+        --subj-mecc-bg: rgba(249, 115, 22, 0.18);
+        --subj-mecc-text: #fdba74;
+        --subj-mecc-border: rgba(249, 115, 22, 0.35);
+
+        --subj-disp-bg: rgba(168, 85, 247, 0.18);
+        --subj-disp-text: #d8b4fe;
+        --subj-disp-border: rgba(168, 85, 247, 0.35);
+
+        --comp-trad-bg: rgba(239, 68, 68, 0.12);
+        --comp-trad-text: #f87171;
+        --comp-eur-bg: rgba(16, 185, 129, 0.14);
+        --comp-eur-text: #34d399;
+
+        --plan-featured-bg: linear-gradient(180deg, #152238 0%, rgba(5, 150, 105, 0.16) 100%);
+        --advisor-bg: rgba(245, 158, 11, 0.1);
+        --advisor-border: rgba(245, 158, 11, 0.25);
+        --advisor-text: #fcd34d;
 
         --slate-50: #0b1120;
-        --slate-100: #0f172a;
-        --slate-200: #24324f;
+        --slate-100: #0e1626;
+        --slate-200: #233554;
         --slate-400: #64748b;
         --slate-600: #94a3b8;
         --slate-700: #cbd5e1;
         --slate-900: #f8fafc;
+
+        --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
+        --shadow-md: 0 6px 20px -4px rgba(0,0,0,0.5);
+        --shadow-lg: 0 14px 34px -8px rgba(0,0,0,0.7);
       }
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-      background-color: var(--slate-50);
-      color: var(--slate-900);
+      background-color: var(--bg-body);
+      color: var(--text-main);
       line-height: 1.6;
       overflow-x: hidden;
       -webkit-font-smoothing: antialiased;
+      transition: background-color 0.25s ease, color 0.25s ease;
     }
 
     /* Container centrale */
@@ -137,27 +311,30 @@
     .navbar {
       position: sticky;
       top: 0;
-      background: rgba(255, 255, 255, 0.92);
+      background: var(--navbar-bg);
       backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--slate-200);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-color);
       z-index: 100;
-      transition: all 0.2s ease;
+      transition: background-color 0.25s ease, border-color 0.25s ease;
     }
     .nav-inner {
       display: flex;
       justify-content: space-between;
       align-items: center;
       height: 72px;
+      gap: 16px;
     }
     .brand {
       display: flex;
       align-items: center;
       gap: 12px;
       text-decoration: none;
-      color: var(--navy);
+      color: var(--text-title);
       font-weight: 800;
       font-size: 20px;
       letter-spacing: -0.5px;
+      flex-shrink: 0;
     }
     .brand-mark {
       width: 36px;
@@ -171,24 +348,32 @@
     .nav-links {
       display: flex;
       align-items: center;
-      gap: 24px;
+      gap: 20px;
+      flex-shrink: 1;
     }
     .nav-link {
       text-decoration: none;
-      color: var(--slate-600);
+      color: var(--text-muted);
       font-size: 14px;
       font-weight: 600;
       transition: color 0.15s;
+      white-space: nowrap;
     }
-    .nav-link:hover { color: var(--navy); }
+    .nav-link:hover { color: var(--emerald); }
 
+    .nav-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
 
     /* THEME SWITCHER */
     .theme-switch {
       display: inline-flex;
       align-items: center;
-      background: var(--slate-100);
-      border: 1px solid var(--slate-200);
+      background: var(--bg-surface-alt);
+      border: 1px solid var(--border-color);
       border-radius: 99px;
       padding: 3px;
       gap: 2px;
@@ -199,7 +384,7 @@
       padding: 5px 8px;
       border-radius: 99px;
       font-size: 13px;
-      color: var(--slate-600);
+      color: var(--text-muted);
       cursor: pointer;
       transition: all 0.15s ease;
       display: inline-flex;
@@ -208,20 +393,20 @@
       line-height: 1;
     }
     .theme-btn:hover {
-      color: var(--navy);
+      color: var(--text-title);
     }
     .theme-btn.active {
-      background: var(--bg-surface);
-      color: var(--navy);
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      background: var(--bg-card);
+      color: var(--emerald);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.15);
     }
 
     /* LANGUAGE SWITCHER */
     .lang-switch {
       display: inline-flex;
       align-items: center;
-      background: var(--slate-100);
-      border: 1px solid var(--slate-200);
+      background: var(--bg-surface-alt);
+      border: 1px solid var(--border-color);
       border-radius: 99px;
       padding: 3px;
       gap: 2px;
@@ -229,39 +414,42 @@
     .lang-btn {
       border: none;
       background: transparent;
-      padding: 5px 11px;
+      padding: 5px 10px;
       border-radius: 99px;
       font-size: 12.5px;
       font-weight: 700;
-      color: var(--slate-600);
+      color: var(--text-muted);
       cursor: pointer;
       transition: all 0.15s ease;
       display: inline-flex;
       align-items: center;
-      gap: 5px;
+      gap: 4px;
       line-height: 1;
     }
     .lang-btn:hover {
-      color: var(--navy);
+      color: var(--text-title);
     }
     .lang-btn.active {
-      background: #fff;
-      color: var(--navy);
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      background: var(--bg-card);
+      color: var(--emerald);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.15);
     }
 
+    /* BUTTONS */
     .btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
-      padding: 10px 22px;
+      padding: 10px 20px;
       border-radius: var(--radius-md);
       font-weight: 700;
       font-size: 14px;
       text-decoration: none;
       transition: all 0.2s;
       cursor: pointer;
+      white-space: nowrap;
+      border: none;
     }
     .btn-emerald {
       background: var(--emerald);
@@ -273,21 +461,23 @@
       transform: translateY(-1px);
     }
     .btn-navy {
-      background: var(--navy);
+      background: var(--header-bar-bg);
       color: #fff;
+      border: 1px solid var(--border-color);
     }
     .btn-navy:hover {
       background: var(--navy-dark);
       transform: translateY(-1px);
     }
     .btn-outline {
-      border: 1.5px solid var(--slate-200);
-      color: var(--slate-600);
-      background: #fff;
+      border: 1.5px solid var(--border-color);
+      color: var(--text-main);
+      background: var(--bg-card);
     }
     .btn-outline:hover {
-      border-color: var(--slate-400);
-      color: var(--slate-900);
+      border-color: var(--emerald);
+      color: var(--emerald);
+      transform: translateY(-1px);
     }
 
     /* HERO */
@@ -307,6 +497,7 @@
       gap: 8px;
       background: var(--emerald-light);
       color: var(--emerald);
+      border: 1px solid rgba(5,150,105,0.2);
       padding: 6px 14px;
       border-radius: 99px;
       font-size: 13px;
@@ -318,17 +509,17 @@
       font-weight: 800;
       line-height: 1.15;
       letter-spacing: -1px;
-      color: var(--navy);
+      color: var(--text-title);
       margin-bottom: 20px;
     }
     .hero-title span {
-      background: linear-gradient(135deg, var(--emerald) 0%, var(--navy) 100%);
+      background: linear-gradient(135deg, var(--emerald) 0%, #38bdf8 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
     .hero-subtitle {
       font-size: 17px;
-      color: var(--slate-600);
+      color: var(--text-muted);
       line-height: 1.6;
       margin-bottom: 32px;
       max-width: 580px;
@@ -342,9 +533,9 @@
 
     /* MOCKUP APPLICATIVO HERO */
     .mockup-window {
-      background: #fff;
+      background: var(--bg-card);
       border-radius: var(--radius-lg);
-      border: 1px solid var(--slate-200);
+      border: 1px solid var(--border-color);
       box-shadow: var(--shadow-lg);
       overflow: hidden;
       transform: perspective(1000px) rotateY(-3deg) rotateX(2deg);
@@ -354,11 +545,12 @@
       transform: perspective(1000px) rotateY(0deg) rotateX(0deg);
     }
     .mockup-header {
-      background: var(--navy);
+      background: var(--header-bar-bg);
       padding: 12px 18px;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      border-bottom: 1px solid var(--border-color);
     }
     .mockup-dots {
       display: flex;
@@ -371,7 +563,7 @@
     }
     .mockup-body {
       padding: 20px;
-      background: var(--slate-50);
+      background: var(--bg-surface-alt);
     }
     .timetable-mini {
       display: grid;
@@ -380,31 +572,35 @@
       font-size: 11px;
     }
     .mini-cell {
-      background: #fff;
-      border: 1px solid var(--slate-200);
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
       border-radius: 4px;
       padding: 8px 4px;
       text-align: center;
       font-weight: 600;
-      color: var(--navy);
+      color: var(--text-title);
     }
     .cell-header {
-      background: var(--navy);
+      background: var(--header-bar-bg);
       color: #fff;
-      border: none;
+      border: 1px solid var(--border-color);
       font-size: 10px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
-    .cell-ita { background: #fee2e2; color: #991b1b; }
-    .cell-mat { background: #dbeafe; color: #1e40af; }
-    .cell-ing { background: #fef3c7; color: #92400e; }
-    .cell-sci { background: #d1fae5; color: #065f46; }
-    .cell-disp { background: #f3e8ff; color: #6b21a8; font-style: italic; }
+    .cell-ita { background: var(--subj-ita-bg); color: var(--subj-ita-text); border: 1px solid var(--subj-ita-border); }
+    .cell-mat { background: var(--subj-mat-bg); color: var(--subj-mat-text); border: 1px solid var(--subj-mat-border); }
+    .cell-ing { background: var(--subj-ing-bg); color: var(--subj-ing-text); border: 1px solid var(--subj-ing-border); }
+    .cell-sci { background: var(--subj-sci-bg); color: var(--subj-sci-text); border: 1px solid var(--subj-sci-border); }
+    .cell-disp { background: var(--subj-disp-bg); color: var(--subj-disp-text); border: 1px solid var(--subj-disp-border); font-style: italic; }
 
     /* SEZIONI GENERALI */
     .section {
       padding: 90px 0;
+      transition: background-color 0.25s ease;
+    }
+    .section-alt {
+      background-color: var(--bg-surface-alt);
     }
     .section-header {
       text-align: center;
@@ -423,13 +619,13 @@
     .section-title {
       font-size: 36px;
       font-weight: 800;
-      color: var(--navy);
+      color: var(--text-title);
       letter-spacing: -0.8px;
       margin-bottom: 16px;
     }
     .section-subtitle {
       font-size: 16px;
-      color: var(--slate-600);
+      color: var(--text-muted);
     }
 
     /* I PILASTRI */
@@ -439,17 +635,17 @@
       gap: 28px;
     }
     .pillar-card {
-      background: #fff;
+      background: var(--bg-card);
       border-radius: var(--radius-md);
       padding: 32px 28px;
-      border: 1px solid var(--slate-200);
+      border: 1px solid var(--border-color);
       box-shadow: var(--shadow-sm);
       transition: all 0.25s ease;
     }
     .pillar-card:hover {
       transform: translateY(-4px);
       box-shadow: var(--shadow-md);
-      border-color: rgba(5,150,105,0.4);
+      border-color: var(--emerald);
     }
     .pillar-icon {
       font-size: 32px;
@@ -459,12 +655,12 @@
     .pillar-title {
       font-size: 18px;
       font-weight: 700;
-      color: var(--navy);
+      color: var(--text-title);
       margin-bottom: 10px;
     }
     .pillar-desc {
       font-size: 14px;
-      color: var(--slate-600);
+      color: var(--text-muted);
       line-height: 1.6;
     }
 
@@ -477,9 +673,9 @@
       margin-bottom: 28px;
     }
     .showcase-tab-btn {
-      background: #fff;
-      border: 1.5px solid var(--slate-200);
-      color: var(--slate-600);
+      background: var(--bg-card);
+      border: 1.5px solid var(--border-color);
+      color: var(--text-muted);
       padding: 11px 22px;
       border-radius: 99px;
       font-size: 14px;
@@ -492,31 +688,31 @@
       box-shadow: var(--shadow-sm);
     }
     .showcase-tab-btn:hover {
-      border-color: var(--slate-400);
-      color: var(--navy);
+      border-color: var(--emerald);
+      color: var(--text-title);
       transform: translateY(-1px);
     }
     .showcase-tab-btn.active {
-      background: var(--navy);
+      background: var(--emerald);
       color: #fff;
-      border-color: var(--navy);
-      box-shadow: 0 4px 14px rgba(27,42,74,0.25);
+      border-color: var(--emerald);
+      box-shadow: 0 4px 14px rgba(5,150,105,0.3);
     }
     .showcase-window {
-      background: #fff;
+      background: var(--bg-card);
       border-radius: var(--radius-lg);
-      border: 1px solid var(--slate-200);
+      border: 1px solid var(--border-color);
       box-shadow: var(--shadow-lg);
       overflow: hidden;
     }
     .showcase-topbar {
-      background: var(--navy);
+      background: var(--header-bar-bg);
       padding: 14px 20px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       color: #fff;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
+      border-bottom: 1px solid var(--border-color);
     }
     .showcase-dots {
       display: flex;
@@ -546,7 +742,7 @@
     .showcase-pane {
       display: none;
       padding: 28px;
-      background: var(--slate-50);
+      background: var(--bg-surface-alt);
       animation: fadeIn 0.25s ease forwards;
     }
     .showcase-pane.active {
@@ -563,16 +759,16 @@
       gap: 16px;
       flex-wrap: wrap;
       padding-bottom: 16px;
-      border-bottom: 1px solid var(--slate-200);
+      border-bottom: 1px solid var(--border-color);
     }
     .showcase-card-footer {
       margin-top: 18px;
       padding: 12px 16px;
-      background: #fff;
-      border: 1px solid var(--slate-200);
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
       border-radius: var(--radius-sm);
       font-size: 12.5px;
-      color: var(--slate-700);
+      color: var(--text-muted);
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -588,7 +784,7 @@
       min-width: 700px;
     }
     .showcase-timetable-grid th {
-      background: var(--navy);
+      background: var(--header-bar-bg);
       color: #fff;
       padding: 10px 12px;
       font-size: 12px;
@@ -597,20 +793,21 @@
       letter-spacing: 0.5px;
       border-radius: 6px;
       text-align: center;
+      border: 1px solid var(--border-color);
     }
     .showcase-timetable-grid td {
-      background: #fff;
-      border: 1px solid var(--slate-200);
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
       border-radius: 6px;
       padding: 8px;
       vertical-align: middle;
     }
     .showcase-timetable-grid td.cell-hour {
-      background: #f1f5f9;
+      background: var(--bg-surface-alt);
       font-weight: 700;
       font-size: 11.5px;
       text-align: center;
-      color: var(--navy);
+      color: var(--text-title);
       width: 90px;
     }
     .cell-pill {
@@ -622,13 +819,13 @@
       text-align: center;
       line-height: 1.35;
     }
-    .cell-subj-mat { background: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; }
-    .cell-subj-ita { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
-    .cell-subj-sci { background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
-    .cell-subj-ing { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
-    .cell-subj-pe { background: #fce7f3; color: #9d174d; border: 1px solid #fbcfe8; }
-    .cell-subj-mecc { background: #ffedd5; color: #9a3412; border: 1px solid #fed7aa; }
-    .cell-subj-disp { background: #f3e8ff; color: #6b21a8; border: 1px solid #e9d5ff; font-style: italic; }
+    .cell-subj-mat { background: var(--subj-mat-bg); color: var(--subj-mat-text); border: 1px solid var(--subj-mat-border); }
+    .cell-subj-ita { background: var(--subj-ita-bg); color: var(--subj-ita-text); border: 1px solid var(--subj-ita-border); }
+    .cell-subj-sci { background: var(--subj-sci-bg); color: var(--subj-sci-text); border: 1px solid var(--subj-sci-border); }
+    .cell-subj-ing { background: var(--subj-ing-bg); color: var(--subj-ing-text); border: 1px solid var(--subj-ing-border); }
+    .cell-subj-pe { background: var(--subj-pe-bg); color: var(--subj-pe-text); border: 1px solid var(--subj-pe-border); }
+    .cell-subj-mecc { background: var(--subj-mecc-bg); color: var(--subj-mecc-text); border: 1px solid var(--subj-mecc-border); }
+    .cell-subj-disp { background: var(--subj-disp-bg); color: var(--subj-disp-text); border: 1px solid var(--subj-disp-border); font-style: italic; }
 
     /* Docenti Showcase */
     .teachers-showcase-grid {
@@ -637,8 +834,8 @@
       gap: 16px;
     }
     .teacher-showcase-card {
-      background: #fff;
-      border: 1px solid var(--slate-200);
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
       border-radius: var(--radius-md);
       padding: 18px 20px;
       box-shadow: var(--shadow-sm);
@@ -650,9 +847,9 @@
       border-radius: 4px;
       white-space: nowrap;
     }
-    .badge-success { background: #ecfdf5; color: #047857; }
-    .badge-warning { background: #fffbeb; color: #b45309; }
-    .badge-info { background: #eff6ff; color: #1d4ed8; }
+    .badge-success { background: var(--emerald-badge-bg); color: var(--emerald-badge-text); }
+    .badge-warning { background: var(--amber-badge-bg); color: var(--amber-badge-text); }
+    .badge-info { background: var(--blue-badge-bg); color: var(--blue-badge-text); }
 
     /* Solver Showcase */
     .solver-stats-grid {
@@ -661,15 +858,15 @@
       gap: 14px;
     }
     .solver-stat-box {
-      background: #fff;
-      border: 1px solid var(--slate-200);
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
       border-radius: var(--radius-md);
       padding: 16px 20px;
     }
     .solver-stat-label {
       font-size: 12px;
       font-weight: 600;
-      color: var(--slate-600);
+      color: var(--text-muted);
       margin-bottom: 4px;
     }
     .solver-stat-val {
@@ -678,13 +875,14 @@
       letter-spacing: -0.5px;
     }
     .color-emerald { color: var(--emerald); }
-    .color-navy { color: var(--navy); }
+    .color-navy { color: var(--text-title); }
     .solver-terminal-log {
-      background: #0f172a;
+      background: #090e1a;
       color: #34d399;
       font-family: 'JetBrains Mono', monospace;
       padding: 20px;
       border-radius: var(--radius-md);
+      border: 1px solid var(--border-color);
       font-size: 12.5px;
       line-height: 1.7;
       overflow-x: auto;
@@ -700,18 +898,18 @@
       gap: 16px;
     }
     .diagnostic-check-card {
-      background: #fff;
-      border: 1px solid var(--slate-200);
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
       border-radius: var(--radius-md);
       padding: 18px 20px;
     }
     .advisor-callout {
-      background: #fffbeb;
-      border: 1px solid #fde68a;
+      background: var(--advisor-bg);
+      border: 1px solid var(--advisor-border);
       border-radius: var(--radius-md);
       padding: 16px 20px;
       font-size: 13.5px;
-      color: #92400e;
+      color: var(--advisor-text);
       font-weight: 600;
     }
 
@@ -722,19 +920,21 @@
       gap: 16px;
     }
     .report-card {
-      background: #fff;
-      border: 1px solid var(--slate-200);
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
       border-radius: var(--radius-md);
       padding: 22px 20px;
-      transition: transform 0.2s ease;
+      transition: transform 0.2s ease, border-color 0.2s ease;
     }
     .report-card:hover {
       transform: translateY(-2px);
+      border-color: var(--emerald);
       box-shadow: var(--shadow-sm);
     }
     .report-format-pill {
-      background: var(--navy);
+      background: var(--header-bar-bg);
       color: #fff;
+      border: 1px solid var(--border-color);
       font-size: 11px;
       font-weight: 800;
       padding: 2px 8px;
@@ -744,30 +944,31 @@
     /* CONFRONTO */
     .compare-table {
       width: 100%;
-      background: #fff;
+      background: var(--bg-card);
       border-radius: var(--radius-lg);
-      border: 1px solid var(--slate-200);
+      border: 1px solid var(--border-color);
       overflow: hidden;
       border-collapse: collapse;
       box-shadow: var(--shadow-sm);
     }
     .compare-table th {
-      background: var(--navy);
+      background: var(--header-bar-bg);
       color: #fff;
       padding: 16px 20px;
       text-align: left;
       font-size: 14px;
       font-weight: 700;
+      border-bottom: 1px solid var(--border-color);
     }
     .compare-table td {
       padding: 16px 20px;
-      border-bottom: 1px solid var(--slate-200);
+      border-bottom: 1px solid var(--border-color);
       font-size: 13.5px;
     }
     .compare-table tr:last-child td { border-bottom: none; }
-    .col-feature { font-weight: 700; color: var(--navy); width: 22%; }
-    .col-trad { color: #dc2626; width: 39%; background: #fffaf0; }
-    .col-eurario { color: #047857; width: 39%; background: #f0fdf4; font-weight: 600; }
+    .col-feature { font-weight: 700; color: var(--text-title); width: 22%; }
+    .col-trad { color: var(--comp-trad-text); width: 39%; background: var(--comp-trad-bg); }
+    .col-eurario { color: var(--comp-eur-text); width: 39%; background: var(--comp-eur-bg); font-weight: 600; }
 
     /* MODELLI DI ADOZIONE / SELF-HOSTED VS SAAS */
     .plans-grid {
@@ -777,10 +978,10 @@
       align-items: stretch;
     }
     .plan-card {
-      background: #fff;
+      background: var(--bg-card);
       border-radius: var(--radius-lg);
       padding: 44px 32px 36px;
-      border: 1px solid var(--slate-200);
+      border: 1px solid var(--border-color);
       box-shadow: var(--shadow-sm);
       display: flex;
       flex-direction: column;
@@ -793,8 +994,8 @@
     }
     .plan-card.featured {
       border: 2px solid var(--emerald);
-      box-shadow: 0 12px 36px -8px rgba(5,150,105,0.2);
-      background: linear-gradient(180deg, #ffffff 0%, #f0fdf4 100%);
+      box-shadow: 0 12px 36px -8px rgba(5,150,105,0.25);
+      background: var(--plan-featured-bg);
     }
     .plan-badge-top {
       position: absolute;
@@ -815,32 +1016,32 @@
     .plan-title {
       font-size: 24px;
       font-weight: 800;
-      color: var(--navy);
+      color: var(--text-title);
       margin-bottom: 8px;
     }
     .plan-target {
       font-size: 13.5px;
-      color: var(--slate-600);
+      color: var(--text-muted);
       margin-bottom: 24px;
       min-height: 40px;
       line-height: 1.5;
     }
     .plan-price-box {
-      border-top: 1px solid var(--slate-200);
-      border-bottom: 1px solid var(--slate-200);
+      border-top: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-color);
       padding: 18px 0;
       margin-bottom: 24px;
     }
     .plan-price-label {
       font-size: 32px;
       font-weight: 800;
-      color: var(--navy);
+      color: var(--text-title);
       letter-spacing: -0.5px;
       line-height: 1.1;
     }
     .plan-price-sub {
       font-size: 13px;
-      color: var(--slate-400);
+      color: var(--text-subtle);
       margin-top: 4px;
     }
     .plan-features-list {
@@ -856,7 +1057,7 @@
       align-items: flex-start;
       gap: 12px;
       font-size: 14px;
-      color: var(--slate-700);
+      color: var(--text-main);
       line-height: 1.5;
     }
     .plan-feature-icon {
@@ -869,23 +1070,23 @@
       color: var(--emerald);
     }
     .plan-feature-icon.icon-info {
-      color: var(--slate-400);
+      color: var(--text-subtle);
     }
 
     /* TERMINALE INSTALLAZIONE */
     .terminal-box {
-      background: var(--navy-dark);
+      background: #090e1a;
       border-radius: var(--radius-lg);
       padding: 30px;
       color: #fff;
-      border: 1px solid rgba(255,255,255,0.1);
+      border: 1px solid var(--border-color);
       box-shadow: var(--shadow-lg);
       margin-top: 40px;
     }
     .code-line {
       font-family: 'JetBrains Mono', monospace;
       font-size: 14px;
-      background: rgba(0,0,0,0.4);
+      background: rgba(0,0,0,0.5);
       padding: 12px 18px;
       border-radius: var(--radius-sm);
       display: flex;
@@ -894,6 +1095,8 @@
       color: #34d399;
       margin-top: 12px;
       overflow-x: auto;
+      border: 1px solid rgba(255,255,255,0.08);
+      gap: 12px;
     }
 
     /* FAQ */
@@ -903,28 +1106,33 @@
       gap: 20px;
     }
     .faq-item {
-      background: #fff;
+      background: var(--bg-card);
       padding: 24px;
       border-radius: var(--radius-md);
-      border: 1px solid var(--slate-200);
+      border: 1px solid var(--border-color);
+      transition: border-color 0.2s ease;
+    }
+    .faq-item:hover {
+      border-color: var(--emerald);
     }
     .faq-q {
       font-size: 15.5px;
       font-weight: 700;
-      color: var(--navy);
+      color: var(--text-title);
       margin-bottom: 8px;
     }
     .faq-a {
       font-size: 13.5px;
-      color: var(--slate-600);
+      color: var(--text-muted);
     }
 
     /* FOOTER */
     .footer {
-      background: var(--navy);
+      background: var(--footer-bg);
       color: #fff;
       padding: 60px 0 30px;
       margin-top: 80px;
+      border-top: 1px solid var(--border-color);
     }
     .footer-inner {
       display: flex;
@@ -939,15 +1147,38 @@
       text-align: center;
       padding-top: 24px;
       font-size: 12.5px;
-      color: var(--slate-400);
+      color: var(--text-subtle);
     }
 
-    @media (max-width: 900px) {
+    /* RESPONSIVE DESIGN */
+    @media (max-width: 1080px) {
+      .nav-links { gap: 14px; }
+      .nav-link { font-size: 13px; }
+    }
+    @media (max-width: 960px) {
       .hero-grid { grid-template-columns: 1fr; }
       .hero-title { font-size: 34px; }
       .faq-grid { grid-template-columns: 1fr; }
       .nav-links { display: none; }
-      .lang-btn { padding: 4px 8px; font-size: 11.5px; }
+    }
+    @media (max-width: 640px) {
+      .nav-inner {
+        height: auto;
+        padding: 12px 0;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+      .nav-controls {
+        width: 100%;
+        justify-content: space-between;
+      }
+      #navLoginBtn {
+        padding: 8px 14px;
+        font-size: 13px;
+      }
+      .plans-grid {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
@@ -977,8 +1208,8 @@
         <a href="#faq" class="nav-link" id="navLinkFaq">Domande Frequenti</a>
         <a href="https://github.com/carlorigoni/eurario" target="_blank" class="nav-link">GitHub</a>
       </div>
-      <div style="display:flex;gap:12px;align-items:center;">
-                <div class="theme-switch" role="group" aria-label="Theme Selector">
+      <div class="nav-controls">
+        <div class="theme-switch" role="group" aria-label="Theme Selector">
           <button class="theme-btn" id="themeBtnLight" onclick="setTheme('light')" title="Tema Chiaro">☀️</button>
           <button class="theme-btn" id="themeBtnDark" onclick="setTheme('dark')" title="Tema Scuro">🌙</button>
           <button class="theme-btn active" id="themeBtnAuto" onclick="setTheme('auto')" title="Tema Automatico (Sistema)">💻</button>
@@ -1015,8 +1246,8 @@
             📖 Scopri le Funzionalità
           </a>
         </div>
-        <div style="font-size:12.5px;color:var(--slate-400);display:flex;align-items:center;gap:8px;">
-          <span>🐳</span> Docker Hub: <code style="color:var(--navy);font-weight:700;">carlorigoni/eurario:<span id="liveVerTag">v1.9.2</span></code>
+        <div style="font-size:12.5px;color:var(--text-muted);display:flex;align-items:center;gap:8px;">
+          <span>🐳</span> Docker Hub: <code style="background:var(--bg-card);color:var(--emerald);padding:3px 8px;border-radius:4px;border:1px solid var(--border-color);font-weight:700;">carlorigoni/eurario:<span id="liveVerTag">v1.9.2</span></code>
         </div>
       </div>
 
@@ -1028,17 +1259,17 @@
             <div class="mockup-dot" style="background:#f59e0b;"></div>
             <div class="mockup-dot" style="background:#10b981;"></div>
           </div>
-          <div style="color:rgba(255,255,255,0.7);font-size:11px;font-family:monospace;" id="mockupTitle">
+          <div style="color:rgba(255,255,255,0.85);font-size:11px;font-family:monospace;" id="mockupTitle">
             app.eurario.it &mdash; Quadro Orario Generale
           </div>
-          <div style="color:#10b981;font-size:11px;font-weight:700;" id="mockupStatus">
+          <div style="color:#34d399;font-size:11px;font-weight:700;" id="mockupStatus">
             ● FET Solved
           </div>
         </div>
         <div class="mockup-body">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-            <div style="font-weight:700;color:var(--navy);" id="mockupClass">Classe 3A &bull; Liceo Scientifico</div>
-            <div style="font-size:10px;background:#ecfdf5;color:#047857;padding:2px 8px;border-radius:4px;font-weight:700;" id="mockupAssigned">100% Assegnato</div>
+            <div style="font-weight:700;color:var(--text-title);" id="mockupClass">Classe 3A &bull; Liceo Scientifico</div>
+            <div style="font-size:10px;background:var(--emerald-badge-bg);color:var(--emerald-badge-text);padding:2px 8px;border-radius:4px;font-weight:700;" id="mockupAssigned">100% Assegnato</div>
           </div>
           <div class="timetable-mini">
             <div class="mini-cell cell-header" id="mockupDay0">Ora</div>
@@ -1048,37 +1279,37 @@
             <div class="mini-cell cell-header" id="mockupDay4">Gio</div>
             <div class="mini-cell cell-header" id="mockupDay5">Ven</div>
 
-            <div class="mini-cell" style="background:#f8fafc;color:#64748b;">1ª</div>
+            <div class="mini-cell" style="background:var(--bg-surface-alt);color:var(--text-muted);">1ª</div>
             <div class="mini-cell cell-ita">ITA</div>
             <div class="mini-cell cell-mat">MAT</div>
             <div class="mini-cell cell-ing">ING</div>
             <div class="mini-cell cell-sci">SCI</div>
             <div class="mini-cell cell-ita">ITA</div>
 
-            <div class="mini-cell" style="background:#f8fafc;color:#64748b;">2ª</div>
+            <div class="mini-cell" style="background:var(--bg-surface-alt);color:var(--text-muted);">2ª</div>
             <div class="mini-cell cell-ita">ITA</div>
             <div class="mini-cell cell-mat">MAT</div>
             <div class="mini-cell cell-sci">SCI</div>
             <div class="mini-cell cell-ing">ING</div>
             <div class="mini-cell cell-mat">MAT</div>
 
-            <div class="mini-cell" style="background:#f8fafc;color:#64748b;">3ª</div>
+            <div class="mini-cell" style="background:var(--bg-surface-alt);color:var(--text-muted);">3ª</div>
             <div class="mini-cell cell-sci">SCI</div>
             <div class="mini-cell cell-ing">ING</div>
             <div class="mini-cell cell-ita">ITA</div>
             <div class="mini-cell cell-mat">MAT</div>
             <div class="mini-cell cell-sci">SCI</div>
 
-            <div class="mini-cell" style="background:#f8fafc;color:#64748b;">4ª</div>
+            <div class="mini-cell" style="background:var(--bg-surface-alt);color:var(--text-muted);">4ª</div>
             <div class="mini-cell cell-mat">MAT</div>
             <div class="mini-cell cell-disp">DISP</div>
             <div class="mini-cell cell-ita">ITA</div>
             <div class="mini-cell cell-sci">SCI</div>
             <div class="mini-cell cell-ing">ING</div>
           </div>
-          <div style="margin-top:12px;background:#fff;border:1px solid #e2e8f0;padding:8px 12px;border-radius:6px;font-size:11px;display:flex;justify-content:space-between;">
+          <div style="margin-top:12px;background:var(--bg-card);border:1px solid var(--border-color);padding:8px 12px;border-radius:6px;font-size:11px;display:flex;justify-content:space-between;color:var(--text-main);">
             <span id="mockupFooterSnap">🛡️ Snapshot Sicuro: <b>Pre-Collegio v3</b></span>
-            <span style="color:#059669;font-weight:700;" id="mockupFooterConf">0 Ore Buche Conflitto</span>
+            <span style="color:var(--emerald);font-weight:700;" id="mockupFooterConf">0 Ore Buche Conflitto</span>
           </div>
         </div>
       </div>
@@ -1101,7 +1332,7 @@
   </section>
 
   <!-- TOUR DELLE MASCHERE PRINCIPALI (DEMO PAPEROPOLI / DUCKBURG) -->
-  <section class="section" id="maschere" style="background:#f1f5f9;">
+  <section class="section section-alt" id="maschere">
     <div class="container">
       <div class="section-header">
         <span class="section-tag" id="showcaseTag">Tour Applicativo • Esempio Didattico</span>
@@ -1122,7 +1353,7 @@
           </div>
           <div class="showcase-address">
             <span>🔒</span>
-            <span id="showcaseAddressBar">app.eurario.it/dashboard</span>
+            <span id="showcaseAddressBar">app.eurario.it/timetable</span>
           </div>
           <div style="font-size:11px;color:rgba(255,255,255,0.7);font-family:monospace;">
             Eurario Suite 7.12
@@ -1171,7 +1402,7 @@
   </section>
 
   <!-- MODELLI DI ADOZIONE / SELF-HOSTED VS SAAS CLOUD -->
-  <section class="section" id="modelli" style="background:#f1f5f9;">
+  <section class="section section-alt" id="modelli">
     <div class="container">
       <div class="section-header">
         <span class="section-tag" id="deploymentTag">Modalità di Utilizzo</span>
@@ -1192,17 +1423,17 @@
       </div>
 
       <div class="terminal-box">
-        <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
           <div style="font-weight:700;font-size:15px;display:flex;align-items:center;gap:8px;" id="installBoxTitle">
             <span>🐳</span> Avvio Rapido Docker (Linux, Mac, Synology NAS)
           </div>
-          <span style="font-size:12px;color:#94a3b8;" id="installBoxPort">Porta: 8000</span>
+          <span style="font-size:12px;color:var(--text-subtle);" id="installBoxPort">Porta: 8000</span>
         </div>
         <div class="code-line">
           <span>docker run -d --name eurario -p 8000:8000 carlorigoni/eurario:latest</span>
-          <button class="btn btn-outline" style="padding:4px 10px;font-size:11px;" id="installCopyBtn" onclick="copyDockerCmd()">Copia</button>
+          <button class="btn btn-outline" style="padding:4px 12px;font-size:11px;" id="installCopyBtn" onclick="copyDockerCmd()">Copia</button>
         </div>
-        <div style="margin-top:16px;font-size:13px;color:#cbd5e1;display:flex;gap:20px;flex-wrap:wrap;">
+        <div style="margin-top:16px;font-size:13px;color:var(--text-muted);display:flex;gap:20px;flex-wrap:wrap;">
           <span id="installFeat1">✓ Supporto Synology Container Manager</span>
           <span id="installFeat2">✓ Docker Compose integrato con Watchtower</span>
           <span id="installFeat3">✓ Volume dati persistente e snapshot</span>
@@ -1212,7 +1443,7 @@
   </section>
 
   <!-- FAQ -->
-  <section class="section" id="faq" style="background:#f1f5f9;">
+  <section class="section section-alt" id="faq">
     <div class="container">
       <div class="section-header">
         <span class="section-tag" id="faqTag">Risposte Chiare</span>
@@ -1229,17 +1460,17 @@
       <div class="footer-inner">
         <div>
           <div style="font-weight:800;font-size:20px;letter-spacing:-0.5px;margin-bottom:6px;">Eurario FET Suite</div>
-          <div style="color:var(--slate-400);font-size:13px;" id="footerDesc">Software libero per la gestione avanzata dell'orario scolastico italiano, disponibile Self-Hosted e in Cloud SaaS.</div>
+          <div style="color:var(--text-subtle);font-size:13px;" id="footerDesc">Software libero per la gestione avanzata dell'orario scolastico italiano, disponibile Self-Hosted e in Cloud SaaS.</div>
         </div>
         <div style="display:flex;gap:12px;align-items:center;">
           <a href="https://app.eurario.it" class="btn btn-emerald" style="padding:8px 18px;font-size:13px;" id="footerAppBtn">Accedi all'App</a>
-          <a href="https://github.com/carlorigoni/eurario" target="_blank" class="btn btn-outline" style="padding:8px 18px;font-size:13px;color:#fff;border-color:rgba(255,255,255,0.2);background:transparent;" id="footerCodeBtn">Codice Sorgente</a>
+          <a href="https://github.com/carlorigoni/eurario" target="_blank" class="btn btn-outline" style="padding:8px 18px;font-size:13px;color:#fff;border-color:rgba(255,255,255,0.25);background:transparent;" id="footerCodeBtn">Codice Sorgente</a>
         </div>
       </div>
       <div class="footer-credits" id="footerCredits">
         Ideazione & Architettura: <b>Carlo Rigoni</b> &bull; Mentore dell'Orario: <b>Federico Rettore</b> &bull; Motore Euristico: <b>FET Free Software</b> &bull; AI Pair Programming: <b>Google DeepMind Antigravity</b>
       </div>
-      <div style="text-align:center;margin-top:8px;font-size:11.5px;color:#64748b;" id="footerGdpr">
+      <div style="text-align:center;margin-top:8px;font-size:11.5px;color:var(--text-subtle);" id="footerGdpr">
         Piattaforma on-premise conforme al Regolamento UE 2016/679 (GDPR).
       </div>
     </div>
@@ -1248,37 +1479,37 @@
   <!-- SCRIPT DI IDRATAZIONE DINAMICA E MULTILINGUA SOSTENIBILE -->
   <script>
     let siteData = null;
-    let currentTheme = auto;
+    let currentTheme = 'auto';
 
     function detectInitialTheme() {
       try {
-        const saved = localStorage.getItem(eurario_theme);
-        if (saved && [light, dark, auto].includes(saved)) {
+        const saved = localStorage.getItem('eurario_theme');
+        if (saved && ['light', 'dark', 'auto'].includes(saved)) {
           return saved;
         }
       } catch (e) {}
-      return auto;
+      return 'auto';
     }
 
     function applyTheme(theme) {
       currentTheme = theme;
       try {
-        localStorage.setItem(eurario_theme, theme);
+        localStorage.setItem('eurario_theme', theme);
       } catch (e) {}
 
-      if (theme === auto) {
-        document.documentElement.removeAttribute(data-theme);
+      if (theme === 'auto') {
+        document.documentElement.removeAttribute('data-theme');
       } else {
-        document.documentElement.setAttribute(data-theme, theme);
+        document.documentElement.setAttribute('data-theme', theme);
       }
 
-      const btnL = document.getElementById(themeBtnLight);
-      const btnD = document.getElementById(themeBtnDark);
-      const btnA = document.getElementById(themeBtnAuto);
+      const btnL = document.getElementById('themeBtnLight');
+      const btnD = document.getElementById('themeBtnDark');
+      const btnA = document.getElementById('themeBtnAuto');
       if (btnL && btnD && btnA) {
-        btnL.classList.toggle(active, currentTheme === light);
-        btnD.classList.toggle(active, currentTheme === dark);
-        btnA.classList.toggle(active, currentTheme === auto);
+        btnL.classList.toggle('active', currentTheme === 'light');
+        btnD.classList.toggle('active', currentTheme === 'dark');
+        btnA.classList.toggle('active', currentTheme === 'auto');
       }
     }
 
@@ -1374,8 +1605,8 @@
           paneEl.innerHTML = `
             <div class="showcase-card-header">
               <div>
-                <div style="font-weight:800;font-size:17px;color:var(--navy);margin-bottom:4px;">${pTime.title}</div>
-                <div style="font-size:13px;color:var(--slate-600);">${pTime.school} &bull; ${pTime.description}</div>
+                <div style="font-weight:800;font-size:17px;color:var(--text-title);margin-bottom:4px;">${pTime.title}</div>
+                <div style="font-size:13px;color:var(--text-muted);">${pTime.school} &bull; ${pTime.description}</div>
               </div>
               <span class="showcase-badge-status">${pTime.badge}</span>
             </div>
@@ -1421,8 +1652,8 @@
           paneEl.innerHTML = `
             <div class="showcase-card-header">
               <div>
-                <div style="font-weight:800;font-size:17px;color:var(--navy);margin-bottom:4px;">${pTeach.title}</div>
-                <div style="font-size:13px;color:var(--slate-600);">${pTeach.school} &bull; ${pTeach.description}</div>
+                <div style="font-weight:800;font-size:17px;color:var(--text-title);margin-bottom:4px;">${pTeach.title}</div>
+                <div style="font-size:13px;color:var(--text-muted);">${pTeach.school} &bull; ${pTeach.description}</div>
               </div>
               <span class="showcase-badge-status">${pTeach.badge}</span>
             </div>
@@ -1431,12 +1662,12 @@
                 <div class="teacher-showcase-card">
                   <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:8px;">
                     <div>
-                      <div style="font-weight:800;font-size:16px;color:var(--navy);">${item.name}</div>
-                      <div style="font-size:13px;color:var(--slate-600);">${item.subject}</div>
+                      <div style="font-weight:800;font-size:16px;color:var(--text-title);">${item.name}</div>
+                      <div style="font-size:13px;color:var(--text-muted);">${item.subject}</div>
                     </div>
                     <span class="type-pill ${item.type_class}">${item.type_badge}</span>
                   </div>
-                  <div style="font-size:12.5px;color:var(--slate-700);line-height:1.5;background:#f8fafc;padding:10px 12px;border-radius:6px;border:1px solid var(--slate-200);">
+                  <div style="font-size:12.5px;color:var(--text-main);line-height:1.5;background:var(--bg-surface-alt);padding:10px 12px;border-radius:6px;border:1px solid var(--border-color);">
                     ${item.details}
                   </div>
                 </div>
@@ -1458,8 +1689,8 @@
           paneEl.innerHTML = `
             <div class="showcase-card-header">
               <div>
-                <div style="font-weight:800;font-size:17px;color:var(--navy);margin-bottom:4px;">${pSolv.title}</div>
-                <div style="font-size:13px;color:var(--slate-600);">${pSolv.school} &bull; ${pSolv.description}</div>
+                <div style="font-weight:800;font-size:17px;color:var(--text-title);margin-bottom:4px;">${pSolv.title}</div>
+                <div style="font-size:13px;color:var(--text-muted);">${pSolv.school} &bull; ${pSolv.description}</div>
               </div>
               <span class="showcase-badge-status">${pSolv.badge}</span>
             </div>
@@ -1471,11 +1702,11 @@
                 </div>
               `).join('')}
             </div>
-            <div style="margin-top:14px;background:#e2e8f0;border-radius:99px;height:10px;overflow:hidden;">
+            <div style="margin-top:14px;background:var(--border-color);border-radius:99px;height:10px;overflow:hidden;">
               <div style="background:var(--emerald);width:100%;height:100%;"></div>
             </div>
             <div class="solver-terminal-log" style="margin-top:16px;">
-              <div style="font-size:11.5px;color:#94a3b8;margin-bottom:8px;font-family:monospace;">● console stdout / fet_engine_run</div>
+              <div style="font-size:11.5px;color:var(--text-subtle);margin-bottom:8px;font-family:monospace;">● console stdout / fet_engine_run</div>
               ${pSolv.console_output.map(line => `<div class="solver-log-line">${line}</div>`).join('')}
             </div>
             <div class="showcase-card-footer">
@@ -1494,8 +1725,8 @@
           paneEl.innerHTML = `
             <div class="showcase-card-header">
               <div>
-                <div style="font-weight:800;font-size:17px;color:var(--navy);margin-bottom:4px;">${pDiag.title}</div>
-                <div style="font-size:13px;color:var(--slate-600);">${pDiag.school} &bull; ${pDiag.description}</div>
+                <div style="font-weight:800;font-size:17px;color:var(--text-title);margin-bottom:4px;">${pDiag.title}</div>
+                <div style="font-size:13px;color:var(--text-muted);">${pDiag.school} &bull; ${pDiag.description}</div>
               </div>
               <span class="showcase-badge-status">${pDiag.badge}</span>
             </div>
@@ -1504,9 +1735,9 @@
                 <div class="diagnostic-check-card">
                   <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
                     <span style="font-size:18px;">✅</span>
-                    <span style="font-weight:700;font-size:14.5px;color:var(--navy);">${c.title}</span>
+                    <span style="font-weight:700;font-size:14.5px;color:var(--text-title);">${c.title}</span>
                   </div>
-                  <p style="font-size:13px;color:var(--slate-600);line-height:1.5;">${c.desc}</p>
+                  <p style="font-size:13px;color:var(--text-muted);line-height:1.5;">${c.desc}</p>
                 </div>
               `).join('')}
             </div>
@@ -1525,8 +1756,8 @@
           paneEl.innerHTML = `
             <div class="showcase-card-header">
               <div>
-                <div style="font-weight:800;font-size:17px;color:var(--navy);margin-bottom:4px;">${pRep.title}</div>
-                <div style="font-size:13px;color:var(--slate-600);">${pRep.school} &bull; ${pRep.description}</div>
+                <div style="font-weight:800;font-size:17px;color:var(--text-title);margin-bottom:4px;">${pRep.title}</div>
+                <div style="font-size:13px;color:var(--text-muted);">${pRep.school} &bull; ${pRep.description}</div>
               </div>
               <span class="showcase-badge-status">${pRep.badge}</span>
             </div>
@@ -1537,8 +1768,8 @@
                     <span style="font-size:28px;">${exp.icon}</span>
                     <span class="report-format-pill">${exp.format}</span>
                   </div>
-                  <div style="font-weight:700;font-size:15px;color:var(--navy);margin-bottom:6px;">${exp.title}</div>
-                  <p style="font-size:13px;color:var(--slate-600);line-height:1.5;">${exp.desc}</p>
+                  <div style="font-weight:700;font-size:15px;color:var(--text-title);margin-bottom:6px;">${exp.title}</div>
+                  <p style="font-size:13px;color:var(--text-muted);line-height:1.5;">${exp.desc}</p>
                 </div>
               `).join('')}
             </div>
@@ -1639,10 +1870,10 @@
         if (t.announcements && t.announcements.length > 0) {
           const a = t.announcements[0];
           annContainer.innerHTML = `
-            <div style="background:#fff;border:1px solid var(--slate-200);border-radius:var(--radius-md);padding:14px 20px;display:flex;align-items:center;gap:14px;box-shadow:var(--shadow-sm);margin-bottom:20px;flex-wrap:wrap;">
+            <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:14px 20px;display:flex;align-items:center;gap:14px;box-shadow:var(--shadow-sm);margin-bottom:20px;flex-wrap:wrap;">
               <span style="background:var(--emerald-light);color:var(--emerald);padding:3px 10px;border-radius:99px;font-size:12px;font-weight:700;">${a.badge}</span>
-              <span style="font-size:13.5px;color:var(--slate-600);flex:1;">${a.text}</span>
-              <span style="font-size:12px;color:var(--slate-400);">${a.date}</span>
+              <span style="font-size:13.5px;color:var(--text-muted);flex:1;">${a.text}</span>
+              <span style="font-size:12px;color:var(--text-subtle);">${a.date}</span>
             </div>
           `;
           annContainer.style.display = 'block';
