@@ -141,15 +141,28 @@ class SchoolManager:
             out.sort(key=lambda x: (0 if x["id"] == "default" else 1, x.get("name", "").lower()))
             return out
 
-    def create_school(self, name, city="", country="Italia", school_year="2026/2027", owner_email="", notes="", meccanografico=""):
+    def create_school(self, name, city="", country="Italia", school_year="", owner_email="", notes="", meccanografico=""):
         """
         Crea un nuovo Istituto in stato 'trial' (Modalità di Prova).
         Genera la cartella isolata tenant e inizializza il database dedicato.
+        Effettua il controllo di unicità del Codice Meccanografico per l'Italia.
         """
         with self.lock:
             clean_name = (name or "").strip()
             if not clean_name:
                 raise ValueError("Il nome dell'Istituto è obbligatorio.")
+
+            clean_country = (country or "Italia").strip()
+            clean_mecc = (meccanografico or "").strip().upper()
+
+            # Controllo unicità Codice Meccanografico per scuole in Italia
+            if clean_country.lower() in ("italia", "italy") and clean_mecc:
+                for sid, s in self.schools.items():
+                    s_country = (s.get("country") or "Italia").strip().lower()
+                    if s_country in ("italia", "italy"):
+                        s_mecc = (s.get("meccanografico") or "").strip().upper()
+                        if s_mecc and s_mecc == clean_mecc:
+                            raise ValueError(f"Il codice meccanografico '{clean_mecc}' è già associato all'istituto '{s.get('name')}'. Ogni scuola deve avere un codice univoco.")
 
             base_slug = sanitize_slug(clean_name)
             slug = base_slug
@@ -162,9 +175,9 @@ class SchoolManager:
                 "id": slug,
                 "name": clean_name,
                 "city": (city or "").strip(),
-                "country": (country or "Italia").strip(),
-                "school_year": (school_year or "2026/2027").strip(),
-                "meccanografico": (meccanografico or "").strip().upper(),
+                "country": clean_country,
+                "school_year": (school_year or "").strip(),
+                "meccanografico": clean_mecc,
                 "status": "trial",  # 'trial' = in prova con filigrana | 'active' = approvata dal superadmin
                 "owner_email": (owner_email or "").strip().lower(),
                 "created_at": datetime.now().isoformat(),
@@ -184,11 +197,25 @@ class SchoolManager:
             return school_obj
 
     def update_school_info(self, school_id, **kwargs):
-        """Aggiorna i metadati anagrafici di una scuola nel registro centralizzato."""
+        """Aggiorna i metadati anagrafici di una scuola nel registro centralizzato con controllo unicità."""
         with self.lock:
             if school_id not in self.schools:
                 return None
             s = self.schools[school_id]
+
+            new_country = (kwargs.get("country") if "country" in kwargs and kwargs["country"] is not None else s.get("country", "Italia")).strip()
+            new_mecc = (str(kwargs["meccanografico"]).strip().upper() if "meccanografico" in kwargs and kwargs["meccanografico"] is not None else s.get("meccanografico", "").strip().upper())
+
+            # Se si aggiorna o mantiene il codice meccanografico in Italia, verifica unicità escludendo se stessa
+            if "meccanografico" in kwargs and new_country.lower() in ("italia", "italy") and new_mecc:
+                for sid, s2 in self.schools.items():
+                    if sid != school_id:
+                        s2_country = (s2.get("country") or "Italia").strip().lower()
+                        if s2_country in ("italia", "italy"):
+                            s2_mecc = (s2.get("meccanografico") or "").strip().upper()
+                            if s2_mecc and s2_mecc == new_mecc:
+                                raise ValueError(f"Il codice meccanografico '{new_mecc}' è già associato all'istituto '{s2.get('name')}'.")
+
             for k in ("name", "city", "country", "school_year", "meccanografico", "notes"):
                 if k in kwargs and kwargs[k] is not None:
                     if k == "meccanografico":

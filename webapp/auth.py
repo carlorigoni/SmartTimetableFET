@@ -721,6 +721,39 @@ Eurario Automated Security Notification
             return True
         return False
 
+    def update_user_role(self, email, role, admin_email=None, ip=None):
+        """
+        Consente all'amministratore di modificare il ruolo di un utente (admin, editor, viewer)
+        anche dopo la sua definizione iniziale.
+        """
+        self._load()
+        email = (email or "").lower().strip()
+        if email not in self.config["users"]:
+            raise ValueError("Utente non trovato")
+        if role not in ("admin", "editor", "viewer"):
+            raise ValueError("Ruolo non valido")
+        if email == self.config["admin_email"] and role != "admin":
+            raise ValueError("Impossibile modificare il ruolo dell'Amministratore Principale")
+
+        u = self.config["users"][email]
+        old_role = u.get("role", "viewer")
+        u["role"] = role
+
+        # Aggiorna anche le membership di scuola associate
+        mems = self.config.setdefault("school_memberships", {})
+        if email in mems:
+            for sid in mems[email]:
+                mems[email][sid]["role"] = role
+
+        # Aggiorna sessioni attive dell'utente
+        for tok, s in list(self.sessions.items()):
+            if s.get("email") == email:
+                s["role"] = role
+
+        self._save()
+        self.log_access("ROLE_CHANGED", email, role, "SUCCESS", ip, "-", f"Ruolo modificato da '{old_role}' a '{role}' da {admin_email or 'admin'}")
+        return u
+
     def reopen_user(self, email, admin_email=None, ip=None):
         """
         Consente all'amministratore di riaprire/riabilitare un utente precedentemente revocato
@@ -799,6 +832,57 @@ Eurario Automated Security Notification
             print(f"[AUTH] Email di notifica inviata con successo a {to_email}")
         except Exception as e:
             print(f"[AUTH] Avviso: invio email fallito: {e}")
+
+    def notify_admin_new_school(self, school, user):
+        """Invia email di notifica all'amministratore quando viene creata/registrata una nuova scuola."""
+        smtp = self.config.get("smtp", {})
+        if not smtp.get("enabled"):
+            return
+
+        to_email = smtp.get("notify_to") or self.config["admin_email"]
+        host = smtp.get("host", "smtp.gmail.com")
+        port = int(smtp.get("port", 587))
+        user_smtp = (smtp.get("user") or "").strip()
+        pwd = (smtp.get("password") or "").strip()
+
+        if not host or not user_smtp or not pwd:
+            return
+
+        msg = EmailMessage()
+        sch_name = school.get("name") or "Nuovo Istituto"
+        msg["Subject"] = f"🏫 [Eurario] Nuovo Istituto Registrato: {sch_name}"
+        msg["From"] = user_smtp
+        msg["To"] = to_email
+
+        body = f"""Ciao Carlo,
+
+È stato registrato un nuovo Istituto Scolastico sulla piattaforma Eurario:
+
+• Nome Istituto: {sch_name}
+• Città / Comune: {school.get('city') or 'Non specificato'}
+• Nazione: {school.get('country') or 'Italia'}
+• Codice Meccanografico: {school.get('meccanografico') or 'Non presente'}
+• Referente / Proprietario: {user.get('name') or user.get('email')} ({user.get('email')})
+• Note / Recapiti: {school.get('notes') or 'Nessuna nota'}
+• Stato iniziale: In Prova (Trial)
+• Data registrazione: {school.get('created_at')}
+
+L'istituto è stato creato in Modalità di Prova con il solutore FET attivo. Puoi gestirlo o approvarlo dalla Console SuperAdmin di Eurario.
+
+---
+Eurario Automated Multi-School Notification System
+"""
+        msg.set_content(body)
+
+        try:
+            context = ssl.create_default_context()
+            with smtplib.SMTP(host, port, timeout=10) as server:
+                server.starttls(context=context)
+                server.login(user_smtp, pwd)
+                server.send_message(msg)
+            print(f"[AUTH] Email notifica nuovo istituto inviata con successo a {to_email}")
+        except Exception as e:
+            print(f"[AUTH] Avviso: invio email nuovo istituto fallito: {e}")
 
 
 auth_manager = AuthManager()

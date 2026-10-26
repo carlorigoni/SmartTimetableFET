@@ -295,7 +295,7 @@
         <div class="school-selector-dropdown" id="schoolSelectorDropdown">
           <button type="button" id="btnSchoolToggle" class="topbar-btn school-pill-btn" onclick="toggleSchoolMenu(event)" title="Cambia Istituto Scolastico" aria-label="Selettore istituto" data-i18n-title="schools.selector_title">
             <span class="school-icon">🏫</span>
-            <span id="currentSchoolName" class="school-name-text">Liceo & Tecnico</span>
+            <span id="currentSchoolName" class="school-name-text" data-i18n="schools.no_school">Nessun Istituto</span>
             <span id="currentSchoolTrialBadge" class="badge-trial-pill" style="display:none;" title="Istituto in prova (stampe filigranate)" data-i18n="schools.trial_badge" data-i18n-title="schools.trial_badge_title">In Prova</span>
             <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor" style="opacity:0.7;">
               <path d="M7 10l5 5 5-5z"/>
@@ -982,15 +982,9 @@
           </div>
         </div>
 
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-          <div class="form-group">
-            <label style="font-size:12px;font-weight:600;margin-bottom:4px;display:block;" data-i18n="modals.create_school.code_label">Codice Meccanografico (se presente)</label>
-            <input type="text" id="newSchoolMeccanografico" class="form-input" placeholder="Es. PDIS017007 (Facoltativo)" data-i18n-placeholder="modals.create_school.code_placeholder" style="width:100%;text-transform:uppercase;">
-          </div>
-          <div class="form-group">
-            <label style="font-size:12px;font-weight:600;margin-bottom:4px;display:block;" data-i18n="modals.create_school.year_label">Anno Scolastico</label>
-            <input type="text" id="newSchoolYear" class="form-input" value="2026/2027" data-i18n-placeholder="modals.create_school.year_placeholder" style="width:100%;">
-          </div>
+        <div class="form-group">
+          <label style="font-size:12px;font-weight:600;margin-bottom:4px;display:block;" data-i18n="modals.create_school.code_label">Codice Meccanografico (se presente per l'Italia - univoco)</label>
+          <input type="text" id="newSchoolMeccanografico" class="form-input" placeholder="Es. PDIS017007 (Facoltativo)" data-i18n-placeholder="modals.create_school.code_placeholder" style="width:100%;text-transform:uppercase;">
         </div>
 
         <div class="form-group">

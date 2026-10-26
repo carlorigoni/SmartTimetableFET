@@ -314,6 +314,7 @@
         }
       },
       schools: {
+        no_school: "Nessun Istituto",
         selector_title: "Cambia Istituto Scolastico",
         my_schools: "I Miei Istituti",
         register_new: "Registra Nuovo Istituto...",
@@ -1011,6 +1012,7 @@
         }
       },
       schools: {
+        no_school: "No Institution",
         selector_title: "Change School / Institution",
         my_schools: "My Schools",
         register_new: "Register New School...",

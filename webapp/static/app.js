@@ -429,13 +429,15 @@ async function loadMySchools() {
     const data = await res.json();
     mySchools = data.schools || [];
     currentSchool = data.current_school || null;
-    const activeId = data.active_school_id || (currentSchool ? currentSchool.id : 'default');
+    const activeId = data.active_school_id || (currentSchool ? currentSchool.id : null);
+    const isEn = window.I18N && window.I18N.getLanguage() === 'en';
 
     // Aggiorna indicatore scuola in topbar
     const nameEl = document.getElementById('currentSchoolName');
     if (nameEl) {
-      nameEl.innerText = (currentSchool && currentSchool.name) ? currentSchool.name : 'Nessun Istituto';
-      nameEl.title = (currentSchool && currentSchool.name) ? currentSchool.name : 'Nessun Istituto';
+      const displayName = (currentSchool && currentSchool.name) ? currentSchool.name : (isEn ? 'No Institution' : 'Nessun Istituto');
+      nameEl.innerText = displayName;
+      nameEl.title = displayName;
     }
 
     // Badge Trial e Banner di Avviso
@@ -452,7 +454,6 @@ async function loadMySchools() {
     }
 
     // Popola lista istituti nel menu a tendina
-    const isEn = window.I18N && window.I18N.getLanguage() === 'en';
     const listEl = document.getElementById('schoolMenuList');
     if (listEl) {
       if (mySchools.length === 0) {
@@ -466,7 +467,7 @@ async function loadMySchools() {
           const isActive = s.id === activeId;
           const isSchTrial = s.status === 'trial';
           const locStr = [s.city, s.country].filter(Boolean).join(', ');
-          const subText = [locStr, s.school_year].filter(Boolean).join(' • ');
+          const subText = [locStr, s.meccanografico].filter(Boolean).join(' • ');
           return `
             <button type="button" class="school-menu-item ${isActive ? 'active' : ''}" onclick="switchSchool('${escapeHtml(s.id)}')">
               <div class="school-item-info">
@@ -481,12 +482,6 @@ async function loadMySchools() {
           `;
         }).join('');
       }
-    }
-
-    if (mySchools.length === 0 && data.can_define_school) {
-      setTimeout(() => {
-        openCreateSchoolModal();
-      }, 400);
     }
   } catch (err) {
     console.error('Errore caricamento scuole utente:', err);
@@ -554,7 +549,6 @@ async function submitCreateSchool() {
   const name = (document.getElementById('newSchoolName').value || '').trim();
   const city = (document.getElementById('newSchoolCity').value || '').trim();
   const country = (document.getElementById('newSchoolCountry').value || (isEn ? 'United States' : 'Italia')).trim();
-  const school_year = (document.getElementById('newSchoolYear').value || '2026/2027').trim();
   const meccanografico = (document.getElementById('newSchoolMeccanografico')?.value || '').trim().toUpperCase();
   const notes = (document.getElementById('newSchoolNotes').value || '').trim();
 
@@ -570,7 +564,7 @@ async function submitCreateSchool() {
     const res = await fetch('/api/schools/create', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, city, country, school_year, meccanografico, notes })
+      body: JSON.stringify({ name, city, country, meccanografico, notes })
     });
     const data = await res.json();
     if (data.success) {
@@ -587,6 +581,34 @@ async function submitCreateSchool() {
     alert(isEn ? 'Connection error while creating new school.' : 'Errore di connessione durante la creazione del nuovo istituto.');
   } finally {
     if (btn) btn.disabled = false;
+  }
+}
+
+async function createDemoSchool() {
+  const isEn = window.I18N && window.I18N.getLanguage() === 'en';
+  if (!confirm(isEn
+    ? 'Do you want to initialize and explore Eurario with the preloaded demonstration school (Duckburg)?'
+    : 'Vuoi caricare la scuola dimostrativa di Paperopoli completa di orario, docenti e vincoli?')) return;
+
+  showToast(isEn ? 'Setting up Duckburg demo school...' : 'Inizializzazione scuola di Paperopoli in corso...');
+  try {
+    const res = await fetch('/api/schools/create_demo', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ lang: isEn ? 'en' : 'it' })
+    });
+    const data = await res.json();
+    if (data.success) {
+      showToast(isEn ? 'Demo school loaded successfully!' : 'Scuola di Paperopoli caricata con successo!', 'ok');
+      await loadMySchools();
+      await refreshAppState();
+      navigate('dashboard', false);
+    } else {
+      alert(data.error || (isEn ? 'Error loading demo school.' : 'Errore caricamento scuola demo.'));
+    }
+  } catch (err) {
+    console.error('Errore creazione scuola demo:', err);
+    alert(isEn ? 'Connection error.' : 'Errore di connessione.');
   }
 }
 
@@ -823,9 +845,12 @@ function renderOnboardingSchoolWelcome() {
         <div>⚡ <b>${isEn ? 'FET 7.12 Engine:' : 'Motore FET 7.12:'}</b> ${isEn ? 'high-speed heuristic timetable calculation and smart advisor.' : 'calcolo orario euristico veloce e diagnostica advisor.'}</div>
         <div>🔒 <b>${isEn ? 'Complete tenant isolation:' : 'Isolamento totale:'}</b> ${isEn ? 'your data and snapshots reside in an isolated workspace.' : 'i tuoi dati risiedono in uno spazio isolato e riservato.'}</div>
       </div>
-      <div>
-        <button class="btn btn-primary btn-lg" onclick="openCreateSchoolModal()" style="padding: 12px 28px; font-size: 14px; font-weight: 700; border-radius: 10px; cursor: pointer;">
-          ➕ ${isEn ? 'Register and Set Up Your School' : 'Registra e Configura il tuo Istituto'}
+      <div style="display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-top: 8px;">
+        <button class="btn btn-primary btn-lg" onclick="openCreateSchoolModal()" style="padding: 12px 24px; font-size: 14px; font-weight: 700; border-radius: 10px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;">
+          <span>➕</span> <span>${isEn ? 'Register New School' : 'Registra Nuovo Istituto'}</span>
+        </button>
+        <button class="btn btn-sec btn-lg" onclick="createDemoSchool()" style="padding: 12px 24px; font-size: 14px; font-weight: 700; border-radius: 10px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;">
+          <span>🏰</span> <span>${isEn ? 'Load Demo School (Duckburg)' : 'Carica Scuola di Esempio (Paperopoli)'}</span>
         </button>
       </div>
     </div>
@@ -1606,8 +1631,16 @@ function renderUsersUI() {
             <div class="user-card-meta" style="font-size:10.5px;color:var(--text-sub);">${isEn ? 'Last login:' : 'Ultimo accesso:'} ${lastLoginDate}</div>
           </div>
         </div>
-        <div class="user-card-actions" style="display:flex;gap:6px;align-items:center;">
+        <div class="user-card-actions" style="display:flex;gap:8px;align-items:center;">
           ${isMainAdmin ? `<span style="font-size:11.5px;color:#16a34a;font-weight:700;">${isEn ? 'Primary Administrator' : 'Amministratore Principale'}</span>` : `
+            <div style="display:flex;align-items:center;gap:6px;">
+              <span style="font-size:11px;color:var(--text-muted);font-weight:600;">${isEn ? 'Role:' : 'Ruolo:'}</span>
+              <select class="form-input" style="padding:2px 8px;font-size:11.5px;font-weight:600;border-radius:6px;width:auto;" onchange="updateUserRole('${escapeHtml(u.email)}', this.value)">
+                <option value="editor" ${u.role === 'editor' ? 'selected' : ''}>✏️ Editor</option>
+                <option value="viewer" ${u.role === 'viewer' ? 'selected' : ''}>👁️ Viewer</option>
+                <option value="admin" ${u.role === 'admin' ? 'selected' : ''}>🛡️ Admin</option>
+              </select>
+            </div>
             <button class="btn btn-sm btn-outline-warning" onclick="revokeUser('${escapeHtml(u.email)}')">${isEn ? '⛔ Revoke' : '⛔ Revoca'}</button>
             <button class="btn btn-sm btn-outline-danger" onclick="deleteUser('${escapeHtml(u.email)}')">🗑️</button>
           `}
@@ -1693,6 +1726,27 @@ async function rejectUser(email) {
     await loadUsersList();
   } catch (e) {
     showToast('Errore: ' + e.message, 'error');
+  }
+}
+
+async function updateUserRole(email, newRole) {
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
+  try {
+    const res = await fetch('/api/auth/users/update_role', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email, role: newRole })
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      showToast(data.error || (isEn ? 'Error updating user role' : 'Errore modifica ruolo'), 'error');
+      await loadUsersList();
+      return;
+    }
+    showToast(isEn ? `Role updated to ${newRole.toUpperCase()} for ${email}` : `Ruolo aggiornato a ${newRole.toUpperCase()} per ${email}`, 'ok');
+    await loadUsersList();
+  } catch (e) {
+    showToast((isEn ? 'Connection error: ' : 'Errore di connessione: ') + e.message, 'error');
   }
 }
 
@@ -2423,16 +2477,22 @@ async function refreshAppState() {
   try {
     const res = await fetch('/api/summary');
     stateData.summary = await res.json();
+    const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
+    const b = document.getElementById('instBadge');
+    const sName = document.getElementById('currentSchoolName');
     if (currentSchool && currentSchool.name) {
-      const b = document.getElementById('instBadge');
       if (b) b.innerText = currentSchool.name;
-      const sName = document.getElementById('currentSchoolName');
-      if (sName) sName.innerText = currentSchool.name;
-    } else if (stateData.summary && stateData.summary.institution) {
-      const b = document.getElementById('instBadge');
-      if (b) b.innerText = stateData.summary.institution;
-      const sName = document.getElementById('currentSchoolName');
-      if (sName) sName.innerText = stateData.summary.institution;
+      if (sName) {
+        sName.innerText = currentSchool.name;
+        sName.title = currentSchool.name;
+      }
+    } else {
+      if (b) b.innerText = '';
+      if (sName) {
+        const noSch = isEn ? 'No Institution' : 'Nessun Istituto';
+        sName.innerText = noSch;
+        sName.title = noSch;
+      }
     }
     refreshDiagnosticsBadge();
   } catch (e) {
@@ -11014,20 +11074,35 @@ async function renderParameters() {
   const params = cfg.parameters || {};
 
   container.innerHTML = `
-    <!-- Sezione 1: Anagrafica Istituto -->
+    <!-- Sezione 1: Anagrafica Istituto & Profilo Scuola -->
     <div class="card" style="margin-bottom:16px;">
-      <div class="card-title">${isEn ? '🏛️ School / Institution Details & FET File' : '🏛️ Anagrafica Istituto & File FET'}</div>
-      <div style="display:grid;grid-template-columns:minmax(200px, 2fr) minmax(140px, 1.2fr) minmax(160px, 1.4fr);gap:16px;margin-top:12px;">
+      <div class="card-title">${isEn ? '🏛️ School / Institution Profile & Metadata' : '🏛️ Anagrafica e Profilo Istituto'}</div>
+      <div style="display:grid;grid-template-columns:2fr 1.2fr 1fr;gap:14px;margin-top:12px;">
         <div class="form-group">
-          <label class="form-label">${isEn ? 'School / Institution Name' : "Nome dell'Istituto Scolastico"}</label>
-          <input type="text" id="cfgInstName" class="form-input" value="${escapeHtml(cfg.institution || '')}" placeholder="${isEn ? 'e.g. Ludwig Von Drake High School' : 'es. I.I.S. Rolando da Piazzola'}">
+          <label class="form-label">${isEn ? 'School / Institution Name *' : "Nome dell'Istituto Scolastico *"}</label>
+          <input type="text" id="cfgInstName" class="form-input" value="${escapeHtml(cfg.institution || (currentSchool ? currentSchool.name : ''))}" placeholder="${isEn ? 'e.g. Ludwig Von Drake High School' : 'es. Liceo Scientifico Galileo Galilei'}">
         </div>
         <div class="form-group">
-          <label class="form-label">${isEn ? 'MIM / School Code' : 'Codice Meccanografico (se presente)'}</label>
-          <input type="text" id="cfgMeccanografico" class="form-input" value="${escapeHtml(cfg.meccanografico || '')}" placeholder="${isEn ? 'e.g. PDIS017007 (Optional)' : 'es. PDIS017007 (Facoltativo)'}" style="text-transform:uppercase;font-weight:600;letter-spacing:0.5px;">
+          <label class="form-label">${isEn ? 'City / Town' : 'Città / Comune'}</label>
+          <input type="text" id="cfgCity" class="form-input" value="${escapeHtml(cfg.city || (currentSchool ? currentSchool.city : ''))}" placeholder="${isEn ? 'e.g. London, Rome...' : 'es. Padova, Milano, Roma...'}">
         </div>
         <div class="form-group">
-          <label class="form-label">${isEn ? 'Notes / School Year' : 'Note / Anno Scolastico'}</label>
+          <label class="form-label">${isEn ? 'Country' : 'Nazione'}</label>
+          <input type="text" id="cfgCountry" class="form-input" value="${escapeHtml(cfg.country || (currentSchool ? currentSchool.country : (isEn ? 'United States' : 'Italia')))}" placeholder="${isEn ? 'e.g. United States' : 'es. Italia'}">
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1.5fr 2fr 1.5fr;gap:14px;margin-top:10px;">
+        <div class="form-group">
+          <label class="form-label">${isEn ? 'School Code (MIM / Unique)' : 'Codice Meccanografico (Univoco per l\'Italia)'}</label>
+          <input type="text" id="cfgMeccanografico" class="form-input" value="${escapeHtml(cfg.meccanografico || (currentSchool ? currentSchool.meccanografico : ''))}" placeholder="${isEn ? 'e.g. PDIS017007 (Optional)' : 'es. PDIS017007 (Facoltativo)'}" style="text-transform:uppercase;font-weight:600;letter-spacing:0.5px;">
+        </div>
+        <div class="form-group">
+          <label class="form-label">${isEn ? 'Notes / Timetable Committee Contact' : 'Note / Referente Commissione Orario'}</label>
+          <input type="text" id="cfgNotes" class="form-input" value="${escapeHtml(cfg.notes || (currentSchool ? currentSchool.notes : ''))}" placeholder="${isEn ? 'Contact or setup notes...' : 'Recapiti o note di configurazione...'}">
+        </div>
+        <div class="form-group">
+          <label class="form-label">${isEn ? 'FET Project Comments / Year' : 'Commenti Progetto / Anno Scolastico'}</label>
           <input type="text" id="cfgComments" class="form-input" value="${escapeHtml(cfg.comments || '')}" placeholder="${isEn ? 'e.g. S.Y. 2026/2027' : 'es. A.S. 2026/2027'}">
         </div>
       </div>
@@ -11317,7 +11392,10 @@ function applyDayHoursPreset(type) {
 async function saveParametersSettings() {
   const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
   const instName = document.getElementById('cfgInstName').value.trim();
+  const city = (document.getElementById('cfgCity')?.value || '').trim();
+  const country = (document.getElementById('cfgCountry')?.value || (isEn ? 'United States' : 'Italia')).trim();
   const meccanografico = (document.getElementById('cfgMeccanografico')?.value || '').trim().toUpperCase();
+  const notes = (document.getElementById('cfgNotes')?.value || '').trim();
   const comments = document.getElementById('cfgComments').value.trim();
   const dayLimits = {};
   
@@ -11365,7 +11443,10 @@ async function saveParametersSettings() {
 
   const payload = {
     institution: instName,
+    city: city,
+    country: country,
     meccanografico: meccanografico,
+    notes: notes,
     comments: comments,
     days: activeDays,
     day_hours_limit: dayLimits,
@@ -11378,13 +11459,24 @@ async function saveParametersSettings() {
     body: JSON.stringify(payload)
   });
 
+  const resData = await res.json().catch(() => ({}));
+
   if (res.ok) {
     showToast(isEn ? 'Institution parameters and calendar saved successfully!' : 'Parametri istituto e calendario salvati con successo!');
     const badge = document.getElementById('instBadge');
     if (badge) badge.innerText = instName;
+    if (window.currentSchool) {
+      window.currentSchool.name = instName;
+      window.currentSchool.city = city;
+      window.currentSchool.country = country;
+      window.currentSchool.meccanografico = meccanografico;
+      window.currentSchool.notes = notes;
+    }
+    const sName = document.getElementById('currentSchoolName');
+    if (sName && instName) sName.innerText = instName;
     renderParameters();
   } else {
-    alert(isEn ? 'Error saving parameters.' : 'Errore durante il salvataggio dei parametri.');
+    alert(resData.error || (isEn ? 'Error saving parameters.' : 'Errore durante il salvataggio dei parametri.'));
   }
 }
 

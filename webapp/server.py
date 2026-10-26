@@ -394,16 +394,27 @@ class EurarioHandler(BaseHTTPRequestHandler):
                 return q_sid
         # 3. Sessione utente loggato
         user = self._get_current_user()
-        if user and user.get("active_school_id"):
-            s_sid = str(user["active_school_id"]).strip()
-            if school_manager.get_school(s_sid):
-                return s_sid
-        # 4. Fallback predefinito
+        if user:
+            if user.get("is_superadmin"):
+                if user.get("active_school_id") and school_manager.get_school(user["active_school_id"]):
+                    return str(user["active_school_id"]).strip()
+                return "default"
+            # Utente normale: determina le scuole accessibili
+            email = user.get("email")
+            mems = {email: auth_manager.get_user_memberships(email)} if email else None
+            can_def = bool(user.get("can_define_school"))
+            user_schools = school_manager.list_schools_for_user(email, is_superadmin=False, memberships=mems, can_define_school=can_def)
+            if not user_schools:
+                return None
+            if user.get("active_school_id") and any(s["id"] == user["active_school_id"] for s in user_schools):
+                return str(user["active_school_id"]).strip()
+            return user_schools[0]["id"]
+        # 4. Fallback predefinito (per connessioni locali/script)
         return "default"
 
     def _setup_request_school(self, query=None):
         sid = self._resolve_school_id(query=query)
-        set_current_school_id(sid)
+        set_current_school_id(sid or "none")
         return sid
 
     def _is_current_school_trial(self):
@@ -572,7 +583,10 @@ class EurarioHandler(BaseHTTPRequestHandler):
 
         elif path == "/api/schools/current":
             active_sid = get_current_school_id()
-            curr_school = school_manager.get_school(active_sid) or school_manager.get_school("default")
+            if not active_sid or active_sid == "none":
+                self._json(200, None)
+                return
+            curr_school = school_manager.get_school(active_sid)
             self._json(200, curr_school)
             return
 
@@ -722,6 +736,23 @@ class EurarioHandler(BaseHTTPRequestHandler):
 
         # --- REST API ---
         if path == "/api/summary":
+            sid = get_current_school_id()
+            if not sid or sid == "none":
+                fet_info = get_fet_binary_info()
+                self._json(200, {
+                    "institution": "",
+                    "teachers_count": 0,
+                    "classes_count": 0,
+                    "subjects_count": 0,
+                    "rooms_count": 0,
+                    "activities_count": 0,
+                    "app_version": APP_VERSION,
+                    "fet_version": FET_VERSION,
+                    "fet_arch": fet_info["arch_label"],
+                    "fet_title": fet_info["title_label"],
+                    "author": APP_AUTHOR
+                })
+                return
             sum_data = db.get_summary()
             sum_data["app_version"] = APP_VERSION
             sum_data["fet_version"] = FET_VERSION
@@ -756,7 +787,20 @@ class EurarioHandler(BaseHTTPRequestHandler):
             self._json(200, db.get_accorpamenti_candidates())
 
         elif path == "/api/settings":
-            self._json(200, db.get_settings())
+            st = db.get_settings()
+            sid = get_current_school_id()
+            if sid and sid != "none":
+                sch = school_manager.get_school(sid)
+                if sch:
+                    st["school_id"] = sch.get("id")
+                    st["city"] = sch.get("city", "")
+                    st["country"] = sch.get("country", "Italia")
+                    st["notes"] = sch.get("notes", "")
+                    if not st.get("meccanografico"):
+                        st["meccanografico"] = sch.get("meccanografico", "")
+                    if not st.get("institution"):
+                        st["institution"] = sch.get("name", "")
+            self._json(200, st)
 
         elif path == "/api/sections/percorsi":
             self._json(200, db.get_section_percorsi())
@@ -1073,6 +1117,20 @@ class EurarioHandler(BaseHTTPRequestHandler):
                 self._json(400, {"error": str(e)})
             return
 
+        elif path == "/api/auth/users/update_role":
+            admin = self._require_admin()
+            if not admin:
+                return
+            if not body or not body.get("email") or not body.get("role"):
+                self._json(400, {"error": "Email e ruolo mancanti"})
+                return
+            try:
+                u = auth_manager.update_user_role(body["email"], body["role"], admin_email=admin.get("email"), ip=client_ip)
+                self._json(200, {"ok": True, "user": u})
+            except Exception as e:
+                self._json(400, {"error": str(e)})
+            return
+
         elif path == "/api/auth/access_logs/clear":
             admin = self._require_admin()
             if not admin:
@@ -1133,7 +1191,7 @@ class EurarioHandler(BaseHTTPRequestHandler):
                 name = body.get("name")
                 city = body.get("city", "")
                 country = body.get("country", "Italia")
-                school_year = body.get("school_year", "2026/2027")
+                school_year = body.get("school_year", "")
                 notes = body.get("notes", "")
                 meccanografico = body.get("meccanografico", "").strip().upper()
                 new_sch = school_manager.create_school(
@@ -1155,10 +1213,61 @@ class EurarioHandler(BaseHTTPRequestHandler):
                 if meccanografico:
                     new_db.data["meccanografico"] = meccanografico
                 new_db.save()
+
+                # Notifica email automatica all'amministratore via SMTP
+                try:
+                    auth_manager.notify_admin_new_school(new_sch, user)
+                except Exception as ne:
+                    print(f"[SCHOOLS] Avviso: errore notifica email admin: {ne}")
+
                 self._json(200, {
                     "success": True,
                     "school": new_sch,
                     "message": "Istituto registrato con successo in Modalità di Prova."
+                })
+            except Exception as e:
+                self._json(400, {"error": str(e)})
+            return
+
+        elif path == "/api/schools/create_demo":
+            user = self._require_auth()
+            if not user:
+                return
+            try:
+                lang = (body or {}).get("lang", "it")
+                is_en = (lang == "en")
+                name = "Ludwig Von Drake High School" if is_en else 'Liceo & Tecnico "Pico De Paperis"'
+                city = "Duckburg" if is_en else "Paperopoli"
+                country = "United States" if is_en else "Italia"
+                notes = "Scuola di esempio precaricata con orario completo e vincoli FET." if not is_en else "Preloaded sample school with complete timetable and FET constraints."
+                meccanografico = ""
+
+                new_sch = school_manager.create_school(
+                    name=name,
+                    city=city,
+                    country=country,
+                    owner_email=user["email"],
+                    notes=notes,
+                    meccanografico=meccanografico
+                )
+                auth_manager.add_user_to_school(user["email"], new_sch["id"], role="owner", status="approved")
+                tok = self._get_session_token()
+                if tok:
+                    auth_manager.set_session_school(tok, new_sch["id"])
+                set_current_school_id(new_sch["id"])
+                new_db = get_db(new_sch["id"])
+                new_db.load_demo(lang=lang)
+                new_db.save()
+
+                try:
+                    auth_manager.notify_admin_new_school(new_sch, user)
+                except Exception as ne:
+                    print(f"[DEMO_SCHOOL] Avviso: errore notifica email admin: {ne}")
+
+                self._json(200, {
+                    "success": True,
+                    "school": new_sch,
+                    "message": "Scuola di esempio caricata con successo!" if not is_en else "Demo school loaded successfully!"
                 })
             except Exception as e:
                 self._json(400, {"error": str(e)})
@@ -1567,12 +1676,32 @@ class EurarioHandler(BaseHTTPRequestHandler):
             if not body:
                 self._json(400, {"error": "Parametri non validi"})
                 return
-            db.save_settings(body)
-            self._json(200, {
-                "success": True,
-                "data_version": db.data.get("data_version", 1),
-                "last_modified": db.data.get("last_modified")
-            })
+            try:
+                sid = get_current_school_id()
+                sch_updates = {}
+                if "institution" in body:
+                    sch_updates["name"] = body["institution"]
+                if "city" in body:
+                    sch_updates["city"] = body["city"]
+                if "country" in body:
+                    sch_updates["country"] = body["country"]
+                if "meccanografico" in body:
+                    sch_updates["meccanografico"] = body["meccanografico"]
+                if "notes" in body:
+                    sch_updates["notes"] = body["notes"]
+
+                if sch_updates and sid and sid != "none":
+                    school_manager.update_school_info(sid, **sch_updates)
+
+                db.save_settings(body)
+                self._json(200, {
+                    "success": True,
+                    "data_version": db.data.get("data_version", 1),
+                    "last_modified": db.data.get("last_modified")
+                })
+            except Exception as e:
+                self._json(400, {"error": str(e)})
+            return
 
         elif path == "/api/import/fet":
             if not body or not body.get("xml"):
