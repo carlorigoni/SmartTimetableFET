@@ -72,16 +72,14 @@ Non è necessario installare compiler C++, Qt o librerie grafiche: l'immagine in
          retries: 3
          start_period: 15s
 
-     # [Opzionale] Aggiornamento automatico intelligente all'uscita di nuove versioni su Docker Hub
-     watchtower:
-       container_name: eurario_watchtower
-       image: containrrr/watchtower
-       restart: unless-stopped
-       volumes:
-         - /var/run/docker.sock:/var/run/docker.sock
-       command: --interval 3600 --cleanup eurario
-       profiles:
-         - auto-update
+  # Aggiornamento automatico intelligente all'uscita di nuove versioni su Docker Hub
+  watchtower:
+    container_name: eurario_watchtower
+    image: containrrr/watchtower
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: --interval 3600 --cleanup eurario
    ```
 
 2. **Avvia i container**:
@@ -216,11 +214,10 @@ Watchtower è **esso stesso un normale container Docker** (`image: containrrr/wa
 
 ### Metodo 1: Gestione Integrata con Docker Compose (Scelta Consigliata)
 
-Il servizio `watchtower` è già configurato all'interno del file `docker-compose.yml` con il tag `profiles: [auto-update]`. Questo ti consente di decidere con un singolo comando se attivare o meno l'aggiornamento automatico:
+Il servizio `watchtower` è già integrato nel file `docker-compose.yml`. Avviando Docker Compose, sia Eurario sia Watchtower partono insieme in background:
 
-#### 1. Come avviare CON AGGIORNAMENTO AUTOMATICO ATTIVO:
 ```bash
-docker compose --profile auto-update up -d
+docker compose up -d
 ```
 * **Cosa succede:** Docker avvia in background sia il server scolastico `eurario` sia il container `eurario_watchtower`.
 * **Cosa fa Watchtower:**
@@ -230,13 +227,7 @@ docker compose --profile auto-update up -d
   4. Rimuove la vecchia immagine dismessa liberando lo spazio su disco (`--cleanup`).
   5. Il database della scuola (`current_project.json`) e gli orari non vengono mai persi né alterati.
 
-#### 2. Come avviare SENZA AGGIORNAMENTO AUTOMATICO (Modalità Manuale):
-```bash
-docker compose up -d
-```
-* **Cosa succede:** Docker avvia **esclusivamente** `eurario`. Watchtower rimane completamente spento. L'aggiornamento avverrà solo quando deciderai tu di lanciare manualmente `docker compose pull && docker compose up -d`.
-
-#### 3. Comandi utili per monitorare Watchtower:
+#### Comandi utili per monitorare Watchtower:
 * **Verificare i container in esecuzione:**
   ```bash
   docker compose ps
@@ -276,7 +267,7 @@ services:
       retries: 3
       start_period: 15s
 
-  # Servizio di aggiornamento automatico (attivabile con --profile auto-update)
+  # Servizio di aggiornamento automatico
   watchtower:
     container_name: eurario_watchtower
     image: containrrr/watchtower
@@ -284,8 +275,6 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     command: --interval 3600 --cleanup eurario
-    profiles:
-      - auto-update
 ```
 
 * `--interval 3600`: frequenza di verifica in secondi (ogni 60 minuti). In alternativa puoi usare `--schedule "0 0 3 * * *"` per aggiornare solo ogni notte alle 03:00.

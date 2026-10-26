@@ -24,7 +24,7 @@ services:
       retries: 3
       start_period: 15s
 
-  # [Consigliato per Server Ubuntu] Aggiornamento automatico container all'uscita di nuove versioni Docker Hub
+  # Aggiornamento automatico container all'uscita di nuove versioni Docker Hub
   watchtower:
     container_name: eurario_watchtower
     image: containrrr/watchtower
@@ -32,5 +32,3 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     command: --interval 3600 --cleanup eurario
-    profiles:
-      - auto-update
