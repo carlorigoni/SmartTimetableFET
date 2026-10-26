@@ -368,71 +368,101 @@
       flex-shrink: 0;
     }
 
-    /* THEME SWITCHER */
-    .theme-switch {
-      display: inline-flex;
-      align-items: center;
-      background: var(--bg-surface-alt);
-      border: 1px solid var(--border-color);
-      border-radius: 99px;
-      padding: 3px;
-      gap: 2px;
+    /* COMPACT VERTICAL DROPDOWNS (THEME & LANGUAGE) */
+    .nav-dropdown {
+      position: relative;
     }
-    .theme-btn {
-      border: none;
-      background: transparent;
-      padding: 5px 8px;
-      border-radius: 99px;
-      font-size: 13px;
-      color: var(--text-muted);
-      cursor: pointer;
-      transition: all 0.15s ease;
+    .nav-drop-btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      line-height: 1;
-    }
-    .theme-btn:hover {
-      color: var(--text-title);
-    }
-    .theme-btn.active {
-      background: var(--bg-card);
-      color: var(--emerald);
-      box-shadow: 0 1px 3px rgba(0,0,0,0.15);
-    }
-
-    /* LANGUAGE SWITCHER */
-    .lang-switch {
-      display: inline-flex;
-      align-items: center;
+      gap: 6px;
+      height: 38px;
+      padding: 0 10px;
       background: var(--bg-surface-alt);
       border: 1px solid var(--border-color);
-      border-radius: 99px;
-      padding: 3px;
-      gap: 2px;
-    }
-    .lang-btn {
-      border: none;
-      background: transparent;
-      padding: 5px 10px;
-      border-radius: 99px;
-      font-size: 12.5px;
+      border-radius: var(--radius-sm);
+      color: var(--text-main);
+      font-size: 13px;
       font-weight: 700;
-      color: var(--text-muted);
       cursor: pointer;
       transition: all 0.15s ease;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
+      user-select: none;
+    }
+    .nav-drop-btn:hover {
+      border-color: var(--emerald);
+      color: var(--emerald);
+      background: var(--bg-card);
+    }
+    .drop-arrow {
+      font-size: 9px;
+      color: var(--text-subtle);
+      transition: transform 0.2s ease;
       line-height: 1;
     }
-    .lang-btn:hover {
+    .nav-dropdown.open .drop-arrow {
+      transform: rotate(180deg);
+    }
+    .nav-dropdown.open .nav-drop-btn {
+      border-color: var(--emerald);
+      background: var(--bg-card);
+    }
+    .dropdown-menu {
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      min-width: 140px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-lg);
+      padding: 6px;
+      display: none;
+      flex-direction: column;
+      gap: 2px;
+      z-index: 1000;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      animation: dropFadeIn 0.15s ease;
+    }
+    @keyframes dropFadeIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .nav-dropdown.open .dropdown-menu {
+      display: flex;
+    }
+    .dropdown-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      text-align: left;
+      width: 100%;
+      transition: all 0.12s ease;
+    }
+    .dropdown-item:hover {
+      background: var(--bg-surface-alt);
       color: var(--text-title);
     }
-    .lang-btn.active {
-      background: var(--bg-card);
+    .dropdown-item.active {
+      background: var(--emerald-light);
       color: var(--emerald);
-      box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+      font-weight: 700;
+    }
+    .item-icon {
+      font-size: 14px;
+      line-height: 1;
+    }
+    .item-label {
+      flex: 1;
     }
 
     /* BUTTONS */
@@ -1209,15 +1239,46 @@
         <a href="https://github.com/carlorigoni/eurario" target="_blank" class="nav-link">GitHub</a>
       </div>
       <div class="nav-controls">
-        <div class="theme-switch" role="group" aria-label="Theme Selector">
-          <button class="theme-btn" id="themeBtnLight" onclick="setTheme('light')" title="Tema Chiaro">☀️</button>
-          <button class="theme-btn" id="themeBtnDark" onclick="setTheme('dark')" title="Tema Scuro">🌙</button>
-          <button class="theme-btn active" id="themeBtnAuto" onclick="setTheme('auto')" title="Tema Automatico (Sistema)">💻</button>
+        <!-- THEME DROPDOWN -->
+        <div class="nav-dropdown" id="themeDropdownWrap">
+          <button class="nav-drop-btn" id="themeMenuBtn" onclick="toggleDropdown('themeDropdownWrap', event)" title="Tema" aria-label="Cambia Tema" aria-expanded="false">
+            <span id="themeCurrentIcon">💻</span>
+            <span class="drop-arrow">▾</span>
+          </button>
+          <div class="dropdown-menu" id="themeDropdownMenu" role="menu">
+            <button class="dropdown-item" id="themeOpt_light" onclick="selectTheme('light')">
+              <span class="item-icon">☀️</span>
+              <span class="item-label">Chiaro</span>
+            </button>
+            <button class="dropdown-item" id="themeOpt_dark" onclick="selectTheme('dark')">
+              <span class="item-icon">🌙</span>
+              <span class="item-label">Scuro</span>
+            </button>
+            <button class="dropdown-item active" id="themeOpt_auto" onclick="selectTheme('auto')">
+              <span class="item-icon">💻</span>
+              <span class="item-label">Automatico</span>
+            </button>
+          </div>
         </div>
-        <div class="lang-switch" role="group" aria-label="Language Selector">
-          <button class="lang-btn active" id="btnLangIt" onclick="setLanguage('it')">🇮🇹 IT</button>
-          <button class="lang-btn" id="btnLangEn" onclick="setLanguage('en')">🇬🇧 EN</button>
+
+        <!-- LANGUAGE DROPDOWN -->
+        <div class="nav-dropdown" id="langDropdownWrap">
+          <button class="nav-drop-btn" id="langMenuBtn" onclick="toggleDropdown('langDropdownWrap', event)" title="Lingua" aria-label="Seleziona Lingua" aria-expanded="false">
+            <span id="langCurrentLabel">🇮🇹 IT</span>
+            <span class="drop-arrow">▾</span>
+          </button>
+          <div class="dropdown-menu" id="langDropdownMenu" role="menu">
+            <button class="dropdown-item active" id="langOpt_it" onclick="selectLang('it')">
+              <span class="item-icon">🇮🇹</span>
+              <span class="item-label">Italiano</span>
+            </button>
+            <button class="dropdown-item" id="langOpt_en" onclick="selectLang('en')">
+              <span class="item-icon">🇬🇧</span>
+              <span class="item-label">English</span>
+            </button>
+          </div>
         </div>
+
         <a href="https://app.eurario.it" class="btn btn-emerald" id="navLoginBtn">
           🔐 Accedi all'App
         </a>
@@ -1481,6 +1542,47 @@
     let siteData = null;
     let currentTheme = 'auto';
 
+    function toggleDropdown(wrapId, e) {
+      if (e) e.stopPropagation();
+      const wrap = document.getElementById(wrapId);
+      if (!wrap) return;
+      const isOpen = wrap.classList.contains('open');
+      closeAllDropdowns();
+      if (!isOpen) {
+        wrap.classList.add('open');
+        const btn = wrap.querySelector('.nav-drop-btn');
+        if (btn) btn.setAttribute('aria-expanded', 'true');
+      }
+    }
+
+    function closeAllDropdowns() {
+      document.querySelectorAll('.nav-dropdown').forEach(d => {
+        d.classList.remove('open');
+        const btn = d.querySelector('.nav-drop-btn');
+        if (btn) btn.setAttribute('aria-expanded', 'false');
+      });
+    }
+
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.nav-dropdown')) {
+        closeAllDropdowns();
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeAllDropdowns();
+    });
+
+    function selectTheme(theme) {
+      applyTheme(theme);
+      closeAllDropdowns();
+    }
+
+    function selectLang(lang) {
+      setLanguage(lang);
+      closeAllDropdowns();
+    }
+
     function detectInitialTheme() {
       try {
         const saved = localStorage.getItem('eurario_theme');
@@ -1503,14 +1605,15 @@
         document.documentElement.setAttribute('data-theme', theme);
       }
 
-      const btnL = document.getElementById('themeBtnLight');
-      const btnD = document.getElementById('themeBtnDark');
-      const btnA = document.getElementById('themeBtnAuto');
-      if (btnL && btnD && btnA) {
-        btnL.classList.toggle('active', currentTheme === 'light');
-        btnD.classList.toggle('active', currentTheme === 'dark');
-        btnA.classList.toggle('active', currentTheme === 'auto');
+      const iconEl = document.getElementById('themeCurrentIcon');
+      if (iconEl) {
+        iconEl.textContent = (theme === 'light') ? '☀️' : (theme === 'dark') ? '🌙' : '💻';
       }
+
+      ['light', 'dark', 'auto'].forEach(t => {
+        const item = document.getElementById('themeOpt_' + t);
+        if (item) item.classList.toggle('active', currentTheme === t);
+      });
     }
 
     function setTheme(theme) {
@@ -1566,12 +1669,15 @@
 
       document.documentElement.lang = currentLang;
 
-      const btnIt = document.getElementById('btnLangIt');
-      const btnEn = document.getElementById('btnLangEn');
-      if (btnIt && btnEn) {
-        btnIt.classList.toggle('active', currentLang === 'it');
-        btnEn.classList.toggle('active', currentLang === 'en');
+      const lblEl = document.getElementById('langCurrentLabel');
+      if (lblEl) {
+        lblEl.textContent = (currentLang === 'en') ? '🇬🇧 EN' : '🇮🇹 IT';
       }
+
+      const optIt = document.getElementById('langOpt_it');
+      const optEn = document.getElementById('langOpt_en');
+      if (optIt) optIt.classList.toggle('active', currentLang === 'it');
+      if (optEn) optEn.classList.toggle('active', currentLang === 'en');
 
       try {
         const url = new URL(window.location);
@@ -2035,15 +2141,7 @@
 
     async function initLanding() {
       applyTheme(detectInitialTheme());
-      currentLang = detectInitialLang();
-      document.documentElement.lang = currentLang;
-
-      const btnIt = document.getElementById('btnLangIt');
-      const btnEn = document.getElementById('btnLangEn');
-      if (btnIt && btnEn) {
-        btnIt.classList.toggle('active', currentLang === 'it');
-        btnEn.classList.toggle('active', currentLang === 'en');
-      }
+      setLanguage(detectInitialLang());
 
       try {
         const res = await fetch('content/site_data.json');
