@@ -272,6 +272,8 @@ services:
     container_name: eurario_watchtower
     image: containrrr/watchtower
     restart: unless-stopped
+    environment:
+      - DOCKER_API_VERSION=1.41
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     command: --interval 3600 --cleanup eurario
@@ -288,10 +290,11 @@ Se non utilizzi Docker Compose, puoi avviare Watchtower con un singolo comando:
 docker run -d \
   --name watchtower \
   --restart unless-stopped \
+  -e DOCKER_API_VERSION=1.41 \
   -v /var/run/docker.sock:/var/run/docker.sock \
   containrrr/watchtower \
   --cleanup \
-  --schedule "0 0 3 * * *" \
+  --interval 3600 \
   eurario
 ```
 
