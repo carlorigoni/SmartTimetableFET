@@ -1156,6 +1156,135 @@
       color: var(--text-muted);
     }
 
+    /* SEZIONE CONTATTI & MODULO PREVENTIVI */
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.35fr;
+      gap: 36px;
+      align-items: start;
+    }
+    .contact-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 36px 32px;
+      box-shadow: var(--shadow-sm);
+    }
+    .contact-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--emerald-light);
+      color: var(--emerald);
+      padding: 4px 12px;
+      border-radius: 99px;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+    .contact-direct-box {
+      background: var(--bg-surface-alt);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 18px 20px;
+      margin: 20px 0;
+    }
+    .contact-email-addr {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--emerald);
+      word-break: break-all;
+    }
+    .contact-benefits-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 24px;
+    }
+    .contact-benefit-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 13.5px;
+      color: var(--text-main);
+      line-height: 1.45;
+    }
+    .contact-benefit-icon {
+      color: var(--emerald);
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+
+    /* Form Contatti */
+    .contact-form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .form-label {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+    .form-control {
+      background: var(--bg-surface-alt);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      color: var(--text-main);
+      padding: 10px 14px;
+      font-size: 13.5px;
+      font-family: inherit;
+      outline: none;
+      transition: all 0.2s ease;
+      width: 100%;
+    }
+    .form-control:focus {
+      border-color: var(--emerald);
+      box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.15);
+      background: var(--bg-card);
+    }
+    select.form-control {
+      cursor: pointer;
+    }
+    textarea.form-control {
+      min-height: 110px;
+      resize: vertical;
+    }
+    .form-feedback {
+      display: none;
+      background: var(--emerald-light);
+      border: 1px solid rgba(5, 150, 105, 0.3);
+      color: var(--emerald-hover);
+      padding: 16px 20px;
+      border-radius: var(--radius-md);
+      font-size: 13.5px;
+      line-height: 1.5;
+      margin-top: 14px;
+    }
+    [data-theme="dark"] .form-feedback {
+      background: rgba(16, 185, 129, 0.12);
+      border-color: rgba(16, 185, 129, 0.3);
+      color: #6ee7b7;
+    }
+    .form-feedback-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
     /* FOOTER */
     .footer {
       background: var(--footer-bg);
@@ -1164,14 +1293,44 @@
       margin-top: 80px;
       border-top: 1px solid var(--border-color);
     }
-    .footer-inner {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 20px;
-      padding-bottom: 30px;
+    .footer-cols {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr 1.2fr;
+      gap: 40px;
+      padding-bottom: 40px;
       border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .footer-col-title {
+      font-size: 14px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #fff;
+      margin-bottom: 16px;
+    }
+    .footer-links {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .footer-link {
+      color: var(--text-subtle);
+      text-decoration: none;
+      font-size: 13.5px;
+      transition: color 0.15s;
+    }
+    .footer-link:hover {
+      color: #fff;
+    }
+    .footer-contact-box {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: var(--radius-sm);
+      padding: 14px 16px;
+      font-size: 13px;
+      line-height: 1.5;
+      color: rgba(255,255,255,0.85);
     }
     .footer-credits {
       text-align: center;
@@ -1189,6 +1348,9 @@
       .hero-grid { grid-template-columns: 1fr; }
       .hero-title { font-size: 34px; }
       .faq-grid { grid-template-columns: 1fr; }
+      .contact-grid { grid-template-columns: 1fr; }
+      .footer-cols { grid-template-columns: 1fr; gap: 30px; }
+      .form-row { grid-template-columns: 1fr; }
       .nav-links { display: none; }
     }
     @media (max-width: 640px) {
@@ -1236,6 +1398,7 @@
         <a href="#modelli" class="nav-link" id="navLinkPlans">Piani & Cloud</a>
         <a href="#installazione" class="nav-link" id="navLinkInstall">Installazione</a>
         <a href="#faq" class="nav-link" id="navLinkFaq">Domande Frequenti</a>
+        <a href="#contatti" class="nav-link" id="navLinkContact">Contatti</a>
         <a href="https://github.com/carlorigoni/eurario" target="_blank" class="nav-link">GitHub</a>
       </div>
       <div class="nav-controls">
@@ -1515,19 +1678,165 @@
     </div>
   </section>
 
+  <!-- SEZIONE CONTATTI & MODULO PREVENTIVI -->
+  <section class="section" id="contatti">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag" id="contactTag">Contatto Diretto & Piani</span>
+        <h2 class="section-title" id="contactTitle">Richiedi Informazioni o un Preventivo per la tua Scuola</h2>
+        <p class="section-subtitle" id="contactSubtitle">Parla direttamente con l'autore di Eurario per scoprire il piano Cloud SaaS gestito, richiedere una demo per la tua scuola o ricevere assistenza tecnica.</p>
+      </div>
+
+      <div class="contact-grid">
+        <!-- Scheda Contatto Amministratore -->
+        <div class="contact-card">
+          <div class="contact-badge" id="contactBadge">✉️ Amministrazione Eurario</div>
+          <h3 style="font-size:22px;font-weight:800;color:var(--text-title);margin-bottom:6px;" id="contactAdminName">Carlo Rigoni</h3>
+          <p style="font-size:13.5px;color:var(--text-muted);line-height:1.5;" id="contactAdminRole">Autore & Architetto Software Eurario</p>
+
+          <div class="contact-direct-box">
+            <div style="font-size:12px;font-weight:700;color:var(--text-subtle);margin-bottom:4px;" id="contactEmailTitle">Email Personale / Amministratore:</div>
+            <div class="contact-email-addr">carlo.rigoni@gmail.com</div>
+            <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">
+              <button type="button" class="btn btn-outline" style="padding:6px 12px;font-size:12px;" onclick="copyAdminEmail()" id="btnCopyEmail">📋 Copia Indirizzo</button>
+              <a href="mailto:carlo.rigoni@gmail.com?subject=Richiesta%20Informazioni%20Eurario" class="btn btn-emerald" style="padding:6px 14px;font-size:12px;" id="btnWriteDirect">✉️ Scrivi Subito</a>
+            </div>
+          </div>
+
+          <p style="font-size:13px;color:var(--text-muted);line-height:1.5;" id="contactAdminNote">
+            Disponibile per videochiamate conoscitive, preventivi formali per la segreteria/DSGA e convenzioni scolastiche.
+          </p>
+
+          <ul class="contact-benefits-list" id="contactBenefitsList">
+            <!-- Idrato dinamicamente -->
+          </ul>
+        </div>
+
+        <!-- Modulo di Contatto -->
+        <div class="contact-card">
+          <form class="contact-form" id="contactForm" onsubmit="handleContactSubmit(event)">
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="cfName" id="lblCfName">Nome e Cognome *</label>
+                <input type="text" class="form-control" id="cfName" required placeholder="es. Prof. Mario Rossi">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="cfEmail" id="lblCfEmail">Email di Contatto *</label>
+                <input type="email" class="form-control" id="cfEmail" required placeholder="mario.rossi@scuola.edu.it">
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="cfSchool" id="lblCfSchool">Istituto Scolastico *</label>
+                <input type="text" class="form-control" id="cfSchool" required placeholder="es. I.I.S. Leonardo da Vinci (MI)">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="cfRole" id="lblCfRole">Il tuo Ruolo nella Scuola</label>
+                <select class="form-control" id="cfRole">
+                  <!-- Idrato dinamicamente -->
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="cfPlan" id="lblCfPlan">Piano / Oggetto della Richiesta</label>
+                <select class="form-control" id="cfPlan">
+                  <!-- Idrato dinamicamente -->
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="cfSize" id="lblCfSize">Dimensioni stimate (opzionale)</label>
+                <input type="text" class="form-control" id="cfSize" placeholder="es. 35 classi, 70 docenti">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="cfMessage" id="lblCfMessage">Messaggio / Esigenze orario *</label>
+              <textarea class="form-control" id="cfMessage" required placeholder="Descrivi brevemente la tua scuola e le complessità dell'orario..."></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-emerald" style="padding:14px;font-size:15px;width:100%;margin-top:6px;" id="cfSubmitBtn">
+              ✉️ Invia Richiesta all'Amministratore
+            </button>
+
+            <!-- Box di feedback / conferma -->
+            <div class="form-feedback" id="cfFeedback">
+              <div style="font-weight:700;margin-bottom:6px;" id="cfFeedbackTitle">✅ Richiesta Pronta per l'Invio!</div>
+              <div id="cfFeedbackDesc">Abbiamo preparato il messaggio per <b>carlo.rigoni@gmail.com</b> nel tuo client email. Se non si è aperto automaticamente, puoi aprirlo o copiare il testo:</div>
+              <div class="form-feedback-actions">
+                <a href="#" id="cfOpenClientBtn" class="btn btn-emerald" style="padding:6px 14px;font-size:12.5px;">✉️ Apri Client Email</a>
+                <button type="button" class="btn btn-outline" style="padding:6px 14px;font-size:12.5px;" onclick="copyFormMessageText()">📋 Copia Messaggio</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- FOOTER -->
   <footer class="footer">
     <div class="container">
-      <div class="footer-inner">
+      <div class="footer-cols">
+        <!-- Col 1: Brand & Info -->
         <div>
-          <div style="font-weight:800;font-size:20px;letter-spacing:-0.5px;margin-bottom:6px;">Eurario FET Suite</div>
-          <div style="color:var(--text-subtle);font-size:13px;" id="footerDesc">Software libero per la gestione avanzata dell'orario scolastico italiano, disponibile Self-Hosted e in Cloud SaaS.</div>
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+            <div class="brand-mark" style="width:30px;height:30px;">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="30" height="30">
+                <rect width="64" height="64" rx="14" fill="#1B2A4A"/>
+                <rect x="10" y="10" width="11" height="44" rx="3" fill="#F6F3EC"/>
+                <rect x="24" y="10" width="30" height="11" rx="3" fill="#E4572E"/>
+                <rect x="24" y="26.5" width="22" height="11" rx="3" fill="#F2B134"/>
+                <rect x="24" y="43" width="30" height="11" rx="3" fill="#2F7F86"/>
+              </svg>
+            </div>
+            <span style="font-weight:800;font-size:18px;color:#fff;">Eurario FET Suite</span>
+          </div>
+          <p style="color:var(--text-subtle);font-size:13px;line-height:1.6;margin-bottom:16px;" id="footerDesc">
+            Software libero per la gestione avanzata dell'orario scolastico italiano, disponibile Self-Hosted e in Cloud SaaS.
+          </p>
+          <div style="font-size:12px;color:rgba(255,255,255,0.7);">
+            Licenza: <b>GNU General Public License v3.0 (GPLv3)</b>
+          </div>
         </div>
-        <div style="display:flex;gap:12px;align-items:center;">
-          <a href="https://app.eurario.it" class="btn btn-emerald" style="padding:8px 18px;font-size:13px;" id="footerAppBtn">Accedi all'App</a>
-          <a href="https://github.com/carlorigoni/eurario" target="_blank" class="btn btn-outline" style="padding:8px 18px;font-size:13px;color:#fff;border-color:rgba(255,255,255,0.25);background:transparent;" id="footerCodeBtn">Codice Sorgente</a>
+
+        <!-- Col 2: Navigazione Rapida -->
+        <div>
+          <div class="footer-col-title" id="footerNavTitle">Navigazione</div>
+          <ul class="footer-links">
+            <li><a href="#funzionalita" class="footer-link" id="fLinkFeatures">Funzionalità</a></li>
+            <li><a href="#maschere" class="footer-link" id="fLinkShowcase">Maschere & Demo</a></li>
+            <li><a href="#confronto" class="footer-link" id="fLinkWhy">Perché Eurario</a></li>
+            <li><a href="#modelli" class="footer-link" id="fLinkPlans">Piani & Cloud SaaS</a></li>
+            <li><a href="#installazione" class="footer-link" id="fLinkInstall">Installazione Docker</a></li>
+            <li><a href="#faq" class="footer-link" id="fLinkFaq">Domande Frequenti</a></li>
+            <li><a href="#contatti" class="footer-link" id="fLinkContact">Contatti & Preventivi</a></li>
+          </ul>
+        </div>
+
+        <!-- Col 3: Contatti Diretti & Amministrazione -->
+        <div>
+          <div class="footer-col-title" id="footerContactTitle">Amministrazione & Contatti</div>
+          <div class="footer-contact-box">
+            <div style="font-weight:700;color:#fff;margin-bottom:4px;">Carlo Rigoni</div>
+            <div style="color:var(--text-subtle);font-size:12px;margin-bottom:10px;">Ideatore & Amministratore Suite</div>
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;">
+              <span>✉️</span>
+              <a href="mailto:carlo.rigoni@gmail.com" style="color:var(--emerald);text-decoration:none;font-weight:700;font-size:13px;">carlo.rigoni@gmail.com</a>
+            </div>
+            <div style="color:rgba(255,255,255,0.65);font-size:11.5px;line-height:1.4;">
+              Contatto diretto per preventivi, convenzioni con Istituti Scolastici e supporto tecnico.
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:16px;">
+            <a href="https://app.eurario.it" class="btn btn-emerald" style="padding:8px 16px;font-size:12.5px;" id="footerAppBtn">Accedi all'App</a>
+            <a href="https://github.com/carlorigoni/eurario" target="_blank" class="btn btn-outline" style="padding:8px 16px;font-size:12.5px;color:#fff;border-color:rgba(255,255,255,0.25);background:transparent;" id="footerCodeBtn">GitHub</a>
+          </div>
         </div>
       </div>
+
       <div class="footer-credits" id="footerCredits">
         Ideazione & Architettura: <b>Carlo Rigoni</b> &bull; Mentore dell'Orario: <b>Federico Rettore</b> &bull; Motore Euristico: <b>FET Free Software</b> &bull; AI Pair Programming: <b>Google DeepMind Antigravity</b>
       </div>
@@ -1918,6 +2227,8 @@
         if (elInstall) elInstall.textContent = t.nav.install;
         const elFaq = document.getElementById('navLinkFaq');
         if (elFaq) elFaq.textContent = t.nav.faq;
+        const elContact = document.getElementById('navLinkContact');
+        if (elContact && t.nav) elContact.textContent = t.nav.contact || 'Contatti';
         const elLogin = document.getElementById('navLoginBtn');
         if (elLogin) elLogin.textContent = t.nav.login_btn;
       }
@@ -2124,7 +2435,106 @@
         `).join('');
       }
 
+      // Contact Section
+      if (t.contact_section) {
+        const cs = t.contact_section;
+        const cTag = document.getElementById('contactTag');
+        if (cTag) cTag.textContent = cs.tag;
+        const cTitle = document.getElementById('contactTitle');
+        if (cTitle) cTitle.textContent = cs.title;
+        const cSub = document.getElementById('contactSubtitle');
+        if (cSub) cSub.textContent = cs.subtitle;
+        const cBadge = document.getElementById('contactBadge');
+        if (cBadge) cBadge.textContent = '✉️ ' + (currentLang === 'en' ? 'Eurario Administration' : 'Amministrazione Eurario');
+        const cAdminName = document.getElementById('contactAdminName');
+        if (cAdminName) cAdminName.textContent = cs.admin_name;
+        const cAdminRole = document.getElementById('contactAdminRole');
+        if (cAdminRole) cAdminRole.textContent = cs.admin_role;
+        const cEmailTitle = document.getElementById('contactEmailTitle');
+        if (cEmailTitle) cEmailTitle.textContent = (currentLang === 'en') ? 'Personal Email / Administrator:' : 'Email Personale / Amministratore:';
+        const cAdminNote = document.getElementById('contactAdminNote');
+        if (cAdminNote) cAdminNote.textContent = cs.admin_note;
+        const btnCopyEmail = document.getElementById('btnCopyEmail');
+        if (btnCopyEmail) btnCopyEmail.textContent = (currentLang === 'en') ? '📋 Copy Address' : '📋 Copia Indirizzo';
+        const btnWriteDirect = document.getElementById('btnWriteDirect');
+        if (btnWriteDirect) btnWriteDirect.textContent = (currentLang === 'en') ? '✉️ Email Now' : '✉️ Scrivi Subito';
+
+        const bList = document.getElementById('contactBenefitsList');
+        if (bList && cs.benefits) {
+          bList.innerHTML = cs.benefits.map(b => `
+            <li class="contact-benefit-item">
+              <span class="contact-benefit-icon">✓</span>
+              <span>${b}</span>
+            </li>
+          `).join('');
+        }
+
+        if (cs.form) {
+          const f = cs.form;
+          const lblName = document.getElementById('lblCfName');
+          if (lblName) lblName.textContent = f.name_label + ' *';
+          const inpName = document.getElementById('cfName');
+          if (inpName) inpName.placeholder = f.name_placeholder;
+
+          const lblEmail = document.getElementById('lblCfEmail');
+          if (lblEmail) lblEmail.textContent = f.email_label + ' *';
+          const inpEmail = document.getElementById('cfEmail');
+          if (inpEmail) inpEmail.placeholder = f.email_placeholder;
+
+          const lblSchool = document.getElementById('lblCfSchool');
+          if (lblSchool) lblSchool.textContent = f.school_label + ' *';
+          const inpSchool = document.getElementById('cfSchool');
+          if (inpSchool) inpSchool.placeholder = f.school_placeholder;
+
+          const lblRole = document.getElementById('lblCfRole');
+          if (lblRole) lblRole.textContent = f.role_label;
+          const selRole = document.getElementById('cfRole');
+          if (selRole && f.roles) {
+            selRole.innerHTML = f.roles.map(r => `<option value="${r}">${r}</option>`).join('');
+          }
+
+          const lblPlan = document.getElementById('lblCfPlan');
+          if (lblPlan) lblPlan.textContent = f.plan_label;
+          const selPlan = document.getElementById('cfPlan');
+          if (selPlan && f.plans) {
+            selPlan.innerHTML = f.plans.map(p => `<option value="${p}">${p}</option>`).join('');
+          }
+
+          const lblSize = document.getElementById('lblCfSize');
+          if (lblSize) lblSize.textContent = f.size_label;
+          const inpSize = document.getElementById('cfSize');
+          if (inpSize) inpSize.placeholder = f.size_placeholder;
+
+          const lblMsg = document.getElementById('lblCfMessage');
+          if (lblMsg) lblMsg.textContent = f.message_label + ' *';
+          const inpMsg = document.getElementById('cfMessage');
+          if (inpMsg) inpMsg.placeholder = f.message_placeholder;
+
+          const btnSubmit = document.getElementById('cfSubmitBtn');
+          if (btnSubmit) btnSubmit.textContent = '✉️ ' + f.submit_btn;
+        }
+      }
+
       // Footer
+      const fNavTitle = document.getElementById('footerNavTitle');
+      if (fNavTitle) fNavTitle.textContent = (currentLang === 'en') ? 'Navigation' : 'Navigazione';
+      const fContactTitle = document.getElementById('footerContactTitle');
+      if (fContactTitle) fContactTitle.textContent = (currentLang === 'en') ? 'Administration & Contact' : 'Amministrazione & Contatti';
+      const fLinkFeatures = document.getElementById('fLinkFeatures');
+      if (fLinkFeatures && t.nav) fLinkFeatures.textContent = t.nav.features;
+      const fLinkShowcase = document.getElementById('fLinkShowcase');
+      if (fLinkShowcase && t.nav) fLinkShowcase.textContent = t.nav.showcase;
+      const fLinkWhy = document.getElementById('fLinkWhy');
+      if (fLinkWhy && t.nav) fLinkWhy.textContent = t.nav.why;
+      const fLinkPlans = document.getElementById('fLinkPlans');
+      if (fLinkPlans && t.nav) fLinkPlans.textContent = t.nav.plans;
+      const fLinkInstall = document.getElementById('fLinkInstall');
+      if (fLinkInstall && t.nav) fLinkInstall.textContent = t.nav.install;
+      const fLinkFaq = document.getElementById('fLinkFaq');
+      if (fLinkFaq && t.nav) fLinkFaq.textContent = t.nav.faq;
+      const fLinkContact = document.getElementById('fLinkContact');
+      if (fLinkContact && t.nav) fLinkContact.textContent = t.nav.contact || 'Contatti & Preventivi';
+
       if (t.footer) {
         const fDesc = document.getElementById('footerDesc');
         if (fDesc) fDesc.textContent = t.footer.desc;
@@ -2137,6 +2547,62 @@
         const fGdpr = document.getElementById('footerGdpr');
         if (fGdpr) fGdpr.textContent = t.footer.gdpr;
       }
+    }
+
+    let lastGeneratedMailto = '';
+    let lastGeneratedText = '';
+
+    function copyAdminEmail() {
+      navigator.clipboard.writeText('carlo.rigoni@gmail.com');
+      alert(currentLang === 'en' ? 'Administrator email (carlo.rigoni@gmail.com) copied to clipboard!' : 'Email dell\'amministratore (carlo.rigoni@gmail.com) copiata negli appunti!');
+    }
+
+    function copyFormMessageText() {
+      if (!lastGeneratedText) return;
+      navigator.clipboard.writeText(lastGeneratedText);
+      alert(currentLang === 'en' ? 'Message content copied to clipboard!' : 'Testo del messaggio copiato negli appunti!');
+    }
+
+    function handleContactSubmit(e) {
+      e.preventDefault();
+      const name = document.getElementById('cfName').value.trim();
+      const email = document.getElementById('cfEmail').value.trim();
+      const school = document.getElementById('cfSchool').value.trim();
+      const role = document.getElementById('cfRole').value;
+      const plan = document.getElementById('cfPlan').value;
+      const size = document.getElementById('cfSize').value.trim();
+      const message = document.getElementById('cfMessage').value.trim();
+
+      const subject = `[Eurario] Richiesta Informazioni / Preventivo - ${school} (${name})`;
+      const bodyLines = [
+        `Nome e Cognome: ${name}`,
+        `Email di Contatto: ${email}`,
+        `Istituto Scolastico: ${school}`,
+        `Ruolo: ${role}`,
+        `Piano di Interesse: ${plan}`,
+        size ? `Dimensioni stimate: ${size}` : null,
+        '',
+        '--- Messaggio ---',
+        message,
+        '',
+        '--- Inviato dal Modulo Contatti della Landing Eurario (eurario.it) ---'
+      ].filter(l => l !== null);
+
+      lastGeneratedText = bodyLines.join('\n');
+      const mailtoUrl = `mailto:carlo.rigoni@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(lastGeneratedText)}`;
+      lastGeneratedMailto = mailtoUrl;
+
+      const fb = document.getElementById('cfFeedback');
+      if (fb) {
+        fb.style.display = 'block';
+        fb.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+      const openBtn = document.getElementById('cfOpenClientBtn');
+      if (openBtn) {
+        openBtn.href = mailtoUrl;
+      }
+
+      window.location.href = mailtoUrl;
     }
 
     async function initLanding() {

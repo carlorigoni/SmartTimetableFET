@@ -6,7 +6,7 @@
     "demo_url": "https://app.eurario.it/#demo",
     "repo_url": "https://github.com/carlorigoni/eurario",
     "docker_hub": "https://hub.docker.com/r/carlorigoni/eurario",
-    "contact_email": "info@eurario.it",
+    "contact_email": "carlo.rigoni@gmail.com",
     "current_version": "v1.9.2",
     "fet_version": "7.12.0",
     "author": "Carlo Rigoni",
@@ -19,6 +19,7 @@
       "plans": "Piani & Cloud",
       "install": "Installazione",
       "faq": "Domande Frequenti",
+      "contact": "Contatti",
       "github": "GitHub",
       "login_btn": "🔐 Accedi all'App",
       "showcase": "Maschere & Demo"
@@ -173,7 +174,7 @@
           "Integrazione Google Workspace for Education pronta all'uso"
         ],
         "cta_text": "Richiedi Info & Preventivo Cloud",
-        "cta_link": "mailto:info@eurario.it?subject=Richiesta%20Informazioni%20Eurario%20Cloud%20SaaS",
+        "cta_link": "#contatti",
         "cta_style": "btn-emerald"
       }
     ],
@@ -445,6 +446,50 @@
           }
         ]
       }
+    },
+    "contact_section": {
+      "tag": "Contatto Diretto & Piani",
+      "title": "Richiedi Informazioni o un Preventivo per la tua Scuola",
+      "subtitle": "Parla direttamente con l'autore di Eurario per scoprire il piano Cloud SaaS gestito, richiedere una demo per la tua scuola o ricevere assistenza tecnica.",
+      "admin_name": "Carlo Rigoni",
+      "admin_role": "Autore & Architetto Software Eurario",
+      "admin_email": "carlo.rigoni@gmail.com",
+      "admin_note": "Disponibile per videochiamate conoscitive, preventivi formali per la segreteria/DSGA e convenzioni scolastiche.",
+      "benefits": [
+        "Risposta garantita entro 24 ore lavorative",
+        "Preventivi personalizzati su misura del numero di classi e docenti",
+        "Possibilità di attivare un'istanza di test con i dati della tua scuola",
+        "Supporto diretto per l'importazione dell'organico da Excel/Word o registro"
+      ],
+      "form": {
+        "name_label": "Nome e Cognome",
+        "name_placeholder": "es. Prof. Mario Rossi",
+        "email_label": "Email di Contatto (Scuola o Personale)",
+        "email_placeholder": "mario.rossi@scuola.edu.it",
+        "school_label": "Istituto Scolastico",
+        "school_placeholder": "es. I.I.S. Leonardo da Vinci (MI)",
+        "role_label": "Ruolo nella Scuola",
+        "roles": [
+          "Responsabile / Membro Commissione Orario",
+          "Dirigente Scolastico / DSGA",
+          "Docente Collaboratore (Vicepresidenza)",
+          "Animatore Digitale / Tecnico Informatico",
+          "Altro"
+        ],
+        "plan_label": "Oggetto della richiesta / Piano",
+        "plans": [
+          "Eurario Cloud Gestito (SaaS) — Richiesta Preventivo Istituzionale",
+          "Assistenza, Setup & Formazione per Self-Hosted",
+          "Richiesta Demo personalizzata per la scuola",
+          "Altra domanda o richiesta tecnica"
+        ],
+        "size_label": "Dimensioni stimate della scuola (opzionale)",
+        "size_placeholder": "es. 35 classi, 70 docenti, 2 plessi",
+        "message_label": "Messaggio / Esigenze orario",
+        "message_placeholder": "Descrivi brevemente la tua scuola e le complessità dell'orario (es. cattedre COE con altre scuole, part-time, palestre condivise, settimana su 5 o 6 giorni)...",
+        "submit_btn": "Invia Richiesta all'Amministratore",
+        "direct_email_text": "Oppure scrivi direttamente dal tuo client di posta a:"
+      }
     }
   },
   "en": {
@@ -454,6 +499,7 @@
       "plans": "Plans & Cloud",
       "install": "Installation",
       "faq": "FAQ",
+      "contact": "Contact",
       "github": "GitHub",
       "login_btn": "🔐 Launch Web App",
       "showcase": "Screens & Demo"
@@ -608,7 +654,7 @@
           "Out-of-the-box Google Workspace for Education integration"
         ],
         "cta_text": "Request SaaS Details & Quote",
-        "cta_link": "mailto:info@eurario.it?subject=Inquiry%20Eurario%20Cloud%20SaaS",
+        "cta_link": "#contatti",
         "cta_style": "btn-emerald"
       }
     ],
@@ -879,6 +925,50 @@
             "desc": "Direct export formatted for electronic school registers and institutional management portals."
           }
         ]
+      }
+    },
+    "contact_section": {
+      "tag": "Direct Contact & Plans",
+      "title": "Inquire About Eurario or Request a School Quote",
+      "subtitle": "Connect directly with the author of Eurario to explore the turnkey Managed Cloud SaaS plan, schedule a walkthrough, or discuss deployment options.",
+      "admin_name": "Carlo Rigoni",
+      "admin_role": "Author & Software Architect of Eurario",
+      "admin_email": "carlo.rigoni@gmail.com",
+      "admin_note": "Available for video consultations, formal institutional quotes for school administration, and custom onboarding.",
+      "benefits": [
+        "Guaranteed response within 24 business hours",
+        "Tailored proposals sized to your school's faculty and classes",
+        "Free trial instance configured with your institution's preliminary roster",
+        "Direct guidance for migrating schedules from spreadsheets or SIS portals"
+      ],
+      "form": {
+        "name_label": "Full Name",
+        "name_placeholder": "e.g. Dr. Jane Smith",
+        "email_label": "Contact Email (School or Personal)",
+        "email_placeholder": "jane.smith@school.edu",
+        "school_label": "School / Institution Name",
+        "school_placeholder": "e.g. Oakridge High & Technical Academy",
+        "role_label": "Your Role",
+        "roles": [
+          "Timetable Coordinator / Committee Member",
+          "Principal / Headteacher / Business Manager",
+          "Vice Principal / Academic Director",
+          "IT Administrator / Digital Lead",
+          "Other"
+        ],
+        "plan_label": "Inquiry Purpose / Plan of Interest",
+        "plans": [
+          "Eurario Managed Cloud (SaaS) — Institutional Quote Request",
+          "Self-Hosted Deployment, Setup & Training Support",
+          "Request a Personalized Demo for Faculty",
+          "General or Technical Inquiry"
+        ],
+        "size_label": "Estimated School Size (optional)",
+        "size_placeholder": "e.g. 40 classes, 85 teachers, 2 campuses",
+        "message_label": "Message / Timetabling Requirements",
+        "message_placeholder": "Briefly share your school's specific scheduling challenges (e.g. split allocations, shared gymnasiums, part-time staff, block schedules)...",
+        "submit_btn": "Send Inquiry to Administrator",
+        "direct_email_text": "Or email directly from your mail client to:"
       }
     }
   }
