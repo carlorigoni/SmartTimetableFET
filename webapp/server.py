@@ -97,7 +97,7 @@ def fetch_google_doc_docx_bytes(url):
     except Exception as e:
         raise ValueError(f"Impossibile scaricare il Google Doc: {e}")
 
-APP_VERSION = "1.8.5"
+APP_VERSION = "1.8.6"
 FET_VERSION = "7.12.0"
 APP_AUTHOR = "Carlo Rigoni"
 APP_MENTOR = "Federico Rettore"
@@ -368,10 +368,14 @@ class EurarioHandler(BaseHTTPRequestHandler):
         user = self._require_auth()
         if not user:
             return None
-        if user.get("role") != "admin":
-            self._json(403, {"error": "Operazione riservata all'amministratore", "code": "FORBIDDEN"})
-            return None
-        return user
+        sid = self._resolve_school_id()
+        is_passcode = bool(user.get("is_passcode_auth", False))
+        if auth_manager.is_superadmin(user.get("email"), is_passcode):
+            return user
+        if sid and auth_manager.is_school_admin(user.get("email"), sid, is_passcode):
+            return user
+        self._json(403, {"error": "Operazione riservata all'amministratore dell'istituto", "code": "FORBIDDEN"})
+        return None
 
     def _require_superadmin(self):
         user = self._require_auth()
@@ -599,10 +603,18 @@ class EurarioHandler(BaseHTTPRequestHandler):
             return
 
         elif path == "/api/auth/users":
-            if not self._require_admin():
+            admin = self._require_admin()
+            if not admin:
                 return
-            users_res = auth_manager.list_users()
-            users_res["available_schools"] = school_manager.list_all_schools()
+            is_passcode = bool(admin.get("is_passcode_auth", False))
+            is_super = auth_manager.is_superadmin(admin.get("email"), is_passcode)
+            requested_sid = query.get("school_id", [None])[0]
+            if not is_super:
+                # Amministratore di scuola: isolamento assoluto sulla propria scuola
+                requested_sid = self._resolve_school_id(query)
+            users_res = auth_manager.list_users(school_id=requested_sid, requesting_user=admin)
+            if is_super:
+                users_res["available_schools"] = school_manager.list_all_schools()
             self._json(200, users_res)
             return
         elif path == "/api/auth/access_logs":
@@ -1125,22 +1137,75 @@ class EurarioHandler(BaseHTTPRequestHandler):
                 self._json(400, {"error": "Email e ruolo mancanti"})
                 return
             try:
-                u = auth_manager.update_user_role(body["email"], body["role"], admin_email=admin.get("email"), ip=client_ip)
-                self._json(200, {"ok": True, "user": u})
+                is_passcode = bool(admin.get("is_passcode_auth", False))
+                is_super = auth_manager.is_superadmin(admin.get("email"), is_passcode)
+                sid = body.get("school_id") or self._resolve_school_id()
+                if not is_super:
+                    sid = self._resolve_school_id()
+                if sid and sid not in ("none", "-"):
+                    res = auth_manager.update_user_school_role(body["email"], sid, body["role"], admin_email=admin.get("email"), ip=client_ip)
+                else:
+                    res = auth_manager.update_user_role(body["email"], body["role"], admin_email=admin.get("email"), ip=client_ip)
+                self._json(200, {"ok": True, "user": res})
+            except Exception as e:
+                self._json(400, {"error": str(e)})
+            return
+
+        elif path == "/api/auth/users/add_to_school":
+            admin = self._require_admin()
+            if not admin:
+                return
+            if not body or not body.get("email"):
+                self._json(400, {"error": "Email Google mancante"})
+                return
+            try:
+                is_passcode = bool(admin.get("is_passcode_auth", False))
+                is_super = auth_manager.is_superadmin(admin.get("email"), is_passcode)
+                sid = body.get("school_id") or self._resolve_school_id()
+                if not is_super:
+                    sid = self._resolve_school_id()
+                if not sid or sid in ("none", "-"):
+                    self._json(400, {"error": "Nessun istituto attivo selezionato"})
+                    return
+                role = body.get("role", "editor")
+                name = body.get("name", "")
+                res = auth_manager.add_user_to_school_by_admin(body["email"], sid, role=role, name=name, admin_email=admin.get("email"), ip=client_ip)
+                self._json(200, {"ok": True, "user": res})
+            except Exception as e:
+                self._json(400, {"error": str(e)})
+            return
+
+        elif path == "/api/auth/users/remove_from_school":
+            admin = self._require_admin()
+            if not admin:
+                return
+            if not body or not body.get("email"):
+                self._json(400, {"error": "Email mancante"})
+                return
+            try:
+                is_passcode = bool(admin.get("is_passcode_auth", False))
+                is_super = auth_manager.is_superadmin(admin.get("email"), is_passcode)
+                sid = body.get("school_id") or self._resolve_school_id()
+                if not is_super:
+                    sid = self._resolve_school_id()
+                if not sid or sid in ("none", "-"):
+                    self._json(400, {"error": "Nessun istituto attivo selezionato"})
+                    return
+                ok = auth_manager.remove_user_from_school_by_admin(body["email"], sid, admin_email=admin.get("email"), ip=client_ip)
+                self._json(200, {"ok": ok})
             except Exception as e:
                 self._json(400, {"error": str(e)})
             return
 
         elif path == "/api/auth/access_logs/clear":
-            admin = self._require_admin()
-            if not admin:
+            if not self._require_superadmin():
                 return
-            auth_manager.clear_access_logs(admin_email=admin.get("email"), ip=client_ip)
+            auth_manager.clear_access_logs(admin_email=admin.get("email") if 'admin' in locals() else None, ip=client_ip)
             self._json(200, {"ok": True, "message": "Registro accessi azzerato con successo"})
             return
 
         elif path == "/api/auth/config":
-            if not self._require_admin():
+            if not self._require_superadmin():
                 return
             try:
                 cfg = auth_manager.update_config(body or {})

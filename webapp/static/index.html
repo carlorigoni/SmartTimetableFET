@@ -21,14 +21,14 @@
     })();
   </script>
   <!-- Favicon & Branding Eurario (Safari macOS, Chrome, Edge, iOS, Android) -->
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=1.8.5">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png?v=1.8.5">
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png?v=1.8.5">
-  <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png?v=1.8.5">
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=1.8.5">
-  <link rel="mask-icon" href="/safari-pinned-tab.svg?v=1.8.5" color="#1B2A4A">
-  <link rel="shortcut icon" href="/favicon.ico?v=1.8.5">
-  <link rel="stylesheet" href="styles.css?v=1.8.5">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=1.8.6">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png?v=1.8.6">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png?v=1.8.6">
+  <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png?v=1.8.6">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=1.8.6">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg?v=1.8.6" color="#1B2A4A">
+  <link rel="shortcut icon" href="/favicon.ico?v=1.8.6">
+  <link rel="stylesheet" href="styles.css?v=1.8.6">
   <!-- Google Identity Services OAuth -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
@@ -247,7 +247,7 @@
             <span id="statusIndicatorDot" class="status-indicator-dot dot-green"></span>
             <span id="statusIndicatorText" class="status-indicator-text">FET 7.12</span>
           </span>
-          <span id="sidebarVerTag" class="footer-ver-tag" title="Versione Eurario">v1.8.5</span>
+          <span id="sidebarVerTag" class="footer-ver-tag" title="Versione Eurario">v1.8.6</span>
           <button class="footer-info-btn" onclick="openAboutModal()" title="Crediti, Mentore e Info Legali" aria-label="Informazioni e crediti">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
               <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
@@ -396,7 +396,7 @@
 
     <footer class="app-page-footer">
       <div>
-        <b>Eurario FET Suite</b> &mdash; <span data-i18n="footer.version">Versione</span> <span id="pageFooterVer" class="badge-ver">v1.8.5</span> &bull; <span data-i18n="footer.author">Autore</span>: <b>Carlo Rigoni</b> &bull; <span data-i18n="footer.engine">Motore</span>: <b>FET 7.12.0</b> &bull; <a href="javascript:void(0)" onclick="openAboutModal()" style="color:var(--primary);text-decoration:none;font-weight:600;" data-i18n="footer.credits">Crediti & Note Legali</a>
+        <b>Eurario FET Suite</b> &mdash; <span data-i18n="footer.version">Versione</span> <span id="pageFooterVer" class="badge-ver">v1.8.6</span> &bull; <span data-i18n="footer.author">Autore</span>: <b>Carlo Rigoni</b> &bull; <span data-i18n="footer.engine">Motore</span>: <b>FET 7.12.0</b> &bull; <a href="javascript:void(0)" onclick="openAboutModal()" style="color:var(--primary);text-decoration:none;font-weight:600;" data-i18n="footer.credits">Crediti & Note Legali</a>
       </div>
       <div style="font-size:11.5px;color:var(--text-muted);">
         <span data-i18n="footer.heuristic">Algoritmo euristico</span>: <a href="https://lalescu.ro/liviu/fet/" target="_blank" rel="noopener" style="color:var(--primary);text-decoration:none;font-weight:600;">FET Free Timetabling Software</a> &bull; <span data-i18n="footer.ai_credit">AI Pair Programming</span>: Google DeepMind Antigravity
@@ -496,17 +496,28 @@
   <!-- Modal Gestione Accessi per l'Amministratore -->
   <div id="accessModal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="accessModalTitle" style="display:none;">
     <div class="modal-dialog modal-lg">
-      <div class="modal-header">
-        <h3 id="accessModalTitle" class="modal-title" data-i18n="modals.access.title">👥 Gestione Accessi & Autorizzazioni Google OAuth</h3>
-        <button class="modal-close-btn" onclick="closeAccessManagementModal()">✕</button>
+      <div class="modal-header" style="flex-direction:column;align-items:flex-start;gap:4px;position:relative;">
+        <div style="display:flex;align-items:center;justify-content:space-between;width:100%;">
+          <h3 id="accessModalTitle" class="modal-title" data-i18n="modals.access.title" style="margin:0;">👥 Gestione Accessi & Autorizzazioni Google OAuth</h3>
+          <button class="modal-close-btn" onclick="closeAccessManagementModal()">✕</button>
+        </div>
+        <div id="accessModalSubtitle" style="font-size:12px;color:var(--text-muted);line-height:1.4;"></div>
       </div>
       <div class="modal-body">
+        <!-- Barra di selezione scuola per SuperAdmin -->
+        <div id="accessSchoolFilterWrap" style="display:none;padding:10px 14px;background:var(--bg-hover);border-radius:8px;margin-bottom:12px;display:none;align-items:center;gap:10px;">
+          <span style="font-size:12px;font-weight:700;color:var(--text-main);white-space:nowrap;">🏫 Filtra per Istituto:</span>
+          <select id="accessSchoolFilterSelect" class="form-input" style="padding:4px 8px;font-size:12px;width:100%;max-width:360px;" onchange="handleSchoolFilterChange(this.value)">
+            <option value="">🌐 Tutti gli Istituti (Piattaforma Globale)</option>
+          </select>
+        </div>
+
         <div class="access-tabs-nav">
           <button class="access-tab-btn active" id="tabBtnPending" onclick="switchAccessTab('pending')">
             <span data-i18n="modals.access.tab_pending">Richieste in Attesa</span> <span id="modalPendingCountBadge" class="badge-count">0</span>
           </button>
           <button class="access-tab-btn" id="tabBtnApproved" onclick="switchAccessTab('approved')">
-            <span data-i18n="modals.access.tab_approved">Utenti Autorizzati</span> (<span id="modalApprovedCount">0</span>)
+            <span id="tabApprovedTitleText" data-i18n="modals.access.tab_approved">Utenti Autorizzati</span> (<span id="modalApprovedCount">0</span>)
           </button>
           <button class="access-tab-btn" id="tabBtnLogs" onclick="switchAccessTab('logs')" data-i18n="modals.access.tab_logs">
             📜 Registro Accessi
@@ -777,7 +788,7 @@
         <!-- Banner Versione & Verifica Aggiornamenti -->
         <div class="about-banner">
           <div style="display:flex;align-items:center;gap:8px;">
-            <span id="aboutModalVer" class="badge badge-info" style="font-size:12px;padding:3px 8px;font-weight:700;">v1.8.5</span>
+            <span id="aboutModalVer" class="badge badge-info" style="font-size:12px;padding:3px 8px;font-weight:700;">v1.8.6</span>
             <span id="aboutUpdateStatusText" style="font-size:11.5px;color:var(--text-sub);" data-i18n="modals.about.stable_release">Release Stabile</span>
           </div>
           <div style="display:flex;align-items:center;gap:10px;">
@@ -891,7 +902,7 @@
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
           <div class="update-stat-card">
             <div style="font-size: 11px; text-transform: uppercase; font-weight: 700; color: var(--text-sub); letter-spacing: 0.5px;" data-i18n="modals.updates.current_ver">Versione Corrente</div>
-            <div id="updateCurrentVer" style="font-size: 18px; font-weight: 800; color: var(--text-main); margin-top: 4px;">v1.8.5</div>
+            <div id="updateCurrentVer" style="font-size: 18px; font-weight: 800; color: var(--text-main); margin-top: 4px;">v1.8.6</div>
             <div id="updateCurrentTag" style="font-size: 11px; color: var(--text-muted); margin-top: 2px;" data-i18n="modals.updates.current_tag">In esecuzione sul server</div>
           </div>
           <div class="update-stat-card">
@@ -1078,7 +1089,7 @@
     </div>
   </div>
 
-  <script src="i18n.js?v=1.8.5"></script>
-  <script src="app.js?v=1.8.5"></script>
+  <script src="i18n.js?v=1.8.6"></script>
+  <script src="app.js?v=1.8.6"></script>
 </body>
 </html>

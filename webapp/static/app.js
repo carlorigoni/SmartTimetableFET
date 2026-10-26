@@ -22,7 +22,7 @@ let pollSolverTimer = null;
 let currentSolverRunning = false;
 
 // --- VERSIONE E IDENTITÀ APPLICATIVA ---
-const APP_VERSION = '1.8.5';
+const APP_VERSION = '1.8.6';
 
 // --- OPTIMISTIC CONCURRENCY CONTROL (OCC) & FETCH INTERCEPTOR ---
 window.CURRENT_DATA_VERSION = null;
@@ -948,9 +948,10 @@ function handleAuthenticatedState(data) {
       }
     }
 
-    // Se admin, mostra voce gestione accessi nel menu laterale
+    // Se admin o school admin, mostra voce gestione accessi nel menu laterale
     const sideItem = document.getElementById('sidebarAccessMgmtItem');
-    if (user.role === 'admin') {
+    const isAnyAdmin = Boolean(user.role === 'admin' || user.is_school_admin || user.is_superadmin);
+    if (isAnyAdmin) {
       if (sideItem) sideItem.style.display = 'flex';
       updatePendingBadge(data.pending_count || 0);
 
@@ -1424,7 +1425,8 @@ async function openAccessManagementModal() {
   if (window.I18N && typeof window.I18N.applyStaticTranslations === 'function') {
     window.I18N.applyStaticTranslations(modal);
   }
-  switchAccessTab('pending');
+  const isSuper = Boolean(currentUser && currentUser.is_superadmin);
+  switchAccessTab(isSuper ? 'pending' : 'approved');
   await loadUsersList();
 }
 
@@ -1517,10 +1519,19 @@ async function clearAccessLogs() {
   }
 }
 
-async function loadUsersList() {
+let selectedAccessSchoolFilter = '';
+
+async function loadUsersList(schoolId) {
   const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
   try {
-    const res = await fetch('/api/auth/users');
+    let url = '/api/auth/users';
+    if (schoolId !== undefined && schoolId !== null) {
+      selectedAccessSchoolFilter = schoolId;
+    }
+    if (selectedAccessSchoolFilter) {
+      url += `?school_id=${encodeURIComponent(selectedAccessSchoolFilter)}`;
+    }
+    const res = await fetch(url);
     if (!res.ok) {
       showToast(isEn ? 'Error loading users list' : 'Errore caricamento utenti', 'error');
       return;
@@ -1532,12 +1543,64 @@ async function loadUsersList() {
   }
 }
 
+function handleSchoolFilterChange(schoolId) {
+  loadUsersList(schoolId);
+}
+
 function renderUsersUI() {
   const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
   const users = currentUsersData.users || [];
   const pending = users.filter(u => u.status === 'pending');
   const approved = users.filter(u => u.status === 'approved');
   const rejected = users.filter(u => u.status === 'rejected');
+  const isSuper = Boolean(currentUsersData.is_superadmin);
+  const isSchoolView = Boolean(currentUsersData.is_school_view);
+
+  // Titolo & Sottotitolo modale
+  const titleEl = document.getElementById('accessModalTitle');
+  const subEl = document.getElementById('accessModalSubtitle');
+  if (titleEl) {
+    if (isSchoolView) {
+      const schName = currentUsersData.school_name || (window.currentSchool && window.currentSchool.name) || currentUsersData.school_id || '';
+      titleEl.innerText = isEn ? `👥 User & Teacher Management — ${schName}` : `👥 Gestione Utenti & Docenti — ${schName}`;
+      if (subEl) {
+        subEl.innerText = isEn
+          ? 'Manage authorized teachers and collaborators for this institution. Platform SuperAdmin is excluded from this list.'
+          : 'Docenti e collaboratori autorizzati per questo istituto. Il SuperAdmin gestisce la piattaforma ed è escluso da questo elenco.';
+      }
+    } else {
+      titleEl.innerText = isEn ? '👥 Global User & Platform Management (SuperAdmin)' : '👥 Console Gestione Utenti & Piattaforma (SuperAdmin)';
+      if (subEl) {
+        subEl.innerText = isEn
+          ? 'Platform-wide administrator console: cross-school user registry, global configurations, and access audit log.'
+          : 'Console di controllo globale: registro utenti di tutti gli istituti, configurazioni di sistema e audit log degli accessi.';
+      }
+    }
+  }
+
+  // Gestione tab Config & Logs (visibili SOLO al SuperAdmin)
+  const tabConfigBtn = document.getElementById('tabBtnConfig');
+  if (tabConfigBtn) tabConfigBtn.style.display = isSuper ? 'inline-flex' : 'none';
+  const tabLogsBtn = document.getElementById('tabBtnLogs');
+  if (tabLogsBtn) tabLogsBtn.style.display = isSuper ? 'inline-flex' : 'none';
+
+  // Filtro Scuole (visibile solo se SuperAdmin)
+  const filterWrap = document.getElementById('accessSchoolFilterWrap');
+  if (filterWrap) {
+    if (isSuper) {
+      filterWrap.style.display = 'flex';
+      const select = document.getElementById('accessSchoolFilterSelect');
+      if (select && currentUsersData.available_schools) {
+        const currentVal = selectedAccessSchoolFilter || '';
+        select.innerHTML = `<option value="">🌐 ${isEn ? 'All Schools (Global Platform)' : 'Tutti gli Istituti (Piattaforma Globale)'}</option>` +
+          currentUsersData.available_schools.map(s =>
+            `<option value="${escapeHtml(s.id)}" ${s.id === currentVal ? 'selected' : ''}>🏫 ${escapeHtml(s.name)}</option>`
+          ).join('');
+      }
+    } else {
+      filterWrap.style.display = 'none';
+    }
+  }
 
   // Badges
   const pBadge = document.getElementById('modalPendingCountBadge');
@@ -1610,39 +1673,77 @@ function renderUsersUI() {
   // Tab 2: Approved Users
   const approvedContainer = document.getElementById('approvedUsersList');
   let approvedHtml = '';
+
+  // Box per aggiungere utente alla scuola (disponibile se in vista scuola o se c'è una scuola selezionata)
+  const targetSchoolId = currentUsersData.school_id || (window.currentSchool && window.currentSchool.id);
+  if (targetSchoolId && targetSchoolId !== 'none') {
+    approvedHtml += `
+      <div style="background:var(--bg-hover);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:18px;">
+        <div style="font-weight:700;font-size:13px;margin-bottom:10px;color:var(--text-main);display:flex;align-items:center;gap:6px;">
+          <span>➕</span> <span>${isEn ? 'Add Teacher / User to this School' : 'Aggiungi Docente / Utente a questo Istituto'}</span>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+          <input type="email" id="newSchoolUserEmail" class="form-input" placeholder="email.docente@gmail.com" style="flex:2;min-width:210px;font-size:12px;padding:6px 10px;" />
+          <input type="text" id="newSchoolUserName" class="form-input" placeholder="${isEn ? 'Teacher Name (Optional)' : 'Nome docente (facoltativo)'}" style="flex:2;min-width:180px;font-size:12px;padding:6px 10px;" />
+          <select id="newSchoolUserRole" class="form-input" style="flex:1;min-width:130px;font-size:12px;padding:6px 10px;">
+            <option value="editor" selected>✏️ Editor (${isEn ? 'Edit Timetable' : 'Modifica Orario'})</option>
+            <option value="viewer">👁️ Viewer (${isEn ? 'Read Only' : 'Sola Lettura'})</option>
+            <option value="admin">👑 Admin (${isEn ? 'School Admin' : 'Amministratore Scuola'})</option>
+          </select>
+          <button class="btn btn-primary btn-sm" onclick="addUserToSchool('${escapeHtml(targetSchoolId)}')" style="font-size:12px;padding:7px 16px;white-space:nowrap;font-weight:700;">
+            ${isEn ? '➕ Add User' : '➕ Aggiungi'}
+          </button>
+        </div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:8px;">
+          ${isEn ? 'The user will be pre-authorized: logging in with their Google account grants immediate access with the selected role.' : 'L\'utente viene pre-autorizzato: al suo accesso con account Google entrerà subito nell\'istituto con il ruolo selezionato.'}
+        </div>
+      </div>
+    `;
+  }
+
   if (approved.length === 0) {
-    approvedHtml = `<div style="text-align:center;padding:24px;color:#64748b;">${isEn ? 'No approved users.' : 'Nessun utente approvato.'}</div>`;
+    approvedHtml += `<div style="text-align:center;padding:24px;color:#64748b;">${isEn ? 'No approved users for this school.' : 'Nessun utente autorizzato per questo istituto.'}</div>`;
   } else {
-    approvedHtml = approved.map(u => {
-      const isMainAdmin = (u.email === currentUsersData.admin_email);
+    approvedHtml += approved.map(u => {
+      const isSuperUser = Boolean(u.is_superadmin);
+      const isOwner = Boolean(u.is_school_owner);
       const lastLoginDate = u.last_login ? new Date(u.last_login).toLocaleString(isEn ? 'en-US' : 'it-IT') : 'N/D';
+      const userSchoolId = u.school_id || targetSchoolId || '';
       return `
       <div class="user-item-card" style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px;padding:10px 14px;border:1px solid var(--border);border-radius:10px;background:var(--bg-card);">
         <div class="user-card-left" style="display:flex;align-items:center;gap:12px;">
           ${u.picture ? `<img src="${u.picture}" class="user-card-avatar" alt="Avatar" style="width:38px;height:38px;border-radius:50%;" />` : `<div class="user-card-avatar" style="width:38px;height:38px;display:flex;align-items:center;justify-content:center;background:var(--bg-hover);border-radius:50%;font-size:18px;">👤</div>`}
           <div class="user-card-info">
-            <div class="user-card-name" style="font-weight:700;font-size:13px;color:var(--text-main);">
+            <div class="user-card-name" style="font-weight:700;font-size:13px;color:var(--text-main);display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
               ${escapeHtml(u.name || u.email)}
-              <span class="badge ${u.role === 'admin' ? 'badge-primary' : (u.role === 'editor' ? 'badge-info' : 'badge-sec')}" style="font-size:10px;margin-left:4px;">
+              <span class="badge ${u.role === 'admin' ? 'badge-primary' : (u.role === 'editor' ? 'badge-info' : 'badge-sec')}" style="font-size:10px;">
                 ${u.role.toUpperCase()}
               </span>
+              ${isOwner ? `<span class="badge badge-warn" style="font-size:10px;background:#fef3c7;color:#b45309;border:1px solid #f59e0b;padding:1px 6px;">👑 Creatore Scuola</span>` : ''}
+              ${isSuperUser ? `<span class="badge badge-primary" style="font-size:10px;background:#e0e7ff;color:#3730a3;border:1px solid #6366f1;padding:1px 6px;">🌟 SuperAdmin</span>` : ''}
             </div>
             <div class="user-card-email" style="font-size:11.5px;color:var(--text-muted);font-family:var(--font-mono);">${escapeHtml(u.email)}</div>
             <div class="user-card-meta" style="font-size:10.5px;color:var(--text-sub);">${isEn ? 'Last login:' : 'Ultimo accesso:'} ${lastLoginDate}</div>
           </div>
         </div>
         <div class="user-card-actions" style="display:flex;gap:8px;align-items:center;">
-          ${isMainAdmin ? `<span style="font-size:11.5px;color:#16a34a;font-weight:700;">${isEn ? 'Primary Administrator' : 'Amministratore Principale'}</span>` : `
+          ${isSuperUser ? `<span style="font-size:11.5px;color:#4f46e5;font-weight:700;">${isEn ? 'Platform SuperAdmin' : 'SuperAdmin Piattaforma'}</span>` : `
             <div style="display:flex;align-items:center;gap:6px;">
               <span style="font-size:11px;color:var(--text-muted);font-weight:600;">${isEn ? 'Role:' : 'Ruolo:'}</span>
-              <select class="form-input" style="padding:2px 8px;font-size:11.5px;font-weight:600;border-radius:6px;width:auto;" onchange="updateUserRole('${escapeHtml(u.email)}', this.value)">
+              <select class="form-input" style="padding:2px 8px;font-size:11.5px;font-weight:600;border-radius:6px;width:auto;" onchange="updateUserRole('${escapeHtml(u.email)}', this.value, '${escapeHtml(userSchoolId)}')">
                 <option value="editor" ${u.role === 'editor' ? 'selected' : ''}>✏️ Editor</option>
                 <option value="viewer" ${u.role === 'viewer' ? 'selected' : ''}>👁️ Viewer</option>
-                <option value="admin" ${u.role === 'admin' ? 'selected' : ''}>🛡️ Admin</option>
+                <option value="admin" ${u.role === 'admin' ? 'selected' : ''}>👑 Admin</option>
               </select>
             </div>
-            <button class="btn btn-sm btn-outline-warning" onclick="revokeUser('${escapeHtml(u.email)}')">${isEn ? '⛔ Revoke' : '⛔ Revoca'}</button>
-            <button class="btn btn-sm btn-outline-danger" onclick="deleteUser('${escapeHtml(u.email)}')">🗑️</button>
+            ${userSchoolId ? `
+              <button class="btn btn-sm btn-outline-danger" onclick="removeUserFromSchool('${escapeHtml(u.email)}', '${escapeHtml(userSchoolId)}')" title="${isEn ? 'Remove user from this school' : 'Rimuovi accesso a questa scuola'}">
+                ❌ ${isEn ? 'Remove' : 'Rimuovi'}
+              </button>
+            ` : `
+              <button class="btn btn-sm btn-outline-warning" onclick="revokeUser('${escapeHtml(u.email)}')">${isEn ? '⛔ Revoke' : '⛔ Revoca'}</button>
+              <button class="btn btn-sm btn-outline-danger" onclick="deleteUser('${escapeHtml(u.email)}')">🗑️</button>
+            `}
           `}
         </div>
       </div>`;
@@ -1682,6 +1783,64 @@ function renderUsersUI() {
   }
 
   approvedContainer.innerHTML = approvedHtml;
+}
+
+async function addUserToSchool(schoolId) {
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
+  const emailInput = document.getElementById('newSchoolUserEmail');
+  const nameInput = document.getElementById('newSchoolUserName');
+  const roleInput = document.getElementById('newSchoolUserRole');
+  const email = (emailInput?.value || '').trim();
+  const name = (nameInput?.value || '').trim();
+  const role = roleInput?.value || 'editor';
+
+  if (!email || !email.includes('@')) {
+    alert(isEn ? 'Please enter a valid Google email address.' : 'Inserisci un indirizzo email Google valido.');
+    return;
+  }
+
+  try {
+    const res = await fetch('/api/auth/users/add_to_school', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, name, role, school_id: schoolId })
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      alert(data.error || (isEn ? 'Error adding user to school' : 'Errore durante l\'aggiunta dell\'utente'));
+      return;
+    }
+    showToast(isEn ? `Teacher ${email} (${role.toUpperCase()}) added to school!` : `Docente ${email} (${role.toUpperCase()}) aggiunto alla scuola!`, 'ok');
+    if (emailInput) emailInput.value = '';
+    if (nameInput) nameInput.value = '';
+    await loadUsersList(schoolId);
+  } catch (e) {
+    alert((isEn ? 'Connection error: ' : 'Errore di connessione: ') + e.message);
+  }
+}
+
+async function removeUserFromSchool(email, schoolId) {
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
+  if (!confirm(isEn
+    ? `Are you sure you want to remove ${email} from this school?`
+    : `Sei sicuro di voler rimuovere ${email} da questo istituto scolastico? L'utente non potrà più accedere né modificare l'orario di questa scuola.`)) return;
+
+  try {
+    const res = await fetch('/api/auth/users/remove_from_school', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, school_id: schoolId })
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      alert(data.error || (isEn ? 'Error removing user from school' : 'Errore durante la rimozione'));
+      return;
+    }
+    showToast(isEn ? `User ${email} removed from this school` : `Utente ${email} rimosso dall'istituto`, 'ok');
+    await loadUsersList(schoolId);
+  } catch (e) {
+    alert((isEn ? 'Connection error: ' : 'Errore di connessione: ') + e.message);
+  }
 }
 
 async function approveUser(email) {
@@ -1729,22 +1888,22 @@ async function rejectUser(email) {
   }
 }
 
-async function updateUserRole(email, newRole) {
+async function updateUserRole(email, newRole, schoolId) {
   const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
   try {
     const res = await fetch('/api/auth/users/update_role', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: email, role: newRole })
+      body: JSON.stringify({ email: email, role: newRole, school_id: schoolId })
     });
     const data = await res.json();
     if (!res.ok) {
       showToast(data.error || (isEn ? 'Error updating user role' : 'Errore modifica ruolo'), 'error');
-      await loadUsersList();
+      await loadUsersList(schoolId);
       return;
     }
     showToast(isEn ? `Role updated to ${newRole.toUpperCase()} for ${email}` : `Ruolo aggiornato a ${newRole.toUpperCase()} per ${email}`, 'ok');
-    await loadUsersList();
+    await loadUsersList(schoolId);
   } catch (e) {
     showToast((isEn ? 'Connection error: ' : 'Errore di connessione: ') + e.message, 'error');
   }
@@ -2254,7 +2413,7 @@ function openRailFlyout(groupId, triggerEl, isPersistent) {
     const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
 
     items.forEach(it => {
-      if (it.adminOnly && (!currentUser || currentUser.role !== 'admin')) {
+      if (it.adminOnly && (!currentUser || (currentUser.role !== 'admin' && !currentUser.is_school_admin && !currentUser.is_superadmin))) {
         return;
       }
       const isActive = Boolean(it.view && (
@@ -2266,7 +2425,7 @@ function openRailFlyout(groupId, triggerEl, isPersistent) {
 
       let badgeHtml = '';
       if (it.adminOnly) {
-        const pCount = (currentUser && currentUser.role === 'admin' && latestPendingCount) ? latestPendingCount : 0;
+        const pCount = (currentUser && (currentUser.role === 'admin' || currentUser.is_school_admin || currentUser.is_superadmin) && latestPendingCount) ? latestPendingCount : 0;
         if (pCount > 0) {
           badgeHtml = `<span id="flyoutPendingBadge" class="badge-pending-count" style="display:inline-block;margin-left:auto;">${pCount}</span>`;
         }

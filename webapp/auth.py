@@ -206,11 +206,71 @@ class AuthManager:
         superadmins = [s.lower().strip() for s in self.config.get("superadmins", [])]
         return clean in superadmins
 
-    def create_session(self, email, is_passcode_auth=False, active_school_id="default"):
+    def is_school_admin(self, email, school_id, is_passcode_auth=False):
+        """
+        Restituisce True se l'utente è amministratore per la specifica scuola:
+        - Il SuperAdmin globale ha poteri di amministrazione su qualsiasi scuola.
+        - L'owner/creatore della scuola in schools.json è amministratore della sua scuola.
+        - Un utente con membership per la scuola con ruolo 'admin' o 'owner' ed approvato.
+        """
+        if self.is_superadmin(email, is_passcode_auth):
+            return True
+        clean = (email or "").lower().strip()
+        if not clean or not school_id or school_id in ("none", "-"):
+            return False
+        self._load()
+        try:
+            from webapp.schools import school_manager
+            sch = school_manager.get_school(school_id)
+            if sch and sch.get("owner_email", "").lower().strip() == clean:
+                return True
+        except Exception:
+            pass
+        mem = self.config.get("school_memberships", {}).get(clean, {}).get(school_id, {})
+        if mem and mem.get("role") in ("admin", "owner") and mem.get("status") == "approved":
+            return True
+        return False
+
+    def get_user_school_role(self, email, school_id, is_passcode_auth=False):
+        """Restituisce il ruolo dell'utente per la specifica scuola ('admin', 'editor', 'viewer')."""
+        if self.is_superadmin(email, is_passcode_auth):
+            return "admin"
+        clean = (email or "").lower().strip()
+        if not clean or not school_id:
+            return "viewer"
+        self._load()
+        try:
+            from webapp.schools import school_manager
+            sch = school_manager.get_school(school_id)
+            if sch and sch.get("owner_email", "").lower().strip() == clean:
+                return "admin"
+        except Exception:
+            pass
+        mem = self.config.get("school_memberships", {}).get(clean, {}).get(school_id, {})
+        role = mem.get("role")
+        if role in ("admin", "owner"):
+            return "admin"
+        elif role == "editor":
+            return "editor"
+        elif role == "viewer":
+            return "viewer"
+        return self.config.get("users", {}).get(clean, {}).get("role", "viewer")
+
+    def create_session(self, email, is_passcode_auth=False, active_school_id=None):
         token = secrets.token_urlsafe(32)
         now = time.time()
+        clean = (email or "").lower().strip()
+        if not active_school_id:
+            if self.is_superadmin(clean, is_passcode_auth):
+                active_school_id = "default"
+            else:
+                mems = list(self.config.get("school_memberships", {}).get(clean, {}).keys())
+                if mems:
+                    active_school_id = mems[0]
+                else:
+                    active_school_id = "none"
         self.sessions[token] = {
-            "email": email.lower().strip(),
+            "email": clean,
             "is_passcode_auth": bool(is_passcode_auth),
             "active_school_id": str(active_school_id or "default").strip(),
             "created_at": now,
@@ -240,8 +300,16 @@ class AuthManager:
             }
         u = dict(user)
         is_passcode = bool(sess.get("is_passcode_auth", False))
+        active_sid = sess.get("active_school_id", "default")
         u["is_superadmin"] = self.is_superadmin(email, is_passcode)
-        u["active_school_id"] = sess.get("active_school_id", "default")
+        u["active_school_id"] = active_sid
+        u["is_school_admin"] = self.is_school_admin(email, active_sid, is_passcode)
+        u["school_role"] = self.get_user_school_role(email, active_sid, is_passcode)
+        # Se è school admin o superadmin, il ruolo effettivo di sessione per le operazioni è admin
+        if u["is_school_admin"] or u["is_superadmin"]:
+            u["role"] = "admin"
+        else:
+            u["role"] = u["school_role"]
         return u
 
     def set_session_school(self, token, school_id):
@@ -565,21 +633,119 @@ class AuthManager:
 
     # --- USER APPROVAL / REJECTION ACTIONS ---
 
-    def list_users(self):
+    def list_users(self, school_id=None, requesting_user=None):
         """
-        Restituisce la lista di tutti gli utenti, suddivisi tra approvati e in attesa.
+        Restituisce la lista degli utenti visibili all'utente richiedente:
+        - Se richiedente è SuperAdmin e school_id è None:
+            restituisce la console globale con tutti gli utenti della piattaforma + config.
+        - Se school_id è specificato o se il richiedente è un Amministratore di Scuola:
+            restituisce SOLO gli utenti associati a quella specifica scuola.
+            REGOLA FONDAMENTALE: IL SUPERADMIN NON COMPARE MAI nella lista degli utenti di una scuola!
+            Il ruolo visualizzato per ciascun utente è il ruolo specifico per QUELLA scuola.
         """
         self._load()
-        users_list = list(self.config["users"].values())
+        is_super = False
+        req_email = None
+        if requesting_user:
+            req_email = (requesting_user.get("email") or "").lower().strip()
+            is_passcode = bool(requesting_user.get("is_passcode_auth", False))
+            is_super = self.is_superadmin(req_email, is_passcode)
+
+        super_emails = set(s.lower().strip() for s in self.config.get("superadmins", []))
+        super_emails.add(self.config.get("admin_email", "").lower().strip())
+
+        # Se non è SuperAdmin e non è specificata school_id, isola sulla scuola attiva
+        if not is_super and not school_id and requesting_user:
+            school_id = requesting_user.get("active_school_id")
+
+        mems = self.config.get("school_memberships", {})
+        users_dict = self.config.get("users", {})
+
+        # Vista Scuola (School Admin o filtro scuola)
+        if school_id and school_id not in ("none", "-"):
+            from webapp.schools import school_manager
+            sch = school_manager.get_school(school_id)
+            sch_owner = (sch.get("owner_email") or "").lower().strip() if sch else ""
+
+            candidate_emails = set()
+            for em, sm_dict in mems.items():
+                if school_id in sm_dict:
+                    candidate_emails.add(em)
+            if sch_owner:
+                candidate_emails.add(sch_owner)
+
+            school_users = []
+            for em in candidate_emails:
+                # REGOLA TASSATIVA: il SuperAdmin NON compare MAI nella lista degli utenti gestiti della scuola
+                if em in super_emails:
+                    continue
+
+                u_base = users_dict.get(em, {
+                    "email": em,
+                    "name": em.split("@")[0].title(),
+                    "picture": "",
+                    "status": "approved",
+                    "created_at": None,
+                    "last_login": None
+                })
+                u_copy = dict(u_base)
+
+                # Ruolo specifico nella scuola
+                mem_info = mems.get(em, {}).get(school_id, {})
+                if em == sch_owner:
+                    sch_role = "admin"
+                    status = "approved"
+                elif mem_info:
+                    sch_role = mem_info.get("role", "editor")
+                    if sch_role == "owner":
+                        sch_role = "admin"
+                    status = mem_info.get("status", "approved")
+                else:
+                    sch_role = u_base.get("role", "editor")
+                    status = u_base.get("status", "approved")
+
+                u_copy["role"] = sch_role
+                u_copy["status"] = status
+                u_copy["school_id"] = school_id
+                u_copy["is_school_owner"] = (em == sch_owner)
+                school_users.append(u_copy)
+
+            school_users.sort(key=lambda u: (
+                0 if u.get("is_school_owner") else (1 if u.get("role") == "admin" else 2),
+                0 if u.get("status") == "pending" else 1,
+                u.get("name") or u.get("email")
+            ))
+
+            return {
+                "is_school_view": True,
+                "school_id": school_id,
+                "school_name": sch.get("name") if sch else school_id,
+                "users": school_users,
+                "pending_count": sum(1 for u in school_users if u.get("status") == "pending"),
+                "is_superadmin": is_super
+            }
+
+        # Vista Globale SuperAdmin
+        users_list = []
+        for em, u in users_dict.items():
+            u_copy = dict(u)
+            u_copy["is_superadmin"] = (em in super_emails)
+            u_copy["schools"] = list(mems.get(em, {}).keys())
+            users_list.append(u_copy)
+
         users_list.sort(key=lambda u: (
             0 if u.get("status") == "pending" else 1,
+            0 if u.get("is_superadmin") else 1,
             u.get("created_at") or ""
         ), reverse=False)
+
         return {
+            "is_school_view": False,
             "admin_email": self.config["admin_email"],
             "google_client_id": self.config["google_client_id"],
             "pending_count": sum(1 for u in users_list if u.get("status") == "pending"),
             "users": users_list,
+            "is_superadmin": True,
             "config": {
                 "smtp": {
                     "enabled": self.config["smtp"].get("enabled", False),
@@ -753,6 +919,145 @@ Eurario Automated Security Notification
         self._save()
         self.log_access("ROLE_CHANGED", email, role, "SUCCESS", ip, "-", f"Ruolo modificato da '{old_role}' a '{role}' da {admin_email or 'admin'}")
         return u
+
+    def add_user_to_school_by_admin(self, email, school_id, role="editor", name="", admin_email=None, ip=None):
+        """
+        Consente all'amministratore di scuola (o SuperAdmin) di aggiungere un nuovo utente/docente alla propria scuola.
+        Se l'utente non ha mai effettuato il login prima, viene pre-autorizzato in modo che al primo accesso Google
+        trovi già la scuola e i permessi pronti.
+        """
+        self._load()
+        email = (email or "").lower().strip()
+        if not email or "@" not in email:
+            raise ValueError("Indirizzo email Google non valido")
+        if not school_id or school_id in ("none", "-"):
+            raise ValueError("ID scuola non valido")
+        if role not in ("admin", "editor", "viewer"):
+            raise ValueError("Ruolo non valido (seleziona admin, editor o viewer)")
+
+        if email == self.config["admin_email"] or email in [s.lower() for s in self.config.get("superadmins", [])]:
+            raise ValueError("Il SuperAdmin della piattaforma ha già accesso globale e non necessita di essere aggiunto alle singole scuole")
+
+        now_iso = get_local_now().isoformat()
+
+        # Se l'utente non esiste ancora nel registro utenti, crea profilo pre-approvato
+        if email not in self.config["users"]:
+            self.config["users"][email] = {
+                "email": email,
+                "name": (name or email.split("@")[0].title()).strip(),
+                "picture": "",
+                "role": role,
+                "status": "approved",
+                "created_at": now_iso,
+                "approved_at": now_iso,
+                "last_login": None
+            }
+        else:
+            u = self.config["users"][email]
+            if name and (not u.get("name") or u.get("name") == email):
+                u["name"] = name.strip()
+            # Se era in attesa, approvalo
+            if u.get("status") == "pending":
+                u["status"] = "approved"
+                u["approved_at"] = now_iso
+
+        # Aggiungi/aggiorna la membership specifica per la scuola
+        mems = self.config.setdefault("school_memberships", {})
+        user_mems = mems.setdefault(email, {})
+        user_mems[school_id] = {
+            "role": role,
+            "status": "approved",
+            "added_at": now_iso
+        }
+
+        self._save()
+        self.log_access("USER_ADDED_TO_SCHOOL", email, role, "SUCCESS", ip, "-", f"Aggiunto alla scuola '{school_id}' con ruolo '{role}' da {admin_email or 'admin'}")
+        return {
+            "email": email,
+            "name": self.config["users"][email].get("name", email),
+            "role": role,
+            "status": "approved",
+            "school_id": school_id
+        }
+
+    def update_user_school_role(self, email, school_id, role, admin_email=None, ip=None):
+        """
+        Consente all'amministratore di scuola (o SuperAdmin) di modificare il ruolo di un utente per una specifica scuola.
+        Protegge il SuperAdmin e il creatore originario della scuola.
+        """
+        self._load()
+        email = (email or "").lower().strip()
+        if not email or not school_id:
+            raise ValueError("Parametri mancanti")
+        if role not in ("admin", "editor", "viewer"):
+            raise ValueError("Ruolo non valido")
+
+        super_emails = set(s.lower().strip() for s in self.config.get("superadmins", []))
+        super_emails.add(self.config.get("admin_email", "").lower().strip())
+        if email in super_emails:
+            raise ValueError("Impossibile modificare il ruolo del SuperAdmin")
+
+        from webapp.schools import school_manager
+        sch = school_manager.get_school(school_id)
+        sch_owner = (sch.get("owner_email") or "").lower().strip() if sch else ""
+
+        if sch_owner and email == sch_owner and role != "admin":
+            is_super = self.is_superadmin(admin_email)
+            if not is_super:
+                raise ValueError("Solo il SuperAdmin della piattaforma può modificare il ruolo del creatore dell'istituto")
+
+        mems = self.config.setdefault("school_memberships", {})
+        user_mems = mems.setdefault(email, {})
+        old_role = user_mems.get(school_id, {}).get("role", "viewer")
+        user_mems[school_id] = {
+            "role": role,
+            "status": "approved",
+            "updated_at": get_local_now().isoformat()
+        }
+
+        # Aggiorna sessioni attive dell'utente per questa scuola
+        for tok, s in list(self.sessions.items()):
+            if s.get("email") == email and s.get("active_school_id") == school_id:
+                s["role"] = role
+
+        self._save()
+        self.log_access("SCHOOL_ROLE_CHANGED", email, role, "SUCCESS", ip, "-", f"Ruolo nella scuola '{school_id}' modificato da '{old_role}' a '{role}' da {admin_email or 'admin'}")
+        return user_mems[school_id]
+
+    def remove_user_from_school_by_admin(self, email, school_id, admin_email=None, ip=None):
+        """
+        Rimuove l'accesso di un utente a una specifica scuola (senza cancellare l'account globale se appartiene ad altre scuole).
+        """
+        self._load()
+        email = (email or "").lower().strip()
+        if not email or not school_id:
+            raise ValueError("Parametri mancanti")
+
+        super_emails = set(s.lower().strip() for s in self.config.get("superadmins", []))
+        super_emails.add(self.config.get("admin_email", "").lower().strip())
+        if email in super_emails:
+            raise ValueError("Impossibile rimuovere il SuperAdmin")
+
+        from webapp.schools import school_manager
+        sch = school_manager.get_school(school_id)
+        sch_owner = (sch.get("owner_email") or "").lower().strip() if sch else ""
+
+        if sch_owner and email == sch_owner:
+            if not self.is_superadmin(admin_email):
+                raise ValueError("Solo il SuperAdmin della piattaforma può rimuovere il creatore dell'istituto")
+
+        mems = self.config.setdefault("school_memberships", {})
+        if email in mems and school_id in mems[email]:
+            del mems[email][school_id]
+
+        # Se l'utente era connesso a questa scuola, scollega la scuola attiva
+        for tok, s in list(self.sessions.items()):
+            if s.get("email") == email and s.get("active_school_id") == school_id:
+                s["active_school_id"] = "none"
+
+        self._save()
+        self.log_access("USER_REMOVED_FROM_SCHOOL", email, "-", "SUCCESS", ip, "-", f"Accesso alla scuola '{school_id}' revocato da {admin_email or 'admin'}")
+        return True
 
     def reopen_user(self, email, admin_email=None, ip=None):
         """
