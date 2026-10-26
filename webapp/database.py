@@ -30,6 +30,32 @@ DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data")
 PROJECT_FILE = os.path.join(DATA_DIR, "current_project.json")
 SOLVED_FILE = os.path.join(DATA_DIR, "solved_timetable.fet")
 SNAPSHOTS_DIR = os.path.join(DATA_DIR, "snapshots")
+SEED_DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "seed_data")
+
+def sync_seed_templates_to_data():
+    """
+    Assicura che tutti i template dimostrativi e di seed (demo_paperopoli, demo_duckburg, etc.)
+    presenti in webapp/seed_data vengano replicati in DATA_DIR se mancanti.
+    Questo garantisce l'immediata disponibilità delle demo anche in ambienti Docker
+    in cui DATA_DIR (/app/webapp/data) è montato come volume host esterno vuoto o parziale.
+    """
+    if not os.path.exists(SEED_DATA_DIR):
+        return
+    try:
+        os.makedirs(DATA_DIR, exist_ok=True)
+        for fname in os.listdir(SEED_DATA_DIR):
+            src = os.path.join(SEED_DATA_DIR, fname)
+            dst = os.path.join(DATA_DIR, fname)
+            if os.path.isfile(src) and not os.path.exists(dst):
+                try:
+                    shutil.copyfile(src, dst)
+                except Exception as e:
+                    print(f"[SEED_SYNC] Avviso copia template {fname}: {e}")
+    except Exception as e:
+        print(f"[SEED_SYNC] Errore sincronizzazione template: {e}")
+
+# Sincronizzazione automatica all'import del modulo database
+sync_seed_templates_to_data()
 
 from webapp.auth import get_local_now
 
@@ -824,18 +850,46 @@ class Database:
 
     def load_demo(self, lang="it"):
         if lang == "en":
-            demo_path = os.path.join(DATA_DIR, "demo_duckburg.json")
-            demo_fet = os.path.join(DATA_DIR, "demo_duckburg_solved_timetable.fet")
+            candidate_files = [
+                os.path.join(DATA_DIR, "demo_duckburg.json"),
+                os.path.join(SEED_DATA_DIR, "demo_duckburg.json"),
+                os.path.join(SNAPSHOTS_DIR, "snap_demo_duckburg.json")
+            ]
+            candidate_fets = [
+                os.path.join(DATA_DIR, "demo_duckburg_solved_timetable.fet"),
+                os.path.join(SEED_DATA_DIR, "demo_duckburg_solved_timetable.fet"),
+                os.path.join(SNAPSHOTS_DIR, "snap_demo_duckburg.fet")
+            ]
             snap_name = "Duckburg Demo (Ludwig Von Drake High School)"
             snap_desc = "Database dimostrativo Duckburg (8 docenti, 5 classi, orario FET 100% risolto)."
         else:
-            demo_path = os.path.join(DATA_DIR, "demo_paperopoli.json")
-            demo_fet = os.path.join(DATA_DIR, "demo_solved_timetable.fet")
+            candidate_files = [
+                os.path.join(DATA_DIR, "demo_paperopoli.json"),
+                os.path.join(SEED_DATA_DIR, "demo_paperopoli.json"),
+                os.path.join(SNAPSHOTS_DIR, "snap_demo_paperopoli.json")
+            ]
+            candidate_fets = [
+                os.path.join(DATA_DIR, "demo_solved_timetable.fet"),
+                os.path.join(SEED_DATA_DIR, "demo_solved_timetable.fet"),
+                os.path.join(SNAPSHOTS_DIR, "snap_demo_paperopoli.fet")
+            ]
             snap_name = "Paperopoli Demo (Liceo Pico De Paperis)"
             snap_desc = "Database dimostrativo Paperopoli (8 docenti, 5 classi, orario FET 100% risolto)."
 
-        if not os.path.exists(demo_path):
-            raise FileNotFoundError(f"File {demo_path} non trovato.")
+        demo_path = next((p for p in candidate_files if os.path.exists(p)), None)
+        demo_fet = next((p for p in candidate_fets if os.path.exists(p)), None)
+
+        if not demo_path:
+            raise FileNotFoundError(f"File demo non trovato per '{lang}'. Percorsi verificati: {candidate_files}")
+
+        # Se il file demo è stato trovato in seed_data o snapshots ma manca in DATA_DIR, replicalo in DATA_DIR
+        target_in_data = os.path.join(DATA_DIR, "demo_duckburg.json" if lang == "en" else "demo_paperopoli.json")
+        if not os.path.exists(target_in_data) and demo_path != target_in_data:
+            try:
+                shutil.copyfile(demo_path, target_in_data)
+            except Exception:
+                pass
+
         with self.lock:
             with open(demo_path, "r", encoding="utf-8") as f:
                 self.data = json.load(f)
@@ -846,7 +900,7 @@ class Database:
             else:
                 self.sync_disposizioni_activities()
             self._save_to_disk(self.data)
-            if os.path.exists(demo_fet):
+            if demo_fet and os.path.exists(demo_fet):
                 try:
                     shutil.copyfile(demo_fet, self.solved_file)
                 except Exception as e:

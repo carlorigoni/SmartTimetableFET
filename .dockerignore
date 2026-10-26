@@ -15,6 +15,6 @@ fet_workspace/
 logs/
 timetables/
 webapp/data/solver_run/
+webapp/data/tenants/
 .idea/
 .vscode/
-data/

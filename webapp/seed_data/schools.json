@@ -1,0 +1,32 @@
+{
+  "default": {
+    "id": "default",
+    "name": "I.I.S. \"Rolando da Piazzola\"",
+    "city": "Sede Principale",
+    "country": "Italia",
+    "school_year": "2026/2027",
+    "meccanografico": "PDIS017007",
+    "status": "active",
+    "owner_email": "admin@paperopoli.edu",
+    "created_at": "2026-10-25T20:00:28.738051",
+    "approved_at": "2026-10-25T20:00:28.738063",
+    "approved_by": "system",
+    "notes": "Istituto Principale Predefinito",
+    "is_default": true
+  },
+  "itet-g-girardi": {
+    "id": "itet-g-girardi",
+    "name": "I.T.E.T. \"G. Girardi\"",
+    "city": "Cittadella PD",
+    "country": "Italia",
+    "school_year": "2026/2027",
+    "meccanografico": "PDTD04000D",
+    "status": "trial",
+    "owner_email": "admin@paperopoli.edu",
+    "created_at": "2026-10-25T21:44:20.510167",
+    "approved_at": null,
+    "approved_by": null,
+    "notes": "",
+    "is_default": false
+  }
+}
