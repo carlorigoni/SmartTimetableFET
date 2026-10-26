@@ -6670,7 +6670,7 @@ function renderCattedreDiffView(data) {
           <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;">
             ${unchanged.map(u => `
               <span style="background:var(--bg-main);border:1px solid var(--border);padding:3px 8px;border-radius:6px;font-size:11px;color:var(--text-main);">
-                <b>${escapeHtml(u.name)}</b> (${u.cur_hours}h, ${escapeHtml(u.cur_ctype.toUpperCase())}${u.cur_days ? ', ' + u.cur_days + 'gg' : ''})
+                <b>${escapeHtml(u.name)}</b> (${u.cur_hours}h, ${escapeHtml((u.cur_ctype || 'intera').toUpperCase())}${u.cur_days ? ', ' + u.cur_days + 'gg' : ''})
               </span>
             `).join('')}
           </div>

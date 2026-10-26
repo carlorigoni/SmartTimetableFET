@@ -97,7 +97,7 @@ def fetch_google_doc_docx_bytes(url):
     except Exception as e:
         raise ValueError(f"Impossibile scaricare il Google Doc: {e}")
 
-APP_VERSION = "1.8.9"
+APP_VERSION = "1.9.0"
 FET_VERSION = "7.12.0"
 APP_AUTHOR = "Carlo Rigoni"
 APP_MENTOR = "Federico Rettore"
@@ -1541,7 +1541,56 @@ class EurarioHandler(BaseHTTPRequestHandler):
             ok = db.update_teacher(body["name"], body)
             self._json(200 if ok else 400, {"success": ok})
 
-        elif path.startswith("/api/teachers/"):
+        elif path == "/api/teachers/align_cattedre/analyze":
+            if not body:
+                self._json(400, {"success": False, "error": "Nessun dato fornito per l'analisi", "message": "Nessun dato fornito per l'analisi"})
+                return
+            try:
+                text_content = body.get("text")
+                file_b64 = body.get("file_base64")
+                filename = body.get("filename", "")
+                file_bytes = None
+                if file_b64:
+                    import base64
+                    if "," in file_b64:
+                        file_b64 = file_b64.split(",", 1)[1]
+                    file_bytes = base64.b64decode(file_b64)
+
+                res = db.analyze_cattedre_alignment(text=text_content, file_bytes=file_bytes, filename=filename)
+                if not res.get("success") and not res.get("message"):
+                    res["message"] = res.get("error", "Analisi della tabella cattedre non riuscita")
+                self._json(200 if res.get("success") else 400, res)
+            except Exception as e:
+                import traceback
+                traceback.print_exc()
+                err_msg = str(e).strip() or type(e).__name__
+                self._json(500, {"success": False, "error": err_msg, "message": err_msg})
+
+        elif path == "/api/teachers/align_cattedre/apply":
+            if not body:
+                self._json(400, {"success": False, "error": "Nessun dato di aggiornamento fornito", "message": "Nessun dato di aggiornamento fornito"})
+                return
+            try:
+                updates = body.get("updates", [])
+                create_snap = body.get("create_snapshot", True)
+                snap_name = body.get("snapshot_name")
+                update_cdc = body.get("update_cdc", False)
+                res = db.apply_cattedre_alignment(
+                    updates_to_apply=updates,
+                    create_snapshot=create_snap,
+                    snapshot_name=snap_name,
+                    update_cdc=update_cdc
+                )
+                if not res.get("success") and not res.get("message"):
+                    res["message"] = res.get("error", "Impossibile applicare le modifiche alle cattedre")
+                self._json(200 if res.get("success") else 400, res)
+            except Exception as e:
+                import traceback
+                traceback.print_exc()
+                err_msg = str(e).strip() or type(e).__name__
+                self._json(500, {"success": False, "error": err_msg, "message": err_msg})
+
+        elif path.startswith("/api/teachers/") and not path.startswith("/api/teachers/align_cattedre"):
             name = unquote(path[len("/api/teachers/"):])
             ok = db.update_teacher(name, body or {})
             self._json(200 if ok else 400, {"success": ok})
@@ -2079,55 +2128,6 @@ class EurarioHandler(BaseHTTPRequestHandler):
                 self._json(200, {"success": True, "result": res, "summary": db.get_summary()})
             except Exception as e:
                 self._json(500, {"error": str(e)})
-
-        elif path == "/api/teachers/align_cattedre/analyze":
-            if not body:
-                self._json(400, {"success": False, "error": "Nessun dato fornito per l'analisi", "message": "Nessun dato fornito per l'analisi"})
-                return
-            try:
-                text_content = body.get("text")
-                file_b64 = body.get("file_base64")
-                filename = body.get("filename", "")
-                file_bytes = None
-                if file_b64:
-                    import base64
-                    if "," in file_b64:
-                        file_b64 = file_b64.split(",", 1)[1]
-                    file_bytes = base64.b64decode(file_b64)
-
-                res = db.analyze_cattedre_alignment(text=text_content, file_bytes=file_bytes, filename=filename)
-                if not res.get("success") and not res.get("message"):
-                    res["message"] = res.get("error", "Analisi della tabella cattedre non riuscita")
-                self._json(200 if res.get("success") else 400, res)
-            except Exception as e:
-                import traceback
-                traceback.print_exc()
-                err_msg = str(e).strip() or type(e).__name__
-                self._json(500, {"success": False, "error": err_msg, "message": err_msg})
-
-        elif path == "/api/teachers/align_cattedre/apply":
-            if not body:
-                self._json(400, {"success": False, "error": "Nessun dato di aggiornamento fornito", "message": "Nessun dato di aggiornamento fornito"})
-                return
-            try:
-                updates = body.get("updates", [])
-                create_snap = body.get("create_snapshot", True)
-                snap_name = body.get("snapshot_name")
-                update_cdc = body.get("update_cdc", False)
-                res = db.apply_cattedre_alignment(
-                    updates_to_apply=updates,
-                    create_snapshot=create_snap,
-                    snapshot_name=snap_name,
-                    update_cdc=update_cdc
-                )
-                if not res.get("success") and not res.get("message"):
-                    res["message"] = res.get("error", "Impossibile applicare le modifiche alle cattedre")
-                self._json(200 if res.get("success") else 400, res)
-            except Exception as e:
-                import traceback
-                traceback.print_exc()
-                err_msg = str(e).strip() or type(e).__name__
-                self._json(500, {"success": False, "error": err_msg, "message": err_msg})
 
         elif path == "/api/timetable/place_disposizioni":
             try:
