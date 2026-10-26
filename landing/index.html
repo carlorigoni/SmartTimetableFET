@@ -1372,6 +1372,135 @@
         grid-template-columns: 1fr;
       }
     }
+
+    /* MODAL PRIVACY & NOTE LEGALI */
+    .legal-modal-backdrop {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(11, 17, 32, 0.78);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .legal-modal-backdrop.open {
+      display: flex;
+    }
+    .legal-modal {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 760px;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+      animation: modalScaleIn 0.2s ease;
+    }
+    @keyframes modalScaleIn {
+      from { opacity: 0; transform: scale(0.96); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .legal-modal-header {
+      padding: 18px 24px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--bg-surface-alt);
+    }
+    .legal-modal-title {
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--text-title);
+    }
+    .legal-modal-close {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 22px;
+      cursor: pointer;
+      line-height: 1;
+      padding: 4px;
+      border-radius: 4px;
+      transition: color 0.15s;
+    }
+    .legal-modal-close:hover {
+      color: var(--text-title);
+    }
+    .legal-tabs {
+      display: flex;
+      border-bottom: 1px solid var(--border-color);
+      background: var(--bg-surface-alt);
+      padding: 0 16px;
+      gap: 4px;
+      overflow-x: auto;
+    }
+    .legal-tab-btn {
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      padding: 12px 16px;
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .legal-tab-btn:hover {
+      color: var(--text-title);
+    }
+    .legal-tab-btn.active {
+      color: var(--emerald);
+      border-bottom-color: var(--emerald);
+    }
+    .legal-modal-body {
+      padding: 24px 28px;
+      overflow-y: auto;
+      font-size: 13.5px;
+      line-height: 1.7;
+      color: var(--text-main);
+    }
+    .legal-modal-body h4 {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-title);
+      margin: 18px 0 8px;
+    }
+    .legal-modal-body h4:first-child {
+      margin-top: 0;
+    }
+    .legal-modal-body p {
+      margin-bottom: 12px;
+      color: var(--text-muted);
+    }
+    .legal-modal-body ul {
+      margin: 0 0 14px 20px;
+      color: var(--text-muted);
+    }
+    .legal-modal-body li {
+      margin-bottom: 6px;
+    }
+    .legal-modal-body a {
+      color: var(--emerald);
+      text-decoration: underline;
+    }
+    .legal-modal-footer {
+      padding: 14px 24px;
+      border-top: 1px solid var(--border-color);
+      background: var(--bg-surface-alt);
+      display: flex;
+      justify-content: flex-end;
+    }
   </style>
 </head>
 <body>
@@ -1761,6 +1890,11 @@
               ✉️ Invia Richiesta all'Amministratore
             </button>
 
+            <!-- Informativa Privacy Sintetica ex Art. 13 GDPR -->
+            <div style="font-size:11.8px;color:var(--text-muted);margin-top:10px;line-height:1.45;">
+              🔒 <span id="lblPrivacyNotice">Inviando il modulo dichiari di aver preso visione dell'<a href="#privacyModal" onclick="openLegalModal('privacy');return false;" style="color:var(--emerald);font-weight:700;text-decoration:underline;">Informativa Privacy</a>. I dati comunicati saranno trattati esclusivamente per dare riscontro alla richiesta (art. 6 par. 1 lett. b GDPR) senza cessione a terzi né newsletter commerciali.</span>
+            </div>
+
             <!-- Box di feedback / conferma -->
             <div class="form-feedback" id="cfFeedback">
               <div style="font-weight:700;margin-bottom:6px;" id="cfFeedbackTitle">✅ Richiesta Pronta per l'Invio!</div>
@@ -1843,8 +1977,36 @@
       <div style="text-align:center;margin-top:8px;font-size:11.5px;color:var(--text-subtle);" id="footerGdpr">
         Piattaforma on-premise conforme al Regolamento UE 2016/679 (GDPR).
       </div>
+      <div style="text-align:center;margin-top:14px;font-size:12px;color:var(--text-subtle);display:flex;justify-content:center;gap:16px;flex-wrap:wrap;">
+        <a href="#privacyModal" onclick="openLegalModal('privacy');return false;" style="color:var(--text-subtle);text-decoration:none;" id="fLegalPrivacy">Informativa Privacy & GDPR</a>
+        <span>&bull;</span>
+        <a href="#privacyModal" onclick="openLegalModal('cookie');return false;" style="color:var(--text-subtle);text-decoration:none;" id="fLegalCookie">Cookie & Tracciamento</a>
+        <span>&bull;</span>
+        <a href="#privacyModal" onclick="openLegalModal('license');return false;" style="color:var(--text-subtle);text-decoration:none;" id="fLegalLicense">Note Legali & Licenza GPLv3</a>
+      </div>
     </div>
   </footer>
+
+  <!-- MODAL INFORMATIVA PRIVACY, COOKIE & NOTE LEGALI -->
+  <div class="legal-modal-backdrop" id="legalModalBackdrop" onclick="handleLegalBackdropClick(event)">
+    <div class="legal-modal" role="dialog" aria-modal="true" aria-labelledby="legalModalTitle">
+      <div class="legal-modal-header">
+        <h3 class="legal-modal-title" id="legalModalTitle">Informativa Privacy, Cookie & Note Legali</h3>
+        <button type="button" class="legal-modal-close" onclick="closeLegalModal()" aria-label="Chiudi">&times;</button>
+      </div>
+      <div class="legal-tabs">
+        <button type="button" class="legal-tab-btn active" id="tabBtnPrivacy" onclick="switchLegalTab('privacy')">Privacy & GDPR</button>
+        <button type="button" class="legal-tab-btn" id="tabBtnCookie" onclick="switchLegalTab('cookie')">Cookie & Tracciamento</button>
+        <button type="button" class="legal-tab-btn" id="tabBtnLicense" onclick="switchLegalTab('license')">Licenza & Disclaimer</button>
+      </div>
+      <div class="legal-modal-body" id="legalModalContent">
+        <!-- Idrato dinamicamente -->
+      </div>
+      <div class="legal-modal-footer">
+        <button type="button" class="btn btn-emerald" style="padding:8px 18px;font-size:13px;" onclick="closeLegalModal()" id="btnLegalClose">Chiudi</button>
+      </div>
+    </div>
+  </div>
 
   <!-- SCRIPT DI IDRATAZIONE DINAMICA E MULTILINGUA SOSTENIBILE -->
   <script>
@@ -1879,8 +2041,58 @@
     });
 
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') closeAllDropdowns();
+      if (e.key === 'Escape') {
+        closeAllDropdowns();
+        closeLegalModal();
+      }
     });
+
+    let currentLegalTab = 'privacy';
+
+    function openLegalModal(tab) {
+      currentLegalTab = tab || 'privacy';
+      const backdrop = document.getElementById('legalModalBackdrop');
+      if (backdrop) backdrop.classList.add('open');
+      switchLegalTab(currentLegalTab);
+    }
+
+    function closeLegalModal() {
+      const backdrop = document.getElementById('legalModalBackdrop');
+      if (backdrop) backdrop.classList.remove('open');
+    }
+
+    function handleLegalBackdropClick(e) {
+      if (e.target && e.target.id === 'legalModalBackdrop') {
+        closeLegalModal();
+      }
+    }
+
+    function switchLegalTab(tab) {
+      currentLegalTab = tab;
+      const t = (siteData && siteData[currentLang]) ? siteData[currentLang] : (siteData && siteData['it'] ? siteData['it'] : {});
+      const leg = t.legal_info || {};
+
+      const titleEl = document.getElementById('legalModalTitle');
+      if (titleEl && leg.modal_title) titleEl.textContent = leg.modal_title;
+
+      const btnP = document.getElementById('tabBtnPrivacy');
+      const btnC = document.getElementById('tabBtnCookie');
+      const btnL = document.getElementById('tabBtnLicense');
+      if (btnP && leg.privacy_tab) btnP.textContent = leg.privacy_tab;
+      if (btnC && leg.cookie_tab) btnC.textContent = leg.cookie_tab;
+      if (btnL && leg.license_tab) btnL.textContent = leg.license_tab;
+
+      if (btnP) btnP.classList.toggle('active', tab === 'privacy');
+      if (btnC) btnC.classList.toggle('active', tab === 'cookie');
+      if (btnL) btnL.classList.toggle('active', tab === 'license');
+
+      const bodyEl = document.getElementById('legalModalContent');
+      if (bodyEl) {
+        if (tab === 'privacy') bodyEl.innerHTML = leg.privacy_content || '';
+        else if (tab === 'cookie') bodyEl.innerHTML = leg.cookie_content || '';
+        else if (tab === 'license') bodyEl.innerHTML = leg.license_content || '';
+      }
+    }
 
     function selectTheme(theme) {
       applyTheme(theme);
@@ -2534,6 +2746,24 @@
       if (fLinkFaq && t.nav) fLinkFaq.textContent = t.nav.faq;
       const fLinkContact = document.getElementById('fLinkContact');
       if (fLinkContact && t.nav) fLinkContact.textContent = t.nav.contact || 'Contatti & Preventivi';
+
+      // Legal Notices & Modal Links
+      const lblPrivNotice = document.getElementById('lblPrivacyNotice');
+      if (lblPrivNotice) {
+        if (currentLang === 'en') {
+          lblPrivNotice.innerHTML = `By submitting this inquiry you acknowledge our <a href="#privacyModal" onclick="openLegalModal('privacy');return false;" style="color:var(--emerald);font-weight:700;text-decoration:underline;">Privacy Policy</a>. Data is processed exclusively to answer your request (Art. 6(1)(b) GDPR) without third-party sharing or unsolicited newsletters.`;
+        } else {
+          lblPrivNotice.innerHTML = `Inviando il modulo dichiari di aver preso visione dell'<a href="#privacyModal" onclick="openLegalModal('privacy');return false;" style="color:var(--emerald);font-weight:700;text-decoration:underline;">Informativa Privacy</a>. I dati comunicati saranno trattati esclusivamente per dare riscontro alla richiesta (art. 6 par. 1 lett. b GDPR) senza cessione a terzi né newsletter commerciali.`;
+        }
+      }
+      const fLegalPriv = document.getElementById('fLegalPrivacy');
+      if (fLegalPriv) fLegalPriv.textContent = (currentLang === 'en') ? 'Privacy & GDPR Notice' : 'Informativa Privacy & GDPR';
+      const fLegalCook = document.getElementById('fLegalCookie');
+      if (fLegalCook) fLegalCook.textContent = (currentLang === 'en') ? 'Cookies & Tracking' : 'Cookie & Tracciamento';
+      const fLegalLic = document.getElementById('fLegalLicense');
+      if (fLegalLic) fLegalLic.textContent = (currentLang === 'en') ? 'Legal Terms & GPLv3' : 'Note Legali & Licenza GPLv3';
+      const btnLegClose = document.getElementById('btnLegalClose');
+      if (btnLegClose) btnLegClose.textContent = (currentLang === 'en') ? 'Close' : 'Chiudi';
 
       if (t.footer) {
         const fDesc = document.getElementById('footerDesc');
