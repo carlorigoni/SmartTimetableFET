@@ -27,7 +27,7 @@ flowchart TD
 
     subgraph GitHubRepo["🐙 GitHub Repository (carlorigoni/eurario)"]
         MainBranch["Branch main\n(Codice Stabile & Verificato)"]
-        GitTag["Git Tag di Rilascio\n(es. v1.9.5)"]
+        GitTag["Git Tag di Rilascio\n(es. v1.9.6)"]
         GHActions["GitHub Actions\n(Validazione Docs & Test Build)"]
         MainBranch --> GitTag
         MainBranch --> GHActions
@@ -41,7 +41,7 @@ flowchart TD
     subgraph ContainerRegistry["🐳 Docker Hub Registry (carlorigoni/eurario)"]
         MultiArchBuild["Build Multi-Architettura\n(linux/amd64 & linux/arm64)"]
         TagLatest["Tag: latest\n(Rolling Production Tag)"]
-        TagVersion["Tag Immutabile: vX.Y.Z\n(es. :v1.9.5)"]
+        TagVersion["Tag Immutabile: vX.Y.Z\n(es. :v1.9.6)"]
         MultiArchBuild --> TagLatest
         MultiArchBuild --> TagVersion
     end
@@ -254,15 +254,105 @@ services:
 
 ---
 
-## 6. Cloudflare Pages & Distribuzione Globale dei Siti
+## 6. Il Ruolo Strategico di Cloudflare nell'Ecosistema Eurario
 
-La landing page istituzionale ([eurario.it](https://eurario.it)) e il portale di documentazione ([docs.eurario.it](https://docs.eurario.it)) sono serviti direttamente dalla rete edge globale di Cloudflare:
+Cloudflare costituisce il pilastro di rete e sicurezza dell'intera infrastruttura Eurario, assolvendo a tre funzioni critiche distinte: **Hosting Edge CI/CD (Cloudflare Pages)**, **Protezione DNS & WAF Anycast**, e **Connessione Sicura On-Premise (Cloudflare Tunnel)**:
 
-1. **Deploy Continuo su Push**: A ogni push sul branch `main` di GitHub, i webhook di Cloudflare Pages clonano il repository.
-2. **Generazione Statica**:
-   - Per `docs.eurario.it`, viene eseguito Zensical:
-     ```bash
-     zensical build
-     ```
-   - Per `eurario.it`, i file statici (`landing/`) vengono ottimizzati e distribuiti istantaneamente.
-3. **Distribuzione su 300+ Città nel Mondo**: La documentazione e la landing page beneficiano di tempi di risposta sub-millisecondo, certificato SSL/TLS automatico e protezione DDoS senza gravare sul server di produzione dell'applicazione.
+```mermaid
+flowchart LR
+    subgraph InternetUsers["🌐 Docenti, Studenti & Visitatori"]
+        BrowserDocs["Consultazione Manuale\n(docs.eurario.it)"]
+        BrowserLanding["Visitatore & Showcase\n(eurario.it)"]
+        BrowserApp["Dirigente & Commissione Orario\n(app.eurario.it)"]
+    end
+
+    subgraph CloudflareGlobal["☁️ Rete Edge Globale Cloudflare (300+ Città)"]
+        subgraph CFEnhancements["Edge Security, DNS & Acceleration"]
+            EdgeDNS["Anycast DNS (1.1.1.1)\n+ WAF + Anti-DDoS L3/L4/L7"]
+            EdgeTLS["Terminazione SSL/TLS Automatica\n+ HTTP/3 (QUIC) + Compressione Brotli"]
+        end
+        subgraph CFPages["Cloudflare Pages (Static Edge CI/CD)"]
+            EdgeDocs["docs.eurario.it\n(Build Zensical & Cache Globale)"]
+            EdgeLanding["eurario.it\n(Static Showcase & Demo)"]
+        end
+        subgraph CFTunnel["Cloudflare Zero-Trust Network"]
+            EdgeTunnelEndpoint["Cloudflare Tunnel Edge Endpoint\n(Ingress Criptato)"]
+        end
+    end
+
+    subgraph SchoolInfrastructure["🏫 Rete Istituto Scolastico / Server Host"]
+        subgraph LocalFirewall["Firewall Scolastico (Nessuna porta aperta in ingresso)"]
+            Cloudflared["cloudflared Daemon (Container)\n(Connessione crittografata outbound)"]
+            EurarioContainer["Eurario WebApp Container\n(:8000 locale isolato)"]
+            SchoolData["Storage Dati Persistenti\n(instance/ e snapshots/)"]
+        end
+    end
+
+    BrowserDocs --> EdgeDNS --> EdgeTLS --> EdgeDocs
+    BrowserLanding --> EdgeDNS --> EdgeTLS --> EdgeLanding
+    BrowserApp --> EdgeDNS --> EdgeTLS --> EdgeTunnelEndpoint
+    EdgeTunnelEndpoint <==|"Tunnel QUIC/TLS Outbound (Bypass NAT/Firewall)"|==> Cloudflared
+    Cloudflared -->|"HTTP interno :8000"| EurarioContainer
+    EurarioContainer <--> SchoolData
+```
+
+### 6.1 Cloudflare Pages: CI/CD & Static Edge Hosting
+
+I siti pubblici ad alto traffico ([eurario.it](https://eurario.it) e [docs.eurario.it](https://docs.eurario.it)) non risiedono sul server di calcolo degli orari, ma sono distribuiti in modalità *serverless static edge* tramite **Cloudflare Pages**:
+
+* **Deploy Continuo su Git Push**: A ogni push sul branch `main` di GitHub, Cloudflare Pages clona il repository in un runner isolato ed esegue il comando di build:
+  ```bash
+  pip install zensical && zensical build
+  ```
+* **Prestazioni Sub-Millisecondo**: I file compilati HTML, CSS, JavaScript e le immagini SVG sono replicati istantaneamente su oltre 300 data center edge in tutto il mondo, garantendo tempi di caricamento inferiori a 15 millisecondi e disponibilità 100% SLA.
+* **Isolamento Totale**: Un picco di visite su `eurario.it` o la consultazione massiva della documentazione non sottrae neanche un singolo ciclo di CPU al motore solutore FET in esecuzione sull'istanza applicativa.
+
+### 6.2 Cloudflare DNS, WAF & Terminazione SSL/TLS
+
+Tutti i domini dell'ecosistema sono gestiti attraverso la rete DNS Anycast di Cloudflare:
+
+* **Certificati SSL/TLS Rigorosi**: Gestione automatica del rinnovo certificati con crittografia end-to-end *Full (Strict)*, abilitazione trasparente di **HTTP/3 (QUIC)** e fallback HTTP/2.
+* **Scudo Anti-DDoS & WAF**: Mitigazione volumetrica istantanea contro attacchi Denial of Service a livello 3, 4 e 7.
+* **Ottimizzazione Asset**: Compressione dinamica **Brotli** e minificazione al volo per ridurre al minimo il consumo di banda.
+
+### 6.3 Cloudflare Tunnel (`cloudflared`): Esposizione On-Premise a Zero-Trust
+
+Per gli istituti scolastici italiani che installano Eurario on-premise sui propri server interni (o VM), la configurazione di rete presenta storicamente ostacoli notevoli:
+* Reti protette da firewall rigidi ministeriali o provinciali;
+* Presenza di doppi o tripli NAT senza controllo del router perimetrale;
+* Mancanza di un indirizzo IP pubblico statico;
+* Divieto di aprire porte in ingresso (`80` o `443`) per motivi di sicurezza informatica.
+
+**Cloudflare Tunnel** risolve radicalmente questi vincoli tramite il demone leggero `cloudflared`:
+
+1. **Solo Connessione Outbound**: Il container `cloudflared` in esecuzione nel server della scuola stabilisce una connessione crittografata verso i nodi perimetrali Cloudflare più vicini (utilizzando porte in uscita `443` o `7844/UDP`).
+2. **Nessuna Porta Aperta nel Router**: Tutte le porte in ingresso del firewall scolastico rimangono **ermeticamente chiuse**. Non è richiesto alcun port-forwarding o IP statico.
+3. **Instradamento Sicuro**: Gli utenti autorizzati (docenti e commissione orario) navigano su `https://app.eurario.it` o sul sottodominio scolastico `https://orario.istituto.edu.it`: Cloudflare riceve la richiesta cifrata e la inoltra attraverso il tunnel verso il container locale `eurario:8000`.
+
+#### Esempio di Deploy Docker Compose con Cloudflare Tunnel:
+
+```yaml
+version: '3.8'
+
+services:
+  eurario:
+    image: carlorigoni/eurario:latest
+    container_name: eurario-app
+    restart: unless-stopped
+    volumes:
+      - ./data:/app/data
+    environment:
+      - PORT=8000
+    # Nota: la porta 8000 non necessita neanche di essere esposta all'esterno del server!
+
+  tunnel:
+    image: cloudflare/cloudflared:latest
+    container_name: eurario-tunnel
+    restart: unless-stopped
+    command: tunnel run
+    environment:
+      - TUNNEL_TOKEN=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9... # Token generato da Cloudflare Zero Trust
+```
+
+> [!TIP]
+> Questa architettura garantisce che il server scolastico rimanga totalmente invisibile agli scanner di porte su Internet, beneficiando contestualmente della protezione DDoS globale e del certificato HTTPS gestito di Cloudflare.
