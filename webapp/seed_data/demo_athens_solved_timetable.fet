@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <fet version="7.12.0">
   <Mode>Official</Mode>
-  <Institution_Name>Ludwig Von Drake High School - Duckburg</Institution_Name>
+  <Institution_Name>"School of Athens" Classical &amp; Scientific High School</Institution_Name>
   <Comments>Anno Scolastico 2026/2027 - Database Dimostrativo Completo</Comments>
   <Days_List>
     <Number_of_Days>5</Number_of_Days>
@@ -129,7 +129,7 @@
   </Activity_Tags_List>
   <Teachers_List>
     <Teacher>
-      <Name>Gyro Gearloose</Name>
+      <Name>Galileo Galilei</Name>
       <Long_Name></Long_Name>
       <Code></Code>
       <Target_Number_of_Hours>0</Target_Number_of_Hours>
@@ -138,7 +138,7 @@
       <Comments>Fisica e Laboratorio Invenzioni</Comments>
     </Teacher>
     <Teacher>
-      <Name>Duckworth</Name>
+      <Name>William Shakespeare</Name>
       <Long_Name></Long_Name>
       <Code></Code>
       <Target_Number_of_Hours>0</Target_Number_of_Hours>
@@ -147,7 +147,7 @@
       <Comments>Lingua Foreign Languages (più ore a disposizione)</Comments>
     </Teacher>
     <Teacher>
-      <Name>Hard Haid Moe</Name>
+      <Name>Euclid</Name>
       <Long_Name></Long_Name>
       <Code></Code>
       <Target_Number_of_Hours>0</Target_Number_of_Hours>
@@ -156,7 +156,7 @@
       <Comments>Mathematics</Comments>
     </Teacher>
     <Teacher>
-      <Name>Gladstone Gander</Name>
+      <Name>Dante Alighieri</Name>
       <Long_Name></Long_Name>
       <Code></Code>
       <Target_Number_of_Hours>0</Target_Number_of_Hours>
@@ -165,7 +165,7 @@
       <Comments>Language &amp; Literature Classica</Comments>
     </Teacher>
     <Teacher>
-      <Name>Grandma Duck</Name>
+      <Name>Marie Curie</Name>
       <Long_Name></Long_Name>
       <Code></Code>
       <Target_Number_of_Hours>0</Target_Number_of_Hours>
@@ -174,7 +174,7 @@
       <Comments>Scienze Naturali, Chimica e Agraria</Comments>
     </Teacher>
     <Teacher>
-      <Name>Donald Duck</Name>
+      <Name>Milo of Croton</Name>
       <Long_Name></Long_Name>
       <Code></Code>
       <Target_Number_of_Hours>0</Target_Number_of_Hours>
@@ -192,7 +192,7 @@
       <Comments>Economia Aziendale e Gestione Finanziaria (Lunedì conteggio caveau)</Comments>
     </Teacher>
     <Teacher>
-      <Name>Ludwig Von Drake</Name>
+      <Name>Plato</Name>
       <Long_Name></Long_Name>
       <Code></Code>
       <Target_Number_of_Hours>0</Target_Number_of_Hours>
@@ -260,7 +260,7 @@
   </Students_List>
   <Activities_List>
     <Activity>
-      <Teacher>Gladstone Gander</Teacher>
+      <Teacher>Dante Alighieri</Teacher>
       <Subject>Language &amp; Literature</Subject>
       <Students>1A</Students>
       <Duration>2</Duration>
@@ -271,7 +271,7 @@
       <Comments>Language &amp; Literature per 1A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Gladstone Gander</Teacher>
+      <Teacher>Dante Alighieri</Teacher>
       <Subject>Language &amp; Literature</Subject>
       <Students>1A</Students>
       <Duration>1</Duration>
@@ -282,7 +282,7 @@
       <Comments>Language &amp; Literature per 1A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Gladstone Gander</Teacher>
+      <Teacher>Dante Alighieri</Teacher>
       <Subject>Language &amp; Literature</Subject>
       <Students>1A</Students>
       <Duration>1</Duration>
@@ -293,7 +293,7 @@
       <Comments>Language &amp; Literature per 1A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Gladstone Gander</Teacher>
+      <Teacher>Dante Alighieri</Teacher>
       <Subject>Language &amp; Literature</Subject>
       <Students>2A</Students>
       <Duration>2</Duration>
@@ -304,7 +304,7 @@
       <Comments>Language &amp; Literature per 2A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Gladstone Gander</Teacher>
+      <Teacher>Dante Alighieri</Teacher>
       <Subject>Language &amp; Literature</Subject>
       <Students>2A</Students>
       <Duration>1</Duration>
@@ -315,7 +315,7 @@
       <Comments>Language &amp; Literature per 2A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Gladstone Gander</Teacher>
+      <Teacher>Dante Alighieri</Teacher>
       <Subject>Language &amp; Literature</Subject>
       <Students>2A</Students>
       <Duration>1</Duration>
@@ -326,7 +326,7 @@
       <Comments>Language &amp; Literature per 2A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Gladstone Gander</Teacher>
+      <Teacher>Dante Alighieri</Teacher>
       <Subject>Language &amp; Literature</Subject>
       <Students>3A</Students>
       <Duration>2</Duration>
@@ -337,7 +337,7 @@
       <Comments>Language &amp; Literature per 3A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Gladstone Gander</Teacher>
+      <Teacher>Dante Alighieri</Teacher>
       <Subject>Language &amp; Literature</Subject>
       <Students>3A</Students>
       <Duration>1</Duration>
@@ -348,7 +348,7 @@
       <Comments>Language &amp; Literature per 3A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Gladstone Gander</Teacher>
+      <Teacher>Dante Alighieri</Teacher>
       <Subject>Language &amp; Literature</Subject>
       <Students>3A</Students>
       <Duration>1</Duration>
@@ -359,7 +359,7 @@
       <Comments>Language &amp; Literature per 3A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Gladstone Gander</Teacher>
+      <Teacher>Dante Alighieri</Teacher>
       <Subject>Language &amp; Literature</Subject>
       <Students>4A</Students>
       <Duration>2</Duration>
@@ -370,7 +370,7 @@
       <Comments>Language &amp; Literature per 4A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Gladstone Gander</Teacher>
+      <Teacher>Dante Alighieri</Teacher>
       <Subject>Language &amp; Literature</Subject>
       <Students>4A</Students>
       <Duration>1</Duration>
@@ -381,7 +381,7 @@
       <Comments>Language &amp; Literature per 4A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Gladstone Gander</Teacher>
+      <Teacher>Dante Alighieri</Teacher>
       <Subject>Language &amp; Literature</Subject>
       <Students>5A</Students>
       <Duration>2</Duration>
@@ -392,7 +392,7 @@
       <Comments>Language &amp; Literature per 5A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Gladstone Gander</Teacher>
+      <Teacher>Dante Alighieri</Teacher>
       <Subject>Language &amp; Literature</Subject>
       <Students>5A</Students>
       <Duration>1</Duration>
@@ -403,7 +403,7 @@
       <Comments>Language &amp; Literature per 5A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Hard Haid Moe</Teacher>
+      <Teacher>Euclid</Teacher>
       <Subject>Mathematics</Subject>
       <Students>1A</Students>
       <Duration>2</Duration>
@@ -414,7 +414,7 @@
       <Comments>Mathematics per 1A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Hard Haid Moe</Teacher>
+      <Teacher>Euclid</Teacher>
       <Subject>Mathematics</Subject>
       <Students>1A</Students>
       <Duration>1</Duration>
@@ -425,7 +425,7 @@
       <Comments>Mathematics per 1A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Hard Haid Moe</Teacher>
+      <Teacher>Euclid</Teacher>
       <Subject>Mathematics</Subject>
       <Students>1A</Students>
       <Duration>1</Duration>
@@ -436,7 +436,7 @@
       <Comments>Mathematics per 1A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Hard Haid Moe</Teacher>
+      <Teacher>Euclid</Teacher>
       <Subject>Mathematics</Subject>
       <Students>2A</Students>
       <Duration>2</Duration>
@@ -447,7 +447,7 @@
       <Comments>Mathematics per 2A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Hard Haid Moe</Teacher>
+      <Teacher>Euclid</Teacher>
       <Subject>Mathematics</Subject>
       <Students>2A</Students>
       <Duration>1</Duration>
@@ -458,7 +458,7 @@
       <Comments>Mathematics per 2A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Hard Haid Moe</Teacher>
+      <Teacher>Euclid</Teacher>
       <Subject>Mathematics</Subject>
       <Students>2A</Students>
       <Duration>1</Duration>
@@ -469,7 +469,7 @@
       <Comments>Mathematics per 2A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Hard Haid Moe</Teacher>
+      <Teacher>Euclid</Teacher>
       <Subject>Mathematics</Subject>
       <Students>3A</Students>
       <Duration>2</Duration>
@@ -480,7 +480,7 @@
       <Comments>Mathematics per 3A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Hard Haid Moe</Teacher>
+      <Teacher>Euclid</Teacher>
       <Subject>Mathematics</Subject>
       <Students>3A</Students>
       <Duration>1</Duration>
@@ -491,7 +491,7 @@
       <Comments>Mathematics per 3A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Hard Haid Moe</Teacher>
+      <Teacher>Euclid</Teacher>
       <Subject>Mathematics</Subject>
       <Students>3A</Students>
       <Duration>1</Duration>
@@ -502,7 +502,7 @@
       <Comments>Mathematics per 3A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Hard Haid Moe</Teacher>
+      <Teacher>Euclid</Teacher>
       <Subject>Mathematics</Subject>
       <Students>4A</Students>
       <Duration>2</Duration>
@@ -513,7 +513,7 @@
       <Comments>Mathematics per 4A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Hard Haid Moe</Teacher>
+      <Teacher>Euclid</Teacher>
       <Subject>Mathematics</Subject>
       <Students>4A</Students>
       <Duration>1</Duration>
@@ -524,7 +524,7 @@
       <Comments>Mathematics per 4A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Hard Haid Moe</Teacher>
+      <Teacher>Euclid</Teacher>
       <Subject>Mathematics</Subject>
       <Students>5A</Students>
       <Duration>2</Duration>
@@ -535,7 +535,7 @@
       <Comments>Mathematics per 5A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Hard Haid Moe</Teacher>
+      <Teacher>Euclid</Teacher>
       <Subject>Mathematics</Subject>
       <Students>5A</Students>
       <Duration>1</Duration>
@@ -546,7 +546,7 @@
       <Comments>Mathematics per 5A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Gyro Gearloose</Teacher>
+      <Teacher>Galileo Galilei</Teacher>
       <Subject>Physics &amp; Inventions</Subject>
       <Students>1A</Students>
       <Duration>2</Duration>
@@ -557,7 +557,7 @@
       <Comments>Physics &amp; Inventions per 1A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Gyro Gearloose</Teacher>
+      <Teacher>Galileo Galilei</Teacher>
       <Subject>Physics &amp; Inventions</Subject>
       <Students>1A</Students>
       <Duration>1</Duration>
@@ -568,7 +568,7 @@
       <Comments>Physics &amp; Inventions per 1A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Gyro Gearloose</Teacher>
+      <Teacher>Galileo Galilei</Teacher>
       <Subject>Physics &amp; Inventions</Subject>
       <Students>2A</Students>
       <Duration>2</Duration>
@@ -579,7 +579,7 @@
       <Comments>Physics &amp; Inventions per 2A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Gyro Gearloose</Teacher>
+      <Teacher>Galileo Galilei</Teacher>
       <Subject>Physics &amp; Inventions</Subject>
       <Students>2A</Students>
       <Duration>1</Duration>
@@ -590,7 +590,7 @@
       <Comments>Physics &amp; Inventions per 2A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Gyro Gearloose</Teacher>
+      <Teacher>Galileo Galilei</Teacher>
       <Subject>Physics &amp; Inventions</Subject>
       <Students>3A</Students>
       <Duration>2</Duration>
@@ -601,7 +601,7 @@
       <Comments>Physics &amp; Inventions per 3A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Gyro Gearloose</Teacher>
+      <Teacher>Galileo Galilei</Teacher>
       <Subject>Physics &amp; Inventions</Subject>
       <Students>3A</Students>
       <Duration>2</Duration>
@@ -612,7 +612,7 @@
       <Comments>Physics &amp; Inventions per 3A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Gyro Gearloose</Teacher>
+      <Teacher>Galileo Galilei</Teacher>
       <Subject>Physics &amp; Inventions</Subject>
       <Students>4A</Students>
       <Duration>2</Duration>
@@ -623,7 +623,7 @@
       <Comments>Physics &amp; Inventions per 4A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Gyro Gearloose</Teacher>
+      <Teacher>Galileo Galilei</Teacher>
       <Subject>Physics &amp; Inventions</Subject>
       <Students>4A</Students>
       <Duration>2</Duration>
@@ -634,7 +634,7 @@
       <Comments>Physics &amp; Inventions per 4A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Gyro Gearloose</Teacher>
+      <Teacher>Galileo Galilei</Teacher>
       <Subject>Physics &amp; Inventions</Subject>
       <Students>5A</Students>
       <Duration>2</Duration>
@@ -645,7 +645,7 @@
       <Comments>Physics &amp; Inventions per 5A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Gyro Gearloose</Teacher>
+      <Teacher>Galileo Galilei</Teacher>
       <Subject>Physics &amp; Inventions</Subject>
       <Students>5A</Students>
       <Duration>2</Duration>
@@ -656,7 +656,7 @@
       <Comments>Physics &amp; Inventions per 5A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Grandma Duck</Teacher>
+      <Teacher>Marie Curie</Teacher>
       <Subject>Natural Sciences &amp; Botany</Subject>
       <Students>1A</Students>
       <Duration>2</Duration>
@@ -667,7 +667,7 @@
       <Comments>Natural Sciences &amp; Botany per 1A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Grandma Duck</Teacher>
+      <Teacher>Marie Curie</Teacher>
       <Subject>Natural Sciences &amp; Botany</Subject>
       <Students>1A</Students>
       <Duration>1</Duration>
@@ -678,7 +678,7 @@
       <Comments>Natural Sciences &amp; Botany per 1A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Grandma Duck</Teacher>
+      <Teacher>Marie Curie</Teacher>
       <Subject>Natural Sciences &amp; Botany</Subject>
       <Students>1A</Students>
       <Duration>1</Duration>
@@ -689,7 +689,7 @@
       <Comments>Natural Sciences &amp; Botany per 1A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Grandma Duck</Teacher>
+      <Teacher>Marie Curie</Teacher>
       <Subject>Natural Sciences &amp; Botany</Subject>
       <Students>2A</Students>
       <Duration>2</Duration>
@@ -700,7 +700,7 @@
       <Comments>Natural Sciences &amp; Botany per 2A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Grandma Duck</Teacher>
+      <Teacher>Marie Curie</Teacher>
       <Subject>Natural Sciences &amp; Botany</Subject>
       <Students>2A</Students>
       <Duration>1</Duration>
@@ -711,7 +711,7 @@
       <Comments>Natural Sciences &amp; Botany per 2A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Grandma Duck</Teacher>
+      <Teacher>Marie Curie</Teacher>
       <Subject>Natural Sciences &amp; Botany</Subject>
       <Students>2A</Students>
       <Duration>1</Duration>
@@ -722,7 +722,7 @@
       <Comments>Natural Sciences &amp; Botany per 2A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Grandma Duck</Teacher>
+      <Teacher>Marie Curie</Teacher>
       <Subject>Natural Sciences &amp; Botany</Subject>
       <Students>3A</Students>
       <Duration>2</Duration>
@@ -733,7 +733,7 @@
       <Comments>Natural Sciences &amp; Botany per 3A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Grandma Duck</Teacher>
+      <Teacher>Marie Curie</Teacher>
       <Subject>Natural Sciences &amp; Botany</Subject>
       <Students>3A</Students>
       <Duration>1</Duration>
@@ -744,7 +744,7 @@
       <Comments>Natural Sciences &amp; Botany per 3A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Grandma Duck</Teacher>
+      <Teacher>Marie Curie</Teacher>
       <Subject>Natural Sciences &amp; Botany</Subject>
       <Students>3A</Students>
       <Duration>1</Duration>
@@ -755,7 +755,7 @@
       <Comments>Natural Sciences &amp; Botany per 3A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Grandma Duck</Teacher>
+      <Teacher>Marie Curie</Teacher>
       <Subject>Natural Sciences &amp; Botany</Subject>
       <Students>4A</Students>
       <Duration>2</Duration>
@@ -766,7 +766,7 @@
       <Comments>Natural Sciences &amp; Botany per 4A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Grandma Duck</Teacher>
+      <Teacher>Marie Curie</Teacher>
       <Subject>Natural Sciences &amp; Botany</Subject>
       <Students>4A</Students>
       <Duration>1</Duration>
@@ -777,7 +777,7 @@
       <Comments>Natural Sciences &amp; Botany per 4A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Grandma Duck</Teacher>
+      <Teacher>Marie Curie</Teacher>
       <Subject>Natural Sciences &amp; Botany</Subject>
       <Students>5A</Students>
       <Duration>2</Duration>
@@ -788,7 +788,7 @@
       <Comments>Natural Sciences &amp; Botany per 5A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Grandma Duck</Teacher>
+      <Teacher>Marie Curie</Teacher>
       <Subject>Natural Sciences &amp; Botany</Subject>
       <Students>5A</Students>
       <Duration>1</Duration>
@@ -799,7 +799,7 @@
       <Comments>Natural Sciences &amp; Botany per 5A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Ludwig Von Drake</Teacher>
+      <Teacher>Plato</Teacher>
       <Subject>History &amp; Philosophy</Subject>
       <Students>1A</Students>
       <Duration>2</Duration>
@@ -810,7 +810,7 @@
       <Comments>History &amp; Philosophy per 1A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Ludwig Von Drake</Teacher>
+      <Teacher>Plato</Teacher>
       <Subject>History &amp; Philosophy</Subject>
       <Students>2A</Students>
       <Duration>2</Duration>
@@ -821,7 +821,7 @@
       <Comments>History &amp; Philosophy per 2A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Ludwig Von Drake</Teacher>
+      <Teacher>Plato</Teacher>
       <Subject>History &amp; Philosophy</Subject>
       <Students>3A</Students>
       <Duration>2</Duration>
@@ -832,7 +832,7 @@
       <Comments>History &amp; Philosophy per 3A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Ludwig Von Drake</Teacher>
+      <Teacher>Plato</Teacher>
       <Subject>History &amp; Philosophy</Subject>
       <Students>3A</Students>
       <Duration>2</Duration>
@@ -843,7 +843,7 @@
       <Comments>History &amp; Philosophy per 3A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Ludwig Von Drake</Teacher>
+      <Teacher>Plato</Teacher>
       <Subject>History &amp; Philosophy</Subject>
       <Students>4A</Students>
       <Duration>2</Duration>
@@ -854,7 +854,7 @@
       <Comments>History &amp; Philosophy per 4A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Ludwig Von Drake</Teacher>
+      <Teacher>Plato</Teacher>
       <Subject>History &amp; Philosophy</Subject>
       <Students>4A</Students>
       <Duration>2</Duration>
@@ -865,7 +865,7 @@
       <Comments>History &amp; Philosophy per 4A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Ludwig Von Drake</Teacher>
+      <Teacher>Plato</Teacher>
       <Subject>History &amp; Philosophy</Subject>
       <Students>4A</Students>
       <Duration>1</Duration>
@@ -876,7 +876,7 @@
       <Comments>History &amp; Philosophy per 4A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Ludwig Von Drake</Teacher>
+      <Teacher>Plato</Teacher>
       <Subject>History &amp; Philosophy</Subject>
       <Students>5A</Students>
       <Duration>2</Duration>
@@ -887,7 +887,7 @@
       <Comments>History &amp; Philosophy per 5A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Ludwig Von Drake</Teacher>
+      <Teacher>Plato</Teacher>
       <Subject>History &amp; Philosophy</Subject>
       <Students>5A</Students>
       <Duration>2</Duration>
@@ -898,7 +898,7 @@
       <Comments>History &amp; Philosophy per 5A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Ludwig Von Drake</Teacher>
+      <Teacher>Plato</Teacher>
       <Subject>History &amp; Philosophy</Subject>
       <Students>5A</Students>
       <Duration>1</Duration>
@@ -1019,7 +1019,7 @@
       <Comments>Economics &amp; Law per 5A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Donald Duck</Teacher>
+      <Teacher>Milo of Croton</Teacher>
       <Subject>Physical Education</Subject>
       <Students>1A</Students>
       <Duration>2</Duration>
@@ -1030,7 +1030,7 @@
       <Comments>Physical Education per 1A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Donald Duck</Teacher>
+      <Teacher>Milo of Croton</Teacher>
       <Subject>Physical Education</Subject>
       <Students>2A</Students>
       <Duration>2</Duration>
@@ -1041,7 +1041,7 @@
       <Comments>Physical Education per 2A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Donald Duck</Teacher>
+      <Teacher>Milo of Croton</Teacher>
       <Subject>Physical Education</Subject>
       <Students>3A</Students>
       <Duration>2</Duration>
@@ -1052,7 +1052,7 @@
       <Comments>Physical Education per 3A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Donald Duck</Teacher>
+      <Teacher>Milo of Croton</Teacher>
       <Subject>Physical Education</Subject>
       <Students>4A</Students>
       <Duration>2</Duration>
@@ -1063,7 +1063,7 @@
       <Comments>Physical Education per 4A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Donald Duck</Teacher>
+      <Teacher>Milo of Croton</Teacher>
       <Subject>Physical Education</Subject>
       <Students>5A</Students>
       <Duration>2</Duration>
@@ -1074,7 +1074,7 @@
       <Comments>Physical Education per 5A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Duckworth</Teacher>
+      <Teacher>William Shakespeare</Teacher>
       <Subject>Foreign Languages</Subject>
       <Students>1A</Students>
       <Duration>2</Duration>
@@ -1085,7 +1085,7 @@
       <Comments>Foreign Languages per 1A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Duckworth</Teacher>
+      <Teacher>William Shakespeare</Teacher>
       <Subject>Foreign Languages</Subject>
       <Students>1A</Students>
       <Duration>1</Duration>
@@ -1096,7 +1096,7 @@
       <Comments>Foreign Languages per 1A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Duckworth</Teacher>
+      <Teacher>William Shakespeare</Teacher>
       <Subject>Foreign Languages</Subject>
       <Students>2A</Students>
       <Duration>2</Duration>
@@ -1107,7 +1107,7 @@
       <Comments>Foreign Languages per 2A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Duckworth</Teacher>
+      <Teacher>William Shakespeare</Teacher>
       <Subject>Foreign Languages</Subject>
       <Students>2A</Students>
       <Duration>1</Duration>
@@ -1118,7 +1118,7 @@
       <Comments>Foreign Languages per 2A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Duckworth</Teacher>
+      <Teacher>William Shakespeare</Teacher>
       <Subject>Foreign Languages</Subject>
       <Students>3A</Students>
       <Duration>2</Duration>
@@ -1129,7 +1129,7 @@
       <Comments>Foreign Languages per 3A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Duckworth</Teacher>
+      <Teacher>William Shakespeare</Teacher>
       <Subject>Foreign Languages</Subject>
       <Students>3A</Students>
       <Duration>1</Duration>
@@ -1140,7 +1140,7 @@
       <Comments>Foreign Languages per 3A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Duckworth</Teacher>
+      <Teacher>William Shakespeare</Teacher>
       <Subject>Foreign Languages</Subject>
       <Students>4A</Students>
       <Duration>2</Duration>
@@ -1151,7 +1151,7 @@
       <Comments>Foreign Languages per 4A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Duckworth</Teacher>
+      <Teacher>William Shakespeare</Teacher>
       <Subject>Foreign Languages</Subject>
       <Students>4A</Students>
       <Duration>1</Duration>
@@ -1162,7 +1162,7 @@
       <Comments>Foreign Languages per 4A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Duckworth</Teacher>
+      <Teacher>William Shakespeare</Teacher>
       <Subject>Foreign Languages</Subject>
       <Students>5A</Students>
       <Duration>2</Duration>
@@ -1173,7 +1173,7 @@
       <Comments>Foreign Languages per 5A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Duckworth</Teacher>
+      <Teacher>William Shakespeare</Teacher>
       <Subject>Foreign Languages</Subject>
       <Students>5A</Students>
       <Duration>1</Duration>
@@ -1281,7 +1281,7 @@
       <Comments>Modulo interno 3/3 per terza classe piccola (Capienza max totale impianto 57)</Comments>
     </Room>
     <Room>
-      <Name>Money Bin Auditorium</Name>
+      <Name>Academy Auditorium</Name>
       <Long_Name></Long_Name>
       <Code></Code>
       <Building>Main Campus</Building>
@@ -1951,7 +1951,7 @@
     </ConstraintMinDaysBetweenActivities>
     <ConstraintActivitiesPreferredTimeSlots>
       <Weight_Percentage>85</Weight_Percentage>
-      <Teacher>Gyro Gearloose</Teacher>
+      <Teacher>Galileo Galilei</Teacher>
       <Students></Students>
       <Subject></Subject>
       <Activity_Tag></Activity_Tag>
@@ -2038,11 +2038,11 @@
         <Hour>4</Hour>
       </Preferred_Time_Slot>
       <Active>true</Active>
-      <Comments>Gyro Gearloose: preferenza fascia prime (85%)</Comments>
+      <Comments>Galileo Galilei: preferenza fascia prime (85%)</Comments>
     </ConstraintActivitiesPreferredTimeSlots>
     <ConstraintActivitiesPreferredTimeSlots>
       <Weight_Percentage>85</Weight_Percentage>
-      <Teacher>Gyro Gearloose</Teacher>
+      <Teacher>Galileo Galilei</Teacher>
       <Students></Students>
       <Subject></Subject>
       <Activity_Tag></Activity_Tag>
@@ -2145,7 +2145,7 @@
         <Hour>6</Hour>
       </Preferred_Time_Slot>
       <Active>true</Active>
-      <Comments>Gyro Gearloose: giorno libero desiderato Ven (85%)</Comments>
+      <Comments>Galileo Galilei: giorno libero desiderato Ven (85%)</Comments>
     </ConstraintActivitiesPreferredTimeSlots>
     <ConstraintActivitiesPreferredTimeSlots>
       <Weight_Percentage>90</Weight_Percentage>
@@ -2240,7 +2240,7 @@
     </ConstraintActivitiesPreferredTimeSlots>
     <ConstraintActivitiesPreferredTimeSlots>
       <Weight_Percentage>85</Weight_Percentage>
-      <Teacher>Ludwig Von Drake</Teacher>
+      <Teacher>Plato</Teacher>
       <Students></Students>
       <Subject></Subject>
       <Activity_Tag></Activity_Tag>
@@ -2327,11 +2327,11 @@
         <Hour>5</Hour>
       </Preferred_Time_Slot>
       <Active>true</Active>
-      <Comments>Ludwig Von Drake: preferenza fascia bilanciato (85%)</Comments>
+      <Comments>Plato: preferenza fascia bilanciato (85%)</Comments>
     </ConstraintActivitiesPreferredTimeSlots>
     <ConstraintActivitiesPreferredTimeSlots>
       <Weight_Percentage>85</Weight_Percentage>
-      <Teacher>Donald Duck</Teacher>
+      <Teacher>Milo of Croton</Teacher>
       <Students></Students>
       <Subject></Subject>
       <Activity_Tag></Activity_Tag>
@@ -2418,11 +2418,11 @@
         <Hour>6</Hour>
       </Preferred_Time_Slot>
       <Active>true</Active>
-      <Comments>Donald Duck: preferenza fascia ultime (85%)</Comments>
+      <Comments>Milo of Croton: preferenza fascia ultime (85%)</Comments>
     </ConstraintActivitiesPreferredTimeSlots>
     <ConstraintActivitiesPreferredTimeSlots>
       <Weight_Percentage>85</Weight_Percentage>
-      <Teacher>Donald Duck</Teacher>
+      <Teacher>Milo of Croton</Teacher>
       <Students></Students>
       <Subject></Subject>
       <Activity_Tag></Activity_Tag>
@@ -2525,11 +2525,11 @@
         <Hour>6</Hour>
       </Preferred_Time_Slot>
       <Active>true</Active>
-      <Comments>Donald Duck: giorno libero desiderato Mer (85%)</Comments>
+      <Comments>Milo of Croton: giorno libero desiderato Mer (85%)</Comments>
     </ConstraintActivitiesPreferredTimeSlots>
     <ConstraintActivitiesPreferredTimeSlots>
       <Weight_Percentage>85</Weight_Percentage>
-      <Teacher>Grandma Duck</Teacher>
+      <Teacher>Marie Curie</Teacher>
       <Students></Students>
       <Subject></Subject>
       <Activity_Tag></Activity_Tag>
@@ -2616,11 +2616,11 @@
         <Hour>5</Hour>
       </Preferred_Time_Slot>
       <Active>true</Active>
-      <Comments>Grandma Duck: preferenza fascia bilanciato (85%)</Comments>
+      <Comments>Marie Curie: preferenza fascia bilanciato (85%)</Comments>
     </ConstraintActivitiesPreferredTimeSlots>
     <ConstraintActivitiesPreferredTimeSlots>
       <Weight_Percentage>85</Weight_Percentage>
-      <Teacher>Grandma Duck</Teacher>
+      <Teacher>Marie Curie</Teacher>
       <Students></Students>
       <Subject></Subject>
       <Activity_Tag></Activity_Tag>
@@ -2723,11 +2723,11 @@
         <Hour>6</Hour>
       </Preferred_Time_Slot>
       <Active>true</Active>
-      <Comments>Grandma Duck: giorno libero desiderato Gio (85%)</Comments>
+      <Comments>Marie Curie: giorno libero desiderato Gio (85%)</Comments>
     </ConstraintActivitiesPreferredTimeSlots>
     <ConstraintActivitiesPreferredTimeSlots>
       <Weight_Percentage>85</Weight_Percentage>
-      <Teacher>Gladstone Gander</Teacher>
+      <Teacher>Dante Alighieri</Teacher>
       <Students></Students>
       <Subject></Subject>
       <Activity_Tag></Activity_Tag>
@@ -2814,11 +2814,11 @@
         <Hour>5</Hour>
       </Preferred_Time_Slot>
       <Active>true</Active>
-      <Comments>Gladstone Gander: preferenza fascia bilanciato (85%)</Comments>
+      <Comments>Dante Alighieri: preferenza fascia bilanciato (85%)</Comments>
     </ConstraintActivitiesPreferredTimeSlots>
     <ConstraintActivitiesPreferredTimeSlots>
       <Weight_Percentage>85</Weight_Percentage>
-      <Teacher>Gladstone Gander</Teacher>
+      <Teacher>Dante Alighieri</Teacher>
       <Students></Students>
       <Subject></Subject>
       <Activity_Tag></Activity_Tag>
@@ -2921,11 +2921,11 @@
         <Hour>6</Hour>
       </Preferred_Time_Slot>
       <Active>true</Active>
-      <Comments>Gladstone Gander: giorno libero desiderato Mar (85%)</Comments>
+      <Comments>Dante Alighieri: giorno libero desiderato Mar (85%)</Comments>
     </ConstraintActivitiesPreferredTimeSlots>
     <ConstraintActivitiesPreferredTimeSlots>
       <Weight_Percentage>85</Weight_Percentage>
-      <Teacher>Hard Haid Moe</Teacher>
+      <Teacher>Euclid</Teacher>
       <Students></Students>
       <Subject></Subject>
       <Activity_Tag></Activity_Tag>
@@ -3012,11 +3012,11 @@
         <Hour>4</Hour>
       </Preferred_Time_Slot>
       <Active>true</Active>
-      <Comments>Hard Haid Moe: preferenza fascia prime (85%)</Comments>
+      <Comments>Euclid: preferenza fascia prime (85%)</Comments>
     </ConstraintActivitiesPreferredTimeSlots>
     <ConstraintTeacherMaxGapsPerDay>
       <Weight_Percentage>100</Weight_Percentage>
-      <Teacher>Gyro Gearloose</Teacher>
+      <Teacher>Galileo Galilei</Teacher>
       <Max_Gaps>1</Max_Gaps>
       <Active>true</Active>
       <Comments></Comments>
@@ -3030,49 +3030,49 @@
     </ConstraintTeacherMaxGapsPerDay>
     <ConstraintTeacherMaxGapsPerDay>
       <Weight_Percentage>100</Weight_Percentage>
-      <Teacher>Ludwig Von Drake</Teacher>
+      <Teacher>Plato</Teacher>
       <Max_Gaps>1</Max_Gaps>
       <Active>true</Active>
       <Comments></Comments>
     </ConstraintTeacherMaxGapsPerDay>
     <ConstraintTeacherMaxGapsPerDay>
       <Weight_Percentage>100</Weight_Percentage>
-      <Teacher>Donald Duck</Teacher>
+      <Teacher>Milo of Croton</Teacher>
       <Max_Gaps>1</Max_Gaps>
       <Active>true</Active>
       <Comments></Comments>
     </ConstraintTeacherMaxGapsPerDay>
     <ConstraintTeacherMaxGapsPerDay>
       <Weight_Percentage>100</Weight_Percentage>
-      <Teacher>Grandma Duck</Teacher>
+      <Teacher>Marie Curie</Teacher>
       <Max_Gaps>1</Max_Gaps>
       <Active>true</Active>
       <Comments></Comments>
     </ConstraintTeacherMaxGapsPerDay>
     <ConstraintTeacherMaxGapsPerDay>
       <Weight_Percentage>100</Weight_Percentage>
-      <Teacher>Gladstone Gander</Teacher>
+      <Teacher>Dante Alighieri</Teacher>
       <Max_Gaps>1</Max_Gaps>
       <Active>true</Active>
       <Comments></Comments>
     </ConstraintTeacherMaxGapsPerDay>
     <ConstraintTeacherMaxGapsPerDay>
       <Weight_Percentage>100</Weight_Percentage>
-      <Teacher>Hard Haid Moe</Teacher>
+      <Teacher>Euclid</Teacher>
       <Max_Gaps>1</Max_Gaps>
       <Active>true</Active>
       <Comments></Comments>
     </ConstraintTeacherMaxGapsPerDay>
     <ConstraintTeacherMaxGapsPerDay>
       <Weight_Percentage>100</Weight_Percentage>
-      <Teacher>Duckworth</Teacher>
+      <Teacher>William Shakespeare</Teacher>
       <Max_Gaps>1</Max_Gaps>
       <Active>true</Active>
       <Comments></Comments>
     </ConstraintTeacherMaxGapsPerDay>
     <ConstraintTeacherMaxGapsPerWeek>
       <Weight_Percentage>100</Weight_Percentage>
-      <Teacher>Gyro Gearloose</Teacher>
+      <Teacher>Galileo Galilei</Teacher>
       <Max_Gaps>1</Max_Gaps>
       <Active>true</Active>
       <Comments></Comments>
@@ -3086,42 +3086,42 @@
     </ConstraintTeacherMaxGapsPerWeek>
     <ConstraintTeacherMaxGapsPerWeek>
       <Weight_Percentage>100</Weight_Percentage>
-      <Teacher>Ludwig Von Drake</Teacher>
+      <Teacher>Plato</Teacher>
       <Max_Gaps>1</Max_Gaps>
       <Active>true</Active>
       <Comments></Comments>
     </ConstraintTeacherMaxGapsPerWeek>
     <ConstraintTeacherMaxGapsPerWeek>
       <Weight_Percentage>100</Weight_Percentage>
-      <Teacher>Donald Duck</Teacher>
+      <Teacher>Milo of Croton</Teacher>
       <Max_Gaps>1</Max_Gaps>
       <Active>true</Active>
       <Comments></Comments>
     </ConstraintTeacherMaxGapsPerWeek>
     <ConstraintTeacherMaxGapsPerWeek>
       <Weight_Percentage>100</Weight_Percentage>
-      <Teacher>Grandma Duck</Teacher>
+      <Teacher>Marie Curie</Teacher>
       <Max_Gaps>1</Max_Gaps>
       <Active>true</Active>
       <Comments></Comments>
     </ConstraintTeacherMaxGapsPerWeek>
     <ConstraintTeacherMaxGapsPerWeek>
       <Weight_Percentage>100</Weight_Percentage>
-      <Teacher>Gladstone Gander</Teacher>
+      <Teacher>Dante Alighieri</Teacher>
       <Max_Gaps>1</Max_Gaps>
       <Active>true</Active>
       <Comments></Comments>
     </ConstraintTeacherMaxGapsPerWeek>
     <ConstraintTeacherMaxGapsPerWeek>
       <Weight_Percentage>100</Weight_Percentage>
-      <Teacher>Hard Haid Moe</Teacher>
+      <Teacher>Euclid</Teacher>
       <Max_Gaps>1</Max_Gaps>
       <Active>true</Active>
       <Comments></Comments>
     </ConstraintTeacherMaxGapsPerWeek>
     <ConstraintTeacherMaxGapsPerWeek>
       <Weight_Percentage>100</Weight_Percentage>
-      <Teacher>Duckworth</Teacher>
+      <Teacher>William Shakespeare</Teacher>
       <Max_Gaps>1</Max_Gaps>
       <Active>true</Active>
       <Comments></Comments>

@@ -29,8 +29,8 @@ Zero dipendenze esterne Python, interfaccia reattiva in stile Google Classroom /
 - **Sincronizzazione Organico e Modello Word (.docx)**:
   - Download diretto del **Modello Word (.docx)** pre-formattato per l'organico docenti o esportazione istantanea dell'organico attuale della scuola in Word.
   - Sincronizzazione automatica da file Word (.docx) o Google Docs con anteprima differenziale e conferma selettiva.
-- **Dataset Demo "Paperopoli" & Reset a Foglio Bianco**:
-  - Include un istituto didattico completo e funzionante (*Liceo & Tecnico "Pico De Paperis"*, 8 docenti Disney, 5 classi, laboratori, palestra e orario già risolto al 100% in FET) per esplorare subito tutte le funzionalità senza panico da "foglio vuoto".
+- **Dataset Demo "Scuola di Atene" & Reset a Foglio Bianco**:
+  - Include un istituto didattico completo e funzionante (*Liceo Classico e Scientifico Statale "Scuola di Atene"*, 8 docenti storici tra cui Platone, Dante, Galileo e Marie Curie, 5 classi, laboratori, palestra e orario già risolto al 100% in FET) per esplorare subito tutte le funzionalità senza panico da "foglio vuoto".
   - Pulsante per azzerare completamente il database creando un istituto pulito a foglio bianco per iniziare la propria scuola.
 - **Architettura Leggera**:
   - **Zero librerie Python esterne** (utilizza esclusivamente i moduli standard di Python 3).
@@ -384,7 +384,7 @@ Il progetto Eurario nasce dalla sinergia tra competenze didattiche e organizzati
 │   │   ├── app.js               # Logica client-side, visualizzazioni e controlli
 │   │   └── styles.css           # Foglio di stile CSS personalizzato
 │   ├── seed_data/               # Dati dimostrativi di bootstrap per prima installazione
-│   │   ├── current_project.json # Dataset demo Paperopoli
+│   │   ├── current_project.json # Dataset demo Scuola di Atene
 │   │   └── solved_timetable.fet # Orario risolto demo
 │   └── data/                    # Cartella di lavoro e volume persistente montato su disco
 │       ├── current_project.json # Database dell'istituto attivo

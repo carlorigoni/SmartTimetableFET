@@ -1,5 +1,5 @@
 {
-  "admin_email": "admin@paperopoli.edu",
+  "admin_email": "admin@scuolaatene.edu.it",
   "google_client_id": "",
   "emergency_passcode": "admin2026",
   "smtp": {
@@ -8,12 +8,12 @@
     "port": 587,
     "user": "",
     "password": "",
-    "notify_to": "admin@paperopoli.edu"
+    "notify_to": "admin@scuolaatene.edu.it"
   },
   "users": {
-    "admin@paperopoli.edu": {
-      "email": "admin@paperopoli.edu",
-      "name": "Amministratore Paperopoli",
+    "admin@scuolaatene.edu.it": {
+      "email": "admin@scuolaatene.edu.it",
+      "name": "Amministratore Scuola di Atene",
       "picture": "",
       "role": "admin",
       "status": "approved",

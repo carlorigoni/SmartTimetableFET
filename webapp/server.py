@@ -97,7 +97,7 @@ def fetch_google_doc_docx_bytes(url):
     except Exception as e:
         raise ValueError(f"Impossibile scaricare il Google Doc: {e}")
 
-APP_VERSION = "1.9.6"
+APP_VERSION = "1.9.7"
 FET_VERSION = "7.12.0"
 APP_AUTHOR = "Carlo Rigoni"
 APP_MENTOR = "Federico Rettore"
@@ -569,7 +569,7 @@ class EurarioHandler(BaseHTTPRequestHandler):
         elif path == "/api/auth/config":
             self._json(200, {
                 "google_client_id": auth_manager.config.get("google_client_id", ""),
-                "admin_email": auth_manager.config.get("admin_email", "admin@paperopoli.edu")
+                "admin_email": auth_manager.config.get("admin_email", "admin@scuolaatene.edu.it")
             })
             return
         elif path == "/api/auth/me":
@@ -1470,9 +1470,9 @@ class EurarioHandler(BaseHTTPRequestHandler):
             try:
                 lang = (body or {}).get("lang", "it")
                 is_en = (lang == "en")
-                name = "Ludwig Von Drake High School" if is_en else 'Liceo & Tecnico "Pico De Paperis"'
-                city = "Duckburg" if is_en else "Paperopoli"
-                country = "United States" if is_en else "Italia"
+                name = 'School of Athens Classical & Scientific High School' if is_en else 'Liceo Classico e Scientifico Statale "Scuola di Atene"'
+                city = "Athens" if is_en else "Atene"
+                country = "Greece" if is_en else "Italia"
                 notes = "Scuola di esempio precaricata con orario completo e vincoli FET." if not is_en else "Preloaded sample school with complete timetable and FET constraints."
                 meccanografico = ""
 
@@ -2080,7 +2080,7 @@ class EurarioHandler(BaseHTTPRequestHandler):
             try:
                 lang = (body or {}).get("lang", "it")
                 db.load_demo(lang=lang)
-                msg = "Demo Duckburg loaded successfully!" if lang == "en" else "Demo Paperopoli caricata con successo!"
+                msg = "Demo 'School of Athens' loaded successfully!" if lang == "en" else "Demo 'Scuola di Atene' caricata con successo!"
                 self._json(200, {"success": True, "message": msg})
             except Exception as e:
                 self._json(500, {"success": False, "error": str(e)})

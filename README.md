@@ -29,8 +29,8 @@ Zero external Python dependencies, clean Google Classroom / Material 3 reactive 
 - **Word Document (.docx) & Google Docs Staff Synchronization**:
   - Direct download of the pre-formatted **Word (.docx) Teaching Staff Template** or one-click export of current school staff to Word.
   - Automatic synchronization from Word (.docx) or Google Docs with side-by-side diff preview and selective confirmation.
-- **"Paperopoli" Demo Dataset & Blank Slate Reset**:
-  - Preloaded with a complete, realistic sample high school (*"Pico De Paperis High School & Technical Institute"*, 8 Disney characters as faculty, 5 classes, labs, gym, and 100% solved FET timetable) to test all features immediately without "blank canvas" friction.
+- **"School of Athens" Demo Dataset & Blank Slate Reset**:
+  - Preloaded with a complete, realistic sample high school (*"School of Athens" Classical & Scientific High School*, 8 historical scholars including Plato, Dante, Galileo, and Marie Curie, 5 classes, labs, gym, and 100% pre-solved FET timetable) to test all features immediately without "blank canvas" friction.
   - One-click factory reset button to erase the database and start fresh with your own school data.
 - **Lightweight Architecture**:
   - **Zero external Python libraries** (runs strictly on Python 3 standard library modules).
@@ -297,7 +297,7 @@ The Eurario project is the result of collaboration between pedagogical timetabli
 │   │   ├── app.js               # Reactive client-side logic & UI controllers
 │   │   └── styles.css           # Custom CSS3 stylesheet & design tokens
 │   ├── seed_data/               # Bootstrap demo dataset for fresh installs
-│   │   ├── current_project.json # Duckburg demo school dataset
+│   │   ├── current_project.json # "School of Athens" demo school dataset
 │   │   └── solved_timetable.fet # Pre-solved demo timetable
 │   └── data/                    # Persistent host volume mounted directory
 │       ├── current_project.json # Active school database

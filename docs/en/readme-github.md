@@ -33,7 +33,7 @@ Zero external Python dependencies, responsive Material 3 / Google Classroom insp
 - **Staffing Synchronization & Word Template (.docx)**:
   - Official Word template download and diff-based spreadsheet/document ingestion.
 - **Demo Dataset & Blank Slate**:
-  - Pre-populated fully functional school (*Liceo & Tecnico "Pico De Paperis"*) with a 100% solved timetable to explore all features immediately.
+  - Pre-populated fully functional school (*"School of Athens" Classical & Scientific High School*) with a 100% pre-solved timetable to explore all features immediately.
   - One-click reset to start fresh with a blank institution.
 - **Lightweight Architecture**:
   - **Zero external Python libraries** (exclusively uses Python 3 standard library).

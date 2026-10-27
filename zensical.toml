@@ -32,8 +32,8 @@ nav = [
   ]},
 ]
 
-extra_css = ["stylesheets/extra.css?v=1.9.6"]
-extra_javascript = ["javascripts/eurario-docs.js?v=1.9.6"]
+extra_css = ["stylesheets/extra.css?v=1.9.7"]
+extra_javascript = ["javascripts/eurario-docs.js?v=1.9.7"]
 
 [project.theme]
 language = "it"

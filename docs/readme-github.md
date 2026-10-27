@@ -34,7 +34,7 @@ Zero dipendenze esterne Python, interfaccia reattiva in stile Google Classroom /
   - Download diretto del **Modello Word (.docx)** pre-formattato per l'organico docenti o esportazione istantanea dell'organico attuale della scuola in Word.
   - Sincronizzazione automatica da file Word (.docx) o Google Docs con anteprima differenziale e conferma selettiva.
 - **Dataset Demo & Reset a Foglio Bianco**:
-  - Include un istituto didattico completo e funzionante (*Liceo & Tecnico "Pico De Paperis"*, docenti, classi, laboratori, palestra e orario già risolto al 100% in FET) per esplorare subito tutte le funzionalità senza panico da "foglio vuoto".
+  - Include un istituto didattico completo e funzionante (*Liceo Classico e Scientifico Statale "Scuola di Atene"*, docenti storici, classi, laboratori, palestra e orario già risolto al 100% in FET) per esplorare subito tutte le funzionalità senza panico da "foglio vuoto".
   - Possibilità di azzerare completamente il database creando un istituto pulito a foglio bianco per iniziare la propria scuola.
 - **Architettura Leggera**:
   - **Zero librerie Python esterne** (utilizza esclusivamente i moduli standard di Python 3).

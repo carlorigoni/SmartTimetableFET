@@ -40,7 +40,7 @@ SEED_DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "seed_d
 
 def sync_seed_templates_to_data():
     """
-    Assicura che tutti i template dimostrativi e di seed (demo_paperopoli, demo_duckburg, etc.)
+    Assicura che tutti i template dimostrativi e di seed (demo_scuola_atene, demo_athens, etc.)
     presenti in webapp/seed_data vengano replicati in DATA_DIR se mancanti.
     Questo garantisce l'immediata disponibilità delle demo anche in ambienti Docker
     in cui DATA_DIR (/app/webapp/data) è montato come volume host esterno vuoto o parziale.
@@ -439,7 +439,7 @@ class Database:
         seed_data_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "seed_data")
         seed_proj = os.path.join(seed_data_dir, "current_project.json")
         seed_solved_file = os.path.join(seed_data_dir, "solved_timetable.fet")
-        demo_proj = os.path.join(DATA_DIR, "demo_paperopoli.json")
+        demo_proj = os.path.join(DATA_DIR, "demo_scuola_atene.json")
         demo_solved_file = os.path.join(DATA_DIR, "demo_solved_timetable.fet")
 
         if self.school_id != "default" and not os.path.exists(self.project_file):
@@ -495,7 +495,7 @@ class Database:
                     if os.path.exists(demo_solved_file) and not os.path.exists(self.solved_file):
                         shutil.copyfile(demo_solved_file, self.solved_file)
                 except Exception as e:
-                    print("Notice: cannot copy demo_paperopoli:", e)
+                    print("Notice: cannot copy demo_scuola_atene:", e)
 
         if os.path.exists(self.project_file):
             try:
@@ -511,7 +511,7 @@ class Database:
                     data = json.load(f)
             else:
                 data = {
-                    "institution": 'Liceo & Tecnico "Pico De Paperis" - Paperopoli',
+                    "institution": 'Liceo Classico e Scientifico Statale "Scuola di Atene"',
                     "comments": "Configurazione orario",
                     "days": ["Lun", "Mar", "Mer", "Gio", "Ven"],
                     "hours": ["1", "2", "INT1", "3", "4", "INT2", "5", "6", "7", "8"],
@@ -868,30 +868,30 @@ class Database:
     def load_demo(self, lang="it"):
         if lang == "en":
             candidate_files = [
-                os.path.join(DATA_DIR, "demo_duckburg.json"),
-                os.path.join(SEED_DATA_DIR, "demo_duckburg.json"),
-                os.path.join(SNAPSHOTS_DIR, "snap_demo_duckburg.json")
+                os.path.join(DATA_DIR, "demo_athens.json"),
+                os.path.join(SEED_DATA_DIR, "demo_athens.json"),
+                os.path.join(SNAPSHOTS_DIR, "snap_demo_athens.json")
             ]
             candidate_fets = [
-                os.path.join(DATA_DIR, "demo_duckburg_solved_timetable.fet"),
-                os.path.join(SEED_DATA_DIR, "demo_duckburg_solved_timetable.fet"),
-                os.path.join(SNAPSHOTS_DIR, "snap_demo_duckburg.fet")
+                os.path.join(DATA_DIR, "demo_athens_solved_timetable.fet"),
+                os.path.join(SEED_DATA_DIR, "demo_athens_solved_timetable.fet"),
+                os.path.join(SNAPSHOTS_DIR, "snap_demo_athens.fet")
             ]
-            snap_name = "Duckburg Demo (Ludwig Von Drake High School)"
-            snap_desc = "Database dimostrativo Duckburg (8 docenti, 5 classi, orario FET 100% risolto)."
+            snap_name = "\"School of Athens\" Demo (Athens Academy)"
+            snap_desc = "Demonstration database 'School of Athens' (8 teachers, 5 classes, 100% pre-solved FET timetable)."
         else:
             candidate_files = [
-                os.path.join(DATA_DIR, "demo_paperopoli.json"),
-                os.path.join(SEED_DATA_DIR, "demo_paperopoli.json"),
-                os.path.join(SNAPSHOTS_DIR, "snap_demo_paperopoli.json")
+                os.path.join(DATA_DIR, "demo_scuola_atene.json"),
+                os.path.join(SEED_DATA_DIR, "demo_scuola_atene.json"),
+                os.path.join(SNAPSHOTS_DIR, "snap_demo_scuola_atene.json")
             ]
             candidate_fets = [
                 os.path.join(DATA_DIR, "demo_solved_timetable.fet"),
                 os.path.join(SEED_DATA_DIR, "demo_solved_timetable.fet"),
-                os.path.join(SNAPSHOTS_DIR, "snap_demo_paperopoli.fet")
+                os.path.join(SNAPSHOTS_DIR, "snap_demo_scuola_atene.fet")
             ]
-            snap_name = "Paperopoli Demo (Liceo Pico De Paperis)"
-            snap_desc = "Database dimostrativo Paperopoli (8 docenti, 5 classi, orario FET 100% risolto)."
+            snap_name = "Demo Scuola di Atene (Liceo Classico e Scientifico)"
+            snap_desc = "Database dimostrativo 'Scuola di Atene' (8 docenti, 5 classi, orario FET 100% risolto)."
 
         demo_path = next((p for p in candidate_files if os.path.exists(p)), None)
         demo_fet = next((p for p in candidate_fets if os.path.exists(p)), None)
@@ -900,7 +900,7 @@ class Database:
             raise FileNotFoundError(f"File demo non trovato per '{lang}'. Percorsi verificati: {candidate_files}")
 
         # Se il file demo è stato trovato in seed_data o snapshots ma manca in DATA_DIR, replicalo in DATA_DIR
-        target_in_data = os.path.join(DATA_DIR, "demo_duckburg.json" if lang == "en" else "demo_paperopoli.json")
+        target_in_data = os.path.join(DATA_DIR, "demo_athens.json" if lang == "en" else "demo_scuola_atene.json")
         if not os.path.exists(target_in_data) and demo_path != target_in_data:
             try:
                 shutil.copyfile(demo_path, target_in_data)

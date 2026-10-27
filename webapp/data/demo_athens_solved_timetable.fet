@@ -1,28 +1,28 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <fet version="7.12.0">
   <Mode>Official</Mode>
-  <Institution_Name>Liceo &amp; Tecnico &quot;Pico De Paperis&quot; - Paperopoli</Institution_Name>
+  <Institution_Name>"School of Athens" Classical &amp; Scientific High School</Institution_Name>
   <Comments>Anno Scolastico 2026/2027 - Database Dimostrativo Completo</Comments>
   <Days_List>
     <Number_of_Days>5</Number_of_Days>
     <Day>
-      <Name>Lun</Name>
+      <Name>Mon</Name>
       <Long_Name></Long_Name>
     </Day>
     <Day>
-      <Name>Mar</Name>
+      <Name>Tue</Name>
       <Long_Name></Long_Name>
     </Day>
     <Day>
-      <Name>Mer</Name>
+      <Name>Wed</Name>
       <Long_Name></Long_Name>
     </Day>
     <Day>
-      <Name>Gio</Name>
+      <Name>Thu</Name>
       <Long_Name></Long_Name>
     </Day>
     <Day>
-      <Name>Ven</Name>
+      <Name>Fri</Name>
       <Long_Name></Long_Name>
     </Day>
   </Days_List>
@@ -71,65 +71,65 @@
   </Hours_List>
   <Subjects_List>
     <Subject>
-      <Name>Arte e Disegno</Name>
+      <Name>Art &amp; Design</Name>
       <Long_Name></Long_Name>
       <Code></Code>
       <Comments>Disegno Tecnico e Storia dell&apos;Arte</Comments>
     </Subject>
     <Subject>
-      <Name>Economia e Diritto</Name>
+      <Name>Economics &amp; Law</Name>
       <Long_Name></Long_Name>
       <Code></Code>
       <Comments>Economia Politica e Finanza</Comments>
     </Subject>
     <Subject>
-      <Name>Fisica e Invenzioni</Name>
+      <Name>Physics &amp; Inventions</Name>
       <Long_Name></Long_Name>
       <Code></Code>
       <Comments>Fisica Sperimentale</Comments>
     </Subject>
     <Subject>
-      <Name>Inglese</Name>
+      <Name>Foreign Languages</Name>
       <Long_Name></Long_Name>
       <Code></Code>
       <Comments>Lingua Straniera</Comments>
     </Subject>
     <Subject>
-      <Name>Italiano e Letteratura</Name>
+      <Name>Language &amp; Literature</Name>
       <Long_Name></Long_Name>
       <Code></Code>
       <Comments>Discipline Letterarie</Comments>
     </Subject>
     <Subject>
-      <Name>Matematica</Name>
+      <Name>Mathematics</Name>
       <Long_Name></Long_Name>
       <Code></Code>
       <Comments>Scienze Matematiche</Comments>
     </Subject>
     <Subject>
-      <Name>Scienze Motorie</Name>
+      <Name>Physical Education</Name>
       <Long_Name></Long_Name>
       <Code></Code>
       <Comments>Educazione Fisica</Comments>
     </Subject>
     <Subject>
-      <Name>Scienze Naturali e Botanica</Name>
+      <Name>Natural Sciences &amp; Botany</Name>
       <Long_Name></Long_Name>
       <Code></Code>
       <Comments>Scienze della Terra e Biologia</Comments>
     </Subject>
     <Subject>
-      <Name>Storia e Filosofia</Name>
+      <Name>History &amp; Philosophy</Name>
       <Long_Name></Long_Name>
       <Code></Code>
-      <Comments>Storia e Filosofia</Comments>
+      <Comments>History &amp; Philosophy</Comments>
     </Subject>
   </Subjects_List>
   <Activity_Tags_List>
   </Activity_Tags_List>
   <Teachers_List>
     <Teacher>
-      <Name>Archimede Pitagorico</Name>
+      <Name>Galileo Galilei</Name>
       <Long_Name></Long_Name>
       <Code></Code>
       <Target_Number_of_Hours>0</Target_Number_of_Hours>
@@ -138,34 +138,34 @@
       <Comments>Fisica e Laboratorio Invenzioni</Comments>
     </Teacher>
     <Teacher>
-      <Name>Battista</Name>
+      <Name>William Shakespeare</Name>
       <Long_Name></Long_Name>
       <Code></Code>
       <Target_Number_of_Hours>0</Target_Number_of_Hours>
       <Qualified_Subjects>
       </Qualified_Subjects>
-      <Comments>Lingua Inglese (più ore a disposizione)</Comments>
+      <Comments>Lingua Foreign Languages (più ore a disposizione)</Comments>
     </Teacher>
     <Teacher>
-      <Name>Dinamite Bla</Name>
+      <Name>Euclid</Name>
       <Long_Name></Long_Name>
       <Code></Code>
       <Target_Number_of_Hours>0</Target_Number_of_Hours>
       <Qualified_Subjects>
       </Qualified_Subjects>
-      <Comments>Matematica</Comments>
+      <Comments>Mathematics</Comments>
     </Teacher>
     <Teacher>
-      <Name>Gastone Paperone</Name>
+      <Name>Dante Alighieri</Name>
       <Long_Name></Long_Name>
       <Code></Code>
       <Target_Number_of_Hours>0</Target_Number_of_Hours>
       <Qualified_Subjects>
       </Qualified_Subjects>
-      <Comments>Italiano e Letteratura Classica</Comments>
+      <Comments>Language &amp; Literature Classica</Comments>
     </Teacher>
     <Teacher>
-      <Name>Nonna Papera</Name>
+      <Name>Marie Curie</Name>
       <Long_Name></Long_Name>
       <Code></Code>
       <Target_Number_of_Hours>0</Target_Number_of_Hours>
@@ -174,13 +174,13 @@
       <Comments>Scienze Naturali, Chimica e Agraria</Comments>
     </Teacher>
     <Teacher>
-      <Name>Paperino Paolino</Name>
+      <Name>Milo of Croton</Name>
       <Long_Name></Long_Name>
       <Code></Code>
       <Target_Number_of_Hours>0</Target_Number_of_Hours>
       <Qualified_Subjects>
       </Qualified_Subjects>
-      <Comments>Scienze Motorie (ama dormire la 1ª ora)</Comments>
+      <Comments>Physical Education (ama dormire la 1ª ora)</Comments>
     </Teacher>
     <Teacher>
       <Name>Paperon de&apos; Paperoni</Name>
@@ -192,13 +192,13 @@
       <Comments>Economia Aziendale e Gestione Finanziaria (Lunedì conteggio caveau)</Comments>
     </Teacher>
     <Teacher>
-      <Name>Pico De Paperis</Name>
+      <Name>Plato</Name>
       <Long_Name></Long_Name>
       <Code></Code>
       <Target_Number_of_Hours>0</Target_Number_of_Hours>
       <Qualified_Subjects>
       </Qualified_Subjects>
-      <Comments>Storia e Filosofia Universale</Comments>
+      <Comments>History &amp; Philosophy Universale</Comments>
     </Teacher>
   </Teachers_List>
   <Students_List>
@@ -260,939 +260,939 @@
   </Students_List>
   <Activities_List>
     <Activity>
-      <Teacher>Gastone Paperone</Teacher>
-      <Subject>Italiano e Letteratura</Subject>
+      <Teacher>Dante Alighieri</Teacher>
+      <Subject>Language &amp; Literature</Subject>
       <Students>1A</Students>
       <Duration>2</Duration>
       <Total_Duration>2</Total_Duration>
       <Id>1</Id>
       <Activity_Group_Id>1</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Italiano e Letteratura per 1A</Comments>
+      <Comments>Language &amp; Literature per 1A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Gastone Paperone</Teacher>
-      <Subject>Italiano e Letteratura</Subject>
+      <Teacher>Dante Alighieri</Teacher>
+      <Subject>Language &amp; Literature</Subject>
       <Students>1A</Students>
       <Duration>1</Duration>
       <Total_Duration>1</Total_Duration>
       <Id>2</Id>
       <Activity_Group_Id>2</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Italiano e Letteratura per 1A</Comments>
+      <Comments>Language &amp; Literature per 1A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Gastone Paperone</Teacher>
-      <Subject>Italiano e Letteratura</Subject>
+      <Teacher>Dante Alighieri</Teacher>
+      <Subject>Language &amp; Literature</Subject>
       <Students>1A</Students>
       <Duration>1</Duration>
       <Total_Duration>1</Total_Duration>
       <Id>3</Id>
       <Activity_Group_Id>3</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Italiano e Letteratura per 1A</Comments>
+      <Comments>Language &amp; Literature per 1A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Gastone Paperone</Teacher>
-      <Subject>Italiano e Letteratura</Subject>
+      <Teacher>Dante Alighieri</Teacher>
+      <Subject>Language &amp; Literature</Subject>
       <Students>2A</Students>
       <Duration>2</Duration>
       <Total_Duration>2</Total_Duration>
       <Id>4</Id>
       <Activity_Group_Id>4</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Italiano e Letteratura per 2A</Comments>
+      <Comments>Language &amp; Literature per 2A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Gastone Paperone</Teacher>
-      <Subject>Italiano e Letteratura</Subject>
+      <Teacher>Dante Alighieri</Teacher>
+      <Subject>Language &amp; Literature</Subject>
       <Students>2A</Students>
       <Duration>1</Duration>
       <Total_Duration>1</Total_Duration>
       <Id>5</Id>
       <Activity_Group_Id>5</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Italiano e Letteratura per 2A</Comments>
+      <Comments>Language &amp; Literature per 2A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Gastone Paperone</Teacher>
-      <Subject>Italiano e Letteratura</Subject>
+      <Teacher>Dante Alighieri</Teacher>
+      <Subject>Language &amp; Literature</Subject>
       <Students>2A</Students>
       <Duration>1</Duration>
       <Total_Duration>1</Total_Duration>
       <Id>6</Id>
       <Activity_Group_Id>6</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Italiano e Letteratura per 2A</Comments>
+      <Comments>Language &amp; Literature per 2A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Gastone Paperone</Teacher>
-      <Subject>Italiano e Letteratura</Subject>
+      <Teacher>Dante Alighieri</Teacher>
+      <Subject>Language &amp; Literature</Subject>
       <Students>3A</Students>
       <Duration>2</Duration>
       <Total_Duration>2</Total_Duration>
       <Id>7</Id>
       <Activity_Group_Id>7</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Italiano e Letteratura per 3A</Comments>
+      <Comments>Language &amp; Literature per 3A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Gastone Paperone</Teacher>
-      <Subject>Italiano e Letteratura</Subject>
+      <Teacher>Dante Alighieri</Teacher>
+      <Subject>Language &amp; Literature</Subject>
       <Students>3A</Students>
       <Duration>1</Duration>
       <Total_Duration>1</Total_Duration>
       <Id>8</Id>
       <Activity_Group_Id>8</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Italiano e Letteratura per 3A</Comments>
+      <Comments>Language &amp; Literature per 3A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Gastone Paperone</Teacher>
-      <Subject>Italiano e Letteratura</Subject>
+      <Teacher>Dante Alighieri</Teacher>
+      <Subject>Language &amp; Literature</Subject>
       <Students>3A</Students>
       <Duration>1</Duration>
       <Total_Duration>1</Total_Duration>
       <Id>9</Id>
       <Activity_Group_Id>9</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Italiano e Letteratura per 3A</Comments>
+      <Comments>Language &amp; Literature per 3A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Gastone Paperone</Teacher>
-      <Subject>Italiano e Letteratura</Subject>
+      <Teacher>Dante Alighieri</Teacher>
+      <Subject>Language &amp; Literature</Subject>
       <Students>4A</Students>
       <Duration>2</Duration>
       <Total_Duration>2</Total_Duration>
       <Id>10</Id>
       <Activity_Group_Id>10</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Italiano e Letteratura per 4A</Comments>
+      <Comments>Language &amp; Literature per 4A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Gastone Paperone</Teacher>
-      <Subject>Italiano e Letteratura</Subject>
+      <Teacher>Dante Alighieri</Teacher>
+      <Subject>Language &amp; Literature</Subject>
       <Students>4A</Students>
       <Duration>1</Duration>
       <Total_Duration>1</Total_Duration>
       <Id>11</Id>
       <Activity_Group_Id>11</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Italiano e Letteratura per 4A</Comments>
+      <Comments>Language &amp; Literature per 4A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Gastone Paperone</Teacher>
-      <Subject>Italiano e Letteratura</Subject>
+      <Teacher>Dante Alighieri</Teacher>
+      <Subject>Language &amp; Literature</Subject>
       <Students>5A</Students>
       <Duration>2</Duration>
       <Total_Duration>2</Total_Duration>
       <Id>12</Id>
       <Activity_Group_Id>12</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Italiano e Letteratura per 5A</Comments>
+      <Comments>Language &amp; Literature per 5A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Gastone Paperone</Teacher>
-      <Subject>Italiano e Letteratura</Subject>
+      <Teacher>Dante Alighieri</Teacher>
+      <Subject>Language &amp; Literature</Subject>
       <Students>5A</Students>
       <Duration>1</Duration>
       <Total_Duration>1</Total_Duration>
       <Id>13</Id>
       <Activity_Group_Id>13</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Italiano e Letteratura per 5A</Comments>
+      <Comments>Language &amp; Literature per 5A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Dinamite Bla</Teacher>
-      <Subject>Matematica</Subject>
+      <Teacher>Euclid</Teacher>
+      <Subject>Mathematics</Subject>
       <Students>1A</Students>
       <Duration>2</Duration>
       <Total_Duration>2</Total_Duration>
       <Id>14</Id>
       <Activity_Group_Id>14</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Matematica per 1A</Comments>
+      <Comments>Mathematics per 1A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Dinamite Bla</Teacher>
-      <Subject>Matematica</Subject>
+      <Teacher>Euclid</Teacher>
+      <Subject>Mathematics</Subject>
       <Students>1A</Students>
       <Duration>1</Duration>
       <Total_Duration>1</Total_Duration>
       <Id>15</Id>
       <Activity_Group_Id>15</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Matematica per 1A</Comments>
+      <Comments>Mathematics per 1A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Dinamite Bla</Teacher>
-      <Subject>Matematica</Subject>
+      <Teacher>Euclid</Teacher>
+      <Subject>Mathematics</Subject>
       <Students>1A</Students>
       <Duration>1</Duration>
       <Total_Duration>1</Total_Duration>
       <Id>16</Id>
       <Activity_Group_Id>16</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Matematica per 1A</Comments>
+      <Comments>Mathematics per 1A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Dinamite Bla</Teacher>
-      <Subject>Matematica</Subject>
+      <Teacher>Euclid</Teacher>
+      <Subject>Mathematics</Subject>
       <Students>2A</Students>
       <Duration>2</Duration>
       <Total_Duration>2</Total_Duration>
       <Id>17</Id>
       <Activity_Group_Id>17</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Matematica per 2A</Comments>
+      <Comments>Mathematics per 2A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Dinamite Bla</Teacher>
-      <Subject>Matematica</Subject>
+      <Teacher>Euclid</Teacher>
+      <Subject>Mathematics</Subject>
       <Students>2A</Students>
       <Duration>1</Duration>
       <Total_Duration>1</Total_Duration>
       <Id>18</Id>
       <Activity_Group_Id>18</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Matematica per 2A</Comments>
+      <Comments>Mathematics per 2A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Dinamite Bla</Teacher>
-      <Subject>Matematica</Subject>
+      <Teacher>Euclid</Teacher>
+      <Subject>Mathematics</Subject>
       <Students>2A</Students>
       <Duration>1</Duration>
       <Total_Duration>1</Total_Duration>
       <Id>19</Id>
       <Activity_Group_Id>19</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Matematica per 2A</Comments>
+      <Comments>Mathematics per 2A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Dinamite Bla</Teacher>
-      <Subject>Matematica</Subject>
+      <Teacher>Euclid</Teacher>
+      <Subject>Mathematics</Subject>
       <Students>3A</Students>
       <Duration>2</Duration>
       <Total_Duration>2</Total_Duration>
       <Id>20</Id>
       <Activity_Group_Id>20</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Matematica per 3A</Comments>
+      <Comments>Mathematics per 3A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Dinamite Bla</Teacher>
-      <Subject>Matematica</Subject>
+      <Teacher>Euclid</Teacher>
+      <Subject>Mathematics</Subject>
       <Students>3A</Students>
       <Duration>1</Duration>
       <Total_Duration>1</Total_Duration>
       <Id>21</Id>
       <Activity_Group_Id>21</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Matematica per 3A</Comments>
+      <Comments>Mathematics per 3A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Dinamite Bla</Teacher>
-      <Subject>Matematica</Subject>
+      <Teacher>Euclid</Teacher>
+      <Subject>Mathematics</Subject>
       <Students>3A</Students>
       <Duration>1</Duration>
       <Total_Duration>1</Total_Duration>
       <Id>22</Id>
       <Activity_Group_Id>22</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Matematica per 3A</Comments>
+      <Comments>Mathematics per 3A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Dinamite Bla</Teacher>
-      <Subject>Matematica</Subject>
+      <Teacher>Euclid</Teacher>
+      <Subject>Mathematics</Subject>
       <Students>4A</Students>
       <Duration>2</Duration>
       <Total_Duration>2</Total_Duration>
       <Id>23</Id>
       <Activity_Group_Id>23</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Matematica per 4A</Comments>
+      <Comments>Mathematics per 4A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Dinamite Bla</Teacher>
-      <Subject>Matematica</Subject>
+      <Teacher>Euclid</Teacher>
+      <Subject>Mathematics</Subject>
       <Students>4A</Students>
       <Duration>1</Duration>
       <Total_Duration>1</Total_Duration>
       <Id>24</Id>
       <Activity_Group_Id>24</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Matematica per 4A</Comments>
+      <Comments>Mathematics per 4A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Dinamite Bla</Teacher>
-      <Subject>Matematica</Subject>
+      <Teacher>Euclid</Teacher>
+      <Subject>Mathematics</Subject>
       <Students>5A</Students>
       <Duration>2</Duration>
       <Total_Duration>2</Total_Duration>
       <Id>25</Id>
       <Activity_Group_Id>25</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Matematica per 5A</Comments>
+      <Comments>Mathematics per 5A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Dinamite Bla</Teacher>
-      <Subject>Matematica</Subject>
+      <Teacher>Euclid</Teacher>
+      <Subject>Mathematics</Subject>
       <Students>5A</Students>
       <Duration>1</Duration>
       <Total_Duration>1</Total_Duration>
       <Id>26</Id>
       <Activity_Group_Id>26</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Matematica per 5A</Comments>
+      <Comments>Mathematics per 5A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Archimede Pitagorico</Teacher>
-      <Subject>Fisica e Invenzioni</Subject>
+      <Teacher>Galileo Galilei</Teacher>
+      <Subject>Physics &amp; Inventions</Subject>
       <Students>1A</Students>
       <Duration>2</Duration>
       <Total_Duration>2</Total_Duration>
       <Id>27</Id>
       <Activity_Group_Id>27</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Fisica e Invenzioni per 1A</Comments>
+      <Comments>Physics &amp; Inventions per 1A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Archimede Pitagorico</Teacher>
-      <Subject>Fisica e Invenzioni</Subject>
+      <Teacher>Galileo Galilei</Teacher>
+      <Subject>Physics &amp; Inventions</Subject>
       <Students>1A</Students>
       <Duration>1</Duration>
       <Total_Duration>1</Total_Duration>
       <Id>28</Id>
       <Activity_Group_Id>28</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Fisica e Invenzioni per 1A</Comments>
+      <Comments>Physics &amp; Inventions per 1A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Archimede Pitagorico</Teacher>
-      <Subject>Fisica e Invenzioni</Subject>
+      <Teacher>Galileo Galilei</Teacher>
+      <Subject>Physics &amp; Inventions</Subject>
       <Students>2A</Students>
       <Duration>2</Duration>
       <Total_Duration>2</Total_Duration>
       <Id>29</Id>
       <Activity_Group_Id>29</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Fisica e Invenzioni per 2A</Comments>
+      <Comments>Physics &amp; Inventions per 2A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Archimede Pitagorico</Teacher>
-      <Subject>Fisica e Invenzioni</Subject>
+      <Teacher>Galileo Galilei</Teacher>
+      <Subject>Physics &amp; Inventions</Subject>
       <Students>2A</Students>
       <Duration>1</Duration>
       <Total_Duration>1</Total_Duration>
       <Id>30</Id>
       <Activity_Group_Id>30</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Fisica e Invenzioni per 2A</Comments>
+      <Comments>Physics &amp; Inventions per 2A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Archimede Pitagorico</Teacher>
-      <Subject>Fisica e Invenzioni</Subject>
+      <Teacher>Galileo Galilei</Teacher>
+      <Subject>Physics &amp; Inventions</Subject>
       <Students>3A</Students>
       <Duration>2</Duration>
       <Total_Duration>2</Total_Duration>
       <Id>31</Id>
       <Activity_Group_Id>31</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Fisica e Invenzioni per 3A</Comments>
+      <Comments>Physics &amp; Inventions per 3A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Archimede Pitagorico</Teacher>
-      <Subject>Fisica e Invenzioni</Subject>
+      <Teacher>Galileo Galilei</Teacher>
+      <Subject>Physics &amp; Inventions</Subject>
       <Students>3A</Students>
       <Duration>2</Duration>
       <Total_Duration>2</Total_Duration>
       <Id>32</Id>
       <Activity_Group_Id>32</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Fisica e Invenzioni per 3A</Comments>
+      <Comments>Physics &amp; Inventions per 3A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Archimede Pitagorico</Teacher>
-      <Subject>Fisica e Invenzioni</Subject>
+      <Teacher>Galileo Galilei</Teacher>
+      <Subject>Physics &amp; Inventions</Subject>
       <Students>4A</Students>
       <Duration>2</Duration>
       <Total_Duration>2</Total_Duration>
       <Id>33</Id>
       <Activity_Group_Id>33</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Fisica e Invenzioni per 4A</Comments>
+      <Comments>Physics &amp; Inventions per 4A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Archimede Pitagorico</Teacher>
-      <Subject>Fisica e Invenzioni</Subject>
+      <Teacher>Galileo Galilei</Teacher>
+      <Subject>Physics &amp; Inventions</Subject>
       <Students>4A</Students>
       <Duration>2</Duration>
       <Total_Duration>2</Total_Duration>
       <Id>34</Id>
       <Activity_Group_Id>34</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Fisica e Invenzioni per 4A</Comments>
+      <Comments>Physics &amp; Inventions per 4A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Archimede Pitagorico</Teacher>
-      <Subject>Fisica e Invenzioni</Subject>
+      <Teacher>Galileo Galilei</Teacher>
+      <Subject>Physics &amp; Inventions</Subject>
       <Students>5A</Students>
       <Duration>2</Duration>
       <Total_Duration>2</Total_Duration>
       <Id>35</Id>
       <Activity_Group_Id>35</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Fisica e Invenzioni per 5A</Comments>
+      <Comments>Physics &amp; Inventions per 5A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Archimede Pitagorico</Teacher>
-      <Subject>Fisica e Invenzioni</Subject>
+      <Teacher>Galileo Galilei</Teacher>
+      <Subject>Physics &amp; Inventions</Subject>
       <Students>5A</Students>
       <Duration>2</Duration>
       <Total_Duration>2</Total_Duration>
       <Id>36</Id>
       <Activity_Group_Id>36</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Fisica e Invenzioni per 5A</Comments>
+      <Comments>Physics &amp; Inventions per 5A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Nonna Papera</Teacher>
-      <Subject>Scienze Naturali e Botanica</Subject>
+      <Teacher>Marie Curie</Teacher>
+      <Subject>Natural Sciences &amp; Botany</Subject>
       <Students>1A</Students>
       <Duration>2</Duration>
       <Total_Duration>2</Total_Duration>
       <Id>37</Id>
       <Activity_Group_Id>37</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Scienze Naturali e Botanica per 1A</Comments>
+      <Comments>Natural Sciences &amp; Botany per 1A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Nonna Papera</Teacher>
-      <Subject>Scienze Naturali e Botanica</Subject>
+      <Teacher>Marie Curie</Teacher>
+      <Subject>Natural Sciences &amp; Botany</Subject>
       <Students>1A</Students>
       <Duration>1</Duration>
       <Total_Duration>1</Total_Duration>
       <Id>38</Id>
       <Activity_Group_Id>38</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Scienze Naturali e Botanica per 1A</Comments>
+      <Comments>Natural Sciences &amp; Botany per 1A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Nonna Papera</Teacher>
-      <Subject>Scienze Naturali e Botanica</Subject>
+      <Teacher>Marie Curie</Teacher>
+      <Subject>Natural Sciences &amp; Botany</Subject>
       <Students>1A</Students>
       <Duration>1</Duration>
       <Total_Duration>1</Total_Duration>
       <Id>39</Id>
       <Activity_Group_Id>39</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Scienze Naturali e Botanica per 1A</Comments>
+      <Comments>Natural Sciences &amp; Botany per 1A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Nonna Papera</Teacher>
-      <Subject>Scienze Naturali e Botanica</Subject>
+      <Teacher>Marie Curie</Teacher>
+      <Subject>Natural Sciences &amp; Botany</Subject>
       <Students>2A</Students>
       <Duration>2</Duration>
       <Total_Duration>2</Total_Duration>
       <Id>40</Id>
       <Activity_Group_Id>40</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Scienze Naturali e Botanica per 2A</Comments>
+      <Comments>Natural Sciences &amp; Botany per 2A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Nonna Papera</Teacher>
-      <Subject>Scienze Naturali e Botanica</Subject>
+      <Teacher>Marie Curie</Teacher>
+      <Subject>Natural Sciences &amp; Botany</Subject>
       <Students>2A</Students>
       <Duration>1</Duration>
       <Total_Duration>1</Total_Duration>
       <Id>41</Id>
       <Activity_Group_Id>41</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Scienze Naturali e Botanica per 2A</Comments>
+      <Comments>Natural Sciences &amp; Botany per 2A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Nonna Papera</Teacher>
-      <Subject>Scienze Naturali e Botanica</Subject>
+      <Teacher>Marie Curie</Teacher>
+      <Subject>Natural Sciences &amp; Botany</Subject>
       <Students>2A</Students>
       <Duration>1</Duration>
       <Total_Duration>1</Total_Duration>
       <Id>42</Id>
       <Activity_Group_Id>42</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Scienze Naturali e Botanica per 2A</Comments>
+      <Comments>Natural Sciences &amp; Botany per 2A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Nonna Papera</Teacher>
-      <Subject>Scienze Naturali e Botanica</Subject>
+      <Teacher>Marie Curie</Teacher>
+      <Subject>Natural Sciences &amp; Botany</Subject>
       <Students>3A</Students>
       <Duration>2</Duration>
       <Total_Duration>2</Total_Duration>
       <Id>43</Id>
       <Activity_Group_Id>43</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Scienze Naturali e Botanica per 3A</Comments>
+      <Comments>Natural Sciences &amp; Botany per 3A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Nonna Papera</Teacher>
-      <Subject>Scienze Naturali e Botanica</Subject>
+      <Teacher>Marie Curie</Teacher>
+      <Subject>Natural Sciences &amp; Botany</Subject>
       <Students>3A</Students>
       <Duration>1</Duration>
       <Total_Duration>1</Total_Duration>
       <Id>44</Id>
       <Activity_Group_Id>44</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Scienze Naturali e Botanica per 3A</Comments>
+      <Comments>Natural Sciences &amp; Botany per 3A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Nonna Papera</Teacher>
-      <Subject>Scienze Naturali e Botanica</Subject>
+      <Teacher>Marie Curie</Teacher>
+      <Subject>Natural Sciences &amp; Botany</Subject>
       <Students>3A</Students>
       <Duration>1</Duration>
       <Total_Duration>1</Total_Duration>
       <Id>45</Id>
       <Activity_Group_Id>45</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Scienze Naturali e Botanica per 3A</Comments>
+      <Comments>Natural Sciences &amp; Botany per 3A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Nonna Papera</Teacher>
-      <Subject>Scienze Naturali e Botanica</Subject>
+      <Teacher>Marie Curie</Teacher>
+      <Subject>Natural Sciences &amp; Botany</Subject>
       <Students>4A</Students>
       <Duration>2</Duration>
       <Total_Duration>2</Total_Duration>
       <Id>46</Id>
       <Activity_Group_Id>46</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Scienze Naturali e Botanica per 4A</Comments>
+      <Comments>Natural Sciences &amp; Botany per 4A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Nonna Papera</Teacher>
-      <Subject>Scienze Naturali e Botanica</Subject>
+      <Teacher>Marie Curie</Teacher>
+      <Subject>Natural Sciences &amp; Botany</Subject>
       <Students>4A</Students>
       <Duration>1</Duration>
       <Total_Duration>1</Total_Duration>
       <Id>47</Id>
       <Activity_Group_Id>47</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Scienze Naturali e Botanica per 4A</Comments>
+      <Comments>Natural Sciences &amp; Botany per 4A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Nonna Papera</Teacher>
-      <Subject>Scienze Naturali e Botanica</Subject>
+      <Teacher>Marie Curie</Teacher>
+      <Subject>Natural Sciences &amp; Botany</Subject>
       <Students>5A</Students>
       <Duration>2</Duration>
       <Total_Duration>2</Total_Duration>
       <Id>48</Id>
       <Activity_Group_Id>48</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Scienze Naturali e Botanica per 5A</Comments>
+      <Comments>Natural Sciences &amp; Botany per 5A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Nonna Papera</Teacher>
-      <Subject>Scienze Naturali e Botanica</Subject>
+      <Teacher>Marie Curie</Teacher>
+      <Subject>Natural Sciences &amp; Botany</Subject>
       <Students>5A</Students>
       <Duration>1</Duration>
       <Total_Duration>1</Total_Duration>
       <Id>49</Id>
       <Activity_Group_Id>49</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Scienze Naturali e Botanica per 5A</Comments>
+      <Comments>Natural Sciences &amp; Botany per 5A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Pico De Paperis</Teacher>
-      <Subject>Storia e Filosofia</Subject>
+      <Teacher>Plato</Teacher>
+      <Subject>History &amp; Philosophy</Subject>
       <Students>1A</Students>
       <Duration>2</Duration>
       <Total_Duration>2</Total_Duration>
       <Id>50</Id>
       <Activity_Group_Id>50</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Storia e Filosofia per 1A</Comments>
+      <Comments>History &amp; Philosophy per 1A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Pico De Paperis</Teacher>
-      <Subject>Storia e Filosofia</Subject>
+      <Teacher>Plato</Teacher>
+      <Subject>History &amp; Philosophy</Subject>
       <Students>2A</Students>
       <Duration>2</Duration>
       <Total_Duration>2</Total_Duration>
       <Id>51</Id>
       <Activity_Group_Id>51</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Storia e Filosofia per 2A</Comments>
+      <Comments>History &amp; Philosophy per 2A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Pico De Paperis</Teacher>
-      <Subject>Storia e Filosofia</Subject>
+      <Teacher>Plato</Teacher>
+      <Subject>History &amp; Philosophy</Subject>
       <Students>3A</Students>
       <Duration>2</Duration>
       <Total_Duration>2</Total_Duration>
       <Id>52</Id>
       <Activity_Group_Id>52</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Storia e Filosofia per 3A</Comments>
+      <Comments>History &amp; Philosophy per 3A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Pico De Paperis</Teacher>
-      <Subject>Storia e Filosofia</Subject>
+      <Teacher>Plato</Teacher>
+      <Subject>History &amp; Philosophy</Subject>
       <Students>3A</Students>
       <Duration>2</Duration>
       <Total_Duration>2</Total_Duration>
       <Id>53</Id>
       <Activity_Group_Id>53</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Storia e Filosofia per 3A</Comments>
+      <Comments>History &amp; Philosophy per 3A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Pico De Paperis</Teacher>
-      <Subject>Storia e Filosofia</Subject>
+      <Teacher>Plato</Teacher>
+      <Subject>History &amp; Philosophy</Subject>
       <Students>4A</Students>
       <Duration>2</Duration>
       <Total_Duration>2</Total_Duration>
       <Id>54</Id>
       <Activity_Group_Id>54</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Storia e Filosofia per 4A</Comments>
+      <Comments>History &amp; Philosophy per 4A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Pico De Paperis</Teacher>
-      <Subject>Storia e Filosofia</Subject>
+      <Teacher>Plato</Teacher>
+      <Subject>History &amp; Philosophy</Subject>
       <Students>4A</Students>
       <Duration>2</Duration>
       <Total_Duration>2</Total_Duration>
       <Id>55</Id>
       <Activity_Group_Id>55</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Storia e Filosofia per 4A</Comments>
+      <Comments>History &amp; Philosophy per 4A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Pico De Paperis</Teacher>
-      <Subject>Storia e Filosofia</Subject>
+      <Teacher>Plato</Teacher>
+      <Subject>History &amp; Philosophy</Subject>
       <Students>4A</Students>
       <Duration>1</Duration>
       <Total_Duration>1</Total_Duration>
       <Id>56</Id>
       <Activity_Group_Id>56</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Storia e Filosofia per 4A</Comments>
+      <Comments>History &amp; Philosophy per 4A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Pico De Paperis</Teacher>
-      <Subject>Storia e Filosofia</Subject>
+      <Teacher>Plato</Teacher>
+      <Subject>History &amp; Philosophy</Subject>
       <Students>5A</Students>
       <Duration>2</Duration>
       <Total_Duration>2</Total_Duration>
       <Id>57</Id>
       <Activity_Group_Id>57</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Storia e Filosofia per 5A</Comments>
+      <Comments>History &amp; Philosophy per 5A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Pico De Paperis</Teacher>
-      <Subject>Storia e Filosofia</Subject>
+      <Teacher>Plato</Teacher>
+      <Subject>History &amp; Philosophy</Subject>
       <Students>5A</Students>
       <Duration>2</Duration>
       <Total_Duration>2</Total_Duration>
       <Id>58</Id>
       <Activity_Group_Id>58</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Storia e Filosofia per 5A</Comments>
+      <Comments>History &amp; Philosophy per 5A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Pico De Paperis</Teacher>
-      <Subject>Storia e Filosofia</Subject>
+      <Teacher>Plato</Teacher>
+      <Subject>History &amp; Philosophy</Subject>
       <Students>5A</Students>
       <Duration>1</Duration>
       <Total_Duration>1</Total_Duration>
       <Id>59</Id>
       <Activity_Group_Id>59</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Storia e Filosofia per 5A</Comments>
+      <Comments>History &amp; Philosophy per 5A</Comments>
     </Activity>
     <Activity>
       <Teacher>Paperon de&apos; Paperoni</Teacher>
-      <Subject>Economia e Diritto</Subject>
+      <Subject>Economics &amp; Law</Subject>
       <Students>1A</Students>
       <Duration>2</Duration>
       <Total_Duration>2</Total_Duration>
       <Id>60</Id>
       <Activity_Group_Id>60</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Economia e Diritto per 1A</Comments>
+      <Comments>Economics &amp; Law per 1A</Comments>
     </Activity>
     <Activity>
       <Teacher>Paperon de&apos; Paperoni</Teacher>
-      <Subject>Economia e Diritto</Subject>
+      <Subject>Economics &amp; Law</Subject>
       <Students>1A</Students>
       <Duration>1</Duration>
       <Total_Duration>1</Total_Duration>
       <Id>61</Id>
       <Activity_Group_Id>61</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Economia e Diritto per 1A</Comments>
+      <Comments>Economics &amp; Law per 1A</Comments>
     </Activity>
     <Activity>
       <Teacher>Paperon de&apos; Paperoni</Teacher>
-      <Subject>Economia e Diritto</Subject>
+      <Subject>Economics &amp; Law</Subject>
       <Students>2A</Students>
       <Duration>2</Duration>
       <Total_Duration>2</Total_Duration>
       <Id>62</Id>
       <Activity_Group_Id>62</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Economia e Diritto per 2A</Comments>
+      <Comments>Economics &amp; Law per 2A</Comments>
     </Activity>
     <Activity>
       <Teacher>Paperon de&apos; Paperoni</Teacher>
-      <Subject>Economia e Diritto</Subject>
+      <Subject>Economics &amp; Law</Subject>
       <Students>2A</Students>
       <Duration>1</Duration>
       <Total_Duration>1</Total_Duration>
       <Id>63</Id>
       <Activity_Group_Id>63</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Economia e Diritto per 2A</Comments>
+      <Comments>Economics &amp; Law per 2A</Comments>
     </Activity>
     <Activity>
       <Teacher>Paperon de&apos; Paperoni</Teacher>
-      <Subject>Economia e Diritto</Subject>
+      <Subject>Economics &amp; Law</Subject>
       <Students>3A</Students>
       <Duration>2</Duration>
       <Total_Duration>2</Total_Duration>
       <Id>64</Id>
       <Activity_Group_Id>64</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Economia e Diritto per 3A</Comments>
+      <Comments>Economics &amp; Law per 3A</Comments>
     </Activity>
     <Activity>
       <Teacher>Paperon de&apos; Paperoni</Teacher>
-      <Subject>Economia e Diritto</Subject>
+      <Subject>Economics &amp; Law</Subject>
       <Students>3A</Students>
       <Duration>2</Duration>
       <Total_Duration>2</Total_Duration>
       <Id>65</Id>
       <Activity_Group_Id>65</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Economia e Diritto per 3A</Comments>
+      <Comments>Economics &amp; Law per 3A</Comments>
     </Activity>
     <Activity>
       <Teacher>Paperon de&apos; Paperoni</Teacher>
-      <Subject>Economia e Diritto</Subject>
+      <Subject>Economics &amp; Law</Subject>
       <Students>4A</Students>
       <Duration>2</Duration>
       <Total_Duration>2</Total_Duration>
       <Id>66</Id>
       <Activity_Group_Id>66</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Economia e Diritto per 4A</Comments>
+      <Comments>Economics &amp; Law per 4A</Comments>
     </Activity>
     <Activity>
       <Teacher>Paperon de&apos; Paperoni</Teacher>
-      <Subject>Economia e Diritto</Subject>
+      <Subject>Economics &amp; Law</Subject>
       <Students>4A</Students>
       <Duration>2</Duration>
       <Total_Duration>2</Total_Duration>
       <Id>67</Id>
       <Activity_Group_Id>67</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Economia e Diritto per 4A</Comments>
+      <Comments>Economics &amp; Law per 4A</Comments>
     </Activity>
     <Activity>
       <Teacher>Paperon de&apos; Paperoni</Teacher>
-      <Subject>Economia e Diritto</Subject>
+      <Subject>Economics &amp; Law</Subject>
       <Students>5A</Students>
       <Duration>2</Duration>
       <Total_Duration>2</Total_Duration>
       <Id>68</Id>
       <Activity_Group_Id>68</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Economia e Diritto per 5A</Comments>
+      <Comments>Economics &amp; Law per 5A</Comments>
     </Activity>
     <Activity>
       <Teacher>Paperon de&apos; Paperoni</Teacher>
-      <Subject>Economia e Diritto</Subject>
+      <Subject>Economics &amp; Law</Subject>
       <Students>5A</Students>
       <Duration>2</Duration>
       <Total_Duration>2</Total_Duration>
       <Id>69</Id>
       <Activity_Group_Id>69</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Economia e Diritto per 5A</Comments>
+      <Comments>Economics &amp; Law per 5A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Paperino Paolino</Teacher>
-      <Subject>Scienze Motorie</Subject>
+      <Teacher>Milo of Croton</Teacher>
+      <Subject>Physical Education</Subject>
       <Students>1A</Students>
       <Duration>2</Duration>
       <Total_Duration>2</Total_Duration>
       <Id>70</Id>
       <Activity_Group_Id>70</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Scienze Motorie per 1A</Comments>
+      <Comments>Physical Education per 1A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Paperino Paolino</Teacher>
-      <Subject>Scienze Motorie</Subject>
+      <Teacher>Milo of Croton</Teacher>
+      <Subject>Physical Education</Subject>
       <Students>2A</Students>
       <Duration>2</Duration>
       <Total_Duration>2</Total_Duration>
       <Id>71</Id>
       <Activity_Group_Id>71</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Scienze Motorie per 2A</Comments>
+      <Comments>Physical Education per 2A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Paperino Paolino</Teacher>
-      <Subject>Scienze Motorie</Subject>
+      <Teacher>Milo of Croton</Teacher>
+      <Subject>Physical Education</Subject>
       <Students>3A</Students>
       <Duration>2</Duration>
       <Total_Duration>2</Total_Duration>
       <Id>72</Id>
       <Activity_Group_Id>72</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Scienze Motorie per 3A</Comments>
+      <Comments>Physical Education per 3A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Paperino Paolino</Teacher>
-      <Subject>Scienze Motorie</Subject>
+      <Teacher>Milo of Croton</Teacher>
+      <Subject>Physical Education</Subject>
       <Students>4A</Students>
       <Duration>2</Duration>
       <Total_Duration>2</Total_Duration>
       <Id>73</Id>
       <Activity_Group_Id>73</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Scienze Motorie per 4A</Comments>
+      <Comments>Physical Education per 4A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Paperino Paolino</Teacher>
-      <Subject>Scienze Motorie</Subject>
+      <Teacher>Milo of Croton</Teacher>
+      <Subject>Physical Education</Subject>
       <Students>5A</Students>
       <Duration>2</Duration>
       <Total_Duration>2</Total_Duration>
       <Id>74</Id>
       <Activity_Group_Id>74</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Scienze Motorie per 5A</Comments>
+      <Comments>Physical Education per 5A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Battista</Teacher>
-      <Subject>Inglese</Subject>
+      <Teacher>William Shakespeare</Teacher>
+      <Subject>Foreign Languages</Subject>
       <Students>1A</Students>
       <Duration>2</Duration>
       <Total_Duration>2</Total_Duration>
       <Id>75</Id>
       <Activity_Group_Id>75</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Inglese per 1A</Comments>
+      <Comments>Foreign Languages per 1A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Battista</Teacher>
-      <Subject>Inglese</Subject>
+      <Teacher>William Shakespeare</Teacher>
+      <Subject>Foreign Languages</Subject>
       <Students>1A</Students>
       <Duration>1</Duration>
       <Total_Duration>1</Total_Duration>
       <Id>76</Id>
       <Activity_Group_Id>76</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Inglese per 1A</Comments>
+      <Comments>Foreign Languages per 1A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Battista</Teacher>
-      <Subject>Inglese</Subject>
+      <Teacher>William Shakespeare</Teacher>
+      <Subject>Foreign Languages</Subject>
       <Students>2A</Students>
       <Duration>2</Duration>
       <Total_Duration>2</Total_Duration>
       <Id>77</Id>
       <Activity_Group_Id>77</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Inglese per 2A</Comments>
+      <Comments>Foreign Languages per 2A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Battista</Teacher>
-      <Subject>Inglese</Subject>
+      <Teacher>William Shakespeare</Teacher>
+      <Subject>Foreign Languages</Subject>
       <Students>2A</Students>
       <Duration>1</Duration>
       <Total_Duration>1</Total_Duration>
       <Id>78</Id>
       <Activity_Group_Id>78</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Inglese per 2A</Comments>
+      <Comments>Foreign Languages per 2A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Battista</Teacher>
-      <Subject>Inglese</Subject>
+      <Teacher>William Shakespeare</Teacher>
+      <Subject>Foreign Languages</Subject>
       <Students>3A</Students>
       <Duration>2</Duration>
       <Total_Duration>2</Total_Duration>
       <Id>79</Id>
       <Activity_Group_Id>79</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Inglese per 3A</Comments>
+      <Comments>Foreign Languages per 3A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Battista</Teacher>
-      <Subject>Inglese</Subject>
+      <Teacher>William Shakespeare</Teacher>
+      <Subject>Foreign Languages</Subject>
       <Students>3A</Students>
       <Duration>1</Duration>
       <Total_Duration>1</Total_Duration>
       <Id>80</Id>
       <Activity_Group_Id>80</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Inglese per 3A</Comments>
+      <Comments>Foreign Languages per 3A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Battista</Teacher>
-      <Subject>Inglese</Subject>
+      <Teacher>William Shakespeare</Teacher>
+      <Subject>Foreign Languages</Subject>
       <Students>4A</Students>
       <Duration>2</Duration>
       <Total_Duration>2</Total_Duration>
       <Id>81</Id>
       <Activity_Group_Id>81</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Inglese per 4A</Comments>
+      <Comments>Foreign Languages per 4A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Battista</Teacher>
-      <Subject>Inglese</Subject>
+      <Teacher>William Shakespeare</Teacher>
+      <Subject>Foreign Languages</Subject>
       <Students>4A</Students>
       <Duration>1</Duration>
       <Total_Duration>1</Total_Duration>
       <Id>82</Id>
       <Activity_Group_Id>82</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Inglese per 4A</Comments>
+      <Comments>Foreign Languages per 4A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Battista</Teacher>
-      <Subject>Inglese</Subject>
+      <Teacher>William Shakespeare</Teacher>
+      <Subject>Foreign Languages</Subject>
       <Students>5A</Students>
       <Duration>2</Duration>
       <Total_Duration>2</Total_Duration>
       <Id>83</Id>
       <Activity_Group_Id>83</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Inglese per 5A</Comments>
+      <Comments>Foreign Languages per 5A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Battista</Teacher>
-      <Subject>Inglese</Subject>
+      <Teacher>William Shakespeare</Teacher>
+      <Subject>Foreign Languages</Subject>
       <Students>5A</Students>
       <Duration>1</Duration>
       <Total_Duration>1</Total_Duration>
       <Id>84</Id>
       <Activity_Group_Id>84</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Inglese per 5A</Comments>
+      <Comments>Foreign Languages per 5A</Comments>
     </Activity>
   </Activities_List>
   <Buildings_List>
     <Building>
-      <Name>Centrale</Name>
+      <Name>Main Campus</Name>
       <Long_Name></Long_Name>
       <Code></Code>
       <Comments></Comments>
     </Building>
     <Building>
-      <Name>Succursale</Name>
+      <Name>West Annex</Name>
       <Long_Name></Long_Name>
       <Code></Code>
       <Comments></Comments>
@@ -1200,55 +1200,55 @@
   </Buildings_List>
   <Rooms_List>
     <Room>
-      <Name>Aula 1A</Name>
+      <Name>Classroom 1A</Name>
       <Long_Name></Long_Name>
       <Code></Code>
-      <Building>Centrale</Building>
+      <Building>Main Campus</Building>
       <Capacity>28</Capacity>
       <Virtual>false</Virtual>
       <Comments></Comments>
     </Room>
     <Room>
-      <Name>Aula 2A</Name>
+      <Name>Classroom 2A</Name>
       <Long_Name></Long_Name>
       <Code></Code>
-      <Building>Centrale</Building>
+      <Building>Main Campus</Building>
       <Capacity>28</Capacity>
       <Virtual>false</Virtual>
       <Comments></Comments>
     </Room>
     <Room>
-      <Name>Aula 3A</Name>
+      <Name>Classroom 3A</Name>
       <Long_Name></Long_Name>
       <Code></Code>
-      <Building>Centrale</Building>
+      <Building>Main Campus</Building>
       <Capacity>28</Capacity>
       <Virtual>false</Virtual>
       <Comments></Comments>
     </Room>
     <Room>
-      <Name>Aula 4A</Name>
+      <Name>Classroom 4A</Name>
       <Long_Name></Long_Name>
       <Code></Code>
-      <Building>Centrale</Building>
+      <Building>Main Campus</Building>
       <Capacity>28</Capacity>
       <Virtual>false</Virtual>
       <Comments></Comments>
     </Room>
     <Room>
-      <Name>Aula 5A</Name>
+      <Name>Classroom 5A</Name>
       <Long_Name></Long_Name>
       <Code></Code>
-      <Building>Centrale</Building>
+      <Building>Main Campus</Building>
       <Capacity>28</Capacity>
       <Virtual>false</Virtual>
       <Comments></Comments>
     </Room>
     <Room>
-      <Name>Laboratorio di Invenzioni</Name>
+      <Name>Inventions Lab</Name>
       <Long_Name></Long_Name>
       <Code></Code>
-      <Building>Centrale</Building>
+      <Building>Main Campus</Building>
       <Capacity>30</Capacity>
       <Virtual>false</Virtual>
       <Comments></Comments>
@@ -1257,7 +1257,7 @@
       <Name>Palestra-1</Name>
       <Long_Name></Long_Name>
       <Code></Code>
-      <Building>Centrale</Building>
+      <Building>Main Campus</Building>
       <Capacity>29</Capacity>
       <Virtual>false</Virtual>
       <Comments>Modulo interno 1/3 (Capienza max totale impianto 57)</Comments>
@@ -1266,7 +1266,7 @@
       <Name>Palestra-2</Name>
       <Long_Name></Long_Name>
       <Code></Code>
-      <Building>Centrale</Building>
+      <Building>Main Campus</Building>
       <Capacity>29</Capacity>
       <Virtual>false</Virtual>
       <Comments>Modulo interno 2/3 (Capienza max totale impianto 57)</Comments>
@@ -1275,16 +1275,16 @@
       <Name>Palestra-3</Name>
       <Long_Name></Long_Name>
       <Code></Code>
-      <Building>Centrale</Building>
+      <Building>Main Campus</Building>
       <Capacity>18</Capacity>
       <Virtual>false</Virtual>
       <Comments>Modulo interno 3/3 per terza classe piccola (Capienza max totale impianto 57)</Comments>
     </Room>
     <Room>
-      <Name>Aula Magna del Deposito</Name>
+      <Name>Academy Auditorium</Name>
       <Long_Name></Long_Name>
       <Code></Code>
-      <Building>Centrale</Building>
+      <Building>Main Campus</Building>
       <Capacity>100</Capacity>
       <Virtual>false</Virtual>
       <Comments></Comments>
@@ -1300,43 +1300,43 @@
       <Weight_Percentage>100</Weight_Percentage>
       <Number_of_Break_Times>10</Number_of_Break_Times>
       <Break_Time>
-        <Day>Lun</Day>
+        <Day>Mon</Day>
         <Hour>INT1</Hour>
       </Break_Time>
       <Break_Time>
-        <Day>Lun</Day>
+        <Day>Mon</Day>
         <Hour>INT2</Hour>
       </Break_Time>
       <Break_Time>
-        <Day>Mar</Day>
+        <Day>Tue</Day>
         <Hour>INT1</Hour>
       </Break_Time>
       <Break_Time>
-        <Day>Mar</Day>
+        <Day>Tue</Day>
         <Hour>INT2</Hour>
       </Break_Time>
       <Break_Time>
-        <Day>Mer</Day>
+        <Day>Wed</Day>
         <Hour>INT1</Hour>
       </Break_Time>
       <Break_Time>
-        <Day>Mer</Day>
+        <Day>Wed</Day>
         <Hour>INT2</Hour>
       </Break_Time>
       <Break_Time>
-        <Day>Gio</Day>
+        <Day>Thu</Day>
         <Hour>INT1</Hour>
       </Break_Time>
       <Break_Time>
-        <Day>Gio</Day>
+        <Day>Thu</Day>
         <Hour>INT2</Hour>
       </Break_Time>
       <Break_Time>
-        <Day>Ven</Day>
+        <Day>Fri</Day>
         <Hour>INT1</Hour>
       </Break_Time>
       <Break_Time>
-        <Day>Ven</Day>
+        <Day>Fri</Day>
         <Hour>INT2</Hour>
       </Break_Time>
       <Active>true</Active>
@@ -1347,27 +1347,27 @@
       <Teacher>Paperon de&apos; Paperoni</Teacher>
       <Number_of_Not_Available_Times>6</Number_of_Not_Available_Times>
       <Not_Available_Time>
-        <Day>Lun</Day>
+        <Day>Mon</Day>
         <Hour>1</Hour>
       </Not_Available_Time>
       <Not_Available_Time>
-        <Day>Lun</Day>
+        <Day>Mon</Day>
         <Hour>2</Hour>
       </Not_Available_Time>
       <Not_Available_Time>
-        <Day>Lun</Day>
+        <Day>Mon</Day>
         <Hour>3</Hour>
       </Not_Available_Time>
       <Not_Available_Time>
-        <Day>Lun</Day>
+        <Day>Mon</Day>
         <Hour>4</Hour>
       </Not_Available_Time>
       <Not_Available_Time>
-        <Day>Lun</Day>
+        <Day>Mon</Day>
         <Hour>5</Hour>
       </Not_Available_Time>
       <Not_Available_Time>
-        <Day>Lun</Day>
+        <Day>Mon</Day>
         <Hour>6</Hour>
       </Not_Available_Time>
       <Active>true</Active>
@@ -1378,43 +1378,43 @@
       <Students>1A</Students>
       <Number_of_Not_Available_Times>10</Number_of_Not_Available_Times>
       <Not_Available_Time>
-        <Day>Lun</Day>
+        <Day>Mon</Day>
         <Hour>7</Hour>
       </Not_Available_Time>
       <Not_Available_Time>
-        <Day>Lun</Day>
+        <Day>Mon</Day>
         <Hour>8</Hour>
       </Not_Available_Time>
       <Not_Available_Time>
-        <Day>Mar</Day>
+        <Day>Tue</Day>
         <Hour>7</Hour>
       </Not_Available_Time>
       <Not_Available_Time>
-        <Day>Mar</Day>
+        <Day>Tue</Day>
         <Hour>8</Hour>
       </Not_Available_Time>
       <Not_Available_Time>
-        <Day>Mer</Day>
+        <Day>Wed</Day>
         <Hour>7</Hour>
       </Not_Available_Time>
       <Not_Available_Time>
-        <Day>Mer</Day>
+        <Day>Wed</Day>
         <Hour>8</Hour>
       </Not_Available_Time>
       <Not_Available_Time>
-        <Day>Gio</Day>
+        <Day>Thu</Day>
         <Hour>7</Hour>
       </Not_Available_Time>
       <Not_Available_Time>
-        <Day>Gio</Day>
+        <Day>Thu</Day>
         <Hour>8</Hour>
       </Not_Available_Time>
       <Not_Available_Time>
-        <Day>Ven</Day>
+        <Day>Fri</Day>
         <Hour>7</Hour>
       </Not_Available_Time>
       <Not_Available_Time>
-        <Day>Ven</Day>
+        <Day>Fri</Day>
         <Hour>8</Hour>
       </Not_Available_Time>
       <Active>true</Active>
@@ -1425,43 +1425,43 @@
       <Students>2A</Students>
       <Number_of_Not_Available_Times>10</Number_of_Not_Available_Times>
       <Not_Available_Time>
-        <Day>Lun</Day>
+        <Day>Mon</Day>
         <Hour>7</Hour>
       </Not_Available_Time>
       <Not_Available_Time>
-        <Day>Lun</Day>
+        <Day>Mon</Day>
         <Hour>8</Hour>
       </Not_Available_Time>
       <Not_Available_Time>
-        <Day>Mar</Day>
+        <Day>Tue</Day>
         <Hour>7</Hour>
       </Not_Available_Time>
       <Not_Available_Time>
-        <Day>Mar</Day>
+        <Day>Tue</Day>
         <Hour>8</Hour>
       </Not_Available_Time>
       <Not_Available_Time>
-        <Day>Mer</Day>
+        <Day>Wed</Day>
         <Hour>7</Hour>
       </Not_Available_Time>
       <Not_Available_Time>
-        <Day>Mer</Day>
+        <Day>Wed</Day>
         <Hour>8</Hour>
       </Not_Available_Time>
       <Not_Available_Time>
-        <Day>Gio</Day>
+        <Day>Thu</Day>
         <Hour>7</Hour>
       </Not_Available_Time>
       <Not_Available_Time>
-        <Day>Gio</Day>
+        <Day>Thu</Day>
         <Hour>8</Hour>
       </Not_Available_Time>
       <Not_Available_Time>
-        <Day>Ven</Day>
+        <Day>Fri</Day>
         <Hour>7</Hour>
       </Not_Available_Time>
       <Not_Available_Time>
-        <Day>Ven</Day>
+        <Day>Fri</Day>
         <Hour>8</Hour>
       </Not_Available_Time>
       <Active>true</Active>
@@ -1472,43 +1472,43 @@
       <Students>3A</Students>
       <Number_of_Not_Available_Times>10</Number_of_Not_Available_Times>
       <Not_Available_Time>
-        <Day>Lun</Day>
+        <Day>Mon</Day>
         <Hour>7</Hour>
       </Not_Available_Time>
       <Not_Available_Time>
-        <Day>Lun</Day>
+        <Day>Mon</Day>
         <Hour>8</Hour>
       </Not_Available_Time>
       <Not_Available_Time>
-        <Day>Mar</Day>
+        <Day>Tue</Day>
         <Hour>7</Hour>
       </Not_Available_Time>
       <Not_Available_Time>
-        <Day>Mar</Day>
+        <Day>Tue</Day>
         <Hour>8</Hour>
       </Not_Available_Time>
       <Not_Available_Time>
-        <Day>Mer</Day>
+        <Day>Wed</Day>
         <Hour>7</Hour>
       </Not_Available_Time>
       <Not_Available_Time>
-        <Day>Mer</Day>
+        <Day>Wed</Day>
         <Hour>8</Hour>
       </Not_Available_Time>
       <Not_Available_Time>
-        <Day>Gio</Day>
+        <Day>Thu</Day>
         <Hour>7</Hour>
       </Not_Available_Time>
       <Not_Available_Time>
-        <Day>Gio</Day>
+        <Day>Thu</Day>
         <Hour>8</Hour>
       </Not_Available_Time>
       <Not_Available_Time>
-        <Day>Ven</Day>
+        <Day>Fri</Day>
         <Hour>7</Hour>
       </Not_Available_Time>
       <Not_Available_Time>
-        <Day>Ven</Day>
+        <Day>Fri</Day>
         <Hour>8</Hour>
       </Not_Available_Time>
       <Active>true</Active>
@@ -1519,43 +1519,43 @@
       <Students>4A</Students>
       <Number_of_Not_Available_Times>10</Number_of_Not_Available_Times>
       <Not_Available_Time>
-        <Day>Lun</Day>
+        <Day>Mon</Day>
         <Hour>7</Hour>
       </Not_Available_Time>
       <Not_Available_Time>
-        <Day>Lun</Day>
+        <Day>Mon</Day>
         <Hour>8</Hour>
       </Not_Available_Time>
       <Not_Available_Time>
-        <Day>Mar</Day>
+        <Day>Tue</Day>
         <Hour>7</Hour>
       </Not_Available_Time>
       <Not_Available_Time>
-        <Day>Mar</Day>
+        <Day>Tue</Day>
         <Hour>8</Hour>
       </Not_Available_Time>
       <Not_Available_Time>
-        <Day>Mer</Day>
+        <Day>Wed</Day>
         <Hour>7</Hour>
       </Not_Available_Time>
       <Not_Available_Time>
-        <Day>Mer</Day>
+        <Day>Wed</Day>
         <Hour>8</Hour>
       </Not_Available_Time>
       <Not_Available_Time>
-        <Day>Gio</Day>
+        <Day>Thu</Day>
         <Hour>7</Hour>
       </Not_Available_Time>
       <Not_Available_Time>
-        <Day>Gio</Day>
+        <Day>Thu</Day>
         <Hour>8</Hour>
       </Not_Available_Time>
       <Not_Available_Time>
-        <Day>Ven</Day>
+        <Day>Fri</Day>
         <Hour>7</Hour>
       </Not_Available_Time>
       <Not_Available_Time>
-        <Day>Ven</Day>
+        <Day>Fri</Day>
         <Hour>8</Hour>
       </Not_Available_Time>
       <Active>true</Active>
@@ -1566,43 +1566,43 @@
       <Students>5A</Students>
       <Number_of_Not_Available_Times>10</Number_of_Not_Available_Times>
       <Not_Available_Time>
-        <Day>Lun</Day>
+        <Day>Mon</Day>
         <Hour>7</Hour>
       </Not_Available_Time>
       <Not_Available_Time>
-        <Day>Lun</Day>
+        <Day>Mon</Day>
         <Hour>8</Hour>
       </Not_Available_Time>
       <Not_Available_Time>
-        <Day>Mar</Day>
+        <Day>Tue</Day>
         <Hour>7</Hour>
       </Not_Available_Time>
       <Not_Available_Time>
-        <Day>Mar</Day>
+        <Day>Tue</Day>
         <Hour>8</Hour>
       </Not_Available_Time>
       <Not_Available_Time>
-        <Day>Mer</Day>
+        <Day>Wed</Day>
         <Hour>7</Hour>
       </Not_Available_Time>
       <Not_Available_Time>
-        <Day>Mer</Day>
+        <Day>Wed</Day>
         <Hour>8</Hour>
       </Not_Available_Time>
       <Not_Available_Time>
-        <Day>Gio</Day>
+        <Day>Thu</Day>
         <Hour>7</Hour>
       </Not_Available_Time>
       <Not_Available_Time>
-        <Day>Gio</Day>
+        <Day>Thu</Day>
         <Hour>8</Hour>
       </Not_Available_Time>
       <Not_Available_Time>
-        <Day>Ven</Day>
+        <Day>Fri</Day>
         <Hour>7</Hour>
       </Not_Available_Time>
       <Not_Available_Time>
-        <Day>Ven</Day>
+        <Day>Fri</Day>
         <Hour>8</Hour>
       </Not_Available_Time>
       <Active>true</Active>
@@ -1951,201 +1951,201 @@
     </ConstraintMinDaysBetweenActivities>
     <ConstraintActivitiesPreferredTimeSlots>
       <Weight_Percentage>85</Weight_Percentage>
-      <Teacher>Archimede Pitagorico</Teacher>
+      <Teacher>Galileo Galilei</Teacher>
       <Students></Students>
       <Subject></Subject>
       <Activity_Tag></Activity_Tag>
       <Duration></Duration>
       <Number_of_Preferred_Time_Slots>20</Number_of_Preferred_Time_Slots>
       <Preferred_Time_Slot>
-        <Day>Lun</Day>
+        <Day>Mon</Day>
         <Hour>1</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Lun</Day>
+        <Day>Mon</Day>
         <Hour>2</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Lun</Day>
+        <Day>Mon</Day>
         <Hour>3</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Lun</Day>
+        <Day>Mon</Day>
         <Hour>4</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mar</Day>
+        <Day>Tue</Day>
         <Hour>1</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mar</Day>
+        <Day>Tue</Day>
         <Hour>2</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mar</Day>
+        <Day>Tue</Day>
         <Hour>3</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mar</Day>
+        <Day>Tue</Day>
         <Hour>4</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mer</Day>
+        <Day>Wed</Day>
         <Hour>1</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mer</Day>
+        <Day>Wed</Day>
         <Hour>2</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mer</Day>
+        <Day>Wed</Day>
         <Hour>3</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mer</Day>
+        <Day>Wed</Day>
         <Hour>4</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Gio</Day>
+        <Day>Thu</Day>
         <Hour>1</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Gio</Day>
+        <Day>Thu</Day>
         <Hour>2</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Gio</Day>
+        <Day>Thu</Day>
         <Hour>3</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Gio</Day>
+        <Day>Thu</Day>
         <Hour>4</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Ven</Day>
+        <Day>Fri</Day>
         <Hour>1</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Ven</Day>
+        <Day>Fri</Day>
         <Hour>2</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Ven</Day>
+        <Day>Fri</Day>
         <Hour>3</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Ven</Day>
+        <Day>Fri</Day>
         <Hour>4</Hour>
       </Preferred_Time_Slot>
       <Active>true</Active>
-      <Comments>Archimede Pitagorico: preferenza fascia prime (85%)</Comments>
+      <Comments>Galileo Galilei: preferenza fascia prime (85%)</Comments>
     </ConstraintActivitiesPreferredTimeSlots>
     <ConstraintActivitiesPreferredTimeSlots>
       <Weight_Percentage>85</Weight_Percentage>
-      <Teacher>Archimede Pitagorico</Teacher>
+      <Teacher>Galileo Galilei</Teacher>
       <Students></Students>
       <Subject></Subject>
       <Activity_Tag></Activity_Tag>
       <Duration></Duration>
       <Number_of_Preferred_Time_Slots>24</Number_of_Preferred_Time_Slots>
       <Preferred_Time_Slot>
-        <Day>Lun</Day>
+        <Day>Mon</Day>
         <Hour>1</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Lun</Day>
+        <Day>Mon</Day>
         <Hour>2</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Lun</Day>
+        <Day>Mon</Day>
         <Hour>3</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Lun</Day>
+        <Day>Mon</Day>
         <Hour>4</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Lun</Day>
+        <Day>Mon</Day>
         <Hour>5</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Lun</Day>
+        <Day>Mon</Day>
         <Hour>6</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mar</Day>
+        <Day>Tue</Day>
         <Hour>1</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mar</Day>
+        <Day>Tue</Day>
         <Hour>2</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mar</Day>
+        <Day>Tue</Day>
         <Hour>3</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mar</Day>
+        <Day>Tue</Day>
         <Hour>4</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mar</Day>
+        <Day>Tue</Day>
         <Hour>5</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mar</Day>
+        <Day>Tue</Day>
         <Hour>6</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mer</Day>
+        <Day>Wed</Day>
         <Hour>1</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mer</Day>
+        <Day>Wed</Day>
         <Hour>2</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mer</Day>
+        <Day>Wed</Day>
         <Hour>3</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mer</Day>
+        <Day>Wed</Day>
         <Hour>4</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mer</Day>
+        <Day>Wed</Day>
         <Hour>5</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mer</Day>
+        <Day>Wed</Day>
         <Hour>6</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Gio</Day>
+        <Day>Thu</Day>
         <Hour>1</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Gio</Day>
+        <Day>Thu</Day>
         <Hour>2</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Gio</Day>
+        <Day>Thu</Day>
         <Hour>3</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Gio</Day>
+        <Day>Thu</Day>
         <Hour>4</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Gio</Day>
+        <Day>Thu</Day>
         <Hour>5</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Gio</Day>
+        <Day>Thu</Day>
         <Hour>6</Hour>
       </Preferred_Time_Slot>
       <Active>true</Active>
-      <Comments>Archimede Pitagorico: giorno libero desiderato Ven (85%)</Comments>
+      <Comments>Galileo Galilei: giorno libero desiderato Ven (85%)</Comments>
     </ConstraintActivitiesPreferredTimeSlots>
     <ConstraintActivitiesPreferredTimeSlots>
       <Weight_Percentage>90</Weight_Percentage>
@@ -2156,83 +2156,83 @@
       <Duration></Duration>
       <Number_of_Preferred_Time_Slots>20</Number_of_Preferred_Time_Slots>
       <Preferred_Time_Slot>
-        <Day>Lun</Day>
+        <Day>Mon</Day>
         <Hour>1</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Lun</Day>
+        <Day>Mon</Day>
         <Hour>2</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Lun</Day>
+        <Day>Mon</Day>
         <Hour>3</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Lun</Day>
+        <Day>Mon</Day>
         <Hour>4</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mar</Day>
+        <Day>Tue</Day>
         <Hour>1</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mar</Day>
+        <Day>Tue</Day>
         <Hour>2</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mar</Day>
+        <Day>Tue</Day>
         <Hour>3</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mar</Day>
+        <Day>Tue</Day>
         <Hour>4</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mer</Day>
+        <Day>Wed</Day>
         <Hour>1</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mer</Day>
+        <Day>Wed</Day>
         <Hour>2</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mer</Day>
+        <Day>Wed</Day>
         <Hour>3</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mer</Day>
+        <Day>Wed</Day>
         <Hour>4</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Gio</Day>
+        <Day>Thu</Day>
         <Hour>1</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Gio</Day>
+        <Day>Thu</Day>
         <Hour>2</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Gio</Day>
+        <Day>Thu</Day>
         <Hour>3</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Gio</Day>
+        <Day>Thu</Day>
         <Hour>4</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Ven</Day>
+        <Day>Fri</Day>
         <Hour>1</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Ven</Day>
+        <Day>Fri</Day>
         <Hour>2</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Ven</Day>
+        <Day>Fri</Day>
         <Hour>3</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Ven</Day>
+        <Day>Fri</Day>
         <Hour>4</Hour>
       </Preferred_Time_Slot>
       <Active>true</Active>
@@ -2240,783 +2240,783 @@
     </ConstraintActivitiesPreferredTimeSlots>
     <ConstraintActivitiesPreferredTimeSlots>
       <Weight_Percentage>85</Weight_Percentage>
-      <Teacher>Pico De Paperis</Teacher>
+      <Teacher>Plato</Teacher>
       <Students></Students>
       <Subject></Subject>
       <Activity_Tag></Activity_Tag>
       <Duration></Duration>
       <Number_of_Preferred_Time_Slots>20</Number_of_Preferred_Time_Slots>
       <Preferred_Time_Slot>
-        <Day>Lun</Day>
+        <Day>Mon</Day>
         <Hour>2</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Lun</Day>
+        <Day>Mon</Day>
         <Hour>3</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Lun</Day>
+        <Day>Mon</Day>
         <Hour>4</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Lun</Day>
+        <Day>Mon</Day>
         <Hour>5</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mar</Day>
+        <Day>Tue</Day>
         <Hour>2</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mar</Day>
+        <Day>Tue</Day>
         <Hour>3</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mar</Day>
+        <Day>Tue</Day>
         <Hour>4</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mar</Day>
+        <Day>Tue</Day>
         <Hour>5</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mer</Day>
+        <Day>Wed</Day>
         <Hour>2</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mer</Day>
+        <Day>Wed</Day>
         <Hour>3</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mer</Day>
+        <Day>Wed</Day>
         <Hour>4</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mer</Day>
+        <Day>Wed</Day>
         <Hour>5</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Gio</Day>
+        <Day>Thu</Day>
         <Hour>2</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Gio</Day>
+        <Day>Thu</Day>
         <Hour>3</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Gio</Day>
+        <Day>Thu</Day>
         <Hour>4</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Gio</Day>
+        <Day>Thu</Day>
         <Hour>5</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Ven</Day>
+        <Day>Fri</Day>
         <Hour>2</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Ven</Day>
+        <Day>Fri</Day>
         <Hour>3</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Ven</Day>
+        <Day>Fri</Day>
         <Hour>4</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Ven</Day>
+        <Day>Fri</Day>
         <Hour>5</Hour>
       </Preferred_Time_Slot>
       <Active>true</Active>
-      <Comments>Pico De Paperis: preferenza fascia bilanciato (85%)</Comments>
+      <Comments>Plato: preferenza fascia bilanciato (85%)</Comments>
     </ConstraintActivitiesPreferredTimeSlots>
     <ConstraintActivitiesPreferredTimeSlots>
       <Weight_Percentage>85</Weight_Percentage>
-      <Teacher>Paperino Paolino</Teacher>
+      <Teacher>Milo of Croton</Teacher>
       <Students></Students>
       <Subject></Subject>
       <Activity_Tag></Activity_Tag>
       <Duration></Duration>
       <Number_of_Preferred_Time_Slots>20</Number_of_Preferred_Time_Slots>
       <Preferred_Time_Slot>
-        <Day>Lun</Day>
+        <Day>Mon</Day>
         <Hour>3</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Lun</Day>
+        <Day>Mon</Day>
         <Hour>4</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Lun</Day>
+        <Day>Mon</Day>
         <Hour>5</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Lun</Day>
+        <Day>Mon</Day>
         <Hour>6</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mar</Day>
+        <Day>Tue</Day>
         <Hour>3</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mar</Day>
+        <Day>Tue</Day>
         <Hour>4</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mar</Day>
+        <Day>Tue</Day>
         <Hour>5</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mar</Day>
+        <Day>Tue</Day>
         <Hour>6</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mer</Day>
+        <Day>Wed</Day>
         <Hour>3</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mer</Day>
+        <Day>Wed</Day>
         <Hour>4</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mer</Day>
+        <Day>Wed</Day>
         <Hour>5</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mer</Day>
+        <Day>Wed</Day>
         <Hour>6</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Gio</Day>
+        <Day>Thu</Day>
         <Hour>3</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Gio</Day>
+        <Day>Thu</Day>
         <Hour>4</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Gio</Day>
+        <Day>Thu</Day>
         <Hour>5</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Gio</Day>
+        <Day>Thu</Day>
         <Hour>6</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Ven</Day>
+        <Day>Fri</Day>
         <Hour>3</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Ven</Day>
+        <Day>Fri</Day>
         <Hour>4</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Ven</Day>
+        <Day>Fri</Day>
         <Hour>5</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Ven</Day>
+        <Day>Fri</Day>
         <Hour>6</Hour>
       </Preferred_Time_Slot>
       <Active>true</Active>
-      <Comments>Paperino Paolino: preferenza fascia ultime (85%)</Comments>
+      <Comments>Milo of Croton: preferenza fascia ultime (85%)</Comments>
     </ConstraintActivitiesPreferredTimeSlots>
     <ConstraintActivitiesPreferredTimeSlots>
       <Weight_Percentage>85</Weight_Percentage>
-      <Teacher>Paperino Paolino</Teacher>
+      <Teacher>Milo of Croton</Teacher>
       <Students></Students>
       <Subject></Subject>
       <Activity_Tag></Activity_Tag>
       <Duration></Duration>
       <Number_of_Preferred_Time_Slots>24</Number_of_Preferred_Time_Slots>
       <Preferred_Time_Slot>
-        <Day>Lun</Day>
+        <Day>Mon</Day>
         <Hour>1</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Lun</Day>
+        <Day>Mon</Day>
         <Hour>2</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Lun</Day>
+        <Day>Mon</Day>
         <Hour>3</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Lun</Day>
+        <Day>Mon</Day>
         <Hour>4</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Lun</Day>
+        <Day>Mon</Day>
         <Hour>5</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Lun</Day>
+        <Day>Mon</Day>
         <Hour>6</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mar</Day>
+        <Day>Tue</Day>
         <Hour>1</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mar</Day>
+        <Day>Tue</Day>
         <Hour>2</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mar</Day>
+        <Day>Tue</Day>
         <Hour>3</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mar</Day>
+        <Day>Tue</Day>
         <Hour>4</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mar</Day>
+        <Day>Tue</Day>
         <Hour>5</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mar</Day>
+        <Day>Tue</Day>
         <Hour>6</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Gio</Day>
+        <Day>Thu</Day>
         <Hour>1</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Gio</Day>
+        <Day>Thu</Day>
         <Hour>2</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Gio</Day>
+        <Day>Thu</Day>
         <Hour>3</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Gio</Day>
+        <Day>Thu</Day>
         <Hour>4</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Gio</Day>
+        <Day>Thu</Day>
         <Hour>5</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Gio</Day>
+        <Day>Thu</Day>
         <Hour>6</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Ven</Day>
+        <Day>Fri</Day>
         <Hour>1</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Ven</Day>
+        <Day>Fri</Day>
         <Hour>2</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Ven</Day>
+        <Day>Fri</Day>
         <Hour>3</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Ven</Day>
+        <Day>Fri</Day>
         <Hour>4</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Ven</Day>
+        <Day>Fri</Day>
         <Hour>5</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Ven</Day>
+        <Day>Fri</Day>
         <Hour>6</Hour>
       </Preferred_Time_Slot>
       <Active>true</Active>
-      <Comments>Paperino Paolino: giorno libero desiderato Mer (85%)</Comments>
+      <Comments>Milo of Croton: giorno libero desiderato Mer (85%)</Comments>
     </ConstraintActivitiesPreferredTimeSlots>
     <ConstraintActivitiesPreferredTimeSlots>
       <Weight_Percentage>85</Weight_Percentage>
-      <Teacher>Nonna Papera</Teacher>
+      <Teacher>Marie Curie</Teacher>
       <Students></Students>
       <Subject></Subject>
       <Activity_Tag></Activity_Tag>
       <Duration></Duration>
       <Number_of_Preferred_Time_Slots>20</Number_of_Preferred_Time_Slots>
       <Preferred_Time_Slot>
-        <Day>Lun</Day>
+        <Day>Mon</Day>
         <Hour>2</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Lun</Day>
+        <Day>Mon</Day>
         <Hour>3</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Lun</Day>
+        <Day>Mon</Day>
         <Hour>4</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Lun</Day>
+        <Day>Mon</Day>
         <Hour>5</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mar</Day>
+        <Day>Tue</Day>
         <Hour>2</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mar</Day>
+        <Day>Tue</Day>
         <Hour>3</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mar</Day>
+        <Day>Tue</Day>
         <Hour>4</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mar</Day>
+        <Day>Tue</Day>
         <Hour>5</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mer</Day>
+        <Day>Wed</Day>
         <Hour>2</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mer</Day>
+        <Day>Wed</Day>
         <Hour>3</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mer</Day>
+        <Day>Wed</Day>
         <Hour>4</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mer</Day>
+        <Day>Wed</Day>
         <Hour>5</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Gio</Day>
+        <Day>Thu</Day>
         <Hour>2</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Gio</Day>
+        <Day>Thu</Day>
         <Hour>3</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Gio</Day>
+        <Day>Thu</Day>
         <Hour>4</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Gio</Day>
+        <Day>Thu</Day>
         <Hour>5</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Ven</Day>
+        <Day>Fri</Day>
         <Hour>2</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Ven</Day>
+        <Day>Fri</Day>
         <Hour>3</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Ven</Day>
+        <Day>Fri</Day>
         <Hour>4</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Ven</Day>
+        <Day>Fri</Day>
         <Hour>5</Hour>
       </Preferred_Time_Slot>
       <Active>true</Active>
-      <Comments>Nonna Papera: preferenza fascia bilanciato (85%)</Comments>
+      <Comments>Marie Curie: preferenza fascia bilanciato (85%)</Comments>
     </ConstraintActivitiesPreferredTimeSlots>
     <ConstraintActivitiesPreferredTimeSlots>
       <Weight_Percentage>85</Weight_Percentage>
-      <Teacher>Nonna Papera</Teacher>
+      <Teacher>Marie Curie</Teacher>
       <Students></Students>
       <Subject></Subject>
       <Activity_Tag></Activity_Tag>
       <Duration></Duration>
       <Number_of_Preferred_Time_Slots>24</Number_of_Preferred_Time_Slots>
       <Preferred_Time_Slot>
-        <Day>Lun</Day>
+        <Day>Mon</Day>
         <Hour>1</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Lun</Day>
+        <Day>Mon</Day>
         <Hour>2</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Lun</Day>
+        <Day>Mon</Day>
         <Hour>3</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Lun</Day>
+        <Day>Mon</Day>
         <Hour>4</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Lun</Day>
+        <Day>Mon</Day>
         <Hour>5</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Lun</Day>
+        <Day>Mon</Day>
         <Hour>6</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mar</Day>
+        <Day>Tue</Day>
         <Hour>1</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mar</Day>
+        <Day>Tue</Day>
         <Hour>2</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mar</Day>
+        <Day>Tue</Day>
         <Hour>3</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mar</Day>
+        <Day>Tue</Day>
         <Hour>4</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mar</Day>
+        <Day>Tue</Day>
         <Hour>5</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mar</Day>
+        <Day>Tue</Day>
         <Hour>6</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mer</Day>
+        <Day>Wed</Day>
         <Hour>1</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mer</Day>
+        <Day>Wed</Day>
         <Hour>2</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mer</Day>
+        <Day>Wed</Day>
         <Hour>3</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mer</Day>
+        <Day>Wed</Day>
         <Hour>4</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mer</Day>
+        <Day>Wed</Day>
         <Hour>5</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mer</Day>
+        <Day>Wed</Day>
         <Hour>6</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Ven</Day>
+        <Day>Fri</Day>
         <Hour>1</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Ven</Day>
+        <Day>Fri</Day>
         <Hour>2</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Ven</Day>
+        <Day>Fri</Day>
         <Hour>3</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Ven</Day>
+        <Day>Fri</Day>
         <Hour>4</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Ven</Day>
+        <Day>Fri</Day>
         <Hour>5</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Ven</Day>
+        <Day>Fri</Day>
         <Hour>6</Hour>
       </Preferred_Time_Slot>
       <Active>true</Active>
-      <Comments>Nonna Papera: giorno libero desiderato Gio (85%)</Comments>
+      <Comments>Marie Curie: giorno libero desiderato Gio (85%)</Comments>
     </ConstraintActivitiesPreferredTimeSlots>
     <ConstraintActivitiesPreferredTimeSlots>
       <Weight_Percentage>85</Weight_Percentage>
-      <Teacher>Gastone Paperone</Teacher>
+      <Teacher>Dante Alighieri</Teacher>
       <Students></Students>
       <Subject></Subject>
       <Activity_Tag></Activity_Tag>
       <Duration></Duration>
       <Number_of_Preferred_Time_Slots>20</Number_of_Preferred_Time_Slots>
       <Preferred_Time_Slot>
-        <Day>Lun</Day>
+        <Day>Mon</Day>
         <Hour>2</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Lun</Day>
+        <Day>Mon</Day>
         <Hour>3</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Lun</Day>
+        <Day>Mon</Day>
         <Hour>4</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Lun</Day>
+        <Day>Mon</Day>
         <Hour>5</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mar</Day>
+        <Day>Tue</Day>
         <Hour>2</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mar</Day>
+        <Day>Tue</Day>
         <Hour>3</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mar</Day>
+        <Day>Tue</Day>
         <Hour>4</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mar</Day>
+        <Day>Tue</Day>
         <Hour>5</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mer</Day>
+        <Day>Wed</Day>
         <Hour>2</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mer</Day>
+        <Day>Wed</Day>
         <Hour>3</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mer</Day>
+        <Day>Wed</Day>
         <Hour>4</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mer</Day>
+        <Day>Wed</Day>
         <Hour>5</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Gio</Day>
+        <Day>Thu</Day>
         <Hour>2</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Gio</Day>
+        <Day>Thu</Day>
         <Hour>3</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Gio</Day>
+        <Day>Thu</Day>
         <Hour>4</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Gio</Day>
+        <Day>Thu</Day>
         <Hour>5</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Ven</Day>
+        <Day>Fri</Day>
         <Hour>2</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Ven</Day>
+        <Day>Fri</Day>
         <Hour>3</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Ven</Day>
+        <Day>Fri</Day>
         <Hour>4</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Ven</Day>
+        <Day>Fri</Day>
         <Hour>5</Hour>
       </Preferred_Time_Slot>
       <Active>true</Active>
-      <Comments>Gastone Paperone: preferenza fascia bilanciato (85%)</Comments>
+      <Comments>Dante Alighieri: preferenza fascia bilanciato (85%)</Comments>
     </ConstraintActivitiesPreferredTimeSlots>
     <ConstraintActivitiesPreferredTimeSlots>
       <Weight_Percentage>85</Weight_Percentage>
-      <Teacher>Gastone Paperone</Teacher>
+      <Teacher>Dante Alighieri</Teacher>
       <Students></Students>
       <Subject></Subject>
       <Activity_Tag></Activity_Tag>
       <Duration></Duration>
       <Number_of_Preferred_Time_Slots>24</Number_of_Preferred_Time_Slots>
       <Preferred_Time_Slot>
-        <Day>Lun</Day>
+        <Day>Mon</Day>
         <Hour>1</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Lun</Day>
+        <Day>Mon</Day>
         <Hour>2</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Lun</Day>
+        <Day>Mon</Day>
         <Hour>3</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Lun</Day>
+        <Day>Mon</Day>
         <Hour>4</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Lun</Day>
+        <Day>Mon</Day>
         <Hour>5</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Lun</Day>
+        <Day>Mon</Day>
         <Hour>6</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mer</Day>
+        <Day>Wed</Day>
         <Hour>1</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mer</Day>
+        <Day>Wed</Day>
         <Hour>2</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mer</Day>
+        <Day>Wed</Day>
         <Hour>3</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mer</Day>
+        <Day>Wed</Day>
         <Hour>4</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mer</Day>
+        <Day>Wed</Day>
         <Hour>5</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mer</Day>
+        <Day>Wed</Day>
         <Hour>6</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Gio</Day>
+        <Day>Thu</Day>
         <Hour>1</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Gio</Day>
+        <Day>Thu</Day>
         <Hour>2</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Gio</Day>
+        <Day>Thu</Day>
         <Hour>3</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Gio</Day>
+        <Day>Thu</Day>
         <Hour>4</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Gio</Day>
+        <Day>Thu</Day>
         <Hour>5</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Gio</Day>
+        <Day>Thu</Day>
         <Hour>6</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Ven</Day>
+        <Day>Fri</Day>
         <Hour>1</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Ven</Day>
+        <Day>Fri</Day>
         <Hour>2</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Ven</Day>
+        <Day>Fri</Day>
         <Hour>3</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Ven</Day>
+        <Day>Fri</Day>
         <Hour>4</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Ven</Day>
+        <Day>Fri</Day>
         <Hour>5</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Ven</Day>
+        <Day>Fri</Day>
         <Hour>6</Hour>
       </Preferred_Time_Slot>
       <Active>true</Active>
-      <Comments>Gastone Paperone: giorno libero desiderato Mar (85%)</Comments>
+      <Comments>Dante Alighieri: giorno libero desiderato Mar (85%)</Comments>
     </ConstraintActivitiesPreferredTimeSlots>
     <ConstraintActivitiesPreferredTimeSlots>
       <Weight_Percentage>85</Weight_Percentage>
-      <Teacher>Dinamite Bla</Teacher>
+      <Teacher>Euclid</Teacher>
       <Students></Students>
       <Subject></Subject>
       <Activity_Tag></Activity_Tag>
       <Duration></Duration>
       <Number_of_Preferred_Time_Slots>20</Number_of_Preferred_Time_Slots>
       <Preferred_Time_Slot>
-        <Day>Lun</Day>
+        <Day>Mon</Day>
         <Hour>1</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Lun</Day>
+        <Day>Mon</Day>
         <Hour>2</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Lun</Day>
+        <Day>Mon</Day>
         <Hour>3</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Lun</Day>
+        <Day>Mon</Day>
         <Hour>4</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mar</Day>
+        <Day>Tue</Day>
         <Hour>1</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mar</Day>
+        <Day>Tue</Day>
         <Hour>2</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mar</Day>
+        <Day>Tue</Day>
         <Hour>3</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mar</Day>
+        <Day>Tue</Day>
         <Hour>4</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mer</Day>
+        <Day>Wed</Day>
         <Hour>1</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mer</Day>
+        <Day>Wed</Day>
         <Hour>2</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mer</Day>
+        <Day>Wed</Day>
         <Hour>3</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Mer</Day>
+        <Day>Wed</Day>
         <Hour>4</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Gio</Day>
+        <Day>Thu</Day>
         <Hour>1</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Gio</Day>
+        <Day>Thu</Day>
         <Hour>2</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Gio</Day>
+        <Day>Thu</Day>
         <Hour>3</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Gio</Day>
+        <Day>Thu</Day>
         <Hour>4</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Ven</Day>
+        <Day>Fri</Day>
         <Hour>1</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Ven</Day>
+        <Day>Fri</Day>
         <Hour>2</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Ven</Day>
+        <Day>Fri</Day>
         <Hour>3</Hour>
       </Preferred_Time_Slot>
       <Preferred_Time_Slot>
-        <Day>Ven</Day>
+        <Day>Fri</Day>
         <Hour>4</Hour>
       </Preferred_Time_Slot>
       <Active>true</Active>
-      <Comments>Dinamite Bla: preferenza fascia prime (85%)</Comments>
+      <Comments>Euclid: preferenza fascia prime (85%)</Comments>
     </ConstraintActivitiesPreferredTimeSlots>
     <ConstraintTeacherMaxGapsPerDay>
       <Weight_Percentage>100</Weight_Percentage>
-      <Teacher>Archimede Pitagorico</Teacher>
+      <Teacher>Galileo Galilei</Teacher>
       <Max_Gaps>1</Max_Gaps>
       <Active>true</Active>
       <Comments></Comments>
@@ -3030,49 +3030,49 @@
     </ConstraintTeacherMaxGapsPerDay>
     <ConstraintTeacherMaxGapsPerDay>
       <Weight_Percentage>100</Weight_Percentage>
-      <Teacher>Pico De Paperis</Teacher>
+      <Teacher>Plato</Teacher>
       <Max_Gaps>1</Max_Gaps>
       <Active>true</Active>
       <Comments></Comments>
     </ConstraintTeacherMaxGapsPerDay>
     <ConstraintTeacherMaxGapsPerDay>
       <Weight_Percentage>100</Weight_Percentage>
-      <Teacher>Paperino Paolino</Teacher>
+      <Teacher>Milo of Croton</Teacher>
       <Max_Gaps>1</Max_Gaps>
       <Active>true</Active>
       <Comments></Comments>
     </ConstraintTeacherMaxGapsPerDay>
     <ConstraintTeacherMaxGapsPerDay>
       <Weight_Percentage>100</Weight_Percentage>
-      <Teacher>Nonna Papera</Teacher>
+      <Teacher>Marie Curie</Teacher>
       <Max_Gaps>1</Max_Gaps>
       <Active>true</Active>
       <Comments></Comments>
     </ConstraintTeacherMaxGapsPerDay>
     <ConstraintTeacherMaxGapsPerDay>
       <Weight_Percentage>100</Weight_Percentage>
-      <Teacher>Gastone Paperone</Teacher>
+      <Teacher>Dante Alighieri</Teacher>
       <Max_Gaps>1</Max_Gaps>
       <Active>true</Active>
       <Comments></Comments>
     </ConstraintTeacherMaxGapsPerDay>
     <ConstraintTeacherMaxGapsPerDay>
       <Weight_Percentage>100</Weight_Percentage>
-      <Teacher>Dinamite Bla</Teacher>
+      <Teacher>Euclid</Teacher>
       <Max_Gaps>1</Max_Gaps>
       <Active>true</Active>
       <Comments></Comments>
     </ConstraintTeacherMaxGapsPerDay>
     <ConstraintTeacherMaxGapsPerDay>
       <Weight_Percentage>100</Weight_Percentage>
-      <Teacher>Battista</Teacher>
+      <Teacher>William Shakespeare</Teacher>
       <Max_Gaps>1</Max_Gaps>
       <Active>true</Active>
       <Comments></Comments>
     </ConstraintTeacherMaxGapsPerDay>
     <ConstraintTeacherMaxGapsPerWeek>
       <Weight_Percentage>100</Weight_Percentage>
-      <Teacher>Archimede Pitagorico</Teacher>
+      <Teacher>Galileo Galilei</Teacher>
       <Max_Gaps>1</Max_Gaps>
       <Active>true</Active>
       <Comments></Comments>
@@ -3086,42 +3086,42 @@
     </ConstraintTeacherMaxGapsPerWeek>
     <ConstraintTeacherMaxGapsPerWeek>
       <Weight_Percentage>100</Weight_Percentage>
-      <Teacher>Pico De Paperis</Teacher>
+      <Teacher>Plato</Teacher>
       <Max_Gaps>1</Max_Gaps>
       <Active>true</Active>
       <Comments></Comments>
     </ConstraintTeacherMaxGapsPerWeek>
     <ConstraintTeacherMaxGapsPerWeek>
       <Weight_Percentage>100</Weight_Percentage>
-      <Teacher>Paperino Paolino</Teacher>
+      <Teacher>Milo of Croton</Teacher>
       <Max_Gaps>1</Max_Gaps>
       <Active>true</Active>
       <Comments></Comments>
     </ConstraintTeacherMaxGapsPerWeek>
     <ConstraintTeacherMaxGapsPerWeek>
       <Weight_Percentage>100</Weight_Percentage>
-      <Teacher>Nonna Papera</Teacher>
+      <Teacher>Marie Curie</Teacher>
       <Max_Gaps>1</Max_Gaps>
       <Active>true</Active>
       <Comments></Comments>
     </ConstraintTeacherMaxGapsPerWeek>
     <ConstraintTeacherMaxGapsPerWeek>
       <Weight_Percentage>100</Weight_Percentage>
-      <Teacher>Gastone Paperone</Teacher>
+      <Teacher>Dante Alighieri</Teacher>
       <Max_Gaps>1</Max_Gaps>
       <Active>true</Active>
       <Comments></Comments>
     </ConstraintTeacherMaxGapsPerWeek>
     <ConstraintTeacherMaxGapsPerWeek>
       <Weight_Percentage>100</Weight_Percentage>
-      <Teacher>Dinamite Bla</Teacher>
+      <Teacher>Euclid</Teacher>
       <Max_Gaps>1</Max_Gaps>
       <Active>true</Active>
       <Comments></Comments>
     </ConstraintTeacherMaxGapsPerWeek>
     <ConstraintTeacherMaxGapsPerWeek>
       <Weight_Percentage>100</Weight_Percentage>
-      <Teacher>Battista</Teacher>
+      <Teacher>William Shakespeare</Teacher>
       <Max_Gaps>1</Max_Gaps>
       <Active>true</Active>
       <Comments></Comments>
@@ -3147,7 +3147,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>1</Activity_Id>
-      <Day>Lun</Day>
+      <Day>Mon</Day>
       <Hour>3</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3156,7 +3156,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>2</Activity_Id>
-      <Day>Gio</Day>
+      <Day>Thu</Day>
       <Hour>4</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3165,7 +3165,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>3</Activity_Id>
-      <Day>Mar</Day>
+      <Day>Tue</Day>
       <Hour>2</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3174,7 +3174,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>4</Activity_Id>
-      <Day>Ven</Day>
+      <Day>Fri</Day>
       <Hour>1</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3183,7 +3183,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>5</Activity_Id>
-      <Day>Mer</Day>
+      <Day>Wed</Day>
       <Hour>4</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3192,7 +3192,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>6</Activity_Id>
-      <Day>Mar</Day>
+      <Day>Tue</Day>
       <Hour>1</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3201,7 +3201,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>7</Activity_Id>
-      <Day>Ven</Day>
+      <Day>Fri</Day>
       <Hour>3</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3210,7 +3210,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>8</Activity_Id>
-      <Day>Mer</Day>
+      <Day>Wed</Day>
       <Hour>5</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3219,7 +3219,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>9</Activity_Id>
-      <Day>Gio</Day>
+      <Day>Thu</Day>
       <Hour>2</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3228,7 +3228,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>10</Activity_Id>
-      <Day>Lun</Day>
+      <Day>Mon</Day>
       <Hour>5</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3237,7 +3237,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>11</Activity_Id>
-      <Day>Gio</Day>
+      <Day>Thu</Day>
       <Hour>5</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3246,7 +3246,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>12</Activity_Id>
-      <Day>Lun</Day>
+      <Day>Mon</Day>
       <Hour>1</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3255,7 +3255,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>13</Activity_Id>
-      <Day>Mer</Day>
+      <Day>Wed</Day>
       <Hour>3</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3264,7 +3264,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>14</Activity_Id>
-      <Day>Mar</Day>
+      <Day>Tue</Day>
       <Hour>3</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3273,7 +3273,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>15</Activity_Id>
-      <Day>Gio</Day>
+      <Day>Thu</Day>
       <Hour>2</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3282,7 +3282,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>16</Activity_Id>
-      <Day>Lun</Day>
+      <Day>Mon</Day>
       <Hour>6</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3291,7 +3291,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>17</Activity_Id>
-      <Day>Lun</Day>
+      <Day>Mon</Day>
       <Hour>1</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3300,7 +3300,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>18</Activity_Id>
-      <Day>Mar</Day>
+      <Day>Tue</Day>
       <Hour>5</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3309,7 +3309,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>19</Activity_Id>
-      <Day>Mer</Day>
+      <Day>Wed</Day>
       <Hour>3</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3318,7 +3318,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>20</Activity_Id>
-      <Day>Mer</Day>
+      <Day>Wed</Day>
       <Hour>1</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3327,7 +3327,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>21</Activity_Id>
-      <Day>Gio</Day>
+      <Day>Thu</Day>
       <Hour>1</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3336,7 +3336,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>22</Activity_Id>
-      <Day>Mar</Day>
+      <Day>Tue</Day>
       <Hour>6</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3345,7 +3345,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>23</Activity_Id>
-      <Day>Lun</Day>
+      <Day>Mon</Day>
       <Hour>3</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3354,7 +3354,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>24</Activity_Id>
-      <Day>Gio</Day>
+      <Day>Thu</Day>
       <Hour>3</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3363,7 +3363,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>25</Activity_Id>
-      <Day>Ven</Day>
+      <Day>Fri</Day>
       <Hour>1</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3372,7 +3372,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>26</Activity_Id>
-      <Day>Mer</Day>
+      <Day>Wed</Day>
       <Hour>4</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3381,7 +3381,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>27</Activity_Id>
-      <Day>Mer</Day>
+      <Day>Wed</Day>
       <Hour>1</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3390,7 +3390,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>28</Activity_Id>
-      <Day>Lun</Day>
+      <Day>Mon</Day>
       <Hour>5</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3399,7 +3399,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>29</Activity_Id>
-      <Day>Gio</Day>
+      <Day>Thu</Day>
       <Hour>1</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3408,7 +3408,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>30</Activity_Id>
-      <Day>Mer</Day>
+      <Day>Wed</Day>
       <Hour>6</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3417,7 +3417,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>31</Activity_Id>
-      <Day>Mar</Day>
+      <Day>Tue</Day>
       <Hour>1</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3426,7 +3426,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>32</Activity_Id>
-      <Day>Mer</Day>
+      <Day>Wed</Day>
       <Hour>3</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3435,7 +3435,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>33</Activity_Id>
-      <Day>Lun</Day>
+      <Day>Mon</Day>
       <Hour>1</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3444,7 +3444,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>34</Activity_Id>
-      <Day>Ven</Day>
+      <Day>Fri</Day>
       <Hour>1</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3453,7 +3453,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>35</Activity_Id>
-      <Day>Gio</Day>
+      <Day>Thu</Day>
       <Hour>3</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3462,7 +3462,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>36</Activity_Id>
-      <Day>Lun</Day>
+      <Day>Mon</Day>
       <Hour>3</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3471,7 +3471,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>37</Activity_Id>
-      <Day>Mer</Day>
+      <Day>Wed</Day>
       <Hour>3</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3480,7 +3480,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>38</Activity_Id>
-      <Day>Mar</Day>
+      <Day>Tue</Day>
       <Hour>1</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3489,7 +3489,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>39</Activity_Id>
-      <Day>Gio</Day>
+      <Day>Thu</Day>
       <Hour>3</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3498,7 +3498,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>40</Activity_Id>
-      <Day>Ven</Day>
+      <Day>Fri</Day>
       <Hour>3</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3507,7 +3507,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>41</Activity_Id>
-      <Day>Mer</Day>
+      <Day>Wed</Day>
       <Hour>5</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3516,7 +3516,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>42</Activity_Id>
-      <Day>Mar</Day>
+      <Day>Tue</Day>
       <Hour>2</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3525,7 +3525,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>43</Activity_Id>
-      <Day>Lun</Day>
+      <Day>Mon</Day>
       <Hour>1</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3534,7 +3534,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>44</Activity_Id>
-      <Day>Mer</Day>
+      <Day>Wed</Day>
       <Hour>6</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3543,7 +3543,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>45</Activity_Id>
-      <Day>Mar</Day>
+      <Day>Tue</Day>
       <Hour>5</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3552,7 +3552,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>46</Activity_Id>
-      <Day>Mar</Day>
+      <Day>Tue</Day>
       <Hour>3</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3561,7 +3561,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>47</Activity_Id>
-      <Day>Ven</Day>
+      <Day>Fri</Day>
       <Hour>5</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3570,7 +3570,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>48</Activity_Id>
-      <Day>Mer</Day>
+      <Day>Wed</Day>
       <Hour>1</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3579,7 +3579,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>49</Activity_Id>
-      <Day>Gio</Day>
+      <Day>Thu</Day>
       <Hour>1</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3588,7 +3588,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>50</Activity_Id>
-      <Day>Ven</Day>
+      <Day>Fri</Day>
       <Hour>1</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3597,7 +3597,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>51</Activity_Id>
-      <Day>Lun</Day>
+      <Day>Mon</Day>
       <Hour>3</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3606,7 +3606,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>52</Activity_Id>
-      <Day>Lun</Day>
+      <Day>Mon</Day>
       <Hour>5</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3615,7 +3615,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>53</Activity_Id>
-      <Day>Gio</Day>
+      <Day>Thu</Day>
       <Hour>5</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3624,7 +3624,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>54</Activity_Id>
-      <Day>Ven</Day>
+      <Day>Fri</Day>
       <Hour>3</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3633,7 +3633,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>55</Activity_Id>
-      <Day>Mar</Day>
+      <Day>Tue</Day>
       <Hour>5</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3642,7 +3642,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>56</Activity_Id>
-      <Day>Gio</Day>
+      <Day>Thu</Day>
       <Hour>4</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3651,7 +3651,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>57</Activity_Id>
-      <Day>Mar</Day>
+      <Day>Tue</Day>
       <Hour>3</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3660,7 +3660,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>58</Activity_Id>
-      <Day>Ven</Day>
+      <Day>Fri</Day>
       <Hour>5</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3669,7 +3669,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>59</Activity_Id>
-      <Day>Gio</Day>
+      <Day>Thu</Day>
       <Hour>2</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3678,7 +3678,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>60</Activity_Id>
-      <Day>Ven</Day>
+      <Day>Fri</Day>
       <Hour>3</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3687,7 +3687,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>61</Activity_Id>
-      <Day>Mer</Day>
+      <Day>Wed</Day>
       <Hour>5</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3696,7 +3696,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>62</Activity_Id>
-      <Day>Mer</Day>
+      <Day>Wed</Day>
       <Hour>1</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3705,7 +3705,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>63</Activity_Id>
-      <Day>Mar</Day>
+      <Day>Tue</Day>
       <Hour>3</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3714,7 +3714,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>64</Activity_Id>
-      <Day>Ven</Day>
+      <Day>Fri</Day>
       <Hour>1</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3723,7 +3723,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>65</Activity_Id>
-      <Day>Gio</Day>
+      <Day>Thu</Day>
       <Hour>3</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3732,7 +3732,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>66</Activity_Id>
-      <Day>Mer</Day>
+      <Day>Wed</Day>
       <Hour>3</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3741,7 +3741,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>67</Activity_Id>
-      <Day>Gio</Day>
+      <Day>Thu</Day>
       <Hour>1</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3750,7 +3750,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>68</Activity_Id>
-      <Day>Mar</Day>
+      <Day>Tue</Day>
       <Hour>1</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3759,7 +3759,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>69</Activity_Id>
-      <Day>Gio</Day>
+      <Day>Thu</Day>
       <Hour>5</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3768,7 +3768,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>70</Activity_Id>
-      <Day>Ven</Day>
+      <Day>Fri</Day>
       <Hour>5</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3777,7 +3777,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>71</Activity_Id>
-      <Day>Lun</Day>
+      <Day>Mon</Day>
       <Hour>5</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3786,7 +3786,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>72</Activity_Id>
-      <Day>Mar</Day>
+      <Day>Tue</Day>
       <Hour>3</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3795,7 +3795,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>73</Activity_Id>
-      <Day>Mar</Day>
+      <Day>Tue</Day>
       <Hour>1</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3804,7 +3804,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>74</Activity_Id>
-      <Day>Ven</Day>
+      <Day>Fri</Day>
       <Hour>3</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3813,7 +3813,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>75</Activity_Id>
-      <Day>Lun</Day>
+      <Day>Mon</Day>
       <Hour>1</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3822,7 +3822,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>76</Activity_Id>
-      <Day>Gio</Day>
+      <Day>Thu</Day>
       <Hour>1</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3831,7 +3831,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>77</Activity_Id>
-      <Day>Gio</Day>
+      <Day>Thu</Day>
       <Hour>3</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3840,7 +3840,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>78</Activity_Id>
-      <Day>Mar</Day>
+      <Day>Tue</Day>
       <Hour>4</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3849,7 +3849,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>79</Activity_Id>
-      <Day>Lun</Day>
+      <Day>Mon</Day>
       <Hour>3</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3858,7 +3858,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>80</Activity_Id>
-      <Day>Ven</Day>
+      <Day>Fri</Day>
       <Hour>5</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3867,7 +3867,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>81</Activity_Id>
-      <Day>Mer</Day>
+      <Day>Wed</Day>
       <Hour>1</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3876,7 +3876,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>82</Activity_Id>
-      <Day>Ven</Day>
+      <Day>Fri</Day>
       <Hour>6</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3885,7 +3885,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>83</Activity_Id>
-      <Day>Mar</Day>
+      <Day>Tue</Day>
       <Hour>5</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3894,7 +3894,7 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>84</Activity_Id>
-      <Day>Lun</Day>
+      <Day>Mon</Day>
       <Hour>5</Hour>
       <Permanently_Locked>false</Permanently_Locked>
       <Active>true</Active>
@@ -3966,7 +3966,7 @@
     <ConstraintActivityPreferredRoom>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>27</Activity_Id>
-      <Room>Laboratorio di Invenzioni</Room>
+      <Room>Inventions Lab</Room>
       <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
       <Comments></Comments>
@@ -3974,7 +3974,7 @@
     <ConstraintActivityPreferredRoom>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>28</Activity_Id>
-      <Room>Laboratorio di Invenzioni</Room>
+      <Room>Inventions Lab</Room>
       <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
       <Comments></Comments>
@@ -3982,7 +3982,7 @@
     <ConstraintActivityPreferredRoom>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>29</Activity_Id>
-      <Room>Laboratorio di Invenzioni</Room>
+      <Room>Inventions Lab</Room>
       <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
       <Comments></Comments>
@@ -3990,7 +3990,7 @@
     <ConstraintActivityPreferredRoom>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>30</Activity_Id>
-      <Room>Laboratorio di Invenzioni</Room>
+      <Room>Inventions Lab</Room>
       <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
       <Comments></Comments>
@@ -3998,7 +3998,7 @@
     <ConstraintActivityPreferredRoom>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>31</Activity_Id>
-      <Room>Laboratorio di Invenzioni</Room>
+      <Room>Inventions Lab</Room>
       <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
       <Comments></Comments>
@@ -4006,7 +4006,7 @@
     <ConstraintActivityPreferredRoom>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>32</Activity_Id>
-      <Room>Laboratorio di Invenzioni</Room>
+      <Room>Inventions Lab</Room>
       <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
       <Comments></Comments>
@@ -4014,7 +4014,7 @@
     <ConstraintActivityPreferredRoom>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>33</Activity_Id>
-      <Room>Laboratorio di Invenzioni</Room>
+      <Room>Inventions Lab</Room>
       <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
       <Comments></Comments>
@@ -4022,7 +4022,7 @@
     <ConstraintActivityPreferredRoom>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>34</Activity_Id>
-      <Room>Laboratorio di Invenzioni</Room>
+      <Room>Inventions Lab</Room>
       <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
       <Comments></Comments>
@@ -4030,7 +4030,7 @@
     <ConstraintActivityPreferredRoom>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>35</Activity_Id>
-      <Room>Laboratorio di Invenzioni</Room>
+      <Room>Inventions Lab</Room>
       <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
       <Comments></Comments>
@@ -4038,7 +4038,7 @@
     <ConstraintActivityPreferredRoom>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>36</Activity_Id>
-      <Room>Laboratorio di Invenzioni</Room>
+      <Room>Inventions Lab</Room>
       <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
       <Comments></Comments>

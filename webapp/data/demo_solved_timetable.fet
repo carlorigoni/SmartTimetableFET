@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <fet version="7.12.0">
   <Mode>Official</Mode>
-  <Institution_Name>Liceo &amp; Tecnico &quot;Pico De Paperis&quot; - Paperopoli</Institution_Name>
+  <Institution_Name>Liceo &amp; Tecnico &quot;Platone&quot; - Atene</Institution_Name>
   <Comments>Anno Scolastico 2026/2027 - Database Dimostrativo Completo</Comments>
   <Days_List>
     <Number_of_Days>5</Number_of_Days>
@@ -83,7 +83,7 @@
       <Comments>Economia Politica e Finanza</Comments>
     </Subject>
     <Subject>
-      <Name>Fisica e Invenzioni</Name>
+      <Name>Fisica e Laboratorio</Name>
       <Long_Name></Long_Name>
       <Code></Code>
       <Comments>Fisica Sperimentale</Comments>
@@ -113,7 +113,7 @@
       <Comments>Educazione Fisica</Comments>
     </Subject>
     <Subject>
-      <Name>Scienze Naturali e Botanica</Name>
+      <Name>Scienze Naturali e Chimica</Name>
       <Long_Name></Long_Name>
       <Code></Code>
       <Comments>Scienze della Terra e Biologia</Comments>
@@ -129,7 +129,7 @@
   </Activity_Tags_List>
   <Teachers_List>
     <Teacher>
-      <Name>Archimede Pitagorico</Name>
+      <Name>Galileo Galilei</Name>
       <Long_Name></Long_Name>
       <Code></Code>
       <Target_Number_of_Hours>0</Target_Number_of_Hours>
@@ -138,7 +138,7 @@
       <Comments>Fisica e Laboratorio Invenzioni</Comments>
     </Teacher>
     <Teacher>
-      <Name>Battista</Name>
+      <Name>William Shakespeare</Name>
       <Long_Name></Long_Name>
       <Code></Code>
       <Target_Number_of_Hours>0</Target_Number_of_Hours>
@@ -147,7 +147,7 @@
       <Comments>Lingua Inglese (più ore a disposizione)</Comments>
     </Teacher>
     <Teacher>
-      <Name>Dinamite Bla</Name>
+      <Name>Euclide</Name>
       <Long_Name></Long_Name>
       <Code></Code>
       <Target_Number_of_Hours>0</Target_Number_of_Hours>
@@ -156,7 +156,7 @@
       <Comments>Matematica</Comments>
     </Teacher>
     <Teacher>
-      <Name>Gastone Paperone</Name>
+      <Name>Dante Alighieri</Name>
       <Long_Name></Long_Name>
       <Code></Code>
       <Target_Number_of_Hours>0</Target_Number_of_Hours>
@@ -165,7 +165,7 @@
       <Comments>Italiano e Letteratura Classica</Comments>
     </Teacher>
     <Teacher>
-      <Name>Nonna Papera</Name>
+      <Name>Marie Curie</Name>
       <Long_Name></Long_Name>
       <Code></Code>
       <Target_Number_of_Hours>0</Target_Number_of_Hours>
@@ -174,7 +174,7 @@
       <Comments>Scienze Naturali, Chimica e Agraria</Comments>
     </Teacher>
     <Teacher>
-      <Name>Paperino Paolino</Name>
+      <Name>Milone di Crotone</Name>
       <Long_Name></Long_Name>
       <Code></Code>
       <Target_Number_of_Hours>0</Target_Number_of_Hours>
@@ -192,7 +192,7 @@
       <Comments>Economia Aziendale e Gestione Finanziaria (Lunedì conteggio caveau)</Comments>
     </Teacher>
     <Teacher>
-      <Name>Pico De Paperis</Name>
+      <Name>Platone</Name>
       <Long_Name></Long_Name>
       <Code></Code>
       <Target_Number_of_Hours>0</Target_Number_of_Hours>
@@ -260,7 +260,7 @@
   </Students_List>
   <Activities_List>
     <Activity>
-      <Teacher>Gastone Paperone</Teacher>
+      <Teacher>Dante Alighieri</Teacher>
       <Subject>Italiano e Letteratura</Subject>
       <Students>1A</Students>
       <Duration>2</Duration>
@@ -271,7 +271,7 @@
       <Comments>Italiano e Letteratura per 1A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Gastone Paperone</Teacher>
+      <Teacher>Dante Alighieri</Teacher>
       <Subject>Italiano e Letteratura</Subject>
       <Students>1A</Students>
       <Duration>1</Duration>
@@ -282,7 +282,7 @@
       <Comments>Italiano e Letteratura per 1A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Gastone Paperone</Teacher>
+      <Teacher>Dante Alighieri</Teacher>
       <Subject>Italiano e Letteratura</Subject>
       <Students>1A</Students>
       <Duration>1</Duration>
@@ -293,7 +293,7 @@
       <Comments>Italiano e Letteratura per 1A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Gastone Paperone</Teacher>
+      <Teacher>Dante Alighieri</Teacher>
       <Subject>Italiano e Letteratura</Subject>
       <Students>2A</Students>
       <Duration>2</Duration>
@@ -304,7 +304,7 @@
       <Comments>Italiano e Letteratura per 2A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Gastone Paperone</Teacher>
+      <Teacher>Dante Alighieri</Teacher>
       <Subject>Italiano e Letteratura</Subject>
       <Students>2A</Students>
       <Duration>1</Duration>
@@ -315,7 +315,7 @@
       <Comments>Italiano e Letteratura per 2A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Gastone Paperone</Teacher>
+      <Teacher>Dante Alighieri</Teacher>
       <Subject>Italiano e Letteratura</Subject>
       <Students>2A</Students>
       <Duration>1</Duration>
@@ -326,7 +326,7 @@
       <Comments>Italiano e Letteratura per 2A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Gastone Paperone</Teacher>
+      <Teacher>Dante Alighieri</Teacher>
       <Subject>Italiano e Letteratura</Subject>
       <Students>3A</Students>
       <Duration>2</Duration>
@@ -337,7 +337,7 @@
       <Comments>Italiano e Letteratura per 3A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Gastone Paperone</Teacher>
+      <Teacher>Dante Alighieri</Teacher>
       <Subject>Italiano e Letteratura</Subject>
       <Students>3A</Students>
       <Duration>1</Duration>
@@ -348,7 +348,7 @@
       <Comments>Italiano e Letteratura per 3A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Gastone Paperone</Teacher>
+      <Teacher>Dante Alighieri</Teacher>
       <Subject>Italiano e Letteratura</Subject>
       <Students>3A</Students>
       <Duration>1</Duration>
@@ -359,7 +359,7 @@
       <Comments>Italiano e Letteratura per 3A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Gastone Paperone</Teacher>
+      <Teacher>Dante Alighieri</Teacher>
       <Subject>Italiano e Letteratura</Subject>
       <Students>4A</Students>
       <Duration>2</Duration>
@@ -370,7 +370,7 @@
       <Comments>Italiano e Letteratura per 4A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Gastone Paperone</Teacher>
+      <Teacher>Dante Alighieri</Teacher>
       <Subject>Italiano e Letteratura</Subject>
       <Students>4A</Students>
       <Duration>1</Duration>
@@ -381,7 +381,7 @@
       <Comments>Italiano e Letteratura per 4A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Gastone Paperone</Teacher>
+      <Teacher>Dante Alighieri</Teacher>
       <Subject>Italiano e Letteratura</Subject>
       <Students>5A</Students>
       <Duration>2</Duration>
@@ -392,7 +392,7 @@
       <Comments>Italiano e Letteratura per 5A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Gastone Paperone</Teacher>
+      <Teacher>Dante Alighieri</Teacher>
       <Subject>Italiano e Letteratura</Subject>
       <Students>5A</Students>
       <Duration>1</Duration>
@@ -403,7 +403,7 @@
       <Comments>Italiano e Letteratura per 5A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Dinamite Bla</Teacher>
+      <Teacher>Euclide</Teacher>
       <Subject>Matematica</Subject>
       <Students>1A</Students>
       <Duration>2</Duration>
@@ -414,7 +414,7 @@
       <Comments>Matematica per 1A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Dinamite Bla</Teacher>
+      <Teacher>Euclide</Teacher>
       <Subject>Matematica</Subject>
       <Students>1A</Students>
       <Duration>1</Duration>
@@ -425,7 +425,7 @@
       <Comments>Matematica per 1A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Dinamite Bla</Teacher>
+      <Teacher>Euclide</Teacher>
       <Subject>Matematica</Subject>
       <Students>1A</Students>
       <Duration>1</Duration>
@@ -436,7 +436,7 @@
       <Comments>Matematica per 1A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Dinamite Bla</Teacher>
+      <Teacher>Euclide</Teacher>
       <Subject>Matematica</Subject>
       <Students>2A</Students>
       <Duration>2</Duration>
@@ -447,7 +447,7 @@
       <Comments>Matematica per 2A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Dinamite Bla</Teacher>
+      <Teacher>Euclide</Teacher>
       <Subject>Matematica</Subject>
       <Students>2A</Students>
       <Duration>1</Duration>
@@ -458,7 +458,7 @@
       <Comments>Matematica per 2A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Dinamite Bla</Teacher>
+      <Teacher>Euclide</Teacher>
       <Subject>Matematica</Subject>
       <Students>2A</Students>
       <Duration>1</Duration>
@@ -469,7 +469,7 @@
       <Comments>Matematica per 2A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Dinamite Bla</Teacher>
+      <Teacher>Euclide</Teacher>
       <Subject>Matematica</Subject>
       <Students>3A</Students>
       <Duration>2</Duration>
@@ -480,7 +480,7 @@
       <Comments>Matematica per 3A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Dinamite Bla</Teacher>
+      <Teacher>Euclide</Teacher>
       <Subject>Matematica</Subject>
       <Students>3A</Students>
       <Duration>1</Duration>
@@ -491,7 +491,7 @@
       <Comments>Matematica per 3A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Dinamite Bla</Teacher>
+      <Teacher>Euclide</Teacher>
       <Subject>Matematica</Subject>
       <Students>3A</Students>
       <Duration>1</Duration>
@@ -502,7 +502,7 @@
       <Comments>Matematica per 3A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Dinamite Bla</Teacher>
+      <Teacher>Euclide</Teacher>
       <Subject>Matematica</Subject>
       <Students>4A</Students>
       <Duration>2</Duration>
@@ -513,7 +513,7 @@
       <Comments>Matematica per 4A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Dinamite Bla</Teacher>
+      <Teacher>Euclide</Teacher>
       <Subject>Matematica</Subject>
       <Students>4A</Students>
       <Duration>1</Duration>
@@ -524,7 +524,7 @@
       <Comments>Matematica per 4A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Dinamite Bla</Teacher>
+      <Teacher>Euclide</Teacher>
       <Subject>Matematica</Subject>
       <Students>5A</Students>
       <Duration>2</Duration>
@@ -535,7 +535,7 @@
       <Comments>Matematica per 5A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Dinamite Bla</Teacher>
+      <Teacher>Euclide</Teacher>
       <Subject>Matematica</Subject>
       <Students>5A</Students>
       <Duration>1</Duration>
@@ -546,260 +546,260 @@
       <Comments>Matematica per 5A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Archimede Pitagorico</Teacher>
-      <Subject>Fisica e Invenzioni</Subject>
+      <Teacher>Galileo Galilei</Teacher>
+      <Subject>Fisica e Laboratorio</Subject>
       <Students>1A</Students>
       <Duration>2</Duration>
       <Total_Duration>2</Total_Duration>
       <Id>27</Id>
       <Activity_Group_Id>27</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Fisica e Invenzioni per 1A</Comments>
+      <Comments>Fisica e Laboratorio per 1A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Archimede Pitagorico</Teacher>
-      <Subject>Fisica e Invenzioni</Subject>
+      <Teacher>Galileo Galilei</Teacher>
+      <Subject>Fisica e Laboratorio</Subject>
       <Students>1A</Students>
       <Duration>1</Duration>
       <Total_Duration>1</Total_Duration>
       <Id>28</Id>
       <Activity_Group_Id>28</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Fisica e Invenzioni per 1A</Comments>
+      <Comments>Fisica e Laboratorio per 1A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Archimede Pitagorico</Teacher>
-      <Subject>Fisica e Invenzioni</Subject>
+      <Teacher>Galileo Galilei</Teacher>
+      <Subject>Fisica e Laboratorio</Subject>
       <Students>2A</Students>
       <Duration>2</Duration>
       <Total_Duration>2</Total_Duration>
       <Id>29</Id>
       <Activity_Group_Id>29</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Fisica e Invenzioni per 2A</Comments>
+      <Comments>Fisica e Laboratorio per 2A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Archimede Pitagorico</Teacher>
-      <Subject>Fisica e Invenzioni</Subject>
+      <Teacher>Galileo Galilei</Teacher>
+      <Subject>Fisica e Laboratorio</Subject>
       <Students>2A</Students>
       <Duration>1</Duration>
       <Total_Duration>1</Total_Duration>
       <Id>30</Id>
       <Activity_Group_Id>30</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Fisica e Invenzioni per 2A</Comments>
+      <Comments>Fisica e Laboratorio per 2A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Archimede Pitagorico</Teacher>
-      <Subject>Fisica e Invenzioni</Subject>
+      <Teacher>Galileo Galilei</Teacher>
+      <Subject>Fisica e Laboratorio</Subject>
       <Students>3A</Students>
       <Duration>2</Duration>
       <Total_Duration>2</Total_Duration>
       <Id>31</Id>
       <Activity_Group_Id>31</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Fisica e Invenzioni per 3A</Comments>
+      <Comments>Fisica e Laboratorio per 3A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Archimede Pitagorico</Teacher>
-      <Subject>Fisica e Invenzioni</Subject>
+      <Teacher>Galileo Galilei</Teacher>
+      <Subject>Fisica e Laboratorio</Subject>
       <Students>3A</Students>
       <Duration>2</Duration>
       <Total_Duration>2</Total_Duration>
       <Id>32</Id>
       <Activity_Group_Id>32</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Fisica e Invenzioni per 3A</Comments>
+      <Comments>Fisica e Laboratorio per 3A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Archimede Pitagorico</Teacher>
-      <Subject>Fisica e Invenzioni</Subject>
+      <Teacher>Galileo Galilei</Teacher>
+      <Subject>Fisica e Laboratorio</Subject>
       <Students>4A</Students>
       <Duration>2</Duration>
       <Total_Duration>2</Total_Duration>
       <Id>33</Id>
       <Activity_Group_Id>33</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Fisica e Invenzioni per 4A</Comments>
+      <Comments>Fisica e Laboratorio per 4A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Archimede Pitagorico</Teacher>
-      <Subject>Fisica e Invenzioni</Subject>
+      <Teacher>Galileo Galilei</Teacher>
+      <Subject>Fisica e Laboratorio</Subject>
       <Students>4A</Students>
       <Duration>2</Duration>
       <Total_Duration>2</Total_Duration>
       <Id>34</Id>
       <Activity_Group_Id>34</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Fisica e Invenzioni per 4A</Comments>
+      <Comments>Fisica e Laboratorio per 4A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Archimede Pitagorico</Teacher>
-      <Subject>Fisica e Invenzioni</Subject>
+      <Teacher>Galileo Galilei</Teacher>
+      <Subject>Fisica e Laboratorio</Subject>
       <Students>5A</Students>
       <Duration>2</Duration>
       <Total_Duration>2</Total_Duration>
       <Id>35</Id>
       <Activity_Group_Id>35</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Fisica e Invenzioni per 5A</Comments>
+      <Comments>Fisica e Laboratorio per 5A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Archimede Pitagorico</Teacher>
-      <Subject>Fisica e Invenzioni</Subject>
+      <Teacher>Galileo Galilei</Teacher>
+      <Subject>Fisica e Laboratorio</Subject>
       <Students>5A</Students>
       <Duration>2</Duration>
       <Total_Duration>2</Total_Duration>
       <Id>36</Id>
       <Activity_Group_Id>36</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Fisica e Invenzioni per 5A</Comments>
+      <Comments>Fisica e Laboratorio per 5A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Nonna Papera</Teacher>
-      <Subject>Scienze Naturali e Botanica</Subject>
+      <Teacher>Marie Curie</Teacher>
+      <Subject>Scienze Naturali e Chimica</Subject>
       <Students>1A</Students>
       <Duration>2</Duration>
       <Total_Duration>2</Total_Duration>
       <Id>37</Id>
       <Activity_Group_Id>37</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Scienze Naturali e Botanica per 1A</Comments>
+      <Comments>Scienze Naturali e Chimica per 1A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Nonna Papera</Teacher>
-      <Subject>Scienze Naturali e Botanica</Subject>
+      <Teacher>Marie Curie</Teacher>
+      <Subject>Scienze Naturali e Chimica</Subject>
       <Students>1A</Students>
       <Duration>1</Duration>
       <Total_Duration>1</Total_Duration>
       <Id>38</Id>
       <Activity_Group_Id>38</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Scienze Naturali e Botanica per 1A</Comments>
+      <Comments>Scienze Naturali e Chimica per 1A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Nonna Papera</Teacher>
-      <Subject>Scienze Naturali e Botanica</Subject>
+      <Teacher>Marie Curie</Teacher>
+      <Subject>Scienze Naturali e Chimica</Subject>
       <Students>1A</Students>
       <Duration>1</Duration>
       <Total_Duration>1</Total_Duration>
       <Id>39</Id>
       <Activity_Group_Id>39</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Scienze Naturali e Botanica per 1A</Comments>
+      <Comments>Scienze Naturali e Chimica per 1A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Nonna Papera</Teacher>
-      <Subject>Scienze Naturali e Botanica</Subject>
+      <Teacher>Marie Curie</Teacher>
+      <Subject>Scienze Naturali e Chimica</Subject>
       <Students>2A</Students>
       <Duration>2</Duration>
       <Total_Duration>2</Total_Duration>
       <Id>40</Id>
       <Activity_Group_Id>40</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Scienze Naturali e Botanica per 2A</Comments>
+      <Comments>Scienze Naturali e Chimica per 2A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Nonna Papera</Teacher>
-      <Subject>Scienze Naturali e Botanica</Subject>
+      <Teacher>Marie Curie</Teacher>
+      <Subject>Scienze Naturali e Chimica</Subject>
       <Students>2A</Students>
       <Duration>1</Duration>
       <Total_Duration>1</Total_Duration>
       <Id>41</Id>
       <Activity_Group_Id>41</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Scienze Naturali e Botanica per 2A</Comments>
+      <Comments>Scienze Naturali e Chimica per 2A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Nonna Papera</Teacher>
-      <Subject>Scienze Naturali e Botanica</Subject>
+      <Teacher>Marie Curie</Teacher>
+      <Subject>Scienze Naturali e Chimica</Subject>
       <Students>2A</Students>
       <Duration>1</Duration>
       <Total_Duration>1</Total_Duration>
       <Id>42</Id>
       <Activity_Group_Id>42</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Scienze Naturali e Botanica per 2A</Comments>
+      <Comments>Scienze Naturali e Chimica per 2A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Nonna Papera</Teacher>
-      <Subject>Scienze Naturali e Botanica</Subject>
+      <Teacher>Marie Curie</Teacher>
+      <Subject>Scienze Naturali e Chimica</Subject>
       <Students>3A</Students>
       <Duration>2</Duration>
       <Total_Duration>2</Total_Duration>
       <Id>43</Id>
       <Activity_Group_Id>43</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Scienze Naturali e Botanica per 3A</Comments>
+      <Comments>Scienze Naturali e Chimica per 3A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Nonna Papera</Teacher>
-      <Subject>Scienze Naturali e Botanica</Subject>
+      <Teacher>Marie Curie</Teacher>
+      <Subject>Scienze Naturali e Chimica</Subject>
       <Students>3A</Students>
       <Duration>1</Duration>
       <Total_Duration>1</Total_Duration>
       <Id>44</Id>
       <Activity_Group_Id>44</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Scienze Naturali e Botanica per 3A</Comments>
+      <Comments>Scienze Naturali e Chimica per 3A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Nonna Papera</Teacher>
-      <Subject>Scienze Naturali e Botanica</Subject>
+      <Teacher>Marie Curie</Teacher>
+      <Subject>Scienze Naturali e Chimica</Subject>
       <Students>3A</Students>
       <Duration>1</Duration>
       <Total_Duration>1</Total_Duration>
       <Id>45</Id>
       <Activity_Group_Id>45</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Scienze Naturali e Botanica per 3A</Comments>
+      <Comments>Scienze Naturali e Chimica per 3A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Nonna Papera</Teacher>
-      <Subject>Scienze Naturali e Botanica</Subject>
+      <Teacher>Marie Curie</Teacher>
+      <Subject>Scienze Naturali e Chimica</Subject>
       <Students>4A</Students>
       <Duration>2</Duration>
       <Total_Duration>2</Total_Duration>
       <Id>46</Id>
       <Activity_Group_Id>46</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Scienze Naturali e Botanica per 4A</Comments>
+      <Comments>Scienze Naturali e Chimica per 4A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Nonna Papera</Teacher>
-      <Subject>Scienze Naturali e Botanica</Subject>
+      <Teacher>Marie Curie</Teacher>
+      <Subject>Scienze Naturali e Chimica</Subject>
       <Students>4A</Students>
       <Duration>1</Duration>
       <Total_Duration>1</Total_Duration>
       <Id>47</Id>
       <Activity_Group_Id>47</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Scienze Naturali e Botanica per 4A</Comments>
+      <Comments>Scienze Naturali e Chimica per 4A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Nonna Papera</Teacher>
-      <Subject>Scienze Naturali e Botanica</Subject>
+      <Teacher>Marie Curie</Teacher>
+      <Subject>Scienze Naturali e Chimica</Subject>
       <Students>5A</Students>
       <Duration>2</Duration>
       <Total_Duration>2</Total_Duration>
       <Id>48</Id>
       <Activity_Group_Id>48</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Scienze Naturali e Botanica per 5A</Comments>
+      <Comments>Scienze Naturali e Chimica per 5A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Nonna Papera</Teacher>
-      <Subject>Scienze Naturali e Botanica</Subject>
+      <Teacher>Marie Curie</Teacher>
+      <Subject>Scienze Naturali e Chimica</Subject>
       <Students>5A</Students>
       <Duration>1</Duration>
       <Total_Duration>1</Total_Duration>
       <Id>49</Id>
       <Activity_Group_Id>49</Activity_Group_Id>
       <Active>true</Active>
-      <Comments>Scienze Naturali e Botanica per 5A</Comments>
+      <Comments>Scienze Naturali e Chimica per 5A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Pico De Paperis</Teacher>
+      <Teacher>Platone</Teacher>
       <Subject>Storia e Filosofia</Subject>
       <Students>1A</Students>
       <Duration>2</Duration>
@@ -810,7 +810,7 @@
       <Comments>Storia e Filosofia per 1A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Pico De Paperis</Teacher>
+      <Teacher>Platone</Teacher>
       <Subject>Storia e Filosofia</Subject>
       <Students>2A</Students>
       <Duration>2</Duration>
@@ -821,7 +821,7 @@
       <Comments>Storia e Filosofia per 2A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Pico De Paperis</Teacher>
+      <Teacher>Platone</Teacher>
       <Subject>Storia e Filosofia</Subject>
       <Students>3A</Students>
       <Duration>2</Duration>
@@ -832,7 +832,7 @@
       <Comments>Storia e Filosofia per 3A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Pico De Paperis</Teacher>
+      <Teacher>Platone</Teacher>
       <Subject>Storia e Filosofia</Subject>
       <Students>3A</Students>
       <Duration>2</Duration>
@@ -843,7 +843,7 @@
       <Comments>Storia e Filosofia per 3A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Pico De Paperis</Teacher>
+      <Teacher>Platone</Teacher>
       <Subject>Storia e Filosofia</Subject>
       <Students>4A</Students>
       <Duration>2</Duration>
@@ -854,7 +854,7 @@
       <Comments>Storia e Filosofia per 4A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Pico De Paperis</Teacher>
+      <Teacher>Platone</Teacher>
       <Subject>Storia e Filosofia</Subject>
       <Students>4A</Students>
       <Duration>2</Duration>
@@ -865,7 +865,7 @@
       <Comments>Storia e Filosofia per 4A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Pico De Paperis</Teacher>
+      <Teacher>Platone</Teacher>
       <Subject>Storia e Filosofia</Subject>
       <Students>4A</Students>
       <Duration>1</Duration>
@@ -876,7 +876,7 @@
       <Comments>Storia e Filosofia per 4A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Pico De Paperis</Teacher>
+      <Teacher>Platone</Teacher>
       <Subject>Storia e Filosofia</Subject>
       <Students>5A</Students>
       <Duration>2</Duration>
@@ -887,7 +887,7 @@
       <Comments>Storia e Filosofia per 5A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Pico De Paperis</Teacher>
+      <Teacher>Platone</Teacher>
       <Subject>Storia e Filosofia</Subject>
       <Students>5A</Students>
       <Duration>2</Duration>
@@ -898,7 +898,7 @@
       <Comments>Storia e Filosofia per 5A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Pico De Paperis</Teacher>
+      <Teacher>Platone</Teacher>
       <Subject>Storia e Filosofia</Subject>
       <Students>5A</Students>
       <Duration>1</Duration>
@@ -1019,7 +1019,7 @@
       <Comments>Economia e Diritto per 5A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Paperino Paolino</Teacher>
+      <Teacher>Milone di Crotone</Teacher>
       <Subject>Scienze Motorie</Subject>
       <Students>1A</Students>
       <Duration>2</Duration>
@@ -1030,7 +1030,7 @@
       <Comments>Scienze Motorie per 1A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Paperino Paolino</Teacher>
+      <Teacher>Milone di Crotone</Teacher>
       <Subject>Scienze Motorie</Subject>
       <Students>2A</Students>
       <Duration>2</Duration>
@@ -1041,7 +1041,7 @@
       <Comments>Scienze Motorie per 2A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Paperino Paolino</Teacher>
+      <Teacher>Milone di Crotone</Teacher>
       <Subject>Scienze Motorie</Subject>
       <Students>3A</Students>
       <Duration>2</Duration>
@@ -1052,7 +1052,7 @@
       <Comments>Scienze Motorie per 3A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Paperino Paolino</Teacher>
+      <Teacher>Milone di Crotone</Teacher>
       <Subject>Scienze Motorie</Subject>
       <Students>4A</Students>
       <Duration>2</Duration>
@@ -1063,7 +1063,7 @@
       <Comments>Scienze Motorie per 4A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Paperino Paolino</Teacher>
+      <Teacher>Milone di Crotone</Teacher>
       <Subject>Scienze Motorie</Subject>
       <Students>5A</Students>
       <Duration>2</Duration>
@@ -1074,7 +1074,7 @@
       <Comments>Scienze Motorie per 5A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Battista</Teacher>
+      <Teacher>William Shakespeare</Teacher>
       <Subject>Inglese</Subject>
       <Students>1A</Students>
       <Duration>2</Duration>
@@ -1085,7 +1085,7 @@
       <Comments>Inglese per 1A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Battista</Teacher>
+      <Teacher>William Shakespeare</Teacher>
       <Subject>Inglese</Subject>
       <Students>1A</Students>
       <Duration>1</Duration>
@@ -1096,7 +1096,7 @@
       <Comments>Inglese per 1A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Battista</Teacher>
+      <Teacher>William Shakespeare</Teacher>
       <Subject>Inglese</Subject>
       <Students>2A</Students>
       <Duration>2</Duration>
@@ -1107,7 +1107,7 @@
       <Comments>Inglese per 2A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Battista</Teacher>
+      <Teacher>William Shakespeare</Teacher>
       <Subject>Inglese</Subject>
       <Students>2A</Students>
       <Duration>1</Duration>
@@ -1118,7 +1118,7 @@
       <Comments>Inglese per 2A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Battista</Teacher>
+      <Teacher>William Shakespeare</Teacher>
       <Subject>Inglese</Subject>
       <Students>3A</Students>
       <Duration>2</Duration>
@@ -1129,7 +1129,7 @@
       <Comments>Inglese per 3A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Battista</Teacher>
+      <Teacher>William Shakespeare</Teacher>
       <Subject>Inglese</Subject>
       <Students>3A</Students>
       <Duration>1</Duration>
@@ -1140,7 +1140,7 @@
       <Comments>Inglese per 3A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Battista</Teacher>
+      <Teacher>William Shakespeare</Teacher>
       <Subject>Inglese</Subject>
       <Students>4A</Students>
       <Duration>2</Duration>
@@ -1151,7 +1151,7 @@
       <Comments>Inglese per 4A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Battista</Teacher>
+      <Teacher>William Shakespeare</Teacher>
       <Subject>Inglese</Subject>
       <Students>4A</Students>
       <Duration>1</Duration>
@@ -1162,7 +1162,7 @@
       <Comments>Inglese per 4A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Battista</Teacher>
+      <Teacher>William Shakespeare</Teacher>
       <Subject>Inglese</Subject>
       <Students>5A</Students>
       <Duration>2</Duration>
@@ -1173,7 +1173,7 @@
       <Comments>Inglese per 5A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Battista</Teacher>
+      <Teacher>William Shakespeare</Teacher>
       <Subject>Inglese</Subject>
       <Students>5A</Students>
       <Duration>1</Duration>
@@ -1245,7 +1245,7 @@
       <Comments></Comments>
     </Room>
     <Room>
-      <Name>Laboratorio di Invenzioni</Name>
+      <Name>Laboratorio di Fisica</Name>
       <Long_Name></Long_Name>
       <Code></Code>
       <Building>Centrale</Building>
@@ -1281,7 +1281,7 @@
       <Comments>Modulo interno 3/3 per terza classe piccola (Capienza max totale impianto 57)</Comments>
     </Room>
     <Room>
-      <Name>Aula Magna del Deposito</Name>
+      <Name>Aula Magna Accademia</Name>
       <Long_Name></Long_Name>
       <Code></Code>
       <Building>Centrale</Building>
@@ -1951,7 +1951,7 @@
     </ConstraintMinDaysBetweenActivities>
     <ConstraintActivitiesPreferredTimeSlots>
       <Weight_Percentage>85</Weight_Percentage>
-      <Teacher>Archimede Pitagorico</Teacher>
+      <Teacher>Galileo Galilei</Teacher>
       <Students></Students>
       <Subject></Subject>
       <Activity_Tag></Activity_Tag>
@@ -2038,11 +2038,11 @@
         <Hour>4</Hour>
       </Preferred_Time_Slot>
       <Active>true</Active>
-      <Comments>Archimede Pitagorico: preferenza fascia prime (85%)</Comments>
+      <Comments>Galileo Galilei: preferenza fascia prime (85%)</Comments>
     </ConstraintActivitiesPreferredTimeSlots>
     <ConstraintActivitiesPreferredTimeSlots>
       <Weight_Percentage>85</Weight_Percentage>
-      <Teacher>Archimede Pitagorico</Teacher>
+      <Teacher>Galileo Galilei</Teacher>
       <Students></Students>
       <Subject></Subject>
       <Activity_Tag></Activity_Tag>
@@ -2145,7 +2145,7 @@
         <Hour>6</Hour>
       </Preferred_Time_Slot>
       <Active>true</Active>
-      <Comments>Archimede Pitagorico: giorno libero desiderato Ven (85%)</Comments>
+      <Comments>Galileo Galilei: giorno libero desiderato Ven (85%)</Comments>
     </ConstraintActivitiesPreferredTimeSlots>
     <ConstraintActivitiesPreferredTimeSlots>
       <Weight_Percentage>90</Weight_Percentage>
@@ -2240,7 +2240,7 @@
     </ConstraintActivitiesPreferredTimeSlots>
     <ConstraintActivitiesPreferredTimeSlots>
       <Weight_Percentage>85</Weight_Percentage>
-      <Teacher>Pico De Paperis</Teacher>
+      <Teacher>Platone</Teacher>
       <Students></Students>
       <Subject></Subject>
       <Activity_Tag></Activity_Tag>
@@ -2327,11 +2327,11 @@
         <Hour>5</Hour>
       </Preferred_Time_Slot>
       <Active>true</Active>
-      <Comments>Pico De Paperis: preferenza fascia bilanciato (85%)</Comments>
+      <Comments>Platone: preferenza fascia bilanciato (85%)</Comments>
     </ConstraintActivitiesPreferredTimeSlots>
     <ConstraintActivitiesPreferredTimeSlots>
       <Weight_Percentage>85</Weight_Percentage>
-      <Teacher>Paperino Paolino</Teacher>
+      <Teacher>Milone di Crotone</Teacher>
       <Students></Students>
       <Subject></Subject>
       <Activity_Tag></Activity_Tag>
@@ -2418,11 +2418,11 @@
         <Hour>6</Hour>
       </Preferred_Time_Slot>
       <Active>true</Active>
-      <Comments>Paperino Paolino: preferenza fascia ultime (85%)</Comments>
+      <Comments>Milone di Crotone: preferenza fascia ultime (85%)</Comments>
     </ConstraintActivitiesPreferredTimeSlots>
     <ConstraintActivitiesPreferredTimeSlots>
       <Weight_Percentage>85</Weight_Percentage>
-      <Teacher>Paperino Paolino</Teacher>
+      <Teacher>Milone di Crotone</Teacher>
       <Students></Students>
       <Subject></Subject>
       <Activity_Tag></Activity_Tag>
@@ -2525,11 +2525,11 @@
         <Hour>6</Hour>
       </Preferred_Time_Slot>
       <Active>true</Active>
-      <Comments>Paperino Paolino: giorno libero desiderato Mer (85%)</Comments>
+      <Comments>Milone di Crotone: giorno libero desiderato Mer (85%)</Comments>
     </ConstraintActivitiesPreferredTimeSlots>
     <ConstraintActivitiesPreferredTimeSlots>
       <Weight_Percentage>85</Weight_Percentage>
-      <Teacher>Nonna Papera</Teacher>
+      <Teacher>Marie Curie</Teacher>
       <Students></Students>
       <Subject></Subject>
       <Activity_Tag></Activity_Tag>
@@ -2616,11 +2616,11 @@
         <Hour>5</Hour>
       </Preferred_Time_Slot>
       <Active>true</Active>
-      <Comments>Nonna Papera: preferenza fascia bilanciato (85%)</Comments>
+      <Comments>Marie Curie: preferenza fascia bilanciato (85%)</Comments>
     </ConstraintActivitiesPreferredTimeSlots>
     <ConstraintActivitiesPreferredTimeSlots>
       <Weight_Percentage>85</Weight_Percentage>
-      <Teacher>Nonna Papera</Teacher>
+      <Teacher>Marie Curie</Teacher>
       <Students></Students>
       <Subject></Subject>
       <Activity_Tag></Activity_Tag>
@@ -2723,11 +2723,11 @@
         <Hour>6</Hour>
       </Preferred_Time_Slot>
       <Active>true</Active>
-      <Comments>Nonna Papera: giorno libero desiderato Gio (85%)</Comments>
+      <Comments>Marie Curie: giorno libero desiderato Gio (85%)</Comments>
     </ConstraintActivitiesPreferredTimeSlots>
     <ConstraintActivitiesPreferredTimeSlots>
       <Weight_Percentage>85</Weight_Percentage>
-      <Teacher>Gastone Paperone</Teacher>
+      <Teacher>Dante Alighieri</Teacher>
       <Students></Students>
       <Subject></Subject>
       <Activity_Tag></Activity_Tag>
@@ -2814,11 +2814,11 @@
         <Hour>5</Hour>
       </Preferred_Time_Slot>
       <Active>true</Active>
-      <Comments>Gastone Paperone: preferenza fascia bilanciato (85%)</Comments>
+      <Comments>Dante Alighieri: preferenza fascia bilanciato (85%)</Comments>
     </ConstraintActivitiesPreferredTimeSlots>
     <ConstraintActivitiesPreferredTimeSlots>
       <Weight_Percentage>85</Weight_Percentage>
-      <Teacher>Gastone Paperone</Teacher>
+      <Teacher>Dante Alighieri</Teacher>
       <Students></Students>
       <Subject></Subject>
       <Activity_Tag></Activity_Tag>
@@ -2921,11 +2921,11 @@
         <Hour>6</Hour>
       </Preferred_Time_Slot>
       <Active>true</Active>
-      <Comments>Gastone Paperone: giorno libero desiderato Mar (85%)</Comments>
+      <Comments>Dante Alighieri: giorno libero desiderato Mar (85%)</Comments>
     </ConstraintActivitiesPreferredTimeSlots>
     <ConstraintActivitiesPreferredTimeSlots>
       <Weight_Percentage>85</Weight_Percentage>
-      <Teacher>Dinamite Bla</Teacher>
+      <Teacher>Euclide</Teacher>
       <Students></Students>
       <Subject></Subject>
       <Activity_Tag></Activity_Tag>
@@ -3012,11 +3012,11 @@
         <Hour>4</Hour>
       </Preferred_Time_Slot>
       <Active>true</Active>
-      <Comments>Dinamite Bla: preferenza fascia prime (85%)</Comments>
+      <Comments>Euclide: preferenza fascia prime (85%)</Comments>
     </ConstraintActivitiesPreferredTimeSlots>
     <ConstraintTeacherMaxGapsPerDay>
       <Weight_Percentage>100</Weight_Percentage>
-      <Teacher>Archimede Pitagorico</Teacher>
+      <Teacher>Galileo Galilei</Teacher>
       <Max_Gaps>1</Max_Gaps>
       <Active>true</Active>
       <Comments></Comments>
@@ -3030,49 +3030,49 @@
     </ConstraintTeacherMaxGapsPerDay>
     <ConstraintTeacherMaxGapsPerDay>
       <Weight_Percentage>100</Weight_Percentage>
-      <Teacher>Pico De Paperis</Teacher>
+      <Teacher>Platone</Teacher>
       <Max_Gaps>1</Max_Gaps>
       <Active>true</Active>
       <Comments></Comments>
     </ConstraintTeacherMaxGapsPerDay>
     <ConstraintTeacherMaxGapsPerDay>
       <Weight_Percentage>100</Weight_Percentage>
-      <Teacher>Paperino Paolino</Teacher>
+      <Teacher>Milone di Crotone</Teacher>
       <Max_Gaps>1</Max_Gaps>
       <Active>true</Active>
       <Comments></Comments>
     </ConstraintTeacherMaxGapsPerDay>
     <ConstraintTeacherMaxGapsPerDay>
       <Weight_Percentage>100</Weight_Percentage>
-      <Teacher>Nonna Papera</Teacher>
+      <Teacher>Marie Curie</Teacher>
       <Max_Gaps>1</Max_Gaps>
       <Active>true</Active>
       <Comments></Comments>
     </ConstraintTeacherMaxGapsPerDay>
     <ConstraintTeacherMaxGapsPerDay>
       <Weight_Percentage>100</Weight_Percentage>
-      <Teacher>Gastone Paperone</Teacher>
+      <Teacher>Dante Alighieri</Teacher>
       <Max_Gaps>1</Max_Gaps>
       <Active>true</Active>
       <Comments></Comments>
     </ConstraintTeacherMaxGapsPerDay>
     <ConstraintTeacherMaxGapsPerDay>
       <Weight_Percentage>100</Weight_Percentage>
-      <Teacher>Dinamite Bla</Teacher>
+      <Teacher>Euclide</Teacher>
       <Max_Gaps>1</Max_Gaps>
       <Active>true</Active>
       <Comments></Comments>
     </ConstraintTeacherMaxGapsPerDay>
     <ConstraintTeacherMaxGapsPerDay>
       <Weight_Percentage>100</Weight_Percentage>
-      <Teacher>Battista</Teacher>
+      <Teacher>William Shakespeare</Teacher>
       <Max_Gaps>1</Max_Gaps>
       <Active>true</Active>
       <Comments></Comments>
     </ConstraintTeacherMaxGapsPerDay>
     <ConstraintTeacherMaxGapsPerWeek>
       <Weight_Percentage>100</Weight_Percentage>
-      <Teacher>Archimede Pitagorico</Teacher>
+      <Teacher>Galileo Galilei</Teacher>
       <Max_Gaps>1</Max_Gaps>
       <Active>true</Active>
       <Comments></Comments>
@@ -3086,42 +3086,42 @@
     </ConstraintTeacherMaxGapsPerWeek>
     <ConstraintTeacherMaxGapsPerWeek>
       <Weight_Percentage>100</Weight_Percentage>
-      <Teacher>Pico De Paperis</Teacher>
+      <Teacher>Platone</Teacher>
       <Max_Gaps>1</Max_Gaps>
       <Active>true</Active>
       <Comments></Comments>
     </ConstraintTeacherMaxGapsPerWeek>
     <ConstraintTeacherMaxGapsPerWeek>
       <Weight_Percentage>100</Weight_Percentage>
-      <Teacher>Paperino Paolino</Teacher>
+      <Teacher>Milone di Crotone</Teacher>
       <Max_Gaps>1</Max_Gaps>
       <Active>true</Active>
       <Comments></Comments>
     </ConstraintTeacherMaxGapsPerWeek>
     <ConstraintTeacherMaxGapsPerWeek>
       <Weight_Percentage>100</Weight_Percentage>
-      <Teacher>Nonna Papera</Teacher>
+      <Teacher>Marie Curie</Teacher>
       <Max_Gaps>1</Max_Gaps>
       <Active>true</Active>
       <Comments></Comments>
     </ConstraintTeacherMaxGapsPerWeek>
     <ConstraintTeacherMaxGapsPerWeek>
       <Weight_Percentage>100</Weight_Percentage>
-      <Teacher>Gastone Paperone</Teacher>
+      <Teacher>Dante Alighieri</Teacher>
       <Max_Gaps>1</Max_Gaps>
       <Active>true</Active>
       <Comments></Comments>
     </ConstraintTeacherMaxGapsPerWeek>
     <ConstraintTeacherMaxGapsPerWeek>
       <Weight_Percentage>100</Weight_Percentage>
-      <Teacher>Dinamite Bla</Teacher>
+      <Teacher>Euclide</Teacher>
       <Max_Gaps>1</Max_Gaps>
       <Active>true</Active>
       <Comments></Comments>
     </ConstraintTeacherMaxGapsPerWeek>
     <ConstraintTeacherMaxGapsPerWeek>
       <Weight_Percentage>100</Weight_Percentage>
-      <Teacher>Battista</Teacher>
+      <Teacher>William Shakespeare</Teacher>
       <Max_Gaps>1</Max_Gaps>
       <Active>true</Active>
       <Comments></Comments>
@@ -3966,7 +3966,7 @@
     <ConstraintActivityPreferredRoom>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>27</Activity_Id>
-      <Room>Laboratorio di Invenzioni</Room>
+      <Room>Laboratorio di Fisica</Room>
       <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
       <Comments></Comments>
@@ -3974,7 +3974,7 @@
     <ConstraintActivityPreferredRoom>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>28</Activity_Id>
-      <Room>Laboratorio di Invenzioni</Room>
+      <Room>Laboratorio di Fisica</Room>
       <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
       <Comments></Comments>
@@ -3982,7 +3982,7 @@
     <ConstraintActivityPreferredRoom>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>29</Activity_Id>
-      <Room>Laboratorio di Invenzioni</Room>
+      <Room>Laboratorio di Fisica</Room>
       <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
       <Comments></Comments>
@@ -3990,7 +3990,7 @@
     <ConstraintActivityPreferredRoom>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>30</Activity_Id>
-      <Room>Laboratorio di Invenzioni</Room>
+      <Room>Laboratorio di Fisica</Room>
       <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
       <Comments></Comments>
@@ -3998,7 +3998,7 @@
     <ConstraintActivityPreferredRoom>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>31</Activity_Id>
-      <Room>Laboratorio di Invenzioni</Room>
+      <Room>Laboratorio di Fisica</Room>
       <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
       <Comments></Comments>
@@ -4006,7 +4006,7 @@
     <ConstraintActivityPreferredRoom>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>32</Activity_Id>
-      <Room>Laboratorio di Invenzioni</Room>
+      <Room>Laboratorio di Fisica</Room>
       <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
       <Comments></Comments>
@@ -4014,7 +4014,7 @@
     <ConstraintActivityPreferredRoom>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>33</Activity_Id>
-      <Room>Laboratorio di Invenzioni</Room>
+      <Room>Laboratorio di Fisica</Room>
       <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
       <Comments></Comments>
@@ -4022,7 +4022,7 @@
     <ConstraintActivityPreferredRoom>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>34</Activity_Id>
-      <Room>Laboratorio di Invenzioni</Room>
+      <Room>Laboratorio di Fisica</Room>
       <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
       <Comments></Comments>
@@ -4030,7 +4030,7 @@
     <ConstraintActivityPreferredRoom>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>35</Activity_Id>
-      <Room>Laboratorio di Invenzioni</Room>
+      <Room>Laboratorio di Fisica</Room>
       <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
       <Comments></Comments>
@@ -4038,7 +4038,7 @@
     <ConstraintActivityPreferredRoom>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>36</Activity_Id>
-      <Room>Laboratorio di Invenzioni</Room>
+      <Room>Laboratorio di Fisica</Room>
       <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
       <Comments></Comments>

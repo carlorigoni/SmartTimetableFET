@@ -563,7 +563,7 @@ def generate_classes_print_html(data, options=None):
     lang = "en" if is_en else "it"
     is_trial = bool(options.get("is_trial", False))
 
-    institution = data.get("institution", 'Liceo & Tecnico "Pico De Paperis" - Paperopoli')
+    institution = data.get("institution", 'Liceo Classico e Scientifico Statale "Scuola di Atene"')
     subjects_list = [s["name"] for s in data.get("subjects", [])]
     subject_short_map = {s["name"]: s.get("short_name", "").strip() for s in data.get("subjects", []) if s.get("short_name", "").strip()}
     color_map = build_subject_color_map(subjects_list)
@@ -1152,7 +1152,7 @@ def generate_teachers_master_print_html(data, options=None):
     lang = "en" if is_en else "it"
     is_trial = bool(options.get("is_trial", False))
 
-    institution = data.get("institution", 'Liceo & Tecnico "Pico De Paperis" - Paperopoli')
+    institution = data.get("institution", 'Liceo Classico e Scientifico Statale "Scuola di Atene"')
     days = data.get("days", ["Lun", "Mar", "Mer", "Gio", "Ven"])
     hours = [h for h in data.get("hours", []) if not h.startswith("INT")]
 
@@ -1694,7 +1694,7 @@ def generate_teachers_master_docx(data, options=None):
     lang = "en" if is_en else "it"
     is_trial = bool(options.get("is_trial", False))
 
-    institution = data.get("institution", 'Liceo & Tecnico "Pico De Paperis" - Paperopoli')
+    institution = data.get("institution", 'Liceo Classico e Scientifico Statale "Scuola di Atene"')
     days = data.get("days", ["Lun", "Mar", "Mer", "Gio", "Ven"])
     hours = [h for h in data.get("hours", []) if not h.startswith("INT")]
 
@@ -1903,7 +1903,7 @@ def get_print_options_metadata(data):
         })
 
     return {
-        "institution": data.get("institution", 'Liceo & Tecnico "Pico De Paperis" - Paperopoli'),
+        "institution": data.get("institution", 'Liceo Classico e Scientifico Statale "Scuola di Atene"'),
         "default_validity_date": get_default_validity_date(),
         "classes": classes_meta,
         "teachers": teachers,
@@ -1923,7 +1923,7 @@ def generate_organico_template_docx(data=None, lang="it"):
     Supporta pienamente la localizzazione in lingua (Italiano / Inglese).
     """
     is_en = (lang == "en")
-    institution = 'Liceo & Tecnico "Pico De Paperis" - Modello Organico Docenti' if not is_en else 'High School & Technical Institute - Faculty Organico Model'
+    institution = 'Liceo Classico e Scientifico Statale "Scuola di Atene" - Modello Organico Docenti' if not is_en else '"School of Athens" High School - Faculty Organico Model'
     teachers_rows = []
 
     if data and data.get("teachers"):
@@ -1994,35 +1994,35 @@ def generate_organico_template_docx(data=None, lang="it"):
     if not teachers_rows:
         if is_en:
             teachers_rows = [
-                {"cdc": "A012 - Literature & Humanities", "name": "Gastone Paperone", "classi": "1A (4) - 2A (4) - 3A (4) - 4A (3) - 5A (3)", "hours": "18"},
-                {"cdc": "A012 - Literature & Humanities", "name": "Paperina", "classi": "1B (4) - 2B (4) - 3B (4) - 4B (3) - 5B (3)", "hours": "18"},
-                {"cdc": "A019 - History & Philosophy", "name": "Pico De Paperis", "classi": "1A (2) - 2A (2) - 3A (4) - 4A (5) - 5A (5)", "hours": "18"},
-                {"cdc": "A026 - Mathematics & Physics", "name": "Dinamite Bla", "classi": "1A (4) - 2A (4) - 3A (4) - 4A (3) - 5A (3)", "hours": "18"},
-                {"cdc": "A026 - Mathematics & Physics", "name": "Archimede Pitagorico", "classi": "1B (4) - 2B (4) - 3A (3) - 4A (3) - 5A (4)", "hours": "18"},
-                {"cdc": "A024 - Foreign Languages (English)", "name": "Battista", "classi": "1A (3) - 2A (3) - 3A (3) - 4A (3) - 5A (3) - POT (3)", "hours": "18"},
-                {"cdc": "A046 - Law & Economics", "name": "Paperon de' Paperoni", "classi": "1A (3) - 2A (3) - 3A (4) - 4A (4) - 5A (4)", "hours": "18"},
-                {"cdc": "A048 - Physical Education", "name": "Paperino Paolino", "classi": "1A (2) - 2A (2) - 3A (2) - 4A (2) - 5A (2) - POT (8)", "hours": "18"},
-                {"cdc": "A050 - Natural Sciences", "name": "Nonna Papera", "classi": "1A (4) - 2A (4) - 3A (4) - 4A (3) - 5A (3)", "hours": "18"}
+                {"cdc": "A012 - Literature & Humanities", "name": "Dante Alighieri", "classi": "1A (4) - 2A (4) - 3A (4) - 4A (3) - 5A (3)", "hours": "18"},
+                {"cdc": "A012 - Literature & Humanities", "name": "Alessandro Manzoni", "classi": "1B (4) - 2B (4) - 3B (4) - 4B (3) - 5B (3)", "hours": "18"},
+                {"cdc": "A019 - History & Philosophy", "name": "Platone", "classi": "1A (2) - 2A (2) - 3A (4) - 4A (5) - 5A (5)", "hours": "18"},
+                {"cdc": "A026 - Mathematics & Physics", "name": "Euclide", "classi": "1A (4) - 2A (4) - 3A (4) - 4A (3) - 5A (3)", "hours": "18"},
+                {"cdc": "A026 - Mathematics & Physics", "name": "Galileo Galilei", "classi": "1B (4) - 2B (4) - 3A (3) - 4A (3) - 5A (4)", "hours": "18"},
+                {"cdc": "A024 - Foreign Languages (English)", "name": "William Shakespeare", "classi": "1A (3) - 2A (3) - 3A (3) - 4A (3) - 5A (3) - POT (3)", "hours": "18"},
+                {"cdc": "A046 - Law & Economics", "name": "Adam Smith", "classi": "1A (3) - 2A (3) - 3A (4) - 4A (4) - 5A (4)", "hours": "18"},
+                {"cdc": "A048 - Physical Education", "name": "Milone di Crotone", "classi": "1A (2) - 2A (2) - 3A (2) - 4A (2) - 5A (2) - POT (8)", "hours": "18"},
+                {"cdc": "A050 - Natural Sciences", "name": "Marie Curie", "classi": "1A (4) - 2A (4) - 3A (4) - 4A (3) - 5A (3)", "hours": "18"}
             ]
         else:
             # Esempio completo con evidenza di più docenti per la stessa CdC (senza ripetere la CdC)
             teachers_rows = [
                 # Gruppo A012: 2 docenti sulla stessa CdC (il secondo docente ha la cella CdC vuota)
-                {"cdc": "A012 - Discipline Letterarie", "name": "Gastone Paperone", "classi": "1A (4) - 2A (4) - 3A (4) - 4A (3) - 5A (3)", "hours": "18"},
-                {"cdc": "A012 - Discipline Letterarie", "name": "Paperina", "classi": "1B (4) - 2B (4) - 3B (4) - 4B (3) - 5B (3)", "hours": "18"},
+                {"cdc": "A012 - Discipline Letterarie", "name": "Dante Alighieri", "classi": "1A (4) - 2A (4) - 3A (4) - 4A (3) - 5A (3)", "hours": "18"},
+                {"cdc": "A012 - Discipline Letterarie", "name": "Alessandro Manzoni", "classi": "1B (4) - 2B (4) - 3B (4) - 4B (3) - 5B (3)", "hours": "18"},
                 
                 # Gruppo A019: 1 docente
-                {"cdc": "A019 - Storia e Filosofia", "name": "Pico De Paperis", "classi": "1A (2) - 2A (2) - 3A (4) - 4A (5) - 5A (5)", "hours": "18"},
+                {"cdc": "A019 - Storia e Filosofia", "name": "Platone", "classi": "1A (2) - 2A (2) - 3A (4) - 4A (5) - 5A (5)", "hours": "18"},
                 
                 # Gruppo A026: 2 docenti sulla stessa CdC (il secondo docente ha la cella CdC vuota)
-                {"cdc": "A026 - Matematica e Fisica", "name": "Dinamite Bla", "classi": "1A (4) - 2A (4) - 3A (4) - 4A (3) - 5A (3)", "hours": "18"},
-                {"cdc": "A026 - Matematica e Fisica", "name": "Archimede Pitagorico", "classi": "1B (4) - 2B (4) - 3A (3) - 4A (3) - 5A (4)", "hours": "18"},
+                {"cdc": "A026 - Matematica e Fisica", "name": "Euclide", "classi": "1A (4) - 2A (4) - 3A (4) - 4A (3) - 5A (3)", "hours": "18"},
+                {"cdc": "A026 - Matematica e Fisica", "name": "Galileo Galilei", "classi": "1B (4) - 2B (4) - 3A (3) - 4A (3) - 5A (4)", "hours": "18"},
                 
                 # Altri docenti
-                {"cdc": "A024 - Lingua Inglese", "name": "Battista", "classi": "1A (3) - 2A (3) - 3A (3) - 4A (3) - 5A (3) - POT (3)", "hours": "18"},
-                {"cdc": "A046 - Economia e Diritto", "name": "Paperon de' Paperoni", "classi": "1A (3) - 2A (3) - 3A (4) - 4A (4) - 5A (4)", "hours": "18"},
-                {"cdc": "A048 - Scienze Motorie", "name": "Paperino Paolino", "classi": "1A (2) - 2A (2) - 3A (2) - 4A (2) - 5A (2) - POT (8)", "hours": "18"},
-                {"cdc": "A050 - Scienze Naturali", "name": "Nonna Papera", "classi": "1A (4) - 2A (4) - 3A (4) - 4A (3) - 5A (3)", "hours": "18"}
+                {"cdc": "A024 - Lingua Inglese", "name": "William Shakespeare", "classi": "1A (3) - 2A (3) - 3A (3) - 4A (3) - 5A (3) - POT (3)", "hours": "18"},
+                {"cdc": "A046 - Economia e Diritto", "name": "Adam Smith", "classi": "1A (3) - 2A (3) - 3A (4) - 4A (4) - 5A (4)", "hours": "18"},
+                {"cdc": "A048 - Scienze Motorie", "name": "Milone di Crotone", "classi": "1A (2) - 2A (2) - 3A (2) - 4A (2) - 5A (2) - POT (8)", "hours": "18"},
+                {"cdc": "A050 - Scienze Naturali", "name": "Marie Curie", "classi": "1A (4) - 2A (4) - 3A (4) - 4A (3) - 5A (3)", "hours": "18"}
             ]
 
     # Generazione OpenXML A4 Portrait

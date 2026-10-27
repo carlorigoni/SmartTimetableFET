@@ -53,7 +53,7 @@ class SchoolManager:
             # Assicura che la scuola principale 'default' esista sempre nel registro
             if "default" not in self.schools:
                 # Prova a leggere il nome reale dal current_project.json esistente
-                inst_name = "Liceo & Tecnico \"Pico De Paperis\""
+                inst_name = "Liceo Classico e Scientifico Statale \"Scuola di Atene\""
                 proj_file = os.path.join(DATA_DIR, "current_project.json")
                 if os.path.exists(proj_file):
                     try:
@@ -72,7 +72,7 @@ class SchoolManager:
                     "school_year": "2026/2027",
                     "meccanografico": "PDIS017007",
                     "status": "active",
-                    "owner_email": "admin@paperopoli.edu",
+                    "owner_email": "admin@scuolaatene.edu.it",
                     "created_at": datetime.now().isoformat(),
                     "approved_at": datetime.now().isoformat(),
                     "approved_by": "system",

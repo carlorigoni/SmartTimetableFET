@@ -1,6 +1,6 @@
 {
-  "institution": "Ludwig Von Drake High School - Duckburg",
-  "comments": "Official Duckburg Demonstration Timetable",
+  "institution": "School of Athens Classical & Scientific High School",
+  "comments": "Official School of Athens Demonstration Timetable",
   "days": [
     "Mon",
     "Tue",
@@ -68,7 +68,7 @@
   ],
   "teachers": [
     {
-      "name": "Gyro Gearloose",
+      "name": "Galileo Galilei",
       "short_name": "GYRO",
       "cdc": "A020",
       "target_hours": 18,
@@ -78,10 +78,10 @@
       "pref_shift_weight": 85,
       "free_day_1": "Fri",
       "free_day_strict": false,
-      "comments": "Physics & Inventions Laboratory"
+      "comments": "Physics & Lab Laboratory"
     },
     {
-      "name": "Scrooge McDuck",
+      "name": "Aristotle",
       "short_name": "SCRO",
       "cdc": "A046",
       "target_hours": 18,
@@ -94,7 +94,7 @@
       "comments": "Corporate Finance & Wealth Management (Vault counting on Mondays)"
     },
     {
-      "name": "Ludwig Von Drake",
+      "name": "Plato",
       "short_name": "LUDW",
       "cdc": "A019",
       "target_hours": 18,
@@ -107,7 +107,7 @@
       "comments": "World History & Universal Philosophy"
     },
     {
-      "name": "Donald Duck",
+      "name": "Milo of Croton",
       "short_name": "DONA",
       "cdc": "A048",
       "target_hours": 18,
@@ -120,7 +120,7 @@
       "comments": "Physical Education (dislikes 1st period morning alarms)"
     },
     {
-      "name": "Grandma Duck",
+      "name": "Marie Curie",
       "short_name": "GRAN",
       "cdc": "A050",
       "target_hours": 18,
@@ -133,7 +133,7 @@
       "comments": "Natural Sciences, Chemistry & Agriculture"
     },
     {
-      "name": "Gladstone Gander",
+      "name": "Dante Alighieri",
       "short_name": "GLAD",
       "cdc": "A012",
       "target_hours": 18,
@@ -146,7 +146,7 @@
       "comments": "Classical Literature & Rhetoric"
     },
     {
-      "name": "Hard Haid Moe",
+      "name": "Euclid",
       "short_name": "MOE",
       "cdc": "A026",
       "target_hours": 18,
@@ -159,7 +159,7 @@
       "comments": "Mathematics & Geometry"
     },
     {
-      "name": "Duckworth",
+      "name": "William Shakespeare",
       "short_name": "DUCK",
       "cdc": "A024",
       "target_hours": 15,
@@ -182,11 +182,11 @@
       "comments": "Scienze Matematiche"
     },
     {
-      "name": "Physics & Inventions",
+      "name": "Physics & Lab",
       "comments": "Fisica Sperimentale"
     },
     {
-      "name": "Natural Sciences & Botany",
+      "name": "Natural Sciences & Chemistry",
       "comments": "Scienze della Terra e Biologia"
     },
     {
@@ -248,14 +248,14 @@
       "building": "Main Campus"
     },
     {
-      "name": "Duckburg Gymnasium",
+      "name": "Athens Gymnasium",
       "capacity": 57,
       "room_type": "gym",
       "building": "Main Campus",
       "max_concurrent": 2
     },
     {
-      "name": "Money Bin Auditorium",
+      "name": "Academy Auditorium",
       "capacity": 100,
       "room_type": "special",
       "building": "Main Campus"
@@ -273,7 +273,7 @@
     {
       "id": "1",
       "teachers": [
-        "Gladstone Gander"
+        "Dante Alighieri"
       ],
       "students": [
         "1A"
@@ -288,7 +288,7 @@
     {
       "id": "2",
       "teachers": [
-        "Gladstone Gander"
+        "Dante Alighieri"
       ],
       "students": [
         "1A"
@@ -303,7 +303,7 @@
     {
       "id": "3",
       "teachers": [
-        "Gladstone Gander"
+        "Dante Alighieri"
       ],
       "students": [
         "1A"
@@ -318,7 +318,7 @@
     {
       "id": "4",
       "teachers": [
-        "Gladstone Gander"
+        "Dante Alighieri"
       ],
       "students": [
         "2A"
@@ -333,7 +333,7 @@
     {
       "id": "5",
       "teachers": [
-        "Gladstone Gander"
+        "Dante Alighieri"
       ],
       "students": [
         "2A"
@@ -348,7 +348,7 @@
     {
       "id": "6",
       "teachers": [
-        "Gladstone Gander"
+        "Dante Alighieri"
       ],
       "students": [
         "2A"
@@ -363,7 +363,7 @@
     {
       "id": "7",
       "teachers": [
-        "Gladstone Gander"
+        "Dante Alighieri"
       ],
       "students": [
         "3A"
@@ -378,7 +378,7 @@
     {
       "id": "8",
       "teachers": [
-        "Gladstone Gander"
+        "Dante Alighieri"
       ],
       "students": [
         "3A"
@@ -393,7 +393,7 @@
     {
       "id": "9",
       "teachers": [
-        "Gladstone Gander"
+        "Dante Alighieri"
       ],
       "students": [
         "3A"
@@ -408,7 +408,7 @@
     {
       "id": "10",
       "teachers": [
-        "Gladstone Gander"
+        "Dante Alighieri"
       ],
       "students": [
         "4A"
@@ -423,7 +423,7 @@
     {
       "id": "11",
       "teachers": [
-        "Gladstone Gander"
+        "Dante Alighieri"
       ],
       "students": [
         "4A"
@@ -438,7 +438,7 @@
     {
       "id": "12",
       "teachers": [
-        "Gladstone Gander"
+        "Dante Alighieri"
       ],
       "students": [
         "5A"
@@ -453,7 +453,7 @@
     {
       "id": "13",
       "teachers": [
-        "Gladstone Gander"
+        "Dante Alighieri"
       ],
       "students": [
         "5A"
@@ -468,7 +468,7 @@
     {
       "id": "14",
       "teachers": [
-        "Hard Haid Moe"
+        "Euclid"
       ],
       "students": [
         "1A"
@@ -483,7 +483,7 @@
     {
       "id": "15",
       "teachers": [
-        "Hard Haid Moe"
+        "Euclid"
       ],
       "students": [
         "1A"
@@ -498,7 +498,7 @@
     {
       "id": "16",
       "teachers": [
-        "Hard Haid Moe"
+        "Euclid"
       ],
       "students": [
         "1A"
@@ -513,7 +513,7 @@
     {
       "id": "17",
       "teachers": [
-        "Hard Haid Moe"
+        "Euclid"
       ],
       "students": [
         "2A"
@@ -528,7 +528,7 @@
     {
       "id": "18",
       "teachers": [
-        "Hard Haid Moe"
+        "Euclid"
       ],
       "students": [
         "2A"
@@ -543,7 +543,7 @@
     {
       "id": "19",
       "teachers": [
-        "Hard Haid Moe"
+        "Euclid"
       ],
       "students": [
         "2A"
@@ -558,7 +558,7 @@
     {
       "id": "20",
       "teachers": [
-        "Hard Haid Moe"
+        "Euclid"
       ],
       "students": [
         "3A"
@@ -573,7 +573,7 @@
     {
       "id": "21",
       "teachers": [
-        "Hard Haid Moe"
+        "Euclid"
       ],
       "students": [
         "3A"
@@ -588,7 +588,7 @@
     {
       "id": "22",
       "teachers": [
-        "Hard Haid Moe"
+        "Euclid"
       ],
       "students": [
         "3A"
@@ -603,7 +603,7 @@
     {
       "id": "23",
       "teachers": [
-        "Hard Haid Moe"
+        "Euclid"
       ],
       "students": [
         "4A"
@@ -618,7 +618,7 @@
     {
       "id": "24",
       "teachers": [
-        "Hard Haid Moe"
+        "Euclid"
       ],
       "students": [
         "4A"
@@ -633,7 +633,7 @@
     {
       "id": "25",
       "teachers": [
-        "Hard Haid Moe"
+        "Euclid"
       ],
       "students": [
         "5A"
@@ -648,7 +648,7 @@
     {
       "id": "26",
       "teachers": [
-        "Hard Haid Moe"
+        "Euclid"
       ],
       "students": [
         "5A"
@@ -663,352 +663,352 @@
     {
       "id": "27",
       "teachers": [
-        "Gyro Gearloose"
+        "Galileo Galilei"
       ],
       "students": [
         "1A"
       ],
-      "subject": "Physics & Inventions",
+      "subject": "Physics & Lab",
       "duration": 2,
       "total_hours": 3,
       "room": "Inventions Lab",
       "active": true,
-      "comments": "Physics & Inventions for 1A"
+      "comments": "Physics & Lab for 1A"
     },
     {
       "id": "28",
       "teachers": [
-        "Gyro Gearloose"
+        "Galileo Galilei"
       ],
       "students": [
         "1A"
       ],
-      "subject": "Physics & Inventions",
+      "subject": "Physics & Lab",
       "duration": 1,
       "total_hours": 3,
       "room": "Inventions Lab",
       "active": true,
-      "comments": "Physics & Inventions for 1A"
+      "comments": "Physics & Lab for 1A"
     },
     {
       "id": "29",
       "teachers": [
-        "Gyro Gearloose"
+        "Galileo Galilei"
       ],
       "students": [
         "2A"
       ],
-      "subject": "Physics & Inventions",
+      "subject": "Physics & Lab",
       "duration": 2,
       "total_hours": 3,
       "room": "Inventions Lab",
       "active": true,
-      "comments": "Physics & Inventions for 2A"
+      "comments": "Physics & Lab for 2A"
     },
     {
       "id": "30",
       "teachers": [
-        "Gyro Gearloose"
+        "Galileo Galilei"
       ],
       "students": [
         "2A"
       ],
-      "subject": "Physics & Inventions",
+      "subject": "Physics & Lab",
       "duration": 1,
       "total_hours": 3,
       "room": "Inventions Lab",
       "active": true,
-      "comments": "Physics & Inventions for 2A"
+      "comments": "Physics & Lab for 2A"
     },
     {
       "id": "31",
       "teachers": [
-        "Gyro Gearloose"
+        "Galileo Galilei"
       ],
       "students": [
         "3A"
       ],
-      "subject": "Physics & Inventions",
+      "subject": "Physics & Lab",
       "duration": 2,
       "total_hours": 4,
       "room": "Inventions Lab",
       "active": true,
-      "comments": "Physics & Inventions for 3A"
+      "comments": "Physics & Lab for 3A"
     },
     {
       "id": "32",
       "teachers": [
-        "Gyro Gearloose"
+        "Galileo Galilei"
       ],
       "students": [
         "3A"
       ],
-      "subject": "Physics & Inventions",
+      "subject": "Physics & Lab",
       "duration": 2,
       "total_hours": 4,
       "room": "Inventions Lab",
       "active": true,
-      "comments": "Physics & Inventions for 3A"
+      "comments": "Physics & Lab for 3A"
     },
     {
       "id": "33",
       "teachers": [
-        "Gyro Gearloose"
+        "Galileo Galilei"
       ],
       "students": [
         "4A"
       ],
-      "subject": "Physics & Inventions",
+      "subject": "Physics & Lab",
       "duration": 2,
       "total_hours": 4,
       "room": "Inventions Lab",
       "active": true,
-      "comments": "Physics & Inventions for 4A"
+      "comments": "Physics & Lab for 4A"
     },
     {
       "id": "34",
       "teachers": [
-        "Gyro Gearloose"
+        "Galileo Galilei"
       ],
       "students": [
         "4A"
       ],
-      "subject": "Physics & Inventions",
+      "subject": "Physics & Lab",
       "duration": 2,
       "total_hours": 4,
       "room": "Inventions Lab",
       "active": true,
-      "comments": "Physics & Inventions for 4A"
+      "comments": "Physics & Lab for 4A"
     },
     {
       "id": "35",
       "teachers": [
-        "Gyro Gearloose"
+        "Galileo Galilei"
       ],
       "students": [
         "5A"
       ],
-      "subject": "Physics & Inventions",
+      "subject": "Physics & Lab",
       "duration": 2,
       "total_hours": 4,
       "room": "Inventions Lab",
       "active": true,
-      "comments": "Physics & Inventions for 5A"
+      "comments": "Physics & Lab for 5A"
     },
     {
       "id": "36",
       "teachers": [
-        "Gyro Gearloose"
+        "Galileo Galilei"
       ],
       "students": [
         "5A"
       ],
-      "subject": "Physics & Inventions",
+      "subject": "Physics & Lab",
       "duration": 2,
       "total_hours": 4,
       "room": "Inventions Lab",
       "active": true,
-      "comments": "Physics & Inventions for 5A"
+      "comments": "Physics & Lab for 5A"
     },
     {
       "id": "37",
       "teachers": [
-        "Grandma Duck"
+        "Marie Curie"
       ],
       "students": [
         "1A"
       ],
-      "subject": "Natural Sciences & Botany",
+      "subject": "Natural Sciences & Chemistry",
       "duration": 2,
       "total_hours": 4,
       "room": "",
       "active": true,
-      "comments": "Natural Sciences & Botany for 1A"
+      "comments": "Natural Sciences & Chemistry for 1A"
     },
     {
       "id": "38",
       "teachers": [
-        "Grandma Duck"
+        "Marie Curie"
       ],
       "students": [
         "1A"
       ],
-      "subject": "Natural Sciences & Botany",
+      "subject": "Natural Sciences & Chemistry",
       "duration": 1,
       "total_hours": 4,
       "room": "",
       "active": true,
-      "comments": "Natural Sciences & Botany for 1A"
+      "comments": "Natural Sciences & Chemistry for 1A"
     },
     {
       "id": "39",
       "teachers": [
-        "Grandma Duck"
+        "Marie Curie"
       ],
       "students": [
         "1A"
       ],
-      "subject": "Natural Sciences & Botany",
+      "subject": "Natural Sciences & Chemistry",
       "duration": 1,
       "total_hours": 4,
       "room": "",
       "active": true,
-      "comments": "Natural Sciences & Botany for 1A"
+      "comments": "Natural Sciences & Chemistry for 1A"
     },
     {
       "id": "40",
       "teachers": [
-        "Grandma Duck"
+        "Marie Curie"
       ],
       "students": [
         "2A"
       ],
-      "subject": "Natural Sciences & Botany",
+      "subject": "Natural Sciences & Chemistry",
       "duration": 2,
       "total_hours": 4,
       "room": "",
       "active": true,
-      "comments": "Natural Sciences & Botany for 2A"
+      "comments": "Natural Sciences & Chemistry for 2A"
     },
     {
       "id": "41",
       "teachers": [
-        "Grandma Duck"
+        "Marie Curie"
       ],
       "students": [
         "2A"
       ],
-      "subject": "Natural Sciences & Botany",
+      "subject": "Natural Sciences & Chemistry",
       "duration": 1,
       "total_hours": 4,
       "room": "",
       "active": true,
-      "comments": "Natural Sciences & Botany for 2A"
+      "comments": "Natural Sciences & Chemistry for 2A"
     },
     {
       "id": "42",
       "teachers": [
-        "Grandma Duck"
+        "Marie Curie"
       ],
       "students": [
         "2A"
       ],
-      "subject": "Natural Sciences & Botany",
+      "subject": "Natural Sciences & Chemistry",
       "duration": 1,
       "total_hours": 4,
       "room": "",
       "active": true,
-      "comments": "Natural Sciences & Botany for 2A"
+      "comments": "Natural Sciences & Chemistry for 2A"
     },
     {
       "id": "43",
       "teachers": [
-        "Grandma Duck"
+        "Marie Curie"
       ],
       "students": [
         "3A"
       ],
-      "subject": "Natural Sciences & Botany",
+      "subject": "Natural Sciences & Chemistry",
       "duration": 2,
       "total_hours": 4,
       "room": "",
       "active": true,
-      "comments": "Natural Sciences & Botany for 3A"
+      "comments": "Natural Sciences & Chemistry for 3A"
     },
     {
       "id": "44",
       "teachers": [
-        "Grandma Duck"
+        "Marie Curie"
       ],
       "students": [
         "3A"
       ],
-      "subject": "Natural Sciences & Botany",
+      "subject": "Natural Sciences & Chemistry",
       "duration": 1,
       "total_hours": 4,
       "room": "",
       "active": true,
-      "comments": "Natural Sciences & Botany for 3A"
+      "comments": "Natural Sciences & Chemistry for 3A"
     },
     {
       "id": "45",
       "teachers": [
-        "Grandma Duck"
+        "Marie Curie"
       ],
       "students": [
         "3A"
       ],
-      "subject": "Natural Sciences & Botany",
+      "subject": "Natural Sciences & Chemistry",
       "duration": 1,
       "total_hours": 4,
       "room": "",
       "active": true,
-      "comments": "Natural Sciences & Botany for 3A"
+      "comments": "Natural Sciences & Chemistry for 3A"
     },
     {
       "id": "46",
       "teachers": [
-        "Grandma Duck"
+        "Marie Curie"
       ],
       "students": [
         "4A"
       ],
-      "subject": "Natural Sciences & Botany",
+      "subject": "Natural Sciences & Chemistry",
       "duration": 2,
       "total_hours": 3,
       "room": "",
       "active": true,
-      "comments": "Natural Sciences & Botany for 4A"
+      "comments": "Natural Sciences & Chemistry for 4A"
     },
     {
       "id": "47",
       "teachers": [
-        "Grandma Duck"
+        "Marie Curie"
       ],
       "students": [
         "4A"
       ],
-      "subject": "Natural Sciences & Botany",
+      "subject": "Natural Sciences & Chemistry",
       "duration": 1,
       "total_hours": 3,
       "room": "",
       "active": true,
-      "comments": "Natural Sciences & Botany for 4A"
+      "comments": "Natural Sciences & Chemistry for 4A"
     },
     {
       "id": "48",
       "teachers": [
-        "Grandma Duck"
+        "Marie Curie"
       ],
       "students": [
         "5A"
       ],
-      "subject": "Natural Sciences & Botany",
+      "subject": "Natural Sciences & Chemistry",
       "duration": 2,
       "total_hours": 3,
       "room": "",
       "active": true,
-      "comments": "Natural Sciences & Botany for 5A"
+      "comments": "Natural Sciences & Chemistry for 5A"
     },
     {
       "id": "49",
       "teachers": [
-        "Grandma Duck"
+        "Marie Curie"
       ],
       "students": [
         "5A"
       ],
-      "subject": "Natural Sciences & Botany",
+      "subject": "Natural Sciences & Chemistry",
       "duration": 1,
       "total_hours": 3,
       "room": "",
       "active": true,
-      "comments": "Natural Sciences & Botany for 5A"
+      "comments": "Natural Sciences & Chemistry for 5A"
     },
     {
       "id": "50",
       "teachers": [
-        "Ludwig Von Drake"
+        "Plato"
       ],
       "students": [
         "1A"
@@ -1023,7 +1023,7 @@
     {
       "id": "51",
       "teachers": [
-        "Ludwig Von Drake"
+        "Plato"
       ],
       "students": [
         "2A"
@@ -1038,7 +1038,7 @@
     {
       "id": "52",
       "teachers": [
-        "Ludwig Von Drake"
+        "Plato"
       ],
       "students": [
         "3A"
@@ -1053,7 +1053,7 @@
     {
       "id": "53",
       "teachers": [
-        "Ludwig Von Drake"
+        "Plato"
       ],
       "students": [
         "3A"
@@ -1068,7 +1068,7 @@
     {
       "id": "54",
       "teachers": [
-        "Ludwig Von Drake"
+        "Plato"
       ],
       "students": [
         "4A"
@@ -1083,7 +1083,7 @@
     {
       "id": "55",
       "teachers": [
-        "Ludwig Von Drake"
+        "Plato"
       ],
       "students": [
         "4A"
@@ -1098,7 +1098,7 @@
     {
       "id": "56",
       "teachers": [
-        "Ludwig Von Drake"
+        "Plato"
       ],
       "students": [
         "4A"
@@ -1113,7 +1113,7 @@
     {
       "id": "57",
       "teachers": [
-        "Ludwig Von Drake"
+        "Plato"
       ],
       "students": [
         "5A"
@@ -1128,7 +1128,7 @@
     {
       "id": "58",
       "teachers": [
-        "Ludwig Von Drake"
+        "Plato"
       ],
       "students": [
         "5A"
@@ -1143,7 +1143,7 @@
     {
       "id": "59",
       "teachers": [
-        "Ludwig Von Drake"
+        "Plato"
       ],
       "students": [
         "5A"
@@ -1158,7 +1158,7 @@
     {
       "id": "60",
       "teachers": [
-        "Scrooge McDuck"
+        "Aristotle"
       ],
       "students": [
         "1A"
@@ -1173,7 +1173,7 @@
     {
       "id": "61",
       "teachers": [
-        "Scrooge McDuck"
+        "Aristotle"
       ],
       "students": [
         "1A"
@@ -1188,7 +1188,7 @@
     {
       "id": "62",
       "teachers": [
-        "Scrooge McDuck"
+        "Aristotle"
       ],
       "students": [
         "2A"
@@ -1203,7 +1203,7 @@
     {
       "id": "63",
       "teachers": [
-        "Scrooge McDuck"
+        "Aristotle"
       ],
       "students": [
         "2A"
@@ -1218,7 +1218,7 @@
     {
       "id": "64",
       "teachers": [
-        "Scrooge McDuck"
+        "Aristotle"
       ],
       "students": [
         "3A"
@@ -1233,7 +1233,7 @@
     {
       "id": "65",
       "teachers": [
-        "Scrooge McDuck"
+        "Aristotle"
       ],
       "students": [
         "3A"
@@ -1248,7 +1248,7 @@
     {
       "id": "66",
       "teachers": [
-        "Scrooge McDuck"
+        "Aristotle"
       ],
       "students": [
         "4A"
@@ -1263,7 +1263,7 @@
     {
       "id": "67",
       "teachers": [
-        "Scrooge McDuck"
+        "Aristotle"
       ],
       "students": [
         "4A"
@@ -1278,7 +1278,7 @@
     {
       "id": "68",
       "teachers": [
-        "Scrooge McDuck"
+        "Aristotle"
       ],
       "students": [
         "5A"
@@ -1293,7 +1293,7 @@
     {
       "id": "69",
       "teachers": [
-        "Scrooge McDuck"
+        "Aristotle"
       ],
       "students": [
         "5A"
@@ -1308,7 +1308,7 @@
     {
       "id": "70",
       "teachers": [
-        "Donald Duck"
+        "Milo of Croton"
       ],
       "students": [
         "1A"
@@ -1323,7 +1323,7 @@
     {
       "id": "71",
       "teachers": [
-        "Donald Duck"
+        "Milo of Croton"
       ],
       "students": [
         "2A"
@@ -1338,7 +1338,7 @@
     {
       "id": "72",
       "teachers": [
-        "Donald Duck"
+        "Milo of Croton"
       ],
       "students": [
         "3A"
@@ -1353,7 +1353,7 @@
     {
       "id": "73",
       "teachers": [
-        "Donald Duck"
+        "Milo of Croton"
       ],
       "students": [
         "4A"
@@ -1368,7 +1368,7 @@
     {
       "id": "74",
       "teachers": [
-        "Donald Duck"
+        "Milo of Croton"
       ],
       "students": [
         "5A"
@@ -1383,7 +1383,7 @@
     {
       "id": "75",
       "teachers": [
-        "Duckworth"
+        "William Shakespeare"
       ],
       "students": [
         "1A"
@@ -1398,7 +1398,7 @@
     {
       "id": "76",
       "teachers": [
-        "Duckworth"
+        "William Shakespeare"
       ],
       "students": [
         "1A"
@@ -1413,7 +1413,7 @@
     {
       "id": "77",
       "teachers": [
-        "Duckworth"
+        "William Shakespeare"
       ],
       "students": [
         "2A"
@@ -1428,7 +1428,7 @@
     {
       "id": "78",
       "teachers": [
-        "Duckworth"
+        "William Shakespeare"
       ],
       "students": [
         "2A"
@@ -1443,7 +1443,7 @@
     {
       "id": "79",
       "teachers": [
-        "Duckworth"
+        "William Shakespeare"
       ],
       "students": [
         "3A"
@@ -1458,7 +1458,7 @@
     {
       "id": "80",
       "teachers": [
-        "Duckworth"
+        "William Shakespeare"
       ],
       "students": [
         "3A"
@@ -1473,7 +1473,7 @@
     {
       "id": "81",
       "teachers": [
-        "Duckworth"
+        "William Shakespeare"
       ],
       "students": [
         "4A"
@@ -1488,7 +1488,7 @@
     {
       "id": "82",
       "teachers": [
-        "Duckworth"
+        "William Shakespeare"
       ],
       "students": [
         "4A"
@@ -1503,7 +1503,7 @@
     {
       "id": "83",
       "teachers": [
-        "Duckworth"
+        "William Shakespeare"
       ],
       "students": [
         "5A"
@@ -1518,7 +1518,7 @@
     {
       "id": "84",
       "teachers": [
-        "Duckworth"
+        "William Shakespeare"
       ],
       "students": [
         "5A"
@@ -1533,7 +1533,7 @@
     {
       "id": "85",
       "teachers": [
-        "Donald Duck"
+        "Milo of Croton"
       ],
       "students": [],
       "subject": "Disposizione",
@@ -1547,7 +1547,7 @@
     {
       "id": "86",
       "teachers": [
-        "Duckworth"
+        "William Shakespeare"
       ],
       "students": [],
       "subject": "Disposizione",
@@ -1560,8 +1560,8 @@
     }
   ],
   "teacher_availability": {
-    "Gyro Gearloose": [],
-    "Scrooge McDuck": [
+    "Galileo Galilei": [],
+    "Aristotle": [
       "Mon|1",
       "Mon|2",
       "Mon|3",
@@ -1569,12 +1569,12 @@
       "Mon|5",
       "Mon|6"
     ],
-    "Ludwig Von Drake": [],
-    "Donald Duck": [],
-    "Grandma Duck": [],
-    "Gladstone Gander": [],
-    "Hard Haid Moe": [],
-    "Duckworth": []
+    "Plato": [],
+    "Milo of Croton": [],
+    "Marie Curie": [],
+    "Dante Alighieri": [],
+    "Euclid": [],
+    "William Shakespeare": []
   },
   "class_availability": {
     "1A": [
@@ -2144,27 +2144,27 @@
     "70": {
       "day": "Fri",
       "hour": "5",
-      "room": "Duckburg Gymnasium"
+      "room": "Athens Gymnasium"
     },
     "71": {
       "day": "Mon",
       "hour": "5",
-      "room": "Duckburg Gymnasium"
+      "room": "Athens Gymnasium"
     },
     "72": {
       "day": "Tue",
       "hour": "3",
-      "room": "Duckburg Gymnasium"
+      "room": "Athens Gymnasium"
     },
     "73": {
       "day": "Tue",
       "hour": "1",
-      "room": "Duckburg Gymnasium"
+      "room": "Athens Gymnasium"
     },
     "74": {
       "day": "Fri",
       "hour": "3",
-      "room": "Duckburg Gymnasium"
+      "room": "Athens Gymnasium"
     },
     "75": {
       "day": "Mon",

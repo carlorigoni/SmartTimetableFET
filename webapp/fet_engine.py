@@ -189,7 +189,7 @@ DEFAULT_CONSTRAINTS = {
 }
 
 DEFAULT_PARAMETERS = {
-    "Nome istituto": 'Liceo & Tecnico "Pico De Paperis" - Paperopoli',
+    "Nome istituto": 'Liceo Classico e Scientifico Statale "Scuola di Atene"',
     "Commenti": "Orario configurato con Eurario Suite FET",
     "Nome file .fet": "ParametriOrario",
     "Versione FET dichiarata": "7.12.0",

@@ -22,7 +22,7 @@ let pollSolverTimer = null;
 let currentSolverRunning = false;
 
 // --- VERSIONE E IDENTITÀ APPLICATIVA ---
-const APP_VERSION = '1.9.6';
+const APP_VERSION = '1.9.7';
 
 // --- OPTIMISTIC CONCURRENCY CONTROL (OCC) & FETCH INTERCEPTOR ---
 window.CURRENT_DATA_VERSION = null;
@@ -607,10 +607,10 @@ async function submitCreateSchool() {
 async function createDemoSchool() {
   const isEn = window.I18N && window.I18N.getLanguage() === 'en';
   if (!confirm(isEn
-    ? 'Do you want to initialize and explore Eurario with the preloaded demonstration school (Duckburg)?'
-    : 'Vuoi caricare la scuola dimostrativa di Paperopoli completa di orario, docenti e vincoli?')) return;
+    ? 'Do you want to initialize and explore Eurario with the preloaded demonstration school ("School of Athens")?'
+    : 'Vuoi caricare la scuola dimostrativa "Scuola di Atene" completa di orario, docenti e vincoli?')) return;
 
-  showToast(isEn ? 'Setting up Duckburg demo school...' : 'Inizializzazione scuola di Paperopoli in corso...');
+  showToast(isEn ? 'Setting up "School of Athens" demo school...' : 'Inizializzazione scuola "Scuola di Atene" in corso...');
   try {
     const res = await fetch('/api/schools/create_demo', {
       method: 'POST',
@@ -619,7 +619,7 @@ async function createDemoSchool() {
     });
     const data = await res.json();
     if (data.success) {
-      showToast(isEn ? 'Demo school loaded successfully!' : 'Scuola di Paperopoli caricata con successo!', 'ok');
+      showToast(isEn ? 'Demo school loaded successfully!' : 'Scuola "Scuola di Atene" caricata con successo!', 'ok');
       await loadMySchools();
       await refreshAppState();
       navigate('dashboard', false);
@@ -870,7 +870,7 @@ function renderOnboardingSchoolWelcome() {
           <span>➕</span> <span>${isEn ? 'Register New School' : 'Registra Nuovo Istituto'}</span>
         </button>
         <button class="btn btn-sec btn-lg" onclick="createDemoSchool()" style="padding: 12px 24px; font-size: 14px; font-weight: 700; border-radius: 10px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;">
-          <span>🏰</span> <span>${isEn ? 'Load Demo School (Duckburg)' : 'Carica Scuola di Esempio (Paperopoli)'}</span>
+          <span>🏰</span> <span>${isEn ? 'Load Demo School ("School of Athens")' : 'Carica Scuola di Esempio ("Scuola di Atene")'}</span>
         </button>
       </div>
     </div>
@@ -12008,7 +12008,7 @@ async function renderParameters() {
       <div style="display:grid;grid-template-columns:2fr 1.2fr 1fr;gap:14px;margin-top:12px;">
         <div class="form-group">
           <label class="form-label">${isEn ? 'School / Institution Name *' : "Nome dell'Istituto Scolastico *"}</label>
-          <input type="text" id="cfgInstName" class="form-input" value="${escapeHtml(cfg.institution || (currentSchool ? currentSchool.name : ''))}" placeholder="${isEn ? 'e.g. Ludwig Von Drake High School' : 'es. Liceo Scientifico Galileo Galilei'}">
+          <input type="text" id="cfgInstName" class="form-input" value="${escapeHtml(cfg.institution || (currentSchool ? currentSchool.name : ''))}" placeholder="${isEn ? 'e.g. Athens Academy High School' : 'es. Liceo Scientifico Galileo Galilei'}">
         </div>
         <div class="form-group">
           <label class="form-label">${isEn ? 'City / Town' : 'Città / Comune'}</label>
@@ -12589,17 +12589,17 @@ async function renderSnapshots() {
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;">
           <div>
             <div class="card-title" style="margin-bottom:3px;display:flex;align-items:center;gap:6px;">
-              <span>🏰</span> <b>${isEn ? 'Sample Timetables (Duckburg & Paperopoli) & Project Reset' : 'Database Demo Didattici (Paperopoli & Duckburg) & Reset'}</b>
+              <span>🏰</span> <b>${isEn ? 'Sample Timetables ("School of Athens") & Project Reset' : 'Database Demo Didattici ("Scuola di Atene") & Reset'}</b>
             </div>
             <div style="font-size:12px;color:var(--text-muted);max-width:680px;line-height:1.4;">
               ${isEn 
-                ? 'Reload a complete sample school timetable at any time (choose between <b>Duckburg</b> in English or <b>Paperopoli</b> in Italian, both with 100% pre-solved timetable) or <b>reset to a clean blank sheet</b> to start a new school from scratch.' 
-                : 'Ricarica in qualsiasi momento un orario didattico dimostrativo completo (scegli tra <b>Paperopoli</b> in Italiano oppure <b>Duckburg</b> in Inglese, entrambi con orario risolto al 100%) oppure <b>azzera l\'applicazione a foglio bianco</b> per iniziare una nuova scuola da zero.'}
+                ? 'Reload a complete sample school timetable at any time (choose between English or Italian version of <b>"School of Athens"</b>, both with 100% pre-solved timetable) or <b>reset to a clean blank sheet</b> to start a new school from scratch.' 
+                : 'Ricarica in qualsiasi momento un orario didattico dimostrativo completo (scegli tra la versione in Italiano oppure in Inglese del <b>Liceo "Scuola di Atene"</b>, entrambi con orario risolto al 100%) oppure <b>azzera l\'applicazione a foglio bianco</b> per iniziare una nuova scuola da zero.'}
             </div>
           </div>
           <div style="display:flex;gap:10px;flex-wrap:wrap;">
-            <button class="btn btn-outline" onclick="confirmRestoreDemo()" title="${isEn ? 'Restore sample demonstration timetable (Duckburg or Paperopoli)' : 'Ripristina un orario didattico dimostrativo (Paperopoli o Duckburg)'}" style="font-weight:700;border:1.5px solid var(--primary);color:var(--primary);background:var(--bg-main);">
-              🏰 ${isEn ? 'Restore Sample Data (Duckburg / Paperopoli)' : 'Ripristina Demo (Paperopoli / Duckburg)'}
+            <button class="btn btn-outline" onclick="confirmRestoreDemo()" title="${isEn ? 'Restore sample demonstration timetable (\"School of Athens\")' : 'Ripristina un orario didattico dimostrativo (\"Scuola di Atene\")'}" style="font-weight:700;border:1.5px solid var(--primary);color:var(--primary);background:var(--bg-main);">
+              🏰 ${isEn ? 'Restore Sample Data (\"School of Athens\")' : 'Ripristina Demo (\"Scuola di Atene\")'}
             </button>
             <button class="btn btn-danger" onclick="confirmResetEmpty()" title="${isEn ? 'Empty database completely and start with a clean school' : 'Svuota completamente il database e crea un nuovo istituto pulito'}" style="font-weight:700;">
               🧹 ${isEn ? 'Reset All (Blank Sheet)' : 'Azzera Tutto (Foglio Bianco)'}
@@ -12723,24 +12723,24 @@ function confirmRestoreDemo() {
   showModal(`
     <div class="modal-dialog" style="max-width:560px;">
       <div class="modal-header">
-        <div class="modal-title">🏰 ${isEn ? 'Restore Sample Timetable (Duckburg / Paperopoli)' : 'Ripristina Demo Didattica (Paperopoli / Duckburg)'}</div>
+        <div class="modal-title">🏰 ${isEn ? 'Restore Sample Timetable (\"School of Athens\")' : 'Ripristina Demo Didattica (\"Scuola di Atene\")'}</div>
         <button class="modal-close" onclick="closeModal()">×</button>
       </div>
       <div class="modal-body" style="padding:18px 22px;display:flex;flex-direction:column;gap:14px;">
         <p style="font-size:13.5px;color:var(--text-main);line-height:1.5;">
           ${isEn 
             ? 'Choose which demonstration database you would like to load. Both include a complete school with 8 faculty members, 5 grade sections, specialized labs, gym and a <b>100% pre-solved timetable</b>.' 
-            : 'Scegli quale database dimostrativo desideri caricare. Entrambi includono un istituto completo con 8 docenti Disney, 5 classi, laboratori, palestra e un <b>orario già risolto al 100%</b>.'}
+            : 'Scegli quale database dimostrativo desideri caricare. Entrambi includono un istituto completo con 8 docenti storici, 5 classi, laboratori, palestra e un <b>orario già risolto al 100%</b>.'}
         </p>
 
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
           <div style="background:var(--bg-app);border:1.5px solid var(--border);border-radius:10px;padding:14px;display:flex;flex-direction:column;justify-content:space-between;gap:10px;">
             <div>
               <div style="font-size:14px;font-weight:700;color:var(--primary);display:flex;align-items:center;gap:6px;">
-                <span>🇮🇹</span> <span>Paperopoli (ITA)</span>
+                <span>🇮🇹</span> <span>Scuola di Atene (ITA)</span>
               </div>
               <div style="font-size:11.5px;color:var(--text-muted);margin-top:6px;line-height:1.4;">
-                Liceo & Tecnico "Pico De Paperis" con Archimede, Paperino, Paperone, Nonna Papera e Gastone.
+                Liceo Classico e Scientifico "Scuola di Atene" con Platone, Dante, Galileo, Marie Curie e Aristotele.
               </div>
             </div>
             <button class="btn btn-sm btn-primary" onclick="executeLoadDemo('it')" style="width:100%;font-weight:600;">
@@ -12751,10 +12751,10 @@ function confirmRestoreDemo() {
           <div style="background:var(--bg-app);border:1.5px solid var(--border);border-radius:10px;padding:14px;display:flex;flex-direction:column;justify-content:space-between;gap:10px;">
             <div>
               <div style="font-size:14px;font-weight:700;color:var(--primary);display:flex;align-items:center;gap:6px;">
-                <span>🇬🇧</span> <span>Duckburg (ENG)</span>
+                <span>🇬🇧</span> <span>School of Athens (ENG)</span>
               </div>
               <div style="font-size:11.5px;color:var(--text-muted);margin-top:6px;line-height:1.4;">
-                Ludwig Von Drake High School with Donald Duck, Gyro Gearloose, Scrooge McDuck & Grandma Duck.
+                School of Athens Classical & Scientific High School with Plato, Dante, Galileo, Marie Curie & Aristotle.
               </div>
             </div>
             <button class="btn btn-sm btn-primary" onclick="executeLoadDemo('en')" style="width:100%;font-weight:600;">
@@ -12777,7 +12777,7 @@ function confirmRestoreDemo() {
 async function executeLoadDemo(lang = 'it') {
   closeModal();
   const isEn = lang === 'en';
-  showToast(isEn ? 'Loading Duckburg demo dataset...' : 'Caricamento demo Paperopoli in corso...');
+  showToast(isEn ? 'Loading "School of Athens" demo dataset...' : 'Caricamento demo "Scuola di Atene" in corso...');
   try {
     const res = await fetch('/api/project/load_demo', {
       method: 'POST',
@@ -12786,7 +12786,7 @@ async function executeLoadDemo(lang = 'it') {
     });
     const data = await res.json();
     if (res.ok && data.success) {
-      showToast(isEn ? '🎉 Duckburg Demo loaded successfully!' : '🎉 Demo Paperopoli caricata con successo!');
+      showToast(isEn ? '🎉 "School of Athens" Demo loaded successfully!' : '🎉 Demo "Scuola di Atene" caricata con successo!');
       activeEntity = '';
       activeTimetableView = 'teacher';
       stateData.timetableViews = null;
@@ -12816,7 +12816,7 @@ function confirmResetEmpty() {
         </div>
         <div class="form-group" style="margin-bottom:12px;">
           <label class="form-label" style="font-weight:700;">${isEn ? 'Name of New Educational Institution' : "Nome del Nuovo Istituto Scolastico"}</label>
-          <input type="text" id="resetInstNameInput" class="form-input" placeholder="${isEn ? 'e.g. Duckburg High School' : 'es. Liceo Scientifico Statale Galileo'}" value="${isEn ? 'New Educational Institution' : 'Nuovo Istituto Scolastico'}">
+          <input type="text" id="resetInstNameInput" class="form-input" placeholder="${isEn ? 'e.g. Athens Academy High School' : 'es. Liceo Scientifico Statale Galileo'}" value="${isEn ? 'New Educational Institution' : 'Nuovo Istituto Scolastico'}">
         </div>
       </div>
       <div class="modal-footer" style="padding:12px 20px;display:flex;justify-content:flex-end;gap:10px;">

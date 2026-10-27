@@ -1,10 +1,10 @@
 {
-  "admin_email": "admin@paperopoli.edu",
+  "admin_email": "admin@scuolaatene.edu.it",
   "superadmins": [
-    "admin@paperopoli.edu"
+    "admin@scuolaatene.edu.it"
   ],
   "school_memberships": {
-    "admin@paperopoli.edu": {
+    "admin@scuolaatene.edu.it": {
       "itet-g-girardi": {
         "role": "owner",
         "status": "approved",
@@ -28,12 +28,12 @@
     "port": 587,
     "user": "",
     "password": "",
-    "notify_to": "admin@paperopoli.edu"
+    "notify_to": "admin@scuolaatene.edu.it"
   },
   "users": {
-    "admin@paperopoli.edu": {
-      "email": "admin@paperopoli.edu",
-      "name": "Amministratore",
+    "admin@scuolaatene.edu.it": {
+      "email": "admin@scuolaatene.edu.it",
+      "name": "Amministratore Scuola di Atene",
       "picture": "",
       "role": "admin",
       "status": "approved",

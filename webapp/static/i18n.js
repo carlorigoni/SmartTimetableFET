@@ -374,10 +374,10 @@
         ai_credit: "AI Pair Programming"
       },
       demo: {
-        restore_paperopoli: "Carica Demo Paperopoli (Italiano)",
-        restore_duckburg: "Load Duckburg Demo (English)",
-        paperopoli_desc: "Liceo & Tecnico Pico De Paperis con Paperino, Archimede e Paperone",
-        duckburg_desc: "Ludwig Von Drake High School with Donald Duck, Gyro Gearloose & Scrooge McDuck",
+        restore_atene: "Carica Demo 'Scuola di Atene' (Italiano)",
+        restore_athens: "Load 'School of Athens' Demo (English)",
+        atene_desc: "Liceo Classico e Scientifico 'Scuola di Atene' con Platone, Dante, Galileo e Marie Curie",
+        athens_desc: "School of Athens Classical & Scientific High School with Plato, Dante, Galileo & Marie Curie",
         confirm_load: "Vuoi davvero caricare questo database dimostrativo? I dati attuali verranno archiviati in uno snapshot di sicurezza.",
         success_toast: "Database dimostrativo caricato con successo!"
       },
@@ -1075,10 +1075,10 @@
         ai_credit: "AI Pair Programming"
       },
       demo: {
-        restore_paperopoli: "Carica Demo Paperopoli (Italiano)",
-        restore_duckburg: "Load Duckburg Demo (English)",
-        paperopoli_desc: "Liceo & Tecnico Pico De Paperis with Donald Duck, Gyro Gearloose & Scrooge McDuck",
-        duckburg_desc: "Ludwig Von Drake High School with Donald Duck, Gyro Gearloose & Scrooge McDuck",
+        restore_atene: "Carica Demo 'Scuola di Atene' (Italiano)",
+        restore_athens: "Load 'School of Athens' Demo (English)",
+        atene_desc: "Liceo Classico e Scientifico 'Scuola di Atene' with Plato, Dante, Galileo & Marie Curie",
+        athens_desc: "School of Athens Classical & Scientific High School with Plato, Dante, Galileo & Marie Curie",
         confirm_load: "Are you sure you want to load this demonstration database? Current project data will be safely archived in a backup snapshot.",
         success_toast: "Demonstration database loaded successfully!"
       },

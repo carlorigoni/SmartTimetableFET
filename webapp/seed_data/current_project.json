@@ -1,5 +1,5 @@
 {
-  "institution": "Liceo & Tecnico \"Pico De Paperis\" - Paperopoli",
+  "institution": "Liceo Classico e Scientifico Statale \"Scuola di Atene\"",
   "comments": "Anno Scolastico 2026/2027 - Database Dimostrativo Completo",
   "days": [
     "Lun",
@@ -68,7 +68,7 @@
   ],
   "teachers": [
     {
-      "name": "Archimede Pitagorico",
+      "name": "Galileo Galilei",
       "short_name": "ARCH",
       "cdc": "A020",
       "target_hours": 18,
@@ -81,7 +81,7 @@
       "comments": "Fisica e Laboratorio Invenzioni"
     },
     {
-      "name": "Paperon de' Paperoni",
+      "name": "Aristotele",
       "short_name": "PAPE",
       "cdc": "A046",
       "target_hours": 18,
@@ -94,7 +94,7 @@
       "comments": "Economia Aziendale e Gestione Finanziaria (Lunedì conteggio caveau)"
     },
     {
-      "name": "Pico De Paperis",
+      "name": "Platone",
       "short_name": "PICO",
       "cdc": "A019",
       "target_hours": 18,
@@ -107,7 +107,7 @@
       "comments": "Storia e Filosofia Universale"
     },
     {
-      "name": "Paperino Paolino",
+      "name": "Milone di Crotone",
       "short_name": "PAPI",
       "cdc": "A048",
       "target_hours": 18,
@@ -120,7 +120,7 @@
       "comments": "Scienze Motorie (ama dormire la 1ª ora)"
     },
     {
-      "name": "Nonna Papera",
+      "name": "Marie Curie",
       "short_name": "NONN",
       "cdc": "A050",
       "target_hours": 18,
@@ -133,7 +133,7 @@
       "comments": "Scienze Naturali, Chimica e Agraria"
     },
     {
-      "name": "Gastone Paperone",
+      "name": "Dante Alighieri",
       "short_name": "GAST",
       "cdc": "A012",
       "target_hours": 18,
@@ -146,7 +146,7 @@
       "comments": "Italiano e Letteratura Classica"
     },
     {
-      "name": "Dinamite Bla",
+      "name": "Euclide",
       "short_name": "DINA",
       "cdc": "A026",
       "target_hours": 18,
@@ -159,7 +159,7 @@
       "comments": "Matematica"
     },
     {
-      "name": "Battista",
+      "name": "William Shakespeare",
       "short_name": "BATT",
       "cdc": "A024",
       "target_hours": 15,
@@ -182,11 +182,11 @@
       "comments": "Scienze Matematiche"
     },
     {
-      "name": "Fisica e Invenzioni",
+      "name": "Fisica e Laboratorio",
       "comments": "Fisica Sperimentale"
     },
     {
-      "name": "Scienze Naturali e Botanica",
+      "name": "Scienze Naturali e Chimica",
       "comments": "Scienze della Terra e Biologia"
     },
     {
@@ -242,20 +242,20 @@
       "building": "Centrale"
     },
     {
-      "name": "Laboratorio di Invenzioni",
+      "name": "Laboratorio di Fisica",
       "capacity": 30,
       "room_type": "lab",
       "building": "Centrale"
     },
     {
-      "name": "Palestra Paperopoli",
+      "name": "Palestra Atene",
       "capacity": 57,
       "room_type": "gym",
       "building": "Centrale",
       "max_concurrent": 2
     },
     {
-      "name": "Aula Magna del Deposito",
+      "name": "Aula Magna Accademia",
       "capacity": 100,
       "room_type": "special",
       "building": "Centrale"
@@ -265,7 +265,7 @@
     {
       "id": "1",
       "teachers": [
-        "Gastone Paperone"
+        "Dante Alighieri"
       ],
       "students": [
         "1A"
@@ -280,7 +280,7 @@
     {
       "id": "2",
       "teachers": [
-        "Gastone Paperone"
+        "Dante Alighieri"
       ],
       "students": [
         "1A"
@@ -295,7 +295,7 @@
     {
       "id": "3",
       "teachers": [
-        "Gastone Paperone"
+        "Dante Alighieri"
       ],
       "students": [
         "1A"
@@ -310,7 +310,7 @@
     {
       "id": "4",
       "teachers": [
-        "Gastone Paperone"
+        "Dante Alighieri"
       ],
       "students": [
         "2A"
@@ -325,7 +325,7 @@
     {
       "id": "5",
       "teachers": [
-        "Gastone Paperone"
+        "Dante Alighieri"
       ],
       "students": [
         "2A"
@@ -340,7 +340,7 @@
     {
       "id": "6",
       "teachers": [
-        "Gastone Paperone"
+        "Dante Alighieri"
       ],
       "students": [
         "2A"
@@ -355,7 +355,7 @@
     {
       "id": "7",
       "teachers": [
-        "Gastone Paperone"
+        "Dante Alighieri"
       ],
       "students": [
         "3A"
@@ -370,7 +370,7 @@
     {
       "id": "8",
       "teachers": [
-        "Gastone Paperone"
+        "Dante Alighieri"
       ],
       "students": [
         "3A"
@@ -385,7 +385,7 @@
     {
       "id": "9",
       "teachers": [
-        "Gastone Paperone"
+        "Dante Alighieri"
       ],
       "students": [
         "3A"
@@ -400,7 +400,7 @@
     {
       "id": "10",
       "teachers": [
-        "Gastone Paperone"
+        "Dante Alighieri"
       ],
       "students": [
         "4A"
@@ -415,7 +415,7 @@
     {
       "id": "11",
       "teachers": [
-        "Gastone Paperone"
+        "Dante Alighieri"
       ],
       "students": [
         "4A"
@@ -430,7 +430,7 @@
     {
       "id": "12",
       "teachers": [
-        "Gastone Paperone"
+        "Dante Alighieri"
       ],
       "students": [
         "5A"
@@ -445,7 +445,7 @@
     {
       "id": "13",
       "teachers": [
-        "Gastone Paperone"
+        "Dante Alighieri"
       ],
       "students": [
         "5A"
@@ -460,7 +460,7 @@
     {
       "id": "14",
       "teachers": [
-        "Dinamite Bla"
+        "Euclide"
       ],
       "students": [
         "1A"
@@ -475,7 +475,7 @@
     {
       "id": "15",
       "teachers": [
-        "Dinamite Bla"
+        "Euclide"
       ],
       "students": [
         "1A"
@@ -490,7 +490,7 @@
     {
       "id": "16",
       "teachers": [
-        "Dinamite Bla"
+        "Euclide"
       ],
       "students": [
         "1A"
@@ -505,7 +505,7 @@
     {
       "id": "17",
       "teachers": [
-        "Dinamite Bla"
+        "Euclide"
       ],
       "students": [
         "2A"
@@ -520,7 +520,7 @@
     {
       "id": "18",
       "teachers": [
-        "Dinamite Bla"
+        "Euclide"
       ],
       "students": [
         "2A"
@@ -535,7 +535,7 @@
     {
       "id": "19",
       "teachers": [
-        "Dinamite Bla"
+        "Euclide"
       ],
       "students": [
         "2A"
@@ -550,7 +550,7 @@
     {
       "id": "20",
       "teachers": [
-        "Dinamite Bla"
+        "Euclide"
       ],
       "students": [
         "3A"
@@ -565,7 +565,7 @@
     {
       "id": "21",
       "teachers": [
-        "Dinamite Bla"
+        "Euclide"
       ],
       "students": [
         "3A"
@@ -580,7 +580,7 @@
     {
       "id": "22",
       "teachers": [
-        "Dinamite Bla"
+        "Euclide"
       ],
       "students": [
         "3A"
@@ -595,7 +595,7 @@
     {
       "id": "23",
       "teachers": [
-        "Dinamite Bla"
+        "Euclide"
       ],
       "students": [
         "4A"
@@ -610,7 +610,7 @@
     {
       "id": "24",
       "teachers": [
-        "Dinamite Bla"
+        "Euclide"
       ],
       "students": [
         "4A"
@@ -625,7 +625,7 @@
     {
       "id": "25",
       "teachers": [
-        "Dinamite Bla"
+        "Euclide"
       ],
       "students": [
         "5A"
@@ -640,7 +640,7 @@
     {
       "id": "26",
       "teachers": [
-        "Dinamite Bla"
+        "Euclide"
       ],
       "students": [
         "5A"
@@ -655,352 +655,352 @@
     {
       "id": "27",
       "teachers": [
-        "Archimede Pitagorico"
+        "Galileo Galilei"
       ],
       "students": [
         "1A"
       ],
-      "subject": "Fisica e Invenzioni",
+      "subject": "Fisica e Laboratorio",
       "duration": 2,
       "total_hours": 3,
-      "room": "Laboratorio di Invenzioni",
+      "room": "Laboratorio di Fisica",
       "active": true,
-      "comments": "Fisica e Invenzioni per 1A"
+      "comments": "Fisica e Laboratorio per 1A"
     },
     {
       "id": "28",
       "teachers": [
-        "Archimede Pitagorico"
+        "Galileo Galilei"
       ],
       "students": [
         "1A"
       ],
-      "subject": "Fisica e Invenzioni",
+      "subject": "Fisica e Laboratorio",
       "duration": 1,
       "total_hours": 3,
-      "room": "Laboratorio di Invenzioni",
+      "room": "Laboratorio di Fisica",
       "active": true,
-      "comments": "Fisica e Invenzioni per 1A"
+      "comments": "Fisica e Laboratorio per 1A"
     },
     {
       "id": "29",
       "teachers": [
-        "Archimede Pitagorico"
+        "Galileo Galilei"
       ],
       "students": [
         "2A"
       ],
-      "subject": "Fisica e Invenzioni",
+      "subject": "Fisica e Laboratorio",
       "duration": 2,
       "total_hours": 3,
-      "room": "Laboratorio di Invenzioni",
+      "room": "Laboratorio di Fisica",
       "active": true,
-      "comments": "Fisica e Invenzioni per 2A"
+      "comments": "Fisica e Laboratorio per 2A"
     },
     {
       "id": "30",
       "teachers": [
-        "Archimede Pitagorico"
+        "Galileo Galilei"
       ],
       "students": [
         "2A"
       ],
-      "subject": "Fisica e Invenzioni",
+      "subject": "Fisica e Laboratorio",
       "duration": 1,
       "total_hours": 3,
-      "room": "Laboratorio di Invenzioni",
+      "room": "Laboratorio di Fisica",
       "active": true,
-      "comments": "Fisica e Invenzioni per 2A"
+      "comments": "Fisica e Laboratorio per 2A"
     },
     {
       "id": "31",
       "teachers": [
-        "Archimede Pitagorico"
+        "Galileo Galilei"
       ],
       "students": [
         "3A"
       ],
-      "subject": "Fisica e Invenzioni",
+      "subject": "Fisica e Laboratorio",
       "duration": 2,
       "total_hours": 4,
-      "room": "Laboratorio di Invenzioni",
+      "room": "Laboratorio di Fisica",
       "active": true,
-      "comments": "Fisica e Invenzioni per 3A"
+      "comments": "Fisica e Laboratorio per 3A"
     },
     {
       "id": "32",
       "teachers": [
-        "Archimede Pitagorico"
+        "Galileo Galilei"
       ],
       "students": [
         "3A"
       ],
-      "subject": "Fisica e Invenzioni",
+      "subject": "Fisica e Laboratorio",
       "duration": 2,
       "total_hours": 4,
-      "room": "Laboratorio di Invenzioni",
+      "room": "Laboratorio di Fisica",
       "active": true,
-      "comments": "Fisica e Invenzioni per 3A"
+      "comments": "Fisica e Laboratorio per 3A"
     },
     {
       "id": "33",
       "teachers": [
-        "Archimede Pitagorico"
+        "Galileo Galilei"
       ],
       "students": [
         "4A"
       ],
-      "subject": "Fisica e Invenzioni",
+      "subject": "Fisica e Laboratorio",
       "duration": 2,
       "total_hours": 4,
-      "room": "Laboratorio di Invenzioni",
+      "room": "Laboratorio di Fisica",
       "active": true,
-      "comments": "Fisica e Invenzioni per 4A"
+      "comments": "Fisica e Laboratorio per 4A"
     },
     {
       "id": "34",
       "teachers": [
-        "Archimede Pitagorico"
+        "Galileo Galilei"
       ],
       "students": [
         "4A"
       ],
-      "subject": "Fisica e Invenzioni",
+      "subject": "Fisica e Laboratorio",
       "duration": 2,
       "total_hours": 4,
-      "room": "Laboratorio di Invenzioni",
+      "room": "Laboratorio di Fisica",
       "active": true,
-      "comments": "Fisica e Invenzioni per 4A"
+      "comments": "Fisica e Laboratorio per 4A"
     },
     {
       "id": "35",
       "teachers": [
-        "Archimede Pitagorico"
+        "Galileo Galilei"
       ],
       "students": [
         "5A"
       ],
-      "subject": "Fisica e Invenzioni",
+      "subject": "Fisica e Laboratorio",
       "duration": 2,
       "total_hours": 4,
-      "room": "Laboratorio di Invenzioni",
+      "room": "Laboratorio di Fisica",
       "active": true,
-      "comments": "Fisica e Invenzioni per 5A"
+      "comments": "Fisica e Laboratorio per 5A"
     },
     {
       "id": "36",
       "teachers": [
-        "Archimede Pitagorico"
+        "Galileo Galilei"
       ],
       "students": [
         "5A"
       ],
-      "subject": "Fisica e Invenzioni",
+      "subject": "Fisica e Laboratorio",
       "duration": 2,
       "total_hours": 4,
-      "room": "Laboratorio di Invenzioni",
+      "room": "Laboratorio di Fisica",
       "active": true,
-      "comments": "Fisica e Invenzioni per 5A"
+      "comments": "Fisica e Laboratorio per 5A"
     },
     {
       "id": "37",
       "teachers": [
-        "Nonna Papera"
+        "Marie Curie"
       ],
       "students": [
         "1A"
       ],
-      "subject": "Scienze Naturali e Botanica",
+      "subject": "Scienze Naturali e Chimica",
       "duration": 2,
       "total_hours": 4,
       "room": "",
       "active": true,
-      "comments": "Scienze Naturali e Botanica per 1A"
+      "comments": "Scienze Naturali e Chimica per 1A"
     },
     {
       "id": "38",
       "teachers": [
-        "Nonna Papera"
+        "Marie Curie"
       ],
       "students": [
         "1A"
       ],
-      "subject": "Scienze Naturali e Botanica",
+      "subject": "Scienze Naturali e Chimica",
       "duration": 1,
       "total_hours": 4,
       "room": "",
       "active": true,
-      "comments": "Scienze Naturali e Botanica per 1A"
+      "comments": "Scienze Naturali e Chimica per 1A"
     },
     {
       "id": "39",
       "teachers": [
-        "Nonna Papera"
+        "Marie Curie"
       ],
       "students": [
         "1A"
       ],
-      "subject": "Scienze Naturali e Botanica",
+      "subject": "Scienze Naturali e Chimica",
       "duration": 1,
       "total_hours": 4,
       "room": "",
       "active": true,
-      "comments": "Scienze Naturali e Botanica per 1A"
+      "comments": "Scienze Naturali e Chimica per 1A"
     },
     {
       "id": "40",
       "teachers": [
-        "Nonna Papera"
+        "Marie Curie"
       ],
       "students": [
         "2A"
       ],
-      "subject": "Scienze Naturali e Botanica",
+      "subject": "Scienze Naturali e Chimica",
       "duration": 2,
       "total_hours": 4,
       "room": "",
       "active": true,
-      "comments": "Scienze Naturali e Botanica per 2A"
+      "comments": "Scienze Naturali e Chimica per 2A"
     },
     {
       "id": "41",
       "teachers": [
-        "Nonna Papera"
+        "Marie Curie"
       ],
       "students": [
         "2A"
       ],
-      "subject": "Scienze Naturali e Botanica",
+      "subject": "Scienze Naturali e Chimica",
       "duration": 1,
       "total_hours": 4,
       "room": "",
       "active": true,
-      "comments": "Scienze Naturali e Botanica per 2A"
+      "comments": "Scienze Naturali e Chimica per 2A"
     },
     {
       "id": "42",
       "teachers": [
-        "Nonna Papera"
+        "Marie Curie"
       ],
       "students": [
         "2A"
       ],
-      "subject": "Scienze Naturali e Botanica",
+      "subject": "Scienze Naturali e Chimica",
       "duration": 1,
       "total_hours": 4,
       "room": "",
       "active": true,
-      "comments": "Scienze Naturali e Botanica per 2A"
+      "comments": "Scienze Naturali e Chimica per 2A"
     },
     {
       "id": "43",
       "teachers": [
-        "Nonna Papera"
+        "Marie Curie"
       ],
       "students": [
         "3A"
       ],
-      "subject": "Scienze Naturali e Botanica",
+      "subject": "Scienze Naturali e Chimica",
       "duration": 2,
       "total_hours": 4,
       "room": "",
       "active": true,
-      "comments": "Scienze Naturali e Botanica per 3A"
+      "comments": "Scienze Naturali e Chimica per 3A"
     },
     {
       "id": "44",
       "teachers": [
-        "Nonna Papera"
+        "Marie Curie"
       ],
       "students": [
         "3A"
       ],
-      "subject": "Scienze Naturali e Botanica",
+      "subject": "Scienze Naturali e Chimica",
       "duration": 1,
       "total_hours": 4,
       "room": "",
       "active": true,
-      "comments": "Scienze Naturali e Botanica per 3A"
+      "comments": "Scienze Naturali e Chimica per 3A"
     },
     {
       "id": "45",
       "teachers": [
-        "Nonna Papera"
+        "Marie Curie"
       ],
       "students": [
         "3A"
       ],
-      "subject": "Scienze Naturali e Botanica",
+      "subject": "Scienze Naturali e Chimica",
       "duration": 1,
       "total_hours": 4,
       "room": "",
       "active": true,
-      "comments": "Scienze Naturali e Botanica per 3A"
+      "comments": "Scienze Naturali e Chimica per 3A"
     },
     {
       "id": "46",
       "teachers": [
-        "Nonna Papera"
+        "Marie Curie"
       ],
       "students": [
         "4A"
       ],
-      "subject": "Scienze Naturali e Botanica",
+      "subject": "Scienze Naturali e Chimica",
       "duration": 2,
       "total_hours": 3,
       "room": "",
       "active": true,
-      "comments": "Scienze Naturali e Botanica per 4A"
+      "comments": "Scienze Naturali e Chimica per 4A"
     },
     {
       "id": "47",
       "teachers": [
-        "Nonna Papera"
+        "Marie Curie"
       ],
       "students": [
         "4A"
       ],
-      "subject": "Scienze Naturali e Botanica",
+      "subject": "Scienze Naturali e Chimica",
       "duration": 1,
       "total_hours": 3,
       "room": "",
       "active": true,
-      "comments": "Scienze Naturali e Botanica per 4A"
+      "comments": "Scienze Naturali e Chimica per 4A"
     },
     {
       "id": "48",
       "teachers": [
-        "Nonna Papera"
+        "Marie Curie"
       ],
       "students": [
         "5A"
       ],
-      "subject": "Scienze Naturali e Botanica",
+      "subject": "Scienze Naturali e Chimica",
       "duration": 2,
       "total_hours": 3,
       "room": "",
       "active": true,
-      "comments": "Scienze Naturali e Botanica per 5A"
+      "comments": "Scienze Naturali e Chimica per 5A"
     },
     {
       "id": "49",
       "teachers": [
-        "Nonna Papera"
+        "Marie Curie"
       ],
       "students": [
         "5A"
       ],
-      "subject": "Scienze Naturali e Botanica",
+      "subject": "Scienze Naturali e Chimica",
       "duration": 1,
       "total_hours": 3,
       "room": "",
       "active": true,
-      "comments": "Scienze Naturali e Botanica per 5A"
+      "comments": "Scienze Naturali e Chimica per 5A"
     },
     {
       "id": "50",
       "teachers": [
-        "Pico De Paperis"
+        "Platone"
       ],
       "students": [
         "1A"
@@ -1015,7 +1015,7 @@
     {
       "id": "51",
       "teachers": [
-        "Pico De Paperis"
+        "Platone"
       ],
       "students": [
         "2A"
@@ -1030,7 +1030,7 @@
     {
       "id": "52",
       "teachers": [
-        "Pico De Paperis"
+        "Platone"
       ],
       "students": [
         "3A"
@@ -1045,7 +1045,7 @@
     {
       "id": "53",
       "teachers": [
-        "Pico De Paperis"
+        "Platone"
       ],
       "students": [
         "3A"
@@ -1060,7 +1060,7 @@
     {
       "id": "54",
       "teachers": [
-        "Pico De Paperis"
+        "Platone"
       ],
       "students": [
         "4A"
@@ -1075,7 +1075,7 @@
     {
       "id": "55",
       "teachers": [
-        "Pico De Paperis"
+        "Platone"
       ],
       "students": [
         "4A"
@@ -1090,7 +1090,7 @@
     {
       "id": "56",
       "teachers": [
-        "Pico De Paperis"
+        "Platone"
       ],
       "students": [
         "4A"
@@ -1105,7 +1105,7 @@
     {
       "id": "57",
       "teachers": [
-        "Pico De Paperis"
+        "Platone"
       ],
       "students": [
         "5A"
@@ -1120,7 +1120,7 @@
     {
       "id": "58",
       "teachers": [
-        "Pico De Paperis"
+        "Platone"
       ],
       "students": [
         "5A"
@@ -1135,7 +1135,7 @@
     {
       "id": "59",
       "teachers": [
-        "Pico De Paperis"
+        "Platone"
       ],
       "students": [
         "5A"
@@ -1150,7 +1150,7 @@
     {
       "id": "60",
       "teachers": [
-        "Paperon de' Paperoni"
+        "Aristotele"
       ],
       "students": [
         "1A"
@@ -1165,7 +1165,7 @@
     {
       "id": "61",
       "teachers": [
-        "Paperon de' Paperoni"
+        "Aristotele"
       ],
       "students": [
         "1A"
@@ -1180,7 +1180,7 @@
     {
       "id": "62",
       "teachers": [
-        "Paperon de' Paperoni"
+        "Aristotele"
       ],
       "students": [
         "2A"
@@ -1195,7 +1195,7 @@
     {
       "id": "63",
       "teachers": [
-        "Paperon de' Paperoni"
+        "Aristotele"
       ],
       "students": [
         "2A"
@@ -1210,7 +1210,7 @@
     {
       "id": "64",
       "teachers": [
-        "Paperon de' Paperoni"
+        "Aristotele"
       ],
       "students": [
         "3A"
@@ -1225,7 +1225,7 @@
     {
       "id": "65",
       "teachers": [
-        "Paperon de' Paperoni"
+        "Aristotele"
       ],
       "students": [
         "3A"
@@ -1240,7 +1240,7 @@
     {
       "id": "66",
       "teachers": [
-        "Paperon de' Paperoni"
+        "Aristotele"
       ],
       "students": [
         "4A"
@@ -1255,7 +1255,7 @@
     {
       "id": "67",
       "teachers": [
-        "Paperon de' Paperoni"
+        "Aristotele"
       ],
       "students": [
         "4A"
@@ -1270,7 +1270,7 @@
     {
       "id": "68",
       "teachers": [
-        "Paperon de' Paperoni"
+        "Aristotele"
       ],
       "students": [
         "5A"
@@ -1285,7 +1285,7 @@
     {
       "id": "69",
       "teachers": [
-        "Paperon de' Paperoni"
+        "Aristotele"
       ],
       "students": [
         "5A"
@@ -1300,7 +1300,7 @@
     {
       "id": "70",
       "teachers": [
-        "Paperino Paolino"
+        "Milone di Crotone"
       ],
       "students": [
         "1A"
@@ -1315,7 +1315,7 @@
     {
       "id": "71",
       "teachers": [
-        "Paperino Paolino"
+        "Milone di Crotone"
       ],
       "students": [
         "2A"
@@ -1330,7 +1330,7 @@
     {
       "id": "72",
       "teachers": [
-        "Paperino Paolino"
+        "Milone di Crotone"
       ],
       "students": [
         "3A"
@@ -1345,7 +1345,7 @@
     {
       "id": "73",
       "teachers": [
-        "Paperino Paolino"
+        "Milone di Crotone"
       ],
       "students": [
         "4A"
@@ -1360,7 +1360,7 @@
     {
       "id": "74",
       "teachers": [
-        "Paperino Paolino"
+        "Milone di Crotone"
       ],
       "students": [
         "5A"
@@ -1375,7 +1375,7 @@
     {
       "id": "75",
       "teachers": [
-        "Battista"
+        "William Shakespeare"
       ],
       "students": [
         "1A"
@@ -1390,7 +1390,7 @@
     {
       "id": "76",
       "teachers": [
-        "Battista"
+        "William Shakespeare"
       ],
       "students": [
         "1A"
@@ -1405,7 +1405,7 @@
     {
       "id": "77",
       "teachers": [
-        "Battista"
+        "William Shakespeare"
       ],
       "students": [
         "2A"
@@ -1420,7 +1420,7 @@
     {
       "id": "78",
       "teachers": [
-        "Battista"
+        "William Shakespeare"
       ],
       "students": [
         "2A"
@@ -1435,7 +1435,7 @@
     {
       "id": "79",
       "teachers": [
-        "Battista"
+        "William Shakespeare"
       ],
       "students": [
         "3A"
@@ -1450,7 +1450,7 @@
     {
       "id": "80",
       "teachers": [
-        "Battista"
+        "William Shakespeare"
       ],
       "students": [
         "3A"
@@ -1465,7 +1465,7 @@
     {
       "id": "81",
       "teachers": [
-        "Battista"
+        "William Shakespeare"
       ],
       "students": [
         "4A"
@@ -1480,7 +1480,7 @@
     {
       "id": "82",
       "teachers": [
-        "Battista"
+        "William Shakespeare"
       ],
       "students": [
         "4A"
@@ -1495,7 +1495,7 @@
     {
       "id": "83",
       "teachers": [
-        "Battista"
+        "William Shakespeare"
       ],
       "students": [
         "5A"
@@ -1510,7 +1510,7 @@
     {
       "id": "84",
       "teachers": [
-        "Battista"
+        "William Shakespeare"
       ],
       "students": [
         "5A"
@@ -1525,7 +1525,7 @@
     {
       "id": "85",
       "teachers": [
-        "Paperino Paolino"
+        "Milone di Crotone"
       ],
       "students": [],
       "subject": "Disposizione",
@@ -1533,13 +1533,13 @@
       "total_hours": 1,
       "room": "",
       "active": true,
-      "comments": "Ore a disposizione Paperino (sportello sportivo)",
+      "comments": "Ore a disposizione Milone di Crotone (sportello sportivo)",
       "custom_desc": "Sportello"
     },
     {
       "id": "86",
       "teachers": [
-        "Battista"
+        "William Shakespeare"
       ],
       "students": [],
       "subject": "Disposizione",
@@ -1547,13 +1547,13 @@
       "total_hours": 1,
       "room": "",
       "active": true,
-      "comments": "Ore a disposizione Battista (accoglienza)",
+      "comments": "Ore a disposizione William Shakespeare (accoglienza)",
       "custom_desc": "Accoglienza"
     }
   ],
   "teacher_availability": {
-    "Archimede Pitagorico": [],
-    "Paperon de' Paperoni": [
+    "Galileo Galilei": [],
+    "Aristotele": [
       "Lun|1",
       "Lun|2",
       "Lun|3",
@@ -1561,12 +1561,12 @@
       "Lun|5",
       "Lun|6"
     ],
-    "Pico De Paperis": [],
-    "Paperino Paolino": [],
-    "Nonna Papera": [],
-    "Gastone Paperone": [],
-    "Dinamite Bla": [],
-    "Battista": []
+    "Platone": [],
+    "Milone di Crotone": [],
+    "Marie Curie": [],
+    "Dante Alighieri": [],
+    "Euclide": [],
+    "William Shakespeare": []
   },
   "class_availability": {
     "1A": [
@@ -1921,52 +1921,52 @@
     "27": {
       "day": "Mer",
       "hour": "1",
-      "room": "Laboratorio di Invenzioni"
+      "room": "Laboratorio di Fisica"
     },
     "28": {
       "day": "Lun",
       "hour": "5",
-      "room": "Laboratorio di Invenzioni"
+      "room": "Laboratorio di Fisica"
     },
     "29": {
       "day": "Gio",
       "hour": "1",
-      "room": "Laboratorio di Invenzioni"
+      "room": "Laboratorio di Fisica"
     },
     "30": {
       "day": "Mer",
       "hour": "6",
-      "room": "Laboratorio di Invenzioni"
+      "room": "Laboratorio di Fisica"
     },
     "31": {
       "day": "Mar",
       "hour": "1",
-      "room": "Laboratorio di Invenzioni"
+      "room": "Laboratorio di Fisica"
     },
     "32": {
       "day": "Mer",
       "hour": "3",
-      "room": "Laboratorio di Invenzioni"
+      "room": "Laboratorio di Fisica"
     },
     "33": {
       "day": "Lun",
       "hour": "1",
-      "room": "Laboratorio di Invenzioni"
+      "room": "Laboratorio di Fisica"
     },
     "34": {
       "day": "Ven",
       "hour": "1",
-      "room": "Laboratorio di Invenzioni"
+      "room": "Laboratorio di Fisica"
     },
     "35": {
       "day": "Gio",
       "hour": "3",
-      "room": "Laboratorio di Invenzioni"
+      "room": "Laboratorio di Fisica"
     },
     "36": {
       "day": "Lun",
       "hour": "3",
-      "room": "Laboratorio di Invenzioni"
+      "room": "Laboratorio di Fisica"
     },
     "37": {
       "day": "Mer",
@@ -2136,27 +2136,27 @@
     "70": {
       "day": "Ven",
       "hour": "5",
-      "room": "Palestra Paperopoli"
+      "room": "Palestra Atene"
     },
     "71": {
       "day": "Lun",
       "hour": "5",
-      "room": "Palestra Paperopoli"
+      "room": "Palestra Atene"
     },
     "72": {
       "day": "Mar",
       "hour": "3",
-      "room": "Palestra Paperopoli"
+      "room": "Palestra Atene"
     },
     "73": {
       "day": "Mar",
       "hour": "1",
-      "room": "Palestra Paperopoli"
+      "room": "Palestra Atene"
     },
     "74": {
       "day": "Ven",
       "hour": "3",
-      "room": "Palestra Paperopoli"
+      "room": "Palestra Atene"
     },
     "75": {
       "day": "Lun",
@@ -2227,5 +2227,7 @@
     {
       "name": "Succursale"
     }
-  ]
+  ],
+  "has_timetable": true,
+  "city": "Atene"
 }

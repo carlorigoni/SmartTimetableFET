@@ -7,7 +7,7 @@
     "repo_url": "https://github.com/carlorigoni/eurario",
     "docker_hub": "https://hub.docker.com/r/carlorigoni/eurario",
     "contact_email": "carlo.rigoni@gmail.com",
-    "current_version": "v1.9.6",
+    "current_version": "v1.9.7",
     "fet_version": "7.12.0",
     "author": "Carlo Rigoni",
     "mentor": "Federico Rettore"
@@ -67,7 +67,7 @@
     },
     "announcements": [
       {
-        "badge": "Novità v1.9.6",
+        "badge": "Novità v1.9.7",
         "date": "Ottobre 2026",
         "text": "Nuova sezione Architettura & DevOps con diagrammi E2E, apertura documentazione con sincronizzazione automatica della lingua dall'app e controlli di versione avanzati."
       }
@@ -235,8 +235,8 @@
     },
     "showcase_header": {
       "tag": "Tour Applicativo • Esempio Didattico",
-      "title": "Le Maschere di Eurario con la Scuola Demo di Paperopoli",
-      "subtitle": "Esplora le schermate operative reali basate sull'istituto di test «Liceo & Tecnico Pico De Paperis»: dal quadro orario settimanale alla gestione cattedre COE, dal compilatore FET alle stampe ufficiali."
+      "title": "Le Maschere di Eurario con la Scuola Demo «Scuola di Atene»",
+      "subtitle": "Esplora le schermate operative reali basate sull'istituto di test «Liceo Classico e Scientifico Statale Scuola di Atene»: dal quadro orario settimanale alla gestione cattedre COE, dal compilatore FET alle stampe ufficiali."
     },
     "showcase_tabs": [
       {
@@ -269,8 +269,8 @@
       "timetable": {
         "title": "app.eurario.it — Orario Risolto • Classe 3A & Docenti",
         "badge": "● 100% Risolto da FET",
-        "school": "Liceo & Tecnico «Pico De Paperis» • Paperopoli",
-        "description": "Visualizzazione dinamica dell'orario con evidenziazione automatica delle materie, aule speciali (Laboratorio Archimede, Palestra) e zero ore buche.",
+        "school": "Liceo Classico e Scientifico «Scuola di Atene» • Atene",
+        "description": "Visualizzazione dinamica dell'orario con evidenziazione automatica delle materie, aule speciali (Laboratorio di Fisica, Palestra) e zero ore buche.",
         "headers": [
           "Ora",
           "Lunedì",
@@ -282,55 +282,55 @@
         "rows": [
           [
             "1ª (08:00)",
-            "MAT • Paperon de' Paperoni",
-            "ITA • Pico De Paperis",
-            "ED.FIS • Battista (Palestra)",
-            "MECC • Dinamite Bla",
-            "ITA • Pico De Paperis"
+            "MAT • Euclide",
+            "ITA • Platone",
+            "ED.FIS • Milone di Crotone (Palestra)",
+            "LET • Dante Alighieri",
+            "ITA • Platone"
           ],
           [
             "2ª (09:00)",
-            "MAT • Paperon de' Paperoni",
-            "ITA • Pico De Paperis",
-            "ED.FIS • Battista (Palestra)",
-            "MECC • Dinamite Bla",
-            "MAT • Paperon de' Paperoni"
+            "MAT • Euclide",
+            "ITA • Platone",
+            "ED.FIS • Milone di Crotone (Palestra)",
+            "LET • Dante Alighieri",
+            "MAT • Euclide"
           ],
           [
             "3ª (10:00)",
-            "FIS • Archimede Pitagorico",
-            "MECC • Dinamite Bla",
-            "MAT • Paperon de' Paperoni",
-            "MAT • Paperon de' Paperoni",
-            "FIS • Archimede Pitagorico"
+            "FIS • Galileo Galilei",
+            "LET • Dante Alighieri",
+            "MAT • Euclide",
+            "MAT • Euclide",
+            "FIS • Galileo Galilei"
           ],
           [
             "4ª (11:00)",
-            "ITA • Pico De Paperis",
-            "LAB • Archimede (Lab Fis)",
-            "DISP • Paperino Paolino",
-            "FIS • Archimede Pitagorico",
-            "ING • Nonna Papera"
+            "ITA • Platone",
+            "LAB • Galileo (Lab Fis)",
+            "DISP • Milone di Crotone",
+            "FIS • Galileo Galilei",
+            "ING • Marie Curie"
           ],
           [
             "5ª (12:00)",
-            "ING • Nonna Papera",
-            "LAB • Archimede (Lab Fis)",
-            "ITA • Pico De Paperis",
-            "ING • Nonna Papera",
-            "FILO • Pico De Paperis"
+            "ING • Marie Curie",
+            "LAB • Galileo (Lab Fis)",
+            "ITA • Platone",
+            "ING • Marie Curie",
+            "FILO • Platone"
           ]
         ],
-        "footer_note": "✓ 0 Conflitti • Paperino Paolino rispetta il Giovedì Libero da Part-Time • COE Paperone 12h Sede Centrale + 6h Esterna"
+        "footer_note": "✓ 0 Conflitti • Milone di Crotone rispetta il Giovedì Libero da Part-Time • COE Aristotele 12h Sede Centrale + 6h Succursale"
       },
       "teachers": {
         "title": "app.eurario.it — Organico Docenti & Cattedre",
         "badge": "8 Docenti Attivi",
-        "school": "Liceo & Tecnico «Pico De Paperis» • Paperopoli",
+        "school": "Liceo Classico e Scientifico «Scuola di Atene» • Atene",
         "description": "Configurazione chirugica di cattedre orario esterne (COE), spezzoni, part-time verticali con giorno libero protetto e ore a disposizione.",
         "items": [
           {
-            "name": "Archimede Pitagorico",
+            "name": "Galileo Galilei",
             "subject": "Fisica & Tecnologie Applicate",
             "type_badge": "Cattedra Intera (18h)",
             "type_class": "badge-success",
@@ -341,17 +341,17 @@
             "subject": "Economia Aziendale & Diritto",
             "type_badge": "Cattedra COE Esterna (12h + 6h)",
             "type_class": "badge-warning",
-            "details": "12h Sede Paperopoli + 6h Ist. Tecnico Paperopoli Nord • Giorni a Paperopoli: Lun/Mer/Ven • Finestra di viaggio garantita"
+            "details": "12h Sede Centrale + 6h Succursale Olimpica • Giorni ad Atene: Lun/Mer/Ven • Finestra di viaggio garantita"
           },
           {
-            "name": "Paperino Paolino",
+            "name": "Milone di Crotone",
             "subject": "Laboratorio & Ore a Disposizione",
             "type_badge": "Part-Time Verticale (10h)",
             "type_class": "badge-info",
             "details": "10 Ore contrattuali • Giorno Libero Vincolante: Giovedì • Disponibilità concentrata fascia mattutina 08:00 - 12:00"
           },
           {
-            "name": "Pico De Paperis",
+            "name": "Platone",
             "subject": "Italiano, Storia & Filosofia",
             "type_badge": "Cattedra Intera (18h)",
             "type_class": "badge-success",
@@ -362,7 +362,7 @@
       "solver": {
         "title": "app.eurario.it — Compilatore FET 7.12 in Tempo Reale",
         "badge": "FET Engine 7.12.0",
-        "school": "Liceo & Tecnico «Pico De Paperis» • Paperopoli",
+        "school": "Liceo Classico e Scientifico «Scuola di Atene» • Atene",
         "description": "Algoritmo euristico multithread integrato: elabora la matrice spazio-temporale di vincoli e chiude orari al 100% in pochi secondi.",
         "stats": [
           {
@@ -389,7 +389,7 @@
         "console_output": [
           "[FET 7.12] Inizializzazione matrice attività: 8 docenti, 5 classi, 3 plessi...",
           "[FET 7.12] Applicazione vincolo COE: Paperon de' Paperoni vincolato su Lun/Mer/Ven...",
-          "[FET 7.12] Applicazione vincolo Part-Time: Paperino Paolino bloccato OFF il Giovedì...",
+          "[FET 7.12] Applicazione vincolo Part-Time: Milone di Crotone bloccato OFF il Giovedì...",
           "[FET 7.12] Collocazione 120 attività didattiche in corso...",
           "[FET 7.12] SUCCESSO! Soluzione ottimale trovata alla generazione #184 (1.34s). Orario completo al 100%!"
         ]
@@ -397,7 +397,7 @@
       "diagnostics": {
         "title": "app.eurario.it — Advisor Intelligente & Diagnostica Vincoli",
         "badge": "Salute Orario: 100%",
-        "school": "Liceo & Tecnico «Pico De Paperis» • Paperopoli",
+        "school": "Liceo Classico e Scientifico «Scuola di Atene» • Atene",
         "description": "Pre-validazione matematica: analizza in tempo reale i colli di bottiglia prima del calcolo per evitare blocchi o combinazioni impossibili.",
         "checks": [
           {
@@ -407,18 +407,18 @@
           },
           {
             "status": "ok",
-            "title": "Vincoli Esterni COE Paperone",
-            "desc": "Nessuna sovrapposizione oraria tra la sede di Paperopoli e la scuola di completamento."
+            "title": "Vincoli Esterni COE Aristotele",
+            "desc": "Nessuna sovrapposizione oraria tra la sede di Atene e la scuola di completamento."
           },
           {
             "status": "ok",
-            "title": "Giorno Libero Paperino Paolino",
+            "title": "Giorno Libero Milone di Crotone",
             "desc": "Giorno libero del Giovedì rigorosamente preservato (0 ore assegnate)."
           },
           {
             "status": "ok",
             "title": "Capienza & Turnazione Laboratori",
-            "desc": "Laboratorio di Fisica utilizzato da Archimede Pitagorico senza conflitti di turno."
+            "desc": "Laboratorio di Fisica utilizzato da Galileo Galilei senza conflitti di turno."
           }
         ],
         "advisor_tip": "💡 Advisor: Nessun vincolo contraddittorio rilevato. Il quadro didattico è matematicamente pronto per la compilazione rapida."
@@ -426,7 +426,7 @@
       "reports": {
         "title": "app.eurario.it — Esportazione Ufficiale & Tipografia",
         "badge": "Word • PDF • Excel",
-        "school": "Liceo & Tecnico «Pico De Paperis» • Paperopoli",
+        "school": "Liceo Classico e Scientifico «Scuola di Atene» • Atene",
         "description": "Generazione con un clic di layout professionali per il Collegio Docenti, orari per classe da affiggere all'albo e file per il registro elettronico.",
         "exports": [
           {
@@ -565,7 +565,7 @@
     },
     "announcements": [
       {
-        "badge": "What's New in v1.9.6",
+        "badge": "What's New in v1.9.7",
         "date": "October 2026",
         "text": "New Architecture & DevOps section with E2E diagrams, language-synchronized documentation launch from WebApp, and automated versioning controls."
       }
@@ -733,8 +733,8 @@
     },
     "showcase_header": {
       "tag": "Application Tour • Live Sample Dataset",
-      "title": "Eurario Interfaces with the Duckburg Sample School",
-      "subtitle": "Explore actual operational screens loaded with the «Duckburg High & Tech Academy» demo: from the interactive master schedule to COE shared posts, from the FET compiler to official printouts."
+      "title": "Eurario Interfaces with the «School of Athens» Sample School",
+      "subtitle": "Explore actual operational screens loaded with the «School of Athens Classical & Scientific High School» demo: from the interactive master schedule to COE shared posts, from the FET compiler to official printouts."
     },
     "showcase_tabs": [
       {
@@ -767,8 +767,8 @@
       "timetable": {
         "title": "app.eurario.it — Master Timetable • Class 3A & Faculty",
         "badge": "● 100% Solved by FET",
-        "school": "Duckburg High & Tech Academy • Duckburg",
-        "description": "Dynamic timetable view with automated subject color-coding, dedicated labs (Gyro's Physics Lab, Gymnasium), and zero gaps.",
+        "school": "School of Athens Classical & Scientific High School • Athens",
+        "description": "Dynamic timetable view with automated subject color-coding, dedicated labs (Galileo's Physics Lab, Gymnasium), and zero gaps.",
         "headers": [
           "Period",
           "Monday",
@@ -780,76 +780,76 @@
         "rows": [
           [
             "1st (08:00)",
-            "MATH • Scrooge McDuck",
-            "LIT • Ludwig Von Drake",
-            "PE • Battista (Gymnasium)",
-            "MECH • Dinamite Bla",
-            "LIT • Ludwig Von Drake"
+            "MATH • Euclid",
+            "LIT • Plato",
+            "PE • Milo of Croton (Gymnasium)",
+            "HUM • Dante Alighieri",
+            "LIT • Plato"
           ],
           [
             "2nd (09:00)",
-            "MATH • Scrooge McDuck",
-            "LIT • Ludwig Von Drake",
-            "PE • Battista (Gymnasium)",
-            "MECH • Dinamite Bla",
-            "MATH • Scrooge McDuck"
+            "MATH • Euclid",
+            "LIT • Plato",
+            "PE • Milo of Croton (Gymnasium)",
+            "HUM • Dante Alighieri",
+            "MATH • Euclid"
           ],
           [
             "3rd (10:00)",
-            "SCI • Gyro Gearloose",
-            "MECH • Dinamite Bla",
-            "MATH • Scrooge McDuck",
-            "MATH • Scrooge McDuck",
-            "SCI • Gyro Gearloose"
+            "SCI • Galileo Galilei",
+            "HUM • Dante Alighieri",
+            "MATH • Euclid",
+            "MATH • Euclid",
+            "SCI • Galileo Galilei"
           ],
           [
             "4th (11:00)",
-            "LIT • Ludwig Von Drake",
-            "LAB • Gyro (Physics Lab)",
-            "DUTY • Donald Duck",
-            "SCI • Gyro Gearloose",
-            "ENG • Grandma Duck"
+            "LIT • Plato",
+            "LAB • Galileo (Physics Lab)",
+            "DUTY • Milo of Croton",
+            "SCI • Galileo Galilei",
+            "ENG • William Shakespeare"
           ],
           [
             "5th (12:00)",
-            "ENG • Grandma Duck",
-            "LAB • Gyro (Physics Lab)",
-            "LIT • Ludwig Von Drake",
-            "ENG • Grandma Duck",
-            "PHIL • Ludwig Von Drake"
+            "ENG • William Shakespeare",
+            "LAB • Galileo (Physics Lab)",
+            "LIT • Plato",
+            "ENG • William Shakespeare",
+            "PHIL • Plato"
           ]
         ],
-        "footer_note": "✓ 0 Conflicts • Donald Duck respects Part-Time Thursday Off-Day • Scrooge McDuck COE 12h Main + 6h North Tech"
+        "footer_note": "✓ 0 Conflicts • Milo of Croton respects Part-Time Thursday Off-Day • Aristotle COE 12h Main + 6h North Tech"
       },
       "teachers": {
         "title": "app.eurario.it — Faculty Roster & Teaching Appointments",
         "badge": "8 Active Faculty",
-        "school": "Duckburg High & Tech Academy • Duckburg",
+        "school": "School of Athens Classical & Scientific High School • Athens",
         "description": "Surgical setup for shared external appointments (COE), fractional splits, vertical part-time schedules with protected off-days, and duty periods.",
         "items": [
           {
-            "name": "Gyro Gearloose",
+            "name": "Galileo Galilei",
             "subject": "Physics & Applied Technologies",
             "type_badge": "Full Post (18h)",
             "type_class": "badge-success",
             "details": "18 Weekly periods • 3 Classes (1A, 2A, 3A) • 4h Co-taught lab slots • Max 4 periods/day • Zero window gaps"
           },
           {
-            "name": "Scrooge McDuck",
+            "name": "Aristotle",
             "subject": "Business Economics & Law",
             "type_badge": "Shared COE Post (12h + 6h)",
             "type_class": "badge-warning",
-            "details": "12h Duckburg Main Campus + 6h North Duckburg Tech • Campus days: Mon/Wed/Fri • Inter-campus transit window preserved"
+            "details": "12h Athens Main Campus + 6h Olympic Branch • Campus days: Mon/Wed/Fri • Inter-campus transit window preserved"
           },
           {
-            "name": "Donald Duck",
+            "name": "Milo of Croton",
             "subject": "Lab Support & On-Call Duty",
             "type_badge": "Vertical Part-Time (10h)",
             "type_class": "badge-info",
             "details": "10 Contracted periods • Binding Off-Day: Thursday • Availability concentrated in morning sessions (08:00 - 12:00)"
           },
           {
-            "name": "Ludwig Von Drake",
+            "name": "Plato",
             "subject": "Literature, History & Philosophy",
             "type_badge": "Full Post (18h)",
             "type_class": "badge-success",
@@ -860,7 +860,7 @@
       "solver": {
         "title": "app.eurario.it — Real-Time FET 7.12 Compiler Console",
         "badge": "FET Engine 7.12.0",
-        "school": "Duckburg High & Tech Academy • Duckburg",
+        "school": "School of Athens Classical & Scientific High School • Athens",
         "description": "Embedded multithreaded heuristic solver: navigates complex space-time constraint matrices and delivers a 100% solved roster in seconds.",
         "stats": [
           {
@@ -886,8 +886,8 @@
         ],
         "console_output": [
           "[FET 7.12] Initializing activity matrix: 8 teachers, 5 classes, 3 buildings...",
-          "[FET 7.12] Applying COE constraint: Scrooge McDuck locked to Mon/Wed/Fri...",
-          "[FET 7.12] Applying Part-Time rule: Donald Duck locked OFF on Thursdays...",
+          "[FET 7.12] Applying COE constraint: Aristotle locked to Mon/Wed/Fri...",
+          "[FET 7.12] Applying Part-Time rule: Milo of Croton locked OFF on Thursdays...",
           "[FET 7.12] Allocating 120 timetable slots...",
           "[FET 7.12] SUCCESS! Optimal solution achieved at generation #184 (1.34s). 100% timetable solved!"
         ]
@@ -895,7 +895,7 @@
       "diagnostics": {
         "title": "app.eurario.it — Smart Constraint Advisor & Diagnostics",
         "badge": "Timetable Health: 100%",
-        "school": "Duckburg High & Tech Academy • Duckburg",
+        "school": "School of Athens Classical & Scientific High School • Athens",
         "description": "Mathematical pre-validation: continuously analyzes bottlenecks prior to execution to prevent deadlock states and contradictory rules.",
         "checks": [
           {
@@ -905,18 +905,18 @@
           },
           {
             "status": "ok",
-            "title": "Scrooge McDuck Shared Appointment Rules",
-            "desc": "No overlapping periods between Duckburg Main Campus and completion partner school."
+            "title": "Aristotle Shared Appointment Rules",
+            "desc": "No overlapping periods between Athens Main Campus and completion partner school."
           },
           {
             "status": "ok",
-            "title": "Donald Duck Off-Day Guarantee",
+            "title": "Milo of Croton Off-Day Guarantee",
             "desc": "Thursday free day contractually preserved with 0 periods assigned."
           },
           {
             "status": "ok",
             "title": "Specialized Lab Room Rotations",
-            "desc": "Physics Lab reserved for Gyro Gearloose with zero room allocation conflicts."
+            "desc": "Physics Lab reserved for Galileo Galilei with zero room allocation conflicts."
           }
         ],
         "advisor_tip": "💡 Advisor: No contradictory constraints detected. The academic dataset is mathematically validated for rapid compilation."
@@ -924,7 +924,7 @@
       "reports": {
         "title": "app.eurario.it — Official Exports & Typography",
         "badge": "Word • PDF • Excel",
-        "school": "Duckburg High & Tech Academy • Duckburg",
+        "school": "School of Athens Classical & Scientific High School • Athens",
         "description": "One-click generation of polished documents for faculty boards, class schedules for bulletin boards, and register-compatible data files.",
         "exports": [
           {
