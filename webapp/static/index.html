@@ -699,6 +699,43 @@
     </div>
   </div>
 
+  <!-- Modal Cambio Password Obbligatorio Primo Accesso Admin -->
+  <div id="modalForceChangePasscode" class="modal-backdrop" role="dialog" aria-modal="true" style="display:none;z-index:99999;align-items:center;justify-content:center;">
+    <div class="modal-dialog" style="max-width:500px;background:var(--bg-card);border:1px solid var(--border-color);border-radius:12px;box-shadow:0 20px 40px rgba(0,0,0,0.35);overflow:hidden;">
+      <div class="modal-header" style="border-bottom:1px solid var(--border-color);padding:16px 20px;background:var(--bg-surface-alt);">
+        <div class="modal-title" style="display:flex;align-items:center;gap:8px;font-size:16px;font-weight:750;color:var(--text-title);">
+          <span>🛡️</span> <span>Sicurezza: Nuovo Passcode Master</span>
+        </div>
+      </div>
+      <div class="modal-body" style="padding:20px;display:flex;flex-direction:column;gap:14px;">
+        <div style="background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.35);border-radius:8px;padding:12px;font-size:13px;line-height:1.5;color:var(--text-main);">
+          ⚠️ <b>Primo Accesso Amministratore:</b> Stai utilizzando il passcode predefinito di fabbrica (<code>admin2026</code>). Per proteggere l'istituto da accessi non autorizzati e attacchi di forza bruta, è obbligatorio impostare ora un nuovo passcode master sicuro.
+        </div>
+
+        <div id="forcePasscodeError" style="display:none;background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.35);border-radius:6px;padding:10px;color:#dc2626;font-size:12.5px;font-weight:600;"></div>
+
+        <div>
+          <label class="form-label" style="font-weight:600;font-size:13px;display:block;margin-bottom:6px;">Nuovo Passcode Master (minimo 8 caratteri):</label>
+          <input type="password" id="inputNewMasterPasscode" class="form-input" placeholder="Almeno 8 caratteri complessi..." style="width:100%;padding:9px 12px;font-size:13px;" />
+        </div>
+
+        <div>
+          <label class="form-label" style="font-weight:600;font-size:13px;display:block;margin-bottom:6px;">Conferma Nuovo Passcode:</label>
+          <input type="password" id="inputConfirmMasterPasscode" class="form-input" placeholder="Ripeti il nuovo passcode..." style="width:100%;padding:9px 12px;font-size:13px;" onkeydown="if(event.key==='Enter') submitForcedPasscodeChange()" />
+        </div>
+
+        <div style="font-size:11.5px;color:var(--text-muted);line-height:1.4;">
+          🔒 Il nuovo passcode verrà memorizzato con derivazione crittografica sicura <b>PBKDF2-HMAC-SHA256</b> (600.000 iterazioni) e protetto da rate-limiting ed IP lockout temporale.
+        </div>
+      </div>
+      <div class="modal-footer" style="padding:14px 20px;border-top:1px solid var(--border-color);background:var(--bg-surface-alt);display:flex;justify-content:flex-end;gap:10px;">
+        <button type="button" class="btn btn-primary" onclick="submitForcedPasscodeChange()" style="font-weight:700;">
+          💾 Salva Passcode & Accedi
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Modal Stampa Orario per Classe (Procedura 9) -->
   <div id="printClassesModal" class="modal-backdrop" role="dialog" aria-modal="true" style="display:none;">
     <div class="modal-dialog" style="max-width:680px;">

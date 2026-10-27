@@ -45,7 +45,7 @@ from webapp.database import (
 )
 from webapp.schools import school_manager
 from webapp.fet_engine import generate_fet_xml
-from webapp.auth import auth_manager, get_local_now, SERVER_TZ_NAME
+from webapp.auth import auth_manager, get_local_now, SERVER_TZ_NAME, AuthLockoutError
 from webapp.validator import TimetablePreValidator
 from webapp.advisor import TimetableAdvisor
 from webapp.print_engine import (
@@ -1134,10 +1134,33 @@ class EurarioHandler(BaseHTTPRequestHandler):
                 res = auth_manager.handle_emergency_login(body["passcode"], ip=client_ip, user_agent=client_ua)
                 self._json(200, {
                     "ok": True,
-                    "user": res["user"]
+                    "user": res["user"],
+                    "must_change_passcode": res.get("must_change_passcode", False)
                 }, set_cookie=res["session_token"])
+            except AuthLockoutError as e:
+                self._json(429, {
+                    "error": str(e),
+                    "locked": True,
+                    "retry_after": getattr(e, "retry_after", 900)
+                })
             except Exception as e:
                 self._json(401, {"error": str(e)})
+            return
+
+        elif path == "/api/auth/emergency/change-passcode":
+            if not body or not body.get("new_passcode"):
+                self._json(400, {"error": "Nuovo passcode mancante"})
+                return
+            user = self._require_admin()
+            if not user:
+                return
+            old_p = body.get("old_passcode", "")
+            new_p = body.get("new_passcode", "")
+            try:
+                auth_manager.change_emergency_passcode(old_p, new_p, ip=client_ip, user_agent=client_ua)
+                self._json(200, {"ok": True, "message": "Passcode di emergenza aggiornato con successo"})
+            except Exception as e:
+                self._json(400, {"error": str(e)})
             return
 
         elif path == "/api/auth/logout":

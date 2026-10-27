@@ -385,6 +385,8 @@
       align-items: center;
       height: 72px;
       gap: 16px;
+      min-width: 0;
+      max-width: 100%;
     }
     .brand {
       display: flex;
@@ -409,8 +411,24 @@
     .nav-links {
       display: flex;
       align-items: center;
-      gap: 20px;
-      flex-shrink: 1;
+      gap: 18px;
+      flex: 1 1 auto;
+      min-width: 0;
+      overflow-x: auto;
+      overflow-y: hidden;
+      white-space: nowrap;
+      scrollbar-width: thin;
+      scrollbar-color: var(--border-color) transparent;
+      -webkit-overflow-scrolling: touch;
+      padding: 6px 4px;
+      scroll-behavior: smooth;
+    }
+    .nav-links::-webkit-scrollbar {
+      height: 3px;
+    }
+    .nav-links::-webkit-scrollbar-thumb {
+      background: var(--border-color);
+      border-radius: 4px;
     }
     .nav-link {
       text-decoration: none;
@@ -419,6 +437,7 @@
       font-weight: 600;
       transition: color 0.15s;
       white-space: nowrap;
+      flex-shrink: 0;
     }
     .nav-link:hover { color: var(--emerald); }
 
@@ -427,6 +446,7 @@
       align-items: center;
       gap: 10px;
       flex-shrink: 0;
+      margin-left: auto;
     }
 
     /* COMPACT VERTICAL DROPDOWNS (THEME & LANGUAGE) */
@@ -1557,11 +1577,11 @@
     }
 
     /* Responsive Media Queries */
-    @media (max-width: 1080px) {
-      .nav-links { gap: 14px; }
+    @media (max-width: 1200px) {
+      .nav-links { gap: 12px; }
       .nav-link { font-size: 13px; }
     }
-    @media (max-width: 960px) {
+    @media (max-width: 1040px) {
       .hero-grid { grid-template-columns: 1fr; gap: 36px; }
       .hero-title { font-size: 34px; }
       .faq-grid { grid-template-columns: 1fr; }
@@ -2386,6 +2406,18 @@
       }
       document.body.style.overflow = '';
     }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const desktopNav = document.querySelector('.nav-links');
+      if (desktopNav) {
+        desktopNav.addEventListener('wheel', (e) => {
+          if (e.deltaY !== 0 && desktopNav.scrollWidth > desktopNav.clientWidth) {
+            e.preventDefault();
+            desktopNav.scrollLeft += e.deltaY;
+          }
+        }, { passive: false });
+      }
+    });
 
     document.addEventListener('click', (e) => {
       if (!e.target.closest('.nav-dropdown')) {

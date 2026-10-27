@@ -16,6 +16,7 @@ import json
 import time
 import secrets
 import hashlib
+import hmac
 import smtplib
 import ssl
 import urllib.request
@@ -50,6 +51,56 @@ SMTP_PASSWORD_ENV = os.environ.get("SMTP_PASSWORD", "").strip()
 SMTP_HOST_ENV = os.environ.get("SMTP_HOST", "smtp.gmail.com").strip()
 SMTP_PORT_ENV = int(os.environ.get("SMTP_PORT", "587"))
 
+# --- STRUTTURE PER PROTEZIONE BRUTE-FORCE SU PASSCODE DI EMERGENZA ---
+FAILED_EMERGENCY_ATTEMPTS = {}  # ip -> list of float timestamps
+EMERGENCY_IP_LOCKOUTS = {}      # ip -> float timestamp di fine blocco
+MAX_FAILED_ATTEMPTS = 5
+LOCKOUT_DURATION_SECONDS = 900  # 15 minuti di congelamento IP
+PBKDF2_ITERATIONS = 600000
+
+class AuthLockoutError(Exception):
+    """Sollevata quando un IP viene bloccato per troppi tentativi consecutivi errati."""
+    def __init__(self, message, retry_after=900):
+        super().__init__(message)
+        self.retry_after = retry_after
+
+def hash_emergency_passcode(passcode: str, salt: str = None) -> str:
+    """Deriva un hash PBKDF2-HMAC-SHA256 con 600.000 iterazioni e salt casuale crittografico (NIST/OWASP)."""
+    if not passcode:
+        raise ValueError("Passcode non valido")
+    if not salt:
+        salt = secrets.token_hex(16)
+    derived = hashlib.pbkdf2_hmac(
+        "sha256",
+        passcode.encode("utf-8"),
+        bytes.fromhex(salt),
+        PBKDF2_ITERATIONS
+    ).hex()
+    return f"pbkdf2:sha256:{PBKDF2_ITERATIONS}${salt}${derived}"
+
+def verify_emergency_passcode(passcode: str, stored_hash: str) -> bool:
+    """Verifica a tempo costante (hmac.compare_digest) per scongiurare qualsiasi attacco di temporizzazione."""
+    if not stored_hash or not passcode:
+        return False
+    # Supporto trasparente per migrazione da stringhe in chiaro legacy
+    if not stored_hash.startswith("pbkdf2:"):
+        return hmac.compare_digest(passcode, stored_hash)
+    try:
+        parts = stored_hash.split("$")
+        if len(parts) != 3:
+            return False
+        alg_iter, salt_hex, expected_hex = parts
+        _, _, iters = alg_iter.split(":")
+        calculated_hex = hashlib.pbkdf2_hmac(
+            "sha256",
+            passcode.encode("utf-8"),
+            bytes.fromhex(salt_hex),
+            int(iters)
+        ).hex()
+        return hmac.compare_digest(calculated_hex, expected_hex)
+    except Exception:
+        return False
+
 
 class AuthManager:
     def __init__(self):
@@ -59,7 +110,8 @@ class AuthManager:
             "superadmins": [DEFAULT_ADMIN_EMAIL],
             "school_memberships": {},  # email -> { school_id: { role, status, added_at } }
             "google_client_id": DEFAULT_GOOGLE_CLIENT_ID,
-            "emergency_passcode": os.environ.get("ADMIN_PASSCODE", "admin2026"),
+            "emergency_passcode": hash_emergency_passcode(os.environ.get("ADMIN_PASSCODE", "admin2026")),
+            "must_change_passcode": True,
             "smtp": {
                 "enabled": SMTP_ENABLED_ENV,
                 "host": SMTP_HOST_ENV,
@@ -97,7 +149,21 @@ class AuthManager:
                             self.config["superadmins"].append(self.config["admin_email"])
                         self.config["school_memberships"] = data.get("school_memberships", {})
                         self.config["google_client_id"] = data.get("google_client_id", self.config["google_client_id"]).strip()
-                        self.config["emergency_passcode"] = data.get("emergency_passcode", self.config["emergency_passcode"])
+                        stored_pass = data.get("emergency_passcode", self.config["emergency_passcode"])
+                        must_change = data.get("must_change_passcode", None)
+                        # Migrazione trasparente: se in chiaro, esegui hash PBKDF2 e forza cambio se default
+                        if not stored_pass.startswith("pbkdf2:"):
+                            is_default = (stored_pass == "admin2026" or stored_pass == os.environ.get("ADMIN_PASSCODE", "admin2026"))
+                            if is_default or must_change is None:
+                                must_change = is_default
+                            self.config["emergency_passcode"] = hash_emergency_passcode(stored_pass)
+                            self.config["must_change_passcode"] = bool(must_change)
+                            self._save()
+                        else:
+                            self.config["emergency_passcode"] = stored_pass
+                            if must_change is None:
+                                must_change = verify_emergency_passcode("admin2026", stored_pass)
+                            self.config["must_change_passcode"] = bool(must_change)
                         self.config["smtp"] = {**self.config["smtp"], **data.get("smtp", {})}
                         # Override con variabili d'ambiente se presenti
                         if SMTP_USER_ENV:
@@ -518,11 +584,59 @@ class AuthManager:
     def handle_emergency_login(self, passcode, ip=None, user_agent=None):
         """
         Accesso di emergenza / fallback locale con passcode amministratore.
+        Implementa:
+        1. Controllo lockout IP (max 5 errori in 15 min -> blocco 15 min).
+        2. Tarpit esponenziale progressivo (1s, 2s, 4s, 8s) per rallentare bot.
+        3. Verifica crittografica PBKDF2-HMAC-SHA256 con confronto a tempo costante.
+        4. Segnalazione obbligatoria 'must_change_passcode' al primo accesso con password predefinita.
         """
-        configured_pass = self.config.get("emergency_passcode", "admin2026")
-        if not passcode or passcode != configured_pass:
-            self.log_access("EMERGENCY_LOGIN_FAIL", "admin", "anonymous", "FAILED", ip, user_agent, "Tentativo di accesso con passcode master errato")
-            raise ValueError("Passcode di emergenza errato")
+        now = time.time()
+        client_ip = (ip or "127.0.0.1").strip()
+
+        # Pulizia vecchi tentativi (> 15 min)
+        if client_ip in FAILED_EMERGENCY_ATTEMPTS:
+            FAILED_EMERGENCY_ATTEMPTS[client_ip] = [
+                t for t in FAILED_EMERGENCY_ATTEMPTS[client_ip]
+                if now - t < LOCKOUT_DURATION_SECONDS
+            ]
+            if not FAILED_EMERGENCY_ATTEMPTS[client_ip]:
+                del FAILED_EMERGENCY_ATTEMPTS[client_ip]
+
+        # 1. Verifica se l'IP è attualmente bloccato
+        lockout_until = EMERGENCY_IP_LOCKOUTS.get(client_ip, 0)
+        if now < lockout_until:
+            remaining = int(lockout_until - now)
+            self.log_access("EMERGENCY_LOGIN_BLOCKED", "admin", "anonymous", "DENIED", client_ip, user_agent, f"Accesso respinto: IP bloccato per brute-force ({remaining}s rimanenti)")
+            raise AuthLockoutError(f"Accesso di emergenza temporaneamente bloccato per troppi tentativi falliti. Riprova tra {remaining} secondi.", retry_after=remaining)
+
+        # 2. Tarpit: ritardo progressivo in base agli errori consecutivi
+        recent_fails = len(FAILED_EMERGENCY_ATTEMPTS.get(client_ip, []))
+        if recent_fails > 0:
+            delay = min(8.0, 1.0 * (2 ** (recent_fails - 1)))
+            time.sleep(delay)
+
+        # 3. Verifica crittografica passcode
+        self._load()
+        stored_hash = self.config.get("emergency_passcode", "")
+        if not passcode or not verify_emergency_passcode(passcode, stored_hash):
+            if client_ip not in FAILED_EMERGENCY_ATTEMPTS:
+                FAILED_EMERGENCY_ATTEMPTS[client_ip] = []
+            FAILED_EMERGENCY_ATTEMPTS[client_ip].append(now)
+            current_count = len(FAILED_EMERGENCY_ATTEMPTS[client_ip])
+
+            if current_count >= MAX_FAILED_ATTEMPTS:
+                EMERGENCY_IP_LOCKOUTS[client_ip] = now + LOCKOUT_DURATION_SECONDS
+                self.log_access("SECURITY_ALERT_BRUTEFORCE", "admin", "anonymous", "BLOCKED", client_ip, user_agent, f"Attacco a forza bruta rilevato: IP {client_ip} congelato per {LOCKOUT_DURATION_SECONDS // 60} minuti.")
+                self._notify_admin_security_alert(client_ip, user_agent)
+                raise AuthLockoutError(f"Troppi tentativi errati: accesso di emergenza bloccato per {LOCKOUT_DURATION_SECONDS // 60} minuti.", retry_after=LOCKOUT_DURATION_SECONDS)
+
+            remaining = MAX_FAILED_ATTEMPTS - current_count
+            self.log_access("EMERGENCY_LOGIN_FAIL", "admin", "anonymous", "FAILED", client_ip, user_agent, f"Tentativo fallito con passcode master ({remaining} tentativi rimasti)")
+            raise ValueError(f"Passcode di emergenza errato. Tentativi rimasti prima del blocco temporaneo: {remaining}")
+
+        # Accesso riuscito: reset contatori fallimenti per questo IP
+        FAILED_EMERGENCY_ATTEMPTS.pop(client_ip, None)
+        EMERGENCY_IP_LOCKOUTS.pop(client_ip, None)
 
         admin_email = self.config["admin_email"]
         session_token = self.create_session(admin_email, is_passcode_auth=True)
@@ -538,11 +652,44 @@ class AuthManager:
         if admin_email in self.config["users"]:
             self.config["users"][admin_email]["last_login"] = user["last_login"]
             self._save()
-        self.log_access("EMERGENCY_LOGIN", admin_email, "admin", "SUCCESS", ip, user_agent, "Accesso riuscito con passcode master")
+        self.log_access("EMERGENCY_LOGIN", admin_email, "admin", "SUCCESS", client_ip, user_agent, "Accesso riuscito con passcode master")
+
+        must_change = self.config.get("must_change_passcode", False)
         return {
             "session_token": session_token,
-            "user": user
+            "user": user,
+            "must_change_passcode": must_change
         }
+
+    def change_emergency_passcode(self, old_passcode, new_passcode, ip=None, user_agent=None):
+        """
+        Modifica sicura del passcode master di emergenza.
+        Valida complessità minima (minimo 8 caratteri, diverso da admin2026).
+        """
+        self._load()
+        stored_hash = self.config.get("emergency_passcode", "")
+
+        # Se fornito il vecchio passcode, verifichiamo la sua validità
+        if old_passcode:
+            if not verify_emergency_passcode(old_passcode, stored_hash):
+                self.log_access("CHANGE_PASSCODE_FAIL", "admin", "admin", "FAILED", ip, user_agent, "Fallita modifica passcode: vecchio passcode errato")
+                raise ValueError("Il passcode attuale inserito non è corretto")
+
+        clean_new = (new_passcode or "").strip()
+        if len(clean_new) < 8:
+            raise ValueError("Il nuovo passcode deve contenere almeno 8 caratteri")
+        if clean_new.lower() in ("admin2026", "password", "12345678", "admin", "eurario"):
+            raise ValueError("Il passcode scelto è troppo semplice o corrisponde al default di fabbrica. Scegli una passphrase più sicura.")
+        if old_passcode and clean_new == old_passcode:
+            raise ValueError("Il nuovo passcode deve essere diverso dal precedente")
+
+        self.config["emergency_passcode"] = hash_emergency_passcode(clean_new)
+        self.config["must_change_passcode"] = False
+        self._save()
+
+        admin_email = self.config.get("admin_email", "admin")
+        self.log_access("EMERGENCY_PASSCODE_CHANGED", admin_email, "admin", "SUCCESS", ip, user_agent, "Passcode master aggiornato e protetto con hash PBKDF2")
+        return True
 
     def handle_access_request(self, email, name=None, ip=None, user_agent=None):
         """
@@ -783,7 +930,8 @@ class AuthManager:
                     "password": self.config["smtp"].get("password", ""),
                     "notify_to": self.config["smtp"].get("notify_to", self.config["admin_email"])
                 },
-                "emergency_passcode": self.config.get("emergency_passcode", "admin2026")
+                "emergency_passcode": "••••••••" if self.config.get("emergency_passcode") else "",
+                "must_change_passcode": self.config.get("must_change_passcode", False)
             }
         }
 
@@ -1109,17 +1257,68 @@ Eurario Automated Security Notification
         if "google_client_id" in new_cfg:
             self.config["google_client_id"] = str(new_cfg["google_client_id"]).strip()
         if "emergency_passcode" in new_cfg and new_cfg["emergency_passcode"]:
-            self.config["emergency_passcode"] = str(new_cfg["emergency_passcode"]).strip()
+            raw_p = str(new_cfg["emergency_passcode"]).strip()
+            if raw_p and raw_p != "••••••••":
+                if len(raw_p) < 8:
+                    raise ValueError("Il nuovo passcode master deve contenere almeno 8 caratteri")
+                self.config["emergency_passcode"] = hash_emergency_passcode(raw_p)
+                self.config["must_change_passcode"] = False
         if "smtp" in new_cfg and isinstance(new_cfg["smtp"], dict):
             self.config["smtp"].update(new_cfg["smtp"])
         self._save()
         return {
             "google_client_id": self.config["google_client_id"],
             "admin_email": self.config["admin_email"],
+            "must_change_passcode": self.config.get("must_change_passcode", False),
             "smtp_enabled": self.config["smtp"].get("enabled", False)
         }
 
     # --- EMAIL NOTIFICATION (SMTP) ---
+
+    def _notify_admin_security_alert(self, client_ip, user_agent):
+        """Invia un'email di allerta critica all'amministratore in caso di attacco a forza bruta rilevato."""
+        smtp = self.config.get("smtp", {})
+        if not smtp.get("enabled"):
+            return
+
+        to_email = smtp.get("notify_to") or self.config["admin_email"]
+        host = smtp.get("host", "smtp.gmail.com")
+        port = int(smtp.get("port", 587))
+        user_smtp = smtp.get("user")
+        pwd = smtp.get("password")
+
+        if not host or not user_smtp or not pwd:
+            return
+
+        msg = EmailMessage()
+        msg["Subject"] = "🚨 [Eurario Sicurezza] Rilevato potenziale attacco Brute-Force: IP congelato"
+        msg["From"] = user_smtp
+        msg["To"] = to_email
+
+        now_str = get_local_now().strftime("%d/%m/%Y %H:%M:%S")
+        body = f"""ATTENZIONE: Notifica di Sicurezza Eurario
+
+È stato rilevato e bloccato un tentativo ripetuto di violazione del passcode master di emergenza:
+
+- Indirizzo IP: {client_ip}
+- User Agent: {user_agent or 'Non specificato'}
+- Data e Ora: {now_str}
+- Provvedimento: Indirizzo IP congelato per 15 minuti (HTTP 429 Too Many Requests).
+
+Se non sei stato tu, verifica gli accessi al server e assicurati di aver sostituito il passcode predefinito con una password complessa.
+
+---
+Eurario Automated Intrusion Prevention System
+"""
+        msg.set_content(body)
+        try:
+            context = ssl.create_default_context()
+            with smtplib.SMTP(host, port, timeout=10) as server:
+                server.starttls(context=context)
+                server.login(user_smtp, pwd)
+                server.send_message(msg)
+        except Exception as e:
+            print(f"[AUTH SECURITY ALERT ERROR]: {e}", file=sys.stderr)
 
     def _notify_admin_email(self, user):
         smtp = self.config.get("smtp", {})

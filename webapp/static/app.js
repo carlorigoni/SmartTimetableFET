@@ -1378,6 +1378,72 @@ async function handleGoogleCredentialResponse(response) {
   }
 }
 
+let pendingForcedAuth = null;
+
+function showForceChangePasscodeModal(oldPasscode, user) {
+  pendingForcedAuth = { oldPasscode, user };
+  const modal = document.getElementById('modalForceChangePasscode');
+  const errBox = document.getElementById('forcePasscodeError');
+  const p1 = document.getElementById('inputNewMasterPasscode');
+  const p2 = document.getElementById('inputConfirmMasterPasscode');
+  if (errBox) { errBox.style.display = 'none'; errBox.innerText = ''; }
+  if (p1) p1.value = '';
+  if (p2) p2.value = '';
+  if (modal) modal.style.display = 'flex';
+  setTimeout(() => p1?.focus(), 150);
+}
+
+async function submitForcedPasscodeChange() {
+  const p1 = (document.getElementById('inputNewMasterPasscode')?.value || '').trim();
+  const p2 = (document.getElementById('inputConfirmMasterPasscode')?.value || '').trim();
+  const errBox = document.getElementById('forcePasscodeError');
+
+  if (!p1) {
+    if (errBox) { errBox.innerText = 'Inserisci il nuovo passcode master.'; errBox.style.display = 'block'; }
+    return;
+  }
+  if (p1.length < 8) {
+    if (errBox) { errBox.innerText = 'Il passcode deve contenere almeno 8 caratteri.'; errBox.style.display = 'block'; }
+    return;
+  }
+  if (p1.toLowerCase() === 'admin2026') {
+    if (errBox) { errBox.innerText = 'Devi scegliere un passcode diverso da quello di fabbrica (admin2026).'; errBox.style.display = 'block'; }
+    return;
+  }
+  if (p1 !== p2) {
+    if (errBox) { errBox.innerText = 'I due passcode inseriti non coincidono. Riprova.'; errBox.style.display = 'block'; }
+    return;
+  }
+
+  try {
+    const res = await fetch('/api/auth/emergency/change-passcode', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        old_passcode: pendingForcedAuth?.oldPasscode || '',
+        new_passcode: p1
+      })
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      if (errBox) { errBox.innerText = data.error || 'Errore durante l\'aggiornamento del passcode.'; errBox.style.display = 'block'; }
+      return;
+    }
+
+    const modal = document.getElementById('modalForceChangePasscode');
+    if (modal) modal.style.display = 'none';
+
+    showToast('Nuovo passcode master configurato con successo!', 'ok');
+    if (pendingForcedAuth?.user) {
+      currentUser = pendingForcedAuth.user;
+      handleAuthenticatedState({ user: pendingForcedAuth.user, pending_count: 0 });
+    }
+    pendingForcedAuth = null;
+  } catch (e) {
+    if (errBox) { errBox.innerText = 'Errore di connessione: ' + e.message; errBox.style.display = 'block'; }
+  }
+}
+
 async function submitEmergencyLogin() {
   const passEl = document.getElementById('emergencyPasscode');
   const errBox = document.getElementById('authErrorMsg');
@@ -1408,6 +1474,11 @@ async function submitEmergencyLogin() {
     }
 
     currentUser = data.user;
+    if (data.must_change_passcode) {
+      showForceChangePasscodeModal(passcode, data.user);
+      return;
+    }
+
     showToast('Accesso Amministratore confermato!', 'ok');
     handleAuthenticatedState({ user: data.user, pending_count: 0 });
   } catch (e) {
