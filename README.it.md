@@ -3,7 +3,7 @@
 [![Version](https://img.shields.io/badge/version-1.9.2-blue.svg)](https://github.com/carlorigoni/eurario)
 [![Docker Hub](https://img.shields.io/badge/docker%20hub-carlorigoni%2Feurario%3Alatest-blue?logo=docker)](https://hub.docker.com/r/carlorigoni/eurario)
 [![FET Solver](https://img.shields.io/badge/FET%20engine-7.12.0-orange.svg)](https://lalescu.ro/liviu/fet/)
-[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-green.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![License: AGPL v3](https://img.shields.io/badge/License-AGPLv3-green.svg)](https://www.gnu.org/licenses/agpl-3.0)
 
 > 🌐 **Lingua / Language:** [English](README.md) | **Italiano**
 
@@ -354,7 +354,7 @@ Il progetto Eurario nasce dalla sinergia tra competenze didattiche e organizzati
 - 🎓 **Mentore dell'Orario & Guida Metodologica**:
   **Federico Rettore** &mdash; Mentore e riferimento metodologico per i principi organizzativi dell'orario scolastico italiano, l'equilibratura dei carichi docenti, la gestione dei vincoli e la prassi applicata degli istituti secondari.
 - ⚡ **Motore Euristico di Calcolo FET**:
-  **Liviu Lalescu** e la comunità internazionale del progetto [FET (Free Educational Timetabling Software)](https://lalescu.ro/liviu/fet/) &mdash; Straordinario algoritmo euristico C++ nativo ad alte prestazioni, distribuito come Software Libero sotto licenza GNU GPL.
+  **Liviu Lalescu**, **Volker Dirr** e la comunità internazionale del progetto [FET (Free Educational Timetabling Software)](https://lalescu.ro/liviu/fet/) &mdash; Straordinario algoritmo euristico C++ nativo ad alte prestazioni, distribuito come Software Libero sotto licenza GNU AGPLv3.
 - 🤖 **AI Engineering & Pair Programming**:
   **Google DeepMind Antigravity** &mdash; Ingegnerizzazione dell'architettura full-stack, design interfaccia reattiva Material 3 (stile Google Classroom), Relaxation Engine dell'Advisor vincoli, parser e generatore Microsoft Word (.docx), pipeline Docker multi-architettura e test.
 - 🔒 **Infrastruttura & Sovranità dei Dati**:
@@ -367,8 +367,10 @@ Il progetto Eurario nasce dalla sinergia tra competenze didattiche e organizzati
 ├── docker-compose.yml           # Configurazione Docker Compose per server/Synology/Watchtower
 ├── .dockerignore                # Esclusioni per build Docker
 ├── .gitignore                   # Esclusioni repository Git
+├── LICENSE                      # Testo integrale licenza GNU Affero General Public License v3 (AGPLv3)
 ├── SYNOLOGY_GUIDE.md            # Guida installazione su Synology NAS
-├── README.md                    # Questa documentazione completa
+├── README.md                    # Documentazione primaria in lingua inglese
+├── README.it.md                 # Questa documentazione completa in italiano
 ├── setup_fet_cl.sh              # Script compilazione locale macOS di fet-cl
 ├── webapp/
 │   ├── server.py                # Backend REST API e server HTTP (Zero dipendenze)
@@ -394,5 +396,5 @@ Il progetto Eurario nasce dalla sinergia tra competenze didattiche e organizzati
 
 ## 📄 Licenza
 
-Distribuito sotto licenza **GNU General Public License v3 (GNU GPL v3)** in piena conformità con la licenza del motore solutore FET.  
+Distribuito sotto licenza **GNU Affero General Public License v3 (GNU AGPLv3)** in piena conformità con la licenza del motore solutore FET.  
 Autore: **Carlo Rigoni** &bull; Motore: **FET 7.12.0** &bull; AI Pair Programming: **Google DeepMind Antigravity**.

@@ -3,7 +3,7 @@
 [![Version](https://img.shields.io/badge/version-1.9.2-blue.svg)](https://github.com/carlorigoni/eurario)
 [![Docker Hub](https://img.shields.io/badge/docker%20hub-carlorigoni%2Feurario%3Alatest-blue?logo=docker)](https://hub.docker.com/r/carlorigoni/eurario)
 [![FET Solver](https://img.shields.io/badge/FET%20engine-7.12.0-orange.svg)](https://lalescu.ro/liviu/fet/)
-[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-green.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![License: AGPL v3](https://img.shields.io/badge/License-AGPLv3-green.svg)](https://www.gnu.org/licenses/agpl-3.0)
 
 > 🌐 **Language / Lingua:** **English** | [Italiano](README.it.md)
 
@@ -265,7 +265,7 @@ The Eurario project is the result of collaboration between pedagogical timetabli
 - 🎓 **Timetabling Mentor & Methodological Guide**:
   **Federico Rettore** &mdash; Mentor and methodological reference for Italian and European school timetabling organizational principles, workload balancing, constraint satisfaction, and high school operational practices.
 - ⚡ **FET Heuristic Solver Engine**:
-  **Liviu Lalescu** and the international [FET (Free Educational Timetabling Software)](https://lalescu.ro/liviu/fet/) community &mdash; Extraordinary native C++ heuristic engine licensed under GNU GPL.
+  **Liviu Lalescu**, **Volker Dirr**, and the international [FET (Free Educational Timetabling Software)](https://lalescu.ro/liviu/fet/) community &mdash; Extraordinary native C++ heuristic engine licensed under GNU AGPLv3.
 - 🤖 **AI Engineering & Pair Programming**:
   **Google DeepMind Antigravity** &mdash; Full-stack architecture, Material 3 responsive UI (Google Classroom style), Advisor relaxation heuristic engine, Word (.docx) parser/generator, multi-arch Docker pipeline, and automated testing.
 - 🔒 **Data Sovereignty**:
@@ -280,6 +280,7 @@ The Eurario project is the result of collaboration between pedagogical timetabli
 ├── docker-compose.yml           # Docker Compose configuration (Eurario + Watchtower)
 ├── .dockerignore                # Docker build exclusions
 ├── .gitignore                   # Git repository exclusions
+├── LICENSE                      # GNU Affero General Public License v3 (AGPLv3)
 ├── SYNOLOGY_GUIDE.md            # Synology NAS deployment guide
 ├── README.md                    # This primary English documentation
 ├── README.it.md                 # Italian language documentation
@@ -308,5 +309,5 @@ The Eurario project is the result of collaboration between pedagogical timetabli
 
 ## 📄 License
 
-Released under the **GNU General Public License v3 (GNU GPL v3)** in full alignment with the FET solver engine license.  
+Released under the **GNU Affero General Public License v3 (GNU AGPLv3)** in full alignment with the FET solver engine license.  
 Author: **Carlo Rigoni** &bull; Solver Engine: **FET 7.12.0** &bull; AI Pair Programming: **Google DeepMind Antigravity**.
