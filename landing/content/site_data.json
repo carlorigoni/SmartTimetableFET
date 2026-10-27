@@ -7,7 +7,7 @@
     "repo_url": "https://github.com/carlorigoni/eurario",
     "docker_hub": "https://hub.docker.com/r/carlorigoni/eurario",
     "contact_email": "carlo.rigoni@gmail.com",
-    "current_version": "v1.9.4",
+    "current_version": "v1.9.5",
     "fet_version": "7.12.0",
     "author": "Carlo Rigoni",
     "mentor": "Federico Rettore"
@@ -67,9 +67,9 @@
     },
     "announcements": [
       {
-        "badge": "Novità v1.9.4",
+        "badge": "Novità v1.9.5",
         "date": "Ottobre 2026",
-        "text": "Protezione avanzata da attacchi brute-force con PBKDF2 a 600.000 iterazioni, tarpit progressivo e cambio password obbligatorio per l'amministratore."
+        "text": "Integrazione documentazione ufficiale in WebApp, indicatori di scorrimento orizzontale reattivi per i menu e 8 nuove casistiche operative FET per la scuola italiana."
       }
     ],
     "pillars_header": {
@@ -565,9 +565,9 @@
     },
     "announcements": [
       {
-        "badge": "What's New in v1.9.4",
+        "badge": "What's New in v1.9.5",
         "date": "October 2026",
-        "text": "Enterprise brute-force defense with 600k-iteration PBKDF2 hashing, progressive tarpit delay, and mandatory first-login administrator password update."
+        "text": "Official docs deep integration in WebApp, responsive horizontal menu scroll indicators, and 8 new real-world FET timetabling use cases."
       }
     ],
     "pillars_header": {
