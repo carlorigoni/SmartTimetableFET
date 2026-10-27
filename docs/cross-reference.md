@@ -156,6 +156,75 @@ Questa pagina documenta la corrispondenza biunivoca e analitica tra ogni singolo
 * **Interfaccia Eurario**: Icona Lucchetto sulla griglia orario.
 * **Tag XML FET**: `<ConstraintActivityPreferredStartingTime>` (Hard 100%). Fissa in modo inamovibile giorno e ora di inizio dell'attività.
 
+### E. Attività a Termine Giornata (Cattedre Quindicinali / Asimmetriche)
+* **Interfaccia Eurario**: Impostazioni Cattedra &rarr; *Colloca a Fine Giornata*.
+* **Tag XML FET**: `<ConstraintActivityEndsStudentsDay>`
+* **Codice XML Generato**:
+  ```xml
+  <ConstraintActivityEndsStudentsDay>
+    <Weight_Percentage>100</Weight_Percentage>
+    <Activity_Id>412</Activity_Id>
+    <Active>true</Active>
+  </ConstraintActivityEndsStudentsDay>
+  ```
+* **Utilizzo pratico FET**: Raccomandato dal manuale FET per le lezioni che si svolgono una volta ogni due settimane (es. laboratori a settimane alterne), garantendo che l'assenza a settimane alterne si traduca in un'uscita anticipata senza generare ore buche per gli studenti.
+
+### F. Consecutività Didattica (Teoria + Laboratorio ITP)
+* **Interfaccia Eurario**: Modale Cattedra &rarr; *Lega in Consecutività Diretta*.
+* **Tag XML FET**: `<ConstraintTwoActivitiesConsecutive>`
+* **Codice XML Generato**:
+  ```xml
+  <ConstraintTwoActivitiesConsecutive>
+    <Weight_Percentage>100</Weight_Percentage>
+    <First_Activity_Id>101</First_Activity_Id>
+    <Second_Activity_Id>102</Second_Activity_Id>
+    <Active>true</Active>
+  </ConstraintTwoActivitiesConsecutive>
+  ```
+* **Utilizzo pratico FET**: Impone che la seconda attività (es. laboratorio) sia collocata nello stesso giorno tassativamente nell'ora immediatamente successiva alla prima (teoria), senza buchi intermedi (salvo intervallo).
+
+### G. Raggruppamento nello Stesso Giorno (Ordine Flessibile)
+* **Interfaccia Eurario**: Modale Cattedra &rarr; *Raggruppa nello Stesso Giorno*.
+* **Tag XML FET**: `<ConstraintTwoActivitiesGrouped>`
+* **Utilizzo pratico FET**: Le attività sono collocate nello stesso giorno senza buchi intermedi, ma senza vincolare quale debba essere svolta per prima, riducendo drasticamente i tempi di calcolo per il solutore.
+
+### H. Propedeuticità Temporale nella Settimana
+* **Interfaccia Eurario**: Modale Cattedra &rarr; *Propedeuticità Settimanale (A prima di B)*.
+* **Tag XML FET**: `<ConstraintTwoActivitiesOrdered>`
+* **Utilizzo pratico FET**: Garantisce che l'attività teorica sia programmata nei primi giorni della settimana (es. Lun/Mar) prima dell'attività di verifica o esercitazione (es. Gio/Ven).
+
+### I. Sincronizzazione Oraria per Opzioni, Articolazioni & Pseudo-Attività
+* **Interfaccia Eurario**: Modale Articolazione &rarr; *Sincronizza Orario di Inizio*.
+* **Tag XML FET**: `<ConstraintActivitySameStartingTime>`
+* **Codice XML Generato**:
+  ```xml
+  <ConstraintActivitySameStartingTime>
+    <Weight_Percentage>100</Weight_Percentage>
+    <First_Activity_Id>201</First_Activity_Id>
+    <Second_Activity_Id>202</Second_Activity_Id>
+    <Active>true</Active>
+  </ConstraintActivitySameStartingTime>
+  ```
+* **Utilizzo pratico FET**: Utilizzato sia per sdoppiamenti paralleli (es. Francese e Spagnolo nella stessa classe) sia per sincronizzare le riunioni collegiali di dipartimento tra docenti senza studenti (*pseudo-attività*).
+
+### J. Riposo Notturno Minimo (Diurno & Serale)
+* **Interfaccia Eurario**: Scheda Docente &rarr; *Intervallo Minimo di Riposo Notturno*.
+* **Tag XML FET**: `<ConstraintTeacherMinRestingHours>`
+* **Codice XML Generato**:
+  ```xml
+  <ConstraintTeacherMinRestingHours>
+    <Weight_Percentage>100</Weight_Percentage>
+    <Teacher_Name>Romani Elena</Teacher_Name>
+    <Min_Resting_Hours>11</Min_Resting_Hours>
+  </ConstraintTeacherMinRestingHours>
+  ```
+* **Utilizzo pratico FET**: Impedisce che un docente con incarico serale (termine alle 22:00) possa essere assegnato alla prima o seconda ora del mattino seguente ($08:00 - 10:00$).
+
+### K. Tetto di Contemporaneità su Risorse Condivise
+* **Interfaccia Eurario**: Vincoli Risorse &rarr; *Massimo Attività Simultanee per Tag*.
+* **Tag XML FET**: `<ConstraintActivitiesMaxSimultaneousInSelectedTimeSlots>`
+* **Utilizzo pratico FET**: Impedisce a un set di attività etichettate con lo stesso tag (es. `PALESTRA_A` o `USCITA_ESTERNA`) di superare una soglia massima istantanea (es. max 2 o 3 classi contemporaneamente).
+
 ---
 
 ## 5. Vincoli Spaziali & Gestione Multi-Plesso (`Space_Constraints_List`)
@@ -191,6 +260,31 @@ Questa pagina documenta la corrispondenza biunivoca e analitica tra ogni singolo
   1. `<ConstraintTeachersMaxBuildingChangesPerDay>`: Limita i cambi plesso nello stesso giorno a un massimo prefissato (tipicamente max 1).
   2. `<ConstraintTeachersMaxBuildingChangesPerWeek>`: Limita i cambi plesso nell'arco dell'intera settimana (tipicamente max 2 o 3).
   3. `<ConstraintTeachersMinGapsBetweenBuildingChanges>`: Impone un intervallo orario vuoto minimo (es. 1 ora di buco obbligatoria per il tempo di percorrenza stradale) prima che il docente possa iniziare la lezione nel nuovo plesso.
+
+### D. Stabilità d'Aula per Ore Consecutive
+* **Interfaccia Eurario**: Impostazioni Aule &rarr; *Stessa Aula se Ore Consecutive*.
+* **Tag XML FET**: `<ConstraintActivitiesSameRoomIfConsecutive>`
+* **Codice XML Generato**:
+  ```xml
+  <ConstraintActivitiesSameRoomIfConsecutive>
+    <Weight_Percentage>100</Weight_Percentage>
+    <Active>true</Active>
+  </ConstraintActivitiesSameRoomIfConsecutive>
+  ```
+* **Utilizzo pratico FET**: Garantisce che se due attività successive hanno gli stessi studenti o lo stesso docente, restino fisicamente nella medesima aula senza costringere a spostamenti intermedi.
+
+### E. Riduzione del Nomadismo delle Classi (Tetto Massimo Aule al Giorno)
+* **Interfaccia Eurario**: Impostazioni Classi &rarr; *Massimo Aule Diverse al Giorno*.
+* **Tag XML FET**: `<ConstraintStudentsSetMaxDifferentRoomsPerDay>`
+* **Codice XML Generato**:
+  ```xml
+  <ConstraintStudentsSetMaxDifferentRoomsPerDay>
+    <Weight_Percentage>95</Weight_Percentage>
+    <Students>1A</Students>
+    <Max_Different_Rooms>2</Max_Different_Rooms>
+  </ConstraintStudentsSetMaxDifferentRoomsPerDay>
+  ```
+* **Utilizzo pratico FET**: Impedisce che una classe cambi più di 2 aule nell'arco della mattinata (l'aula base e al più una rotazione verso palestra o laboratorio).
 
 ---
 

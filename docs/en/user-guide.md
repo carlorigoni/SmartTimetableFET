@@ -134,7 +134,27 @@ Once all curricular lessons are successfully scheduled:
 
 ---
 
-## 💼 10 Real-World Institutional Use Cases
+## 💼 In-Depth Real-World Use Cases (Secondary School & Official FET Manual)
+
+Before examining specific scenarios, it is essential to understand the **algorithmic architecture and philosophy** established in the [Official FET Manual](https://www.timetabling.de/manual/FET-manual.en.html), which is seamlessly embedded within Eurario's solving engine.
+
+### 🧠 The Three Algorithmic Pillars of the Official FET Manual
+
+#### 1. "The Golden Rule" and Incremental Generation
+School timetabling is a known NP-complete mathematical problem. The single most common mistake made by timetabling committees is loading 100% of all constraints, individual preferences, and soft teacher requests on the very first solving attempt. When the calculation fails to converge, isolating which exact rule or combination caused the bottleneck becomes nearly impossible.
+* **Phase A (Structural Baseline 100%)**: Input strictly non-negotiable entities: Days, Hours, Classes, Teachers, Curricular allocations, Hard unavailabilities (statutory days off, part-time schedules), and Mandatory room reservations (specialized labs and gymnasiums). Verify that this baseline converges within seconds. If it fails, an inescapable arithmetic flaw exists in your staffing allocations (e.g., total assigned hours exceed available time slots).
+* **Phase B (Pedagogical Quality & Well-Being)**: Introduce distribution constraints across the week (`Min days between activities`), teacher continuous teaching limits (`Max hours continuously`), and weekly free period caps (`Max gaps per week`).
+* **Phase C (Soft Optimization & Desiderata)**: Layer in subjective preferences (requested early departures or late arrivals), room nomadism caps, and specialized group syncs.
+
+#### 2. Constraint Weight Mechanics ($0.0\% - 100.0\%$)
+Every constraint in the FET engine carries a percentage weight property (`Weight_Percentage`):
+* **Hard Constraints (100% Weight)**: Non-negotiable mandatory rules. FET's search heuristic will never accept a timetable that violates even a single 100% constraint. If two 100% rules contradict each other, the algorithm will loop indefinitely in mathematical deadlock.
+* **Soft Constraints (Weights such as 85%, 95%, 99%)**: Qualitative preferences. During recursive heuristic swapping, FET is permitted to temporarily and locally violate a soft rule to complete the placement of remaining assignments. A constraint set to 98% or 99% often allows FET to find an outstanding pedagogical timetable in seconds, whereas a rigid 100% would cause a complete standstill.
+
+#### 3. Mathematical Deadlock Isolation
+As emphasized by FET creators Liviu Lalescu and Volker Dirr, solving failures are never random: they stem from circular over-constrained models. Eurario includes an automated **Relaxation Engine** that systematically deactivates soft rules and parses conflict traces to pinpoint the exact teachers, classes, or rooms causing the impasse.
+
+---
 
 ### Use Case 1: Teacher on External Shared Schedule (COE)
 * **Scenario**: Dr. Marco Bianchi (Math & Physics) has an 18-hour contract: **12 hours** at your campus and **6 external hours** at a neighboring school 25 km away, scheduled on **Tuesday and Thursday**.
@@ -253,6 +273,115 @@ Once all curricular lessons are successfully scheduled:
      * Run the FET solver for the complete master schedule.
      * Save the snapshot *"2026_10_Official_Permanent"*.
   5. If unforeseen disruptions occur, you can revert to the preliminary schedule with a single click.
+
+---
+
+### Use Case 11: Fortnightly / Alternating Week Classes (Asymmetric Curricula)
+* **FET Manual Reference**: Section *Add a fortnightly activity*.
+* **Scenario**: In 9th and 10th grades, *Design & Technology* requires 1 regular weekly lecture in standard classrooms and 1 computer lab session taught once every two weeks (Week A / Week B), amounting to an average of 1.5 hours per week or 1 hour bi-weekly.
+* **The Two Official FET Workarounds**:
+  1. **Solution 1 (Recommended Edge Placement)**: Add the fortnightly lesson as a standard weekly activity, but lock it to the boundary of the students' school day:
+     * Apply `<ConstraintActivityEndsStudentsDay>` or set an early-period time preference.
+     * This ensures that during the off-week when the lesson does not meet, students never suffer an empty idle period in the middle of their day; they simply arrive one period later or dismiss one period earlier.
+  2. **Solution 2 (Paired Mirror Scheduling)**: If two different fortnightly subjects (e.g., *CAD Drafting* and *Applied Chemistry*) or two separate cohorts (e.g., Class 1A and Class 1B) share the same lab:
+     * Unify them into a single joint FET activity scheduled weekly in the exact same time slot and room.
+     * Noticeboards and syllabus sheets specify that Week A attends Subject 1 while Week B attends Subject 2, guaranteeing 100% room and instructor utilization with zero vacant timetable slots.
+
+---
+
+### Use Case 12: Pedagogical Ordering & Consecutiveness: Theory & Laboratory
+* **FET Manual Reference**: Sections *Two activities are consecutive*, *Activities are grouped*, *Two activities are ordered*.
+* **Scenario**: In 11th Grade Electronics, a 4-hour course consists of 2 theoretical lecture hours and 2 hands-on laboratory hours with a technical co-teacher. The department requires tight pedagogical coordination between both components.
+* **The 3 FET Modeling Rules**:
+  * **Consecutive Activities (`Two activities are consecutive`)**:
+    * Forces both activities onto the **same day, immediately back-to-back**, without any idle gap or intervening subject (recess is permitted).
+    * Best used for: Classroom theory directly succeeded by practical lab execution on the same morning.
+  * **Grouped Activities (`Activities are grouped`)**:
+    * Forces both activities onto the same day without gaps, **but the execution order is flexible** (lab can precede or follow theory).
+    * *FET Manual Tip*: This rule is far less restrictive than rigid consecutiveness and vastly speeds up solver convergence while preventing room-hopping.
+  * **Ordered Activities Across the Week (`Two activities are ordered`)**:
+    * Strictly mandates that Activity 1 (e.g., Monday/Tuesday lecture) must precede Activity 2 (Thursday/Friday exercise) across the calendar week.
+    * *Warning from FET Authors*: Volker Dirr cautions against over-using this rule. If Activity 1 is cancelled due to a Monday bank holiday, teacher illness, or an assembly, the planned sequence breaks down. Use only when pedagogically essential.
+
+---
+
+### Use Case 13: Nighttime Rest Protection Across Day and Evening Programs
+* **FET Manual Reference**: Section *Min resting hours*.
+* **Scenario**: A comprehensive institute operates both standard daytime classes ($08:00 - 14:00$) and evening adult diploma programs ($17:30 - 22:00$). Several teachers hold mixed dual-track assignments. If an instructor finishes at 22:00 on Monday evening and is scheduled for period 1 at 08:00 on Tuesday morning, the overnight rest window is under 10 hours, violating labor regulations.
+* **Configuration in Eurario**:
+  1. Open the Teacher modal and enable **Minimum Overnight Rest**.
+  2. Set `Min Resting Hours: 11` (or 12 hours).
+  3. Alternatively, apply interval caps: if an instructor teaches in the late evening block ($19:00 - 22:00$) on Day $N$, they cannot teach in the early morning block ($08:00 - 10:00$) on Day $N+1$.
+* **FET Compilation**: FET generates `<ConstraintTeacherMinRestingHours>` at 100% weight: whenever the teacher is placed in the final evening period, FET categorically forbids assignments in periods 1 and 2 the next morning, delaying their arrival to period 3 ($10:00$).
+
+---
+
+### Use Case 14: Pseudo-Activities for Faculty Meetings, Councils and Cafeteria
+* **FET Manual Reference**: Sections *Pseudo activities*, *Not available teachers, students or rooms & breaks*.
+* **Scenario**:
+  1. *Department Meetings*: On Thursday at period 6, all 12 STEM faculty members must be freed from class instruction to hold their curriculum alignment assembly.
+  2. *Staggered Cafeteria Lunch*: In extended-day technical high schools, students require a guaranteed lunch period at period 5 or 6 without overcrowding the dining hall.
+* **Configuration in Eurario**:
+  * **Department Meeting (Teachers without students)**:
+    * Create a synthetic "pseudo-activity" listing all 12 participating faculty members, **leaving the student set empty**.
+    * Label the subject *STEM Department Meeting* and set an exact time lock on Thursday period 6 (`ConstraintActivityPreferredStartingTime`) at 100% weight. FET marks all 12 teachers as actively occupied, ensuring no class lessons are booked during that hour.
+  * **Cafeteria Lunch (Students without teachers)**:
+    * *Global Recess Approach*: If all students dine simultaneously, apply `<ConstraintBreakTimes>`.
+    * *Staggered Pseudo-Activity*: If grade 9 dines during period 5 and grade 11 dines during period 6, create student-only activities with the room assigned to *Cafeteria Refectory*.
+
+---
+
+### Use Case 15: Student Room Nomadism and Classroom Stability
+* **FET Manual Reference**: Sections *Home room(s)*, *Preferred room(s)*, *A set of activities occupies max different rooms*, *A set of activities are in the same room if they are consecutive*.
+* **Scenario**: In facilities with tight physical space, students frequently face changing rooms 4 or 5 times a day ("room nomadism"), leading to hall congestion, lost instructional minutes, and logistical disorder.
+* **Configuration in Eurario**:
+  1. **Home Rooms**: Designate a permanent home base for each class (e.g., Class 1A &rarr; *Room 204*). All standard lectures default here automatically.
+  2. **Preferred Specialized Rooms**: Restrict room mobility exclusively to disciplines requiring physical apparatus:
+     * Physical Education &rarr; *Gymnasium*.
+     * Chemistry & Biology &rarr; *Science Lab*.
+     * Computer Science &rarr; *Multimedia Lab*.
+  3. **Room Stability for Consecutive Lessons**: Enable *Same room if consecutive* (`ConstraintActivitiesSameRoomIfConsecutive`). When a class or teacher has two successive periods, room transitions are strictly prohibited.
+  4. **Daily Room Change Cap**: Enforce `<ConstraintStudentsSetMaxDifferentRoomsPerDay>` with a maximum value of 2 rooms per day (the home room plus at most one lab/gym rotation).
+
+---
+
+### Use Case 16: Mid-Year Timetable Adjustments and Activity Locking
+* **FET Manual Reference**: Sections *Before changing a running timetable*, *Changing a running timetable*.
+* **Scenario**: In November, two months into the academic year, a Humanities teacher commences maternity leave. A replacement teacher is hired with a statutory day off on Friday. The committee must adjust the schedule without upsetting the daily routines of hundreds of students, families, and colleagues.
+* **Protected Recalculation Flow in Eurario**:
+  1. **Freeze Existing Stable Schedules (Locking)**:
+     * Click **Lock All Current Activities** (`locked="true"` on every timetable cell except the target maternity assignment).
+     * FET treats all 800 pre-existing class periods as unchangeable constants.
+  2. **Audit Newly Arrived Constraints**:
+     * As Volker Dirr highlights: *"Never focus solely on the departed teacher; audit the new arrival's real-world constraints"*. Enter the replacement teacher's availability and day-off rules.
+  3. **Targeted Relaxation**:
+     * If the new teacher's rules conflict with the prior schedule, unlock only the assignments across the 3 specific classes taught by that teacher, keeping the other 95% of the school completely frozen.
+  4. **Surgical Resolving**:
+     * Run the FET solver: the engine recalculates the local permutation in under 2 seconds, guaranteeing zero collateral disruption across unaffected classes.
+
+---
+
+### Use Case 17: Gap Taxonomy and Equitable Free Period Distribution
+* **FET Manual Reference**: Section *Teachers' Free Periods*.
+* **Scenario**: Teacher dissatisfaction often centers on uneven free period allocations, where some staff have compact schedules while others endure multiple disconnected gaps.
+* **Official FET Gap Taxonomy in Eurario**:
+  * **Single Gap**: An isolated 1-hour opening between lessons (e.g., teaching periods 1, 3, and 4, with period 2 free). *Eurario Strategy*: This is optimal for automated On-Duty ("D") assignment, immediately plugging dead time with compensated reserve supervision.
+  * **Border Gaps**: Delayed arrivals (period 2 start) or early departures (period 4 dismissal). *Eurario Strategy*: Regarded as favorable for staff; Eurario balances early-arrival mornings across departments to ensure fairness.
+  * **Big Gaps**: Multi-hour idle blocks (e.g., teaching period 1, then periods 5 and 6). *Eurario Strategy*: Highly undesirable. Eurario enforces `<ConstraintTeacherMaxGapsPerDay>1</ConstraintTeacherMaxGapsPerDay>` and heavily penalizes multi-hour gaps to eliminate Big Gaps campus-wide.
+
+---
+
+### Use Case 18: Maximum Simultaneous Activities on Shared Resources
+* **FET Manual Reference**: Section *Max simultaneous activities from a set in selected time slots*.
+* **Scenario**:
+  1. *Divided Sports Complex*: A large fieldhouse can safely host at most 3 class groups simultaneously under local fire code regulations.
+  2. *Off-Campus Field Visits*: To prevent security bottlenecks at school gates, the administration mandates that no more than 2 senior classes may conduct off-campus museum or library visits at the same time.
+* **Configuration in Eurario**:
+  1. Label target activities with a shared **Activity Tag** (e.g., `SPORTS_FACILITY` or `EXTERNAL_VISIT`).
+  2. In Resource Constraints, configure:
+     * Tag: `SPORTS_FACILITY`.
+     * Maximum Simultaneous Limit: `3`.
+* **FET Compilation**: FET generates `<ConstraintActivitiesMaxSimultaneousInSelectedTimeSlots>`: for every single weekly period, the engine verifies that the active count of tagged lessons is $\le 3$, guaranteeing safety and preventing resource contention.
 
 ---
 

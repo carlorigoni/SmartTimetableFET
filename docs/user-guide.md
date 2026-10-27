@@ -134,7 +134,27 @@ Una volta calcolate tutte le lezioni:
 
 ---
 
-## 💼 10 Casi d'Uso Reali Approfonditi
+## 💼 Casi d'Uso Reali Approfonditi (Scuola Italiana & Manuale Ufficiale FET)
+
+Prima di addentrarsi nei singoli casi pratici, è fondamentale richiamare l'**architettura e filosofia algoritmica** illustrata nel [Manuale Ufficiale FET](https://www.timetabling.de/manual/FET-manual.en.html), adottata integralmente dal motore di Eurario.
+
+### 🧠 I Tre Pilastri Algoritmici del Manuale Ufficiale FET
+
+#### 1. La "Regola Aurea" (The Golden Rule) e la Generazione Incrementale
+Un orario scolastico è un problema matematico di classe NP-completo. L'errore più comune delle commissioni orario consiste nel caricare contemporaneamente fin dal primo tentativo la totalità dei vincoli, desiderata individuali e preferenze di ogni docente. Se il calcolo non converge, risulta quasi impossibile identificare quale regola sia responsabile del conflitto.
+* **Fase A (Scheletro Strutturale 100%)**: Inserire unicamente entità e vincoli inderogabili: Giorni, Ore, Classi, Docenti, Cattedre curricolari, Indisponibilità assolute (giorni liberi contrattuali, part-time) e Aule obbligatorie (laboratori specialistici e palestre). Convalidare che questo scheletro converga in pochi secondi. Se fallisce, esiste un'incongruenza aritmetica nell'organico (es. ore assegnate a una classe superiori al monte ore settimanale della griglia).
+* **Fase B (Qualità Didattica e Benessere)**: Introdurre i vincoli di cadenza settimanale (`Min days between activities`), il tetto di ore consecutive per docente (`Max hours continuously`) e il tetto massimo di ore buche settimanali (`Max gaps per week`).
+* **Fase C (Ottimizzazioni Soft e Desiderata)**: Aggiungere preferenze orarie (es. ingressi/uscite richieste), limitazione al nomadismo tra aule diverse o raggruppamenti particolari.
+
+#### 2. La Meccanica dei Pesi dei Vincoli ($0.0\% - 100.0\%$)
+Nel solutore FET ogni vincolo possiede un attributo percentuale di peso (`Weight_Percentage`):
+* **Vincoli Rigidi (100% Hard Constraints)**: Costituiscono regole binarie assolute. Il motore di ricerca di FET non accetterà mai un orario che violi anche un solo vincolo al 100%. Se due vincoli al 100% entrano in contraddizione logica, l'algoritmo entrerà in uno stallo matematico infinito.
+* **Vincoli Flessibili (Soft Constraints: es. 85%, 95%, 99%)**: Rappresentano preferenze ottimali. Durante lo scambio euristico ricorsivo (*heuristic recursive swapping*), FET può temporaneamente e circoscrittamente violare un vincolo soft pur di completare il piazzamento delle attività rimanenti. Un vincolo impostato al 98% o 99% consente a FET di generare una soluzione didatticamente impeccabile in decine di secondi, dove un rigido 100% provocherebbe stallo.
+
+#### 3. Isolamento degli Stalli Matematici
+Come documentato dagli sviluppatori Liviu Lalescu e Volker Dirr nel manuale di FET, il fallimento del calcolo non è mai casuale ma deriva da un sovra-vincolamento circolare (*over-constrained model*). Eurario integra a tal fine il **Relaxation Engine**, che disattiva ricorsivamente i vincoli soft e analizza i log di conflitto per isolare esattamente i docenti o le classi coinvolte nel vicolo cieco.
+
+---
 
 ### Caso d'Uso 1: Docente con Cattedra Orario Esterna (COE)
 * **Contesto**: Il Prof. Marco Bianchi (A027, Matematica e Fisica) ha una cattedra di 18 ore complessive: **12 ore** nella scuola principale e **6 ore esterne** in un istituto vicino, dove presta servizio il **Martedì e Giovedì**.
@@ -253,6 +273,115 @@ Una volta calcolate tutte le lezioni:
      * Lanciare il solutore FET per l'orario definitivo completo.
      * Salvare lo snapshot *"2026_10_Orario_Definitivo_Ufficiale"*.
   5. In caso di necessità (es. ritardo nell'arrivo dei docenti o ordinanza sindacale), è possibile ripristinare istantaneamente con un solo clic l'orario provvisorio precedente.
+
+---
+
+### Caso d'Uso 11: Attività Quindicinali / a Settimane Alterne (Cattedre Asimmetriche)
+* **Riferimento Manuale FET**: Sezione *Add a fortnightly activity*.
+* **Contesto**: Nel biennio, l'insegnamento di *Tecnologia e Disegno* prevede 1 ora settimanale teorica in aula ordinaria e 1 ora di laboratorio informatico svolta a settimane alterne (settimana A / settimana B), per un totale reale di 1,5 ore settimanali oppure 1 ora ogni 15 giorni. In alternativa, una classe ha 1 ora quindicinale di approfondimento con il docente di lettere.
+* **Le Due Soluzioni del Manuale FET**:
+  1. **Soluzione 1 (Workaround pratico raccomandato dal manuale)**: Inserire l'attività come curricolare regolare ma vincolarla a bordo giornata:
+     * Assegnare all'attività il vincolo `<ConstraintActivityEndsStudentsDay>` oppure una preferenza d'orario sulla prima/ultima ora della giornata.
+     * In questo modo, nella settimana in cui la lezione quindicinale non ha luogo, gli studenti non rimangono con un'ora buca nel mezzo della mattinata, ma entrano semplicemente un'ora dopo o escono un'ora prima.
+  2. **Soluzione 2 (Accoppiamento speculare)**: Se due materie quindicinali diverse (es. *Disegno CAD* e *Laboratorio Chimica*) o due gruppi diversi (es. 1A e 1B) condividono il medesimo docente o laboratorio:
+     * Unificare le due materie in un'unica attività didattica congiunta in FET avente frequenza settimanale nello stesso slot orario.
+     * Nelle note e stampe, la scuola notifica che nei giorni pari si svolge la Materia 1 e nei giorni dispari la Materia 2, garantendo che l'aula specializzata o il docente siano impiegati costantemente al 100% senza slot vacanti.
+
+---
+
+### Caso d'Uso 12: Propedeuticità e Consecutività: Teoria & Laboratorio
+* **Riferimento Manuale FET**: Sezioni *Two activities are consecutive*, *Activities are grouped*, *Two activities are ordered*.
+* **Contesto**: Nella classe 3A Elettronica, la disciplina prevede 2 ore di Teoria in aula e 2 ore di Laboratorio pratico con ITP. Il dipartimento richiede che le due parti siano coordinate didatticamente nello stesso giorno o con sequenza pedagogica precisa.
+* **Le 3 Regole di Modellazione del Manuale FET**:
+  * **Attività Consecutive (`Two activities are consecutive`)**:
+    * Le due attività devono essere collocate **nello stesso giorno, tassativamente una immediatamente dopo l'altra**, senza alcuna ora buca o lezione intermedia (è consentito soltanto l'intervallo didattico).
+    * Ideale per: Teoria seguita direttamente dal blocco di Laboratorio nello stesso giorno.
+  * **Attività Raggruppate (`Two activities are grouped`)**:
+    * Le attività sono collocate nello stesso giorno senza ore buche in mezzo, **ma l'ordine non è obbligatorio** (la pratica può precedere o seguire la teoria).
+    * *Consiglio del manuale FET*: Questa regola è meno restrittiva della consecutività rigida e velocizza notevolmente la convergenza del solutore, evitando anche cambi d'aula o dispersione logistica.
+  * **Attività Ordinate nella Settimana (`Two activities are ordered`)**:
+    * L'attività 1 (es. Spiegazione teorica del Lunedì/Martedì) deve rigorosamente precedere nel corso della settimana l'attività 2 (Esercitazione del Giovedì/Venerdì).
+    * *Avvertenza del manuale*: Volker Dirr e Liviu Lalescu raccomandano cautela nell'uso di questo vincolo; se l'attività 1 cade all'inizio della settimana e coincide con un lunedì festivo, assemblea o assenza del docente, la programmazione settimanale rischia di saltare. Usarlo solo quando pedagogicamente indispensabile.
+
+---
+
+### Caso d'Uso 13: Tutela del Riposo Notturno tra Corso Diurno e Corso Serale
+* **Riferimento Manuale FET**: Sezione *Min resting hours*.
+* **Contesto**: L'istituto gestisce sia corsi diurni ordinari ($08:00 - 14:00$) sia corsi serali per studenti lavoratori ($17:30 - 22:00$). Alcuni docenti con cattedre miste insegnano sia al mattino sia alla sera. Se un docente termina la lezione alle 22:00 del lunedì e riprende alle 08:00 del martedì mattina, l'intervallo di stacco notturno è inferiore a 10 ore, violando la normativa sul riposo psicofisico dei lavoratori (CCNL).
+* **Procedura in Eurario**:
+  1. Nella scheda Docente, attivare la clausola **Riposo Minimo Notturno**.
+  2. Impostare `Min Resting Hours: 11` (o 12 ore).
+  3. In alternativa, utilizzare il vincolo per intervallo orario settimanale: se il docente insegna nella fascia serale ($19:00 - 22:00$) al giorno $N$, non può prestare servizio nella prima fascia mattutina ($08:00 - 10:00$) del giorno $N+1$.
+* **Risultato FET**: FET traduce la regola nel vincolo `<ConstraintTeacherMinRestingHours>` con peso 100%: se il docente è impegnato nell'ultima ora del serale, FET impedisce tassativamente la sua collocazione nelle prime 2 ore del giorno successivo, programmando l'ingresso dalle 10:00 in poi.
+
+---
+
+### Caso d'Uso 14: Pseudo-Attività per Riunioni Collegiali, Consigli e Mensa
+* **Riferimento Manuale FET**: Sezioni *Pseudo activities*, *Not available teachers, students or rooms & breaks*.
+* **Contesto**:
+  1. *Riunione di Dipartimento*: Il Giovedì alla 6ª ora tutti i 12 docenti dell'area Matematica e Fisica devono essere liberi da lezioni con le classi per svolgere la riunione di dipartimento.
+  2. *Pausa Pranzo / Mensa*: Nelle classi a tempo prolungato o licei musicali con rientri pomeridiani, gli studenti devono avere una pausa mensa garantita alla 5ª o 6ª ora.
+* **Procedura in Eurario**:
+  * **Caso Riunione (Docenti senza studenti)**:
+    * Creare una cattedra fittizia ("pseudo-attività") contenente l'elenco dei 12 docenti interessati, **lasciando vuoto l'insieme delle classi/studenti**.
+    * Assegnare la materia *Riunione Dipartimento* e fissare l'orario al Giovedì alla 6ª ora con peso 100% (`ConstraintActivityPreferredStartingTime`). FET tratterà i 12 docenti come impegnati, garantendo che nessuna classe sia programmata con loro in quello slot.
+  * **Caso Mensa (Studenti senza docente)**:
+    * *Variante Break*: Se la pausa pranzo è identica per tutto l'istituto, utilizzare il vincolo globale `<ConstraintBreakTimes>`.
+    * *Variante Pseudo-Attività*: Se diverse classi pranzano a turni sfalsati (es. prime e seconde alla 5ª ora, terze e quarte alla 6ª ora per non saturare la mensa), creare un'attività con solo l'insieme studenti della classe e senza docenti, vincolandola all'aula *Refettorio Mensa*.
+
+---
+
+### Caso d'Uso 15: Nomadismo delle Classi e Stabilità d'Aula
+* **Riferimento Manuale FET**: Sezioni *Home room(s)*, *Preferred room(s)*, *A set of activities occupies max different rooms*, *A set of activities are in the same room if they are consecutive*.
+* **Contesto**: Nelle scuole secondarie con aule limitate, gli studenti rischiano di cambiare aula 4 o 5 volte nella stessa mattina (il cosiddetto "nomadismo delle classi"), causando ritardi nell'avvio delle lezioni, confusione nei corridoi e usura degli arredi.
+* **Procedura in Eurario**:
+  1. **Aula Base (Home Room)**: Assegnare a ciascuna classe la propria aula fissa di riferimento (es. Classe 1A &rarr; *Aula 204*). Tutte le lezioni ordinarie si tengono automaticamente qui.
+  2. **Aule Speciali (Preferred Rooms)**: Assegnare aule specifiche unicamente alle discipline che ne necessitano rigorosamente:
+     * Scienze Motorie &rarr; *Palestra*.
+     * Scienze Naturali &rarr; *Lab Chimica/Biologia*.
+     * Informatica &rarr; *Lab Multimediale*.
+  3. **Stabilità d'Aula per Ore Consecutive**: Attivare la spunta *Stessa aula se lezioni consecutive* (`ConstraintActivitiesSameRoomIfConsecutive`). Se la classe o il docente hanno due lezioni successive (anche di materie differenti), non cambiano stanza.
+  4. **Tetto Massimo di Spostamenti Giornalieri**: Impostare `<ConstraintStudentsSetMaxDifferentRoomsPerDay>` a un valore massimo di 2 aule al giorno (l'aula base e al più una rotazione verso palestra o laboratorio).
+
+---
+
+### Caso d'Uso 16: Gestione Modifiche a Orario Avviato (Running Timetable & Activity Locks)
+* **Riferimento Manuale FET**: Sezioni *Before changing a running timetable*, *Changing a running timetable*.
+* **Contesto**: A novembre, a orario scolastico già in vigore da due mesi, una docente di Lettere entra in congedo maternità e viene nominato un supplente annuale che ha concordato il giorno libero il Venerdì. La commissione deve rimodulare l'orario senza sconvolgere la vita di centinaia di colleghi, studenti e famiglie.
+* **Procedura di Ricalcolo Protetto in Eurario**:
+  1. **Congelamento delle Attività Esistenti (Lock)**:
+     * Cliccare su **Blocca Tutte le Attività Valide** (`locked="true"` su tutti i record tranne quelli della cattedra oggetto di supplenza).
+     * Il solutore FET tratterà le 800 ore già assegnate alle altre classi come costanti immutabili.
+  2. **Rilevazione dei Nuovi Vincoli**:
+     * Il manuale FET raccomanda una regola aurea: *"Non considerare solo il docente uscente, ma verifica i vincoli sopraggiunti del nuovo arrivato"*. Inserire il giorno libero del nuovo docente e la sua disponibilità oraria.
+  3. **Rilassamento Circoscritto**:
+     * Se il nuovo docente ha vincoli incompatibili con lo slot esatto della precedente collega, sbloccare unicamente le attività delle 3 classi in cui insegna il docente, mantenendo bloccato il restante 95% dell'istituto.
+  4. **Risoluzione Mirata**:
+     * Lanciare il solutore FET: il motore ricalcola esclusivamente la combinazione locale delle ore sbloccate in meno di 2 secondi, preservando la stabilità generale dell'orario di plesso.
+
+---
+
+### Caso d'Uso 17: Tassonomia delle Ore Libere e Bilanciamento dei "Buchi" Docente
+* **Riferimento Manuale FET**: Sezione *Teachers' Free Periods*.
+* **Contesto**: Il malcontento più frequente del corpo docente riguarda la distribuzione delle ore buche. Spesso l'orario genera per alcuni insegnanti buchi orari multipli ed estenuanti, mentre altri hanno orari compatti.
+* **La Tassonomia Ufficiale del Manuale FET applicata in Eurario**:
+  * **Single Gap (Buco Singolo)**: Un'ora libera isolata tra due ore di lezione (es. lezioni alla 1ª, 3ª e 4ª ora, con buco alla 2ª). *Strategia Eurario*: Questa finestra è ideale e viene saturata prioritariamente con l'assegnazione automatica delle ore di disposizione ("D"), trasformando un tempo morto in servizio retribuito per supplenze.
+  * **Border Gap (Buchi di Bordo)**: Ingressi posticipati (es. ingresso alla 2ª o 3ª ora) o uscite anticipate (es. fine lezioni alla 3ª ora anziché alla 5ª). *Strategia Eurario*: Sono considerati periodi favorevoli per il docente; Eurario permette di bilanciare equamente i giorni con ingresso alla 1ª ora per evitare disparità.
+  * **Big Gap (Buchi Lunghi Multipli)**: 2 o 3 ore consecutive libere nella stessa mattinata (es. lezione alla 1ª ora e poi alla 5ª e 6ª). *Strategia Eurario*: Sono altamente disagevoli. L'algoritmo impone `<ConstraintTeacherMaxGapsPerDay>1</ConstraintTeacherMaxGapsPerDay>` e penalizza drasticamente i buchi superiori a 1 ora, azzerando i Big Gap nell'intero istituto.
+
+---
+
+### Caso d'Uso 18: Tetto Massimo di Contemporaneità su Risorse Condivise
+* **Riferimento Manuale FET**: Sezione *Max simultaneous activities from a set in selected time slots*.
+* **Contesto**:
+  1. *Palestra a Più Corsie / Pareti Mobili*: L'impianto sportivo può accogliere al massimo 3 gruppi classe contemporaneamente per motivi di sicurezza antincendio e capienza omologata.
+  2. *Uscite Didattiche e Visite al Territorio*: Per non sguarnire la sorveglianza e non sovraccaricare gli ingressi, la dirigenza stabilisce che non più di 2 classi quinte possono svolgere laboratori all'esterno o in biblioteca nello stesso giorno alla stessa ora.
+* **Procedura in Eurario**:
+  1. Raggruppare le attività interessate sotto un **Activity Tag** dedicato (es. `SPORTEAMS` o `LAB_ESTERNO`).
+  2. Nel menu Vincoli Risorse, impostare il parametro:
+     * Tag: `SPORTEAMS`.
+     * Tetto Massimo Simultaneo: `3`.
+* **Risultato FET**: FET compila il vincolo `<ConstraintActivitiesMaxSimultaneousInSelectedTimeSlots>`: in qualunque ora della settimana, il solutore verifica che la somma delle attività del set in esecuzione sia $\le 3$, garantendo il pieno rispetto della sicurezza senza conflitti logistici.
 
 ---
 

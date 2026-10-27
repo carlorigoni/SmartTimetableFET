@@ -156,6 +156,75 @@ This document details the exact, bi-directional mapping between pedagogical para
 * **Eurario Interface**: Lock icon on timetable grid.
 * **FET XML Tag**: `<ConstraintActivityPreferredStartingTime>` (100% weight). Permanently fixes the day and period.
 
+### E. End-of-Day Activities (Fortnightly / Asymmetric Classes)
+* **Eurario Interface**: Allocation Settings &rarr; *Place at End of Day*.
+* **FET XML Tag**: `<ConstraintActivityEndsStudentsDay>`
+* **Generated XML**:
+  ```xml
+  <ConstraintActivityEndsStudentsDay>
+    <Weight_Percentage>100</Weight_Percentage>
+    <Activity_Id>412</Activity_Id>
+    <Active>true</Active>
+  </ConstraintActivityEndsStudentsDay>
+  ```
+* **FET Manual Application**: Recommended by the official FET manual for bi-weekly / alternating classes, ensuring that during the off-week when the lesson does not meet, students simply dismiss early rather than enduring an idle midday gap.
+
+### F. Pedagogical Consecutiveness (Theory + Lab Co-Teaching)
+* **Eurario Interface**: Allocation Modal &rarr; *Link in Direct Consecutiveness*.
+* **FET XML Tag**: `<ConstraintTwoActivitiesConsecutive>`
+* **Generated XML**:
+  ```xml
+  <ConstraintTwoActivitiesConsecutive>
+    <Weight_Percentage>100</Weight_Percentage>
+    <First_Activity_Id>101</First_Activity_Id>
+    <Second_Activity_Id>102</Second_Activity_Id>
+    <Active>true</Active>
+  </ConstraintTwoActivitiesConsecutive>
+  ```
+* **FET Manual Application**: Mandates that the second activity (e.g. practical lab) is scheduled on the same day immediately following the first (theory), with zero intervening gaps (recess permitted).
+
+### G. Grouped Activities on the Same Day (Flexible Order)
+* **Eurario Interface**: Allocation Modal &rarr; *Group on Same Day*.
+* **FET XML Tag**: `<ConstraintTwoActivitiesGrouped>`
+* **FET Manual Application**: Activities must take place on the same day without gaps, but without restricting which one precedes the other, greatly easing solver workload.
+
+### H. Weekly Chronological Ordering
+* **Eurario Interface**: Allocation Modal &rarr; *Weekly Ordering (A before B)*.
+* **FET XML Tag**: `<ConstraintTwoActivitiesOrdered>`
+* **FET Manual Application**: Ensures that theoretical lecture periods occur earlier in the calendar week (Mon/Tue) before hands-on testing or review sessions (Thu/Fri).
+
+### I. Time Synchronization for Options, Articulated Groups & Meetings
+* **Eurario Interface**: Group Modal &rarr; *Synchronize Start Time*.
+* **FET XML Tag**: `<ConstraintActivitySameStartingTime>`
+* **Generated XML**:
+  ```xml
+  <ConstraintActivitySameStartingTime>
+    <Weight_Percentage>100</Weight_Percentage>
+    <First_Activity_Id>201</First_Activity_Id>
+    <Second_Activity_Id>202</Second_Activity_Id>
+    <Active>true</Active>
+  </ConstraintActivitySameStartingTime>
+  ```
+* **FET Manual Application**: Applied to parallel split groups (e.g. French and Spanish tracks) and faculty assembly meetings (*pseudo-activities* with teachers only).
+
+### J. Minimum Overnight Rest (Day & Evening Shifts)
+* **Eurario Interface**: Teacher Modal &rarr; *Minimum Overnight Rest*.
+* **FET XML Tag**: `<ConstraintTeacherMinRestingHours>`
+* **Generated XML**:
+  ```xml
+  <ConstraintTeacherMinRestingHours>
+    <Weight_Percentage>100</Weight_Percentage>
+    <Teacher_Name>Romani Elena</Teacher_Name>
+    <Min_Resting_Hours>11</Min_Resting_Hours>
+  </ConstraintTeacherMinRestingHours>
+  ```
+* **FET Manual Application**: Prevents an instructor finishing an evening shift at 22:00 from being scheduled for early morning classes ($08:00 - 10:00$) the following day.
+
+### K. Maximum Simultaneous Activities on Shared Resources
+* **Eurario Interface**: Resource Constraints &rarr; *Max Simultaneous by Tag*.
+* **FET XML Tag**: `<ConstraintActivitiesMaxSimultaneousInSelectedTimeSlots>`
+* **FET Manual Application**: Caps the number of activities bearing a given tag (e.g. `GYM_COURT` or `EXTERNAL_VISIT`) active at any single period across the school week.
+
 ---
 
 ## 5. Spatial & Multi-Building Constraints (`Space_Constraints_List`)
@@ -191,6 +260,31 @@ This document details the exact, bi-directional mapping between pedagogical para
   1. `<ConstraintTeachersMaxBuildingChangesPerDay>`: Caps campus changes per day (typically max 1).
   2. `<ConstraintTeachersMaxBuildingChangesPerWeek>`: Caps campus changes across the entire week (typically max 2 or 3).
   3. `<ConstraintTeachersMinGapsBetweenBuildingChanges>`: Enforces a required travel gap (e.g. 1 free hour) between lessons held in different buildings.
+
+### D. Classroom Stability for Consecutive Lessons
+* **Eurario Interface**: Room Settings &rarr; *Same Room If Consecutive*.
+* **FET XML Tag**: `<ConstraintActivitiesSameRoomIfConsecutive>`
+* **Generated XML**:
+  ```xml
+  <ConstraintActivitiesSameRoomIfConsecutive>
+    <Weight_Percentage>100</Weight_Percentage>
+    <Active>true</Active>
+  </ConstraintActivitiesSameRoomIfConsecutive>
+  ```
+* **FET Manual Application**: Prevents room relocations when successive lessons share the same students or instructor.
+
+### E. Reducing Student Room Nomadism (Daily Room Cap)
+* **Eurario Interface**: Class Settings &rarr; *Max Different Rooms per Day*.
+* **FET XML Tag**: `<ConstraintStudentsSetMaxDifferentRoomsPerDay>`
+* **Generated XML**:
+  ```xml
+  <ConstraintStudentsSetMaxDifferentRoomsPerDay>
+    <Weight_Percentage>95</Weight_Percentage>
+    <Students>1A</Students>
+    <Max_Different_Rooms>2</Max_Different_Rooms>
+  </ConstraintStudentsSetMaxDifferentRoomsPerDay>
+  ```
+* **FET Manual Application**: Limits a student cohort to occupying at most 2 distinct physical rooms in a single school day (their home room plus at most one lab or gym session).
 
 ---
 
