@@ -1,6 +1,6 @@
 # 🎓 Eurario — Complete School Timetabling Suite with FET 7.12.0
 
-[![Version](https://img.shields.io/badge/version-1.9.2-blue.svg)](https://github.com/carlorigoni/eurario)
+[![Version](https://img.shields.io/badge/version-1.9.3-blue.svg)](https://github.com/carlorigoni/eurario)
 [![Docker Hub](https://img.shields.io/badge/docker%20hub-carlorigoni%2Feurario%3Alatest-blue?logo=docker)](https://hub.docker.com/r/carlorigoni/eurario)
 [![FET Solver](https://img.shields.io/badge/FET%20engine-7.12.0-orange.svg)](https://lalescu.ro/liviu/fet/)
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPLv3-green.svg)](https://www.gnu.org/licenses/agpl-3.0)

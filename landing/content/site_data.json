@@ -7,7 +7,7 @@
     "repo_url": "https://github.com/carlorigoni/eurario",
     "docker_hub": "https://hub.docker.com/r/carlorigoni/eurario",
     "contact_email": "carlo.rigoni@gmail.com",
-    "current_version": "v1.9.2",
+    "current_version": "v1.9.3",
     "fet_version": "7.12.0",
     "author": "Carlo Rigoni",
     "mentor": "Federico Rettore"
@@ -66,9 +66,9 @@
     },
     "announcements": [
       {
-        "badge": "Novità v1.9.2",
+        "badge": "Novità v1.9.3",
         "date": "Ottobre 2026",
-        "text": "Allineamento intelligente cattedre docenti: caricamento multi-foglio Excel/CSV con anteprima variazioni per COE, Spezzoni e Part-Time."
+        "text": "Ridenominazione materie con sigle brevi per le stampe, anteprime link social e ottimizzazione salvataggi concorrenti."
       }
     ],
     "pillars_header": {
@@ -563,9 +563,9 @@
     },
     "announcements": [
       {
-        "badge": "What's New in v1.9.2",
+        "badge": "What's New in v1.9.3",
         "date": "October 2026",
-        "text": "Intelligent teacher post alignment: multi-sheet Excel/CSV upload with live preview of changes for shared allocations and part-time staff."
+        "text": "Subject renaming with optional short names for prints, rich social link previews, and enhanced concurrency safeguard."
       }
     ],
     "pillars_header": {
