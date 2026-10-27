@@ -21,6 +21,118 @@
 .md-header {
   border-bottom: 2px solid #E4572E !important;
   transition: background-color 0.25s ease, color 0.25s ease;
+  position: sticky !important;
+  position: -webkit-sticky !important;
+  overflow: visible !important;
+}
+
+/* Scorrimento Orizzontale Flessibile per Header Menu */
+.md-header__inner {
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  white-space: nowrap !important;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+  -webkit-overflow-scrolling: touch !important;
+  scroll-behavior: smooth !important;
+  position: relative !important;
+}
+
+.md-header__inner::-webkit-scrollbar {
+  display: none !important;
+  height: 0 !important;
+}
+
+/* Indicatore Visivo Sfumatura a Destra quando ci sono menu oltre il bordo */
+.md-header.has-overflow-right::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 44px;
+  background: linear-gradient(to right, transparent, rgba(228, 87, 46, 0.45));
+  pointer-events: none;
+  z-index: 5;
+  animation: pulseOverflowGlow 2s infinite ease-in-out;
+}
+
+[data-md-color-scheme="slate"] .md-header.has-overflow-right::after {
+  background: linear-gradient(to right, transparent, rgba(56, 189, 248, 0.35));
+}
+
+@keyframes pulseOverflowGlow {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+/* Indicatore Visivo Sfumatura a Sinistra quando si è scorsi verso destra */
+.md-header.has-overflow-left::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 36px;
+  background: linear-gradient(to left, transparent, rgba(27, 42, 74, 0.3));
+  pointer-events: none;
+  z-index: 5;
+}
+
+/* Frecce Indicatrici di Scorrimento Orizzontale Flottanti (Chevron) */
+.docs-header-scroll-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: var(--eurario-navy, #1B2A4A);
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  z-index: 10;
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 1;
+  padding: 0;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.docs-header-scroll-arrow:hover {
+  background: #E4572E !important;
+  color: #ffffff !important;
+  transform: translateY(-50%) scale(1.12);
+}
+
+.docs-header-scroll-arrow.arrow-right {
+  right: 6px;
+  animation: bounceRightChevron 1.5s infinite;
+}
+
+.docs-header-scroll-arrow.arrow-left {
+  left: 6px;
+}
+
+@keyframes bounceRightChevron {
+  0%, 100% { transform: translateY(-50%) translateX(0); }
+  50% { transform: translateY(-50%) translateX(3px); }
+}
+
+[data-md-color-scheme="slate"] .docs-header-scroll-arrow {
+  background: #1B2A4A;
+  color: #38bdf8 !important;
+  border-color: #38bdf8;
+}
+
+[data-md-color-scheme="slate"] .docs-header-scroll-arrow:hover {
+  background: #38bdf8 !important;
+  color: #0b1120 !important;
 }
 
 /* Pulsante di Ritorno ad Eurario.it nell'Header Desktop */

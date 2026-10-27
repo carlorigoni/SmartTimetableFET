@@ -160,10 +160,89 @@
     }
   }
 
+  // 7. Header Horizontal Scroll & Indicators (Glow + Floating Chevron)
+  function setupHeaderScrollIndicators() {
+    const header = document.querySelector('.md-header');
+    const headerInner = document.querySelector('.md-header__inner');
+    if (!header || !headerInner) return;
+
+    let rightArrow = document.getElementById('docsHeaderScrollRight');
+    let leftArrow = document.getElementById('docsHeaderScrollLeft');
+
+    if (!rightArrow) {
+      rightArrow = document.createElement('button');
+      rightArrow.id = 'docsHeaderScrollRight';
+      rightArrow.className = 'docs-header-scroll-arrow arrow-right';
+      rightArrow.setAttribute('type', 'button');
+      rightArrow.setAttribute('aria-label', 'Scorri la barra dei menu verso destra');
+      rightArrow.innerHTML = '›';
+      rightArrow.title = 'Altri menu a destra (clicca o scorri per visualizzarli)';
+      header.appendChild(rightArrow);
+
+      rightArrow.addEventListener('click', function(e) {
+        e.preventDefault();
+        headerInner.scrollBy({ left: 160, behavior: 'smooth' });
+      });
+    }
+
+    if (!leftArrow) {
+      leftArrow = document.createElement('button');
+      leftArrow.id = 'docsHeaderScrollLeft';
+      leftArrow.className = 'docs-header-scroll-arrow arrow-left';
+      leftArrow.setAttribute('type', 'button');
+      leftArrow.setAttribute('aria-label', 'Scorri la barra dei menu verso sinistra');
+      leftArrow.innerHTML = '‹';
+      leftArrow.title = 'Scorri indietro a sinistra';
+      header.appendChild(leftArrow);
+
+      leftArrow.addEventListener('click', function(e) {
+        e.preventDefault();
+        headerInner.scrollBy({ left: -160, behavior: 'smooth' });
+      });
+    }
+
+    function checkHeaderOverflow() {
+      const scrollLeft = headerInner.scrollLeft;
+      const maxScroll = headerInner.scrollWidth - headerInner.clientWidth;
+      const hasOverflow = maxScroll > 8;
+
+      if (hasOverflow && scrollLeft < maxScroll - 6) {
+        header.classList.add('has-overflow-right');
+        rightArrow.style.display = 'flex';
+      } else {
+        header.classList.remove('has-overflow-right');
+        rightArrow.style.display = 'none';
+      }
+
+      if (hasOverflow && scrollLeft > 6) {
+        header.classList.add('has-overflow-left');
+        leftArrow.style.display = 'flex';
+      } else {
+        header.classList.remove('has-overflow-left');
+        leftArrow.style.display = 'none';
+      }
+    }
+
+    // Supporto rotellina mouse orizzontale
+    headerInner.addEventListener('wheel', function(e) {
+      if (e.deltaY !== 0 && headerInner.scrollWidth > headerInner.clientWidth) {
+        e.preventDefault();
+        headerInner.scrollLeft += e.deltaY;
+      }
+    }, { passive: false });
+
+    headerInner.addEventListener('scroll', checkHeaderOverflow, { passive: true });
+    window.addEventListener('resize', checkHeaderOverflow, { passive: true });
+
+    setTimeout(checkHeaderOverflow, 120);
+    setTimeout(checkHeaderOverflow, 400);
+  }
+
   function initDocsEnhancements() {
     enhanceNativeLanguageSwitcher();
     isolateSidebarLanguage();
     injectEurarioReturnButton();
+    setupHeaderScrollIndicators();
   }
 
   // Run on load and after instant navigation updates
