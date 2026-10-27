@@ -53,6 +53,10 @@ webapp/data/tenants/
 _backup_privato/
 *.docx
 
+# Documentation (Zensical)
+.venv-docs/
+site/
+
 # IDE & Editor
 .idea/
 .vscode/

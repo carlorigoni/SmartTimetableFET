@@ -1798,6 +1798,7 @@
         <a href="#installazione" class="nav-link" id="navLinkInstall">Installazione</a>
         <a href="#faq" class="nav-link" id="navLinkFaq">Domande Frequenti</a>
         <a href="#contatti" class="nav-link" id="navLinkContact">Contatti</a>
+        <a href="https://docs.eurario.it/" target="_blank" rel="noopener" class="nav-link" id="navLinkDocs">Documentazione</a>
         <a href="https://github.com/carlorigoni/eurario" target="_blank" rel="noopener" class="nav-link">GitHub</a>
       </div>
       <div class="nav-controls">
@@ -1881,6 +1882,7 @@
       <a href="#installazione" class="mobile-nav-link" id="mNavLinkInstall" onclick="closeMobileNav()">Installazione</a>
       <a href="#faq" class="mobile-nav-link" id="mNavLinkFaq" onclick="closeMobileNav()">Domande Frequenti</a>
       <a href="#contatti" class="mobile-nav-link" id="mNavLinkContact" onclick="closeMobileNav()">Contatti</a>
+      <a href="https://docs.eurario.it/" target="_blank" rel="noopener" class="mobile-nav-link" id="mNavLinkDocs">Documentazione ↗</a>
       <a href="https://github.com/carlorigoni/eurario" target="_blank" rel="noopener" class="mobile-nav-link">GitHub ↗</a>
     </nav>
     <div class="mobile-nav-footer">
@@ -2264,6 +2266,7 @@
             <li><a href="#installazione" class="footer-link" id="fLinkInstall">Installazione Docker</a></li>
             <li><a href="#faq" class="footer-link" id="fLinkFaq">Domande Frequenti</a></li>
             <li><a href="#contatti" class="footer-link" id="fLinkContact">Contatti & Preventivi</a></li>
+            <li><a href="https://docs.eurario.it/" target="_blank" rel="noopener" class="footer-link" id="fLinkDocs">Documentazione</a></li>
           </ul>
         </div>
 
@@ -2803,6 +2806,8 @@
         if (elFaq) elFaq.textContent = t.nav.faq;
         const elContact = document.getElementById('navLinkContact');
         if (elContact && t.nav) elContact.textContent = t.nav.contact || 'Contatti';
+        const elDocs = document.getElementById('navLinkDocs');
+        if (elDocs && t.nav) elDocs.textContent = t.nav.docs || 'Documentazione';
         const elLogin = document.getElementById('navLoginBtn');
         if (elLogin) elLogin.textContent = t.nav.login_btn;
 
@@ -2821,6 +2826,8 @@
         if (mFaq) mFaq.textContent = t.nav.faq;
         const mContact = document.getElementById('mNavLinkContact');
         if (mContact) mContact.textContent = t.nav.contact || 'Contatti';
+        const mDocs = document.getElementById('mNavLinkDocs');
+        if (mDocs && t.nav) mDocs.textContent = (t.nav.docs || 'Documentazione') + ' ↗';
         const mLogin = document.getElementById('mNavLoginBtn');
         if (mLogin) mLogin.textContent = t.nav.login_btn;
       }
@@ -3142,6 +3149,8 @@
       if (fLinkFaq && t.nav) fLinkFaq.textContent = t.nav.faq;
       const fLinkContact = document.getElementById('fLinkContact');
       if (fLinkContact && t.nav) fLinkContact.textContent = t.nav.contact || 'Contatti & Preventivi';
+      const fLinkDocs = document.getElementById('fLinkDocs');
+      if (fLinkDocs && t.nav) fLinkDocs.textContent = t.nav.docs || 'Documentazione';
 
       // Legal Notices & Modal Links
       const lblPrivNotice = document.getElementById('lblPrivacyNotice');

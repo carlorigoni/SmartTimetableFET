@@ -28,6 +28,7 @@
       "install": "Installazione",
       "faq": "Domande Frequenti",
       "contact": "Contatti",
+      "docs": "Documentazione",
       "github": "GitHub",
       "login_btn": "🔐 Accedi all'App",
       "showcase": "Maschere & Demo"
@@ -525,6 +526,7 @@
       "install": "Installation",
       "faq": "FAQ",
       "contact": "Contact",
+      "docs": "Documentation",
       "github": "GitHub",
       "login_btn": "🔐 Launch Web App",
       "showcase": "Screens & Demo"
