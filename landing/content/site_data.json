@@ -7,7 +7,7 @@
     "repo_url": "https://github.com/carlorigoni/eurario",
     "docker_hub": "https://hub.docker.com/r/carlorigoni/eurario",
     "contact_email": "carlo.rigoni@gmail.com",
-    "current_version": "v1.9.5",
+    "current_version": "v1.9.6",
     "fet_version": "7.12.0",
     "author": "Carlo Rigoni",
     "mentor": "Federico Rettore"
@@ -67,9 +67,9 @@
     },
     "announcements": [
       {
-        "badge": "Novità v1.9.5",
+        "badge": "Novità v1.9.6",
         "date": "Ottobre 2026",
-        "text": "Integrazione documentazione ufficiale in WebApp, indicatori di scorrimento orizzontale reattivi per i menu e 8 nuove casistiche operative FET per la scuola italiana."
+        "text": "Nuova sezione Architettura & DevOps con diagrammi E2E, apertura documentazione con sincronizzazione automatica della lingua dall'app e controlli di versione avanzati."
       }
     ],
     "pillars_header": {
@@ -565,9 +565,9 @@
     },
     "announcements": [
       {
-        "badge": "What's New in v1.9.5",
+        "badge": "What's New in v1.9.6",
         "date": "October 2026",
-        "text": "Official docs deep integration in WebApp, responsive horizontal menu scroll indicators, and 8 new real-world FET timetabling use cases."
+        "text": "New Architecture & DevOps section with E2E diagrams, language-synchronized documentation launch from WebApp, and automated versioning controls."
       }
     ],
     "pillars_header": {

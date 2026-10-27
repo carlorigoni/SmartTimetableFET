@@ -16,6 +16,7 @@ nav = [
     { "Guida Utente & Casi d'Uso" = "user-guide.md" },
     { "Generazione Orario" = "timetable-flow.md" },
     { "Parametri & Cross-Reference FET" = "cross-reference.md" },
+    { "Architettura & DevOps" = "architecture.md" },
     { "Installazione Docker" = "docker-deploy.md" },
     { "README Ufficiale GitHub" = "readme-github.md" },
   ]},
@@ -25,13 +26,14 @@ nav = [
     { "User Guide & Use Cases" = "en/user-guide.md" },
     { "Timetable Flow" = "en/timetable-flow.md" },
     { "Parameters & FET Cross-Reference" = "en/cross-reference.md" },
+    { "Architecture & DevOps" = "en/architecture.md" },
     { "Docker Deployment" = "en/docker-deploy.md" },
     { "Official GitHub README" = "en/readme-github.md" },
   ]},
 ]
 
-extra_css = ["stylesheets/extra.css?v=1.9.5"]
-extra_javascript = ["javascripts/eurario-docs.js?v=1.9.5"]
+extra_css = ["stylesheets/extra.css?v=1.9.6"]
+extra_javascript = ["javascripts/eurario-docs.js?v=1.9.6"]
 
 [project.theme]
 language = "it"

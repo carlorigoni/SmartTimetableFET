@@ -23,9 +23,24 @@
     return browser.startsWith('it') ? 'it' : 'en';
   }
 
-  // 2. Automatic Routing on First Visit to Root
-  function checkFirstVisitRouting() {
+  // 2. Query Parameter / First Visit Routing
+  function checkUrlAndFirstVisitRouting() {
     try {
+      const urlParams = new URLSearchParams(window.location.search);
+      const queryLang = urlParams.get('lang');
+      if (queryLang === 'en' || queryLang === 'it') {
+        localStorage.setItem(LANG_KEY, queryLang);
+        if (queryLang === 'en' && !isEnPage) {
+          const targetUrl = '/en' + (currentPath.startsWith('/') ? currentPath : '/' + currentPath);
+          window.location.replace(targetUrl + window.location.search);
+          return;
+        } else if (queryLang === 'it' && isEnPage) {
+          const targetUrl = currentPath.replace('/en/', '/') || '/';
+          window.location.replace(targetUrl + window.location.search);
+          return;
+        }
+      }
+
       const explicitChoice = localStorage.getItem(LANG_KEY);
       if (!explicitChoice) {
         const preferred = getSavedLanguage();
@@ -37,7 +52,7 @@
     } catch (e) {}
   }
 
-  checkFirstVisitRouting();
+  checkUrlAndFirstVisitRouting();
 
   // 3. Compute Equivalent Localized URL (IT <-> EN)
   function getEquivalentUrl(targetLang) {

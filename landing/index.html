@@ -2034,7 +2034,7 @@
           </a>
         </div>
         <div style="font-size:12.5px;color:var(--text-muted);display:flex;align-items:center;gap:8px;">
-          <span>🐳</span> Docker Hub: <code style="background:var(--bg-card);color:var(--emerald);padding:3px 8px;border-radius:4px;border:1px solid var(--border-color);font-weight:700;">carlorigoni/eurario:<span id="liveVerTag">v1.9.5</span></code>
+          <span>🐳</span> Docker Hub: <code style="background:var(--bg-card);color:var(--emerald);padding:3px 8px;border-radius:4px;border:1px solid var(--border-color);font-weight:700;">carlorigoni/eurario:<span id="liveVerTag">v1.9.6</span></code>
         </div>
       </div>
 
@@ -2996,7 +2996,10 @@
         const elContact = document.getElementById('navLinkContact');
         if (elContact && t.nav) elContact.textContent = t.nav.contact || 'Contatti';
         const elDocs = document.getElementById('navLinkDocs');
-        if (elDocs && t.nav) elDocs.textContent = t.nav.docs || 'Documentazione';
+        if (elDocs && t.nav) {
+          elDocs.textContent = t.nav.docs || 'Documentazione';
+          elDocs.href = (currentLang === 'en') ? 'https://docs.eurario.it/en/?lang=en' : 'https://docs.eurario.it/?lang=it';
+        }
         const elLogin = document.getElementById('navLoginBtn');
         if (elLogin) elLogin.textContent = t.nav.login_btn;
 
@@ -3016,7 +3019,10 @@
         const mContact = document.getElementById('mNavLinkContact');
         if (mContact) mContact.textContent = t.nav.contact || 'Contatti';
         const mDocs = document.getElementById('mNavLinkDocs');
-        if (mDocs && t.nav) mDocs.textContent = (t.nav.docs || 'Documentazione') + ' ↗';
+        if (mDocs && t.nav) {
+          mDocs.textContent = (t.nav.docs || 'Documentazione') + ' ↗';
+          mDocs.href = (currentLang === 'en') ? 'https://docs.eurario.it/en/?lang=en' : 'https://docs.eurario.it/?lang=it';
+        }
         const mLogin = document.getElementById('mNavLoginBtn');
         if (mLogin) mLogin.textContent = t.nav.login_btn;
       }

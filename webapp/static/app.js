@@ -22,7 +22,7 @@ let pollSolverTimer = null;
 let currentSolverRunning = false;
 
 // --- VERSIONE E IDENTITÀ APPLICATIVA ---
-const APP_VERSION = '1.9.5';
+const APP_VERSION = '1.9.6';
 
 // --- OPTIMISTIC CONCURRENCY CONTROL (OCC) & FETCH INTERCEPTOR ---
 window.CURRENT_DATA_VERSION = null;
@@ -2535,6 +2535,15 @@ function handleFlyoutMouseLeave() {
   }, HOVER_CLOSE_DELAY);
 }
 
+// Apre la documentazione ufficiale sincronizzando automaticamente la lingua corrente dell'app
+function openDocs(subpath = '') {
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
+  const baseUrl = isEn ? 'https://docs.eurario.it/en/' : 'https://docs.eurario.it/';
+  const cleanSub = subpath ? (subpath.startsWith('/') ? subpath.slice(1) : subpath) : '';
+  const url = `${baseUrl}${cleanSub}${cleanSub.includes('?') ? '&' : '?'}lang=${isEn ? 'en' : 'it'}`;
+  window.open(url, '_blank', 'noopener');
+}
+
 // Definizione metadati ricchi voci sottomenu (Icona, Titolo, Descrizione / Sottotitolo)
 const FLYOUT_GROUP_ITEMS = {
   reports: [
@@ -2648,7 +2657,7 @@ const FLYOUT_GROUP_ITEMS = {
       title: 'Documentazione',
       key: 'docs',
       desc: 'Guida utente, casi d\'uso e manuale vincoli FET',
-      action: "window.open('https://docs.eurario.it/', '_blank')",
+      action: "openDocs()",
       external: true
     },
     {
@@ -11985,7 +11994,7 @@ async function renderParameters() {
           </div>
         </div>
         <div>
-          <a href="https://docs.eurario.it/" target="_blank" rel="noopener" class="btn btn-sm btn-primary" style="display:inline-flex;align-items:center;gap:6px;text-decoration:none;font-weight:600;padding:7px 14px;box-shadow:0 2px 6px rgba(37,99,235,0.2);">
+          <a href="${isEn ? 'https://docs.eurario.it/en/?lang=en' : 'https://docs.eurario.it/?lang=it'}" target="_blank" rel="noopener" onclick="openDocs(); return false;" class="btn btn-sm btn-primary" style="display:inline-flex;align-items:center;gap:6px;text-decoration:none;font-weight:600;padding:7px 14px;box-shadow:0 2px 6px rgba(37,99,235,0.2);">
             <span>${isEn ? 'Consult Documentation' : 'Consulta Documentazione'}</span>
             <span style="font-size:13px;">↗</span>
           </a>
