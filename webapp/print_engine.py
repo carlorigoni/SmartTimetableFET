@@ -249,21 +249,22 @@ SUBJECT_TRANSLATIONS_EN = {
     "supplenza": "Substitute Duty",
 }
 
-def get_subject_display_name(subj: str, lang: str = "it") -> str:
+def get_subject_display_name(subj: str, lang: str = "it", short_name: str = "") -> str:
     """
-    Restituisce il nome della materia. Come da richiesta tassativa dell'utente:
-    NON tradurre i nomi delle materie scolastiche (es. Matematica, Diritto, Filosofia, ecc. devono rimanere nei loro nomi originali),
-    ma tradurre solo le voci di servizio come 'Disposizione' ('On-Duty').
+    Restituisce il nome della materia da mostrare nelle stampe / tabelloni.
+    - Se è definita una sigla / nome breve ('short_name'), la usa direttamente.
+    - Traduce solo le voci di servizio istituzionali come 'Disposizione' ('On-Duty').
+    - Mantiene inalterati i nomi didattici originali scelti dalla scuola.
     """
     if not subj:
         return ""
+    if short_name and str(short_name).strip():
+        return str(short_name).strip()
     is_en = str(lang).strip().lower() in ("en", "eng", "english")
-    if not is_en:
-        return subj
     s_clean = subj.strip()
     s_lower = s_clean.lower()
     if s_lower.startswith("disposiz"):
-        return "On-Duty"
+        return "On-Duty" if is_en else "Disposizione"
     return subj
 
 
@@ -564,6 +565,7 @@ def generate_classes_print_html(data, options=None):
 
     institution = data.get("institution", 'Liceo & Tecnico "Pico De Paperis" - Paperopoli')
     subjects_list = [s["name"] for s in data.get("subjects", [])]
+    subject_short_map = {s["name"]: s.get("short_name", "").strip() for s in data.get("subjects", []) if s.get("short_name", "").strip()}
     color_map = build_subject_color_map(subjects_list)
 
     parsed = build_unified_class_timetables(data)
@@ -1054,12 +1056,13 @@ function switchPrintLang(newLang) {{
                     for l in lessons:
                         tag = l.get("daughter_label") or l.get("daughter_name", "")
                         subj = l.get("subject", "")
-                        subj_disp = get_subject_display_name(subj, lang)
+                        subj_short = subject_short_map.get(subj, "")
+                        subj_disp = get_subject_display_name(subj, lang, short_name=subj_short)
                         teachers_str = ", ".join(l.get("teachers_short", []))
                         items_html.append(f"""
                           <div class="articulated-item">
                             <span class="articulated-tag">{escape(tag)}:</span>
-                            <b>{escape(subj_disp)}</b>
+                            <b title="{escape(subj)}">{escape(subj_disp)}</b>
                             <span style="color:#475569;">({escape(teachers_str)})</span>
                           </div>
                         """)
@@ -1076,7 +1079,8 @@ function switchPrintLang(newLang) {{
                     # Lezione normale o in co-docenza
                     l = lessons[0]
                     subj = l.get("subject", "")
-                    subj_disp = get_subject_display_name(subj, lang)
+                    subj_short = subject_short_map.get(subj, "")
+                    subj_disp = get_subject_display_name(subj, lang, short_name=subj_short)
                     teachers_str = " / ".join(l.get("teachers_short", []))
 
                     base = normalize_subject_base(subj)
@@ -1091,7 +1095,7 @@ function switchPrintLang(newLang) {{
 
                     content_parts = []
                     if content_mode in ("materia_docente", "materia"):
-                        content_parts.append(f'<div class="riga-materia" title="{escape(subj_disp)}">{escape(subj_disp)}</div>')
+                        content_parts.append(f'<div class="riga-materia" title="{escape(subj)}">{escape(subj_disp)}</div>')
                     if content_mode in ("materia_docente", "docente"):
                         content_parts.append(f'<div class="riga-docente" title="{escape(teachers_str)}">{escape(teachers_str)}</div>')
 

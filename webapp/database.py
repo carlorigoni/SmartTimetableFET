@@ -691,16 +691,27 @@ class Database:
                 try:
                     exp_int = int(str(exp_v).strip())
                     if exp_int != cur_ver:
-                        raise ConcurrentModificationError(
-                            current_version=cur_ver,
-                            last_modified_by=target_data.get("last_modified_by", ""),
-                            last_modified=target_data.get("last_modified", "")
-                        )
+                        last_author = (target_data.get("last_modified_by") or "").strip().lower()
+                        curr_author = (str(u_email).strip().lower()) if u_email else ""
+
+                        # Se la modifica precedente è stata effettuata dallo STESSO utente,
+                        # non si tratta di una collisione con un collega (es. tab multiple, chiamate
+                        # rapide in sequenza o salvataggi asincroni). Si accetta la modifica senza bloccare l'utente.
+                        is_same_user = bool(curr_author and last_author and curr_author == last_author)
+                        if not is_same_user:
+                            raise ConcurrentModificationError(
+                                current_version=cur_ver,
+                                last_modified_by=target_data.get("last_modified_by", ""),
+                                last_modified=target_data.get("last_modified", "")
+                            )
                 except ValueError:
                     pass
 
             new_ver = cur_ver + 1
             target_data["data_version"] = new_ver
+            # Aggiorna il request context per eventuali salvataggi multipli nella stessa richiesta
+            if hasattr(_request_context, "expected_version"):
+                _request_context.expected_version = str(new_ver)
             now_iso = get_local_now().isoformat()
             target_data["last_modified"] = now_iso
             if u_email:
@@ -1468,15 +1479,17 @@ class Database:
                 s_copy["no_rientri"] = bool(s.get("no_rientri", False))
                 s_copy["pref_hours"] = s.get("pref_hours", "INDIFFERENTE")
                 s_copy["cdc"] = s.get("cdc", "")
+                s_copy["short_name"] = s.get("short_name", "")
                 result.append(s_copy)
             return result
 
-    def add_subject(self, name, comments="", cdc="", no_rientri=False, pref_hours="INDIFFERENTE"):
+    def add_subject(self, name, comments="", cdc="", no_rientri=False, pref_hours="INDIFFERENTE", short_name=""):
         with self.lock:
             name = name.strip()
             if not any(s["name"].lower() == name.lower() for s in self.data["subjects"]):
                 self.data["subjects"].append({
                     "name": name,
+                    "short_name": (short_name or "").strip(),
                     "cdc": (cdc or "").strip(),
                     "comments": comments,
                     "no_rientri": bool(no_rientri),
@@ -1493,6 +1506,8 @@ class Database:
                 if s["name"].lower() == name.lower():
                     if "cdc" in subject_data:
                         s["cdc"] = subject_data["cdc"].strip()
+                    if "short_name" in subject_data:
+                        s["short_name"] = (subject_data["short_name"] or "").strip()
                     if "comments" in subject_data:
                         s["comments"] = subject_data["comments"]
                     if "no_rientri" in subject_data:
@@ -1501,12 +1516,21 @@ class Database:
                         s["pref_hours"] = (subject_data["pref_hours"] or "INDIFFERENTE").strip().upper()
                     if "new_name" in subject_data and subject_data["new_name"].strip():
                         new_name = subject_data["new_name"].strip()
-                        if new_name != s["name"]:
-                            old_name = s["name"]
+                        old_name = s["name"]
+                        if new_name.lower() != old_name.lower():
+                            if any(other["name"].lower() == new_name.lower() for other in self.data.get("subjects", []) if other != s):
+                                return False
+                        if new_name != old_name:
+                            s["name"] = new_name
                             for a in self.data.get("activities", []):
                                 if a.get("subject") == old_name:
                                     a["subject"] = new_name
-                            s["name"] = new_name
+                            for r in self.data.get("block_rules", []):
+                                if r.get("subject") == old_name:
+                                    r["subject"] = new_name
+                            for rule in self.data.get("accorpamenti_rules", []):
+                                if "components" in rule and isinstance(rule["components"], list):
+                                    rule["components"] = [new_name if c == old_name else c for c in rule["components"]]
                     self.data["subjects"].sort(key=lambda x: x["name"].lower())
                     self._save_to_disk(self.data)
                     return True

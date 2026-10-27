@@ -305,7 +305,8 @@ class EurarioHandler(BaseHTTPRequestHandler):
             self.send_header("Access-Control-Allow-Origin", origin)
             self.send_header("Access-Control-Allow-Credentials", "true")
             self.send_header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-            self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With, Accept")
+            self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With, Accept, X-Base-Version")
+            self.send_header("Access-Control-Expose-Headers", "X-Data-Version")
 
     def do_OPTIONS(self):
         self.send_response(204)
@@ -315,11 +316,23 @@ class EurarioHandler(BaseHTTPRequestHandler):
         self.end_headers()
 
     def _json(self, code, data, set_cookie=None, clear_cookie=False):
+        if hasattr(db, "data") and isinstance(getattr(db, "data", None), dict):
+            cur_ver = db.data.get("data_version")
+            if cur_ver is not None:
+                if isinstance(data, dict) and "data_version" not in data:
+                    data["data_version"] = cur_ver
+                    if "last_modified_by" not in data and "last_modified_by" in db.data:
+                        data["last_modified_by"] = db.data.get("last_modified_by")
+
         body = json.dumps(data, ensure_ascii=False).encode("utf-8")
         self.send_response(code)
         self.send_header("Content-Type", "application/json; charset=utf-8")
         self.send_header("Content-Length", str(len(body)))
         self.send_header("Connection", "close")
+        if hasattr(db, "data") and isinstance(getattr(db, "data", None), dict):
+            cur_ver = db.data.get("data_version")
+            if cur_ver is not None:
+                self.send_header("X-Data-Version", str(cur_ver))
         if set_cookie:
             self.send_header("Set-Cookie", f"eurario_session={set_cookie}; Path=/; HttpOnly; SameSite=Lax; Max-Age=2592000")
         elif clear_cookie:
@@ -1728,7 +1741,8 @@ class EurarioHandler(BaseHTTPRequestHandler):
                 comments=body.get("comments", ""),
                 cdc=body.get("cdc", ""),
                 no_rientri=body.get("no_rientri", False),
-                pref_hours=body.get("pref_hours", "INDIFFERENTE")
+                pref_hours=body.get("pref_hours", "INDIFFERENTE"),
+                short_name=body.get("short_name", "")
             )
             self._json(200 if ok else 400, {"success": ok})
 

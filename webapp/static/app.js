@@ -120,12 +120,24 @@ window.fetch = async function(resource, init = {}) {
 
   const response = await _nativeFetch(resource, init);
 
+  const xDataVer = response.headers.get('x-data-version') || response.headers.get('X-Data-Version');
+  if (xDataVer) {
+    updateLocalDataVersion(xDataVer);
+  }
+
   if (response.status === 409) {
     try {
       const cloned = response.clone();
       const errData = await cloned.json();
       if (errData && errData.error === 'concurrent_modification_conflict') {
-        showConcurrencyConflictModal(errData);
+        const myEmail = (currentUser && currentUser.email ? currentUser.email : '').trim().toLowerCase();
+        const author = (errData.last_modified_by || '').trim().toLowerCase();
+        const isMe = !!(myEmail && author && myEmail === author);
+        if (!isMe) {
+          showConcurrencyConflictModal(errData);
+        } else if (errData.server_version) {
+          updateLocalDataVersion(errData.server_version, errData.last_modified_by);
+        }
       } else if (errData && errData.error === 'solver_already_running') {
         showSolverAlreadyRunningModal(errData);
       }
@@ -153,8 +165,15 @@ async function checkConcurrentUpdatesHeartbeat() {
     const res = await _nativeFetch('/api/summary');
     if (res.ok) {
       const summary = await res.json();
-      if (summary && summary.data_version && window.CURRENT_DATA_VERSION && summary.data_version > window.CURRENT_DATA_VERSION) {
-        showConcurrentUpdatesPill(summary.data_version, summary.last_modified_by);
+      if (summary && summary.data_version) {
+        const myEmail = (currentUser && currentUser.email ? currentUser.email : '').trim().toLowerCase();
+        const author = (summary.last_modified_by || '').trim().toLowerCase();
+        const isMe = !!(myEmail && author && myEmail === author);
+        if (isMe) {
+          updateLocalDataVersion(summary.data_version, summary.last_modified_by);
+        } else if (window.CURRENT_DATA_VERSION && summary.data_version > window.CURRENT_DATA_VERSION) {
+          showConcurrentUpdatesPill(summary.data_version, summary.last_modified_by);
+        }
       }
     }
   } catch (e) {}
@@ -7534,9 +7553,10 @@ async function renderSubjects() {
   container.innerHTML = `
     <div class="toolbar" style="flex-wrap:wrap;gap:10px;">
       <input type="text" class="search-input" placeholder="${isEn ? '🔍 Search subject, CDC, teacher or class...' : '🔍 Cerca materia, CDC, docente o classe...'}" oninput="filterTable('subjTable', this.value)" style="min-width:220px;">
-      <div style="display:flex;gap:8px;margin-left:auto;">
+      <div style="display:flex;gap:8px;margin-left:auto;flex-wrap:wrap;">
         <input type="text" id="newSubjName" class="search-input" placeholder="${isEn ? 'Subject name (e.g. Philosophy)' : 'Nome materia (es. Filosofia)'}" style="width:190px;">
-        <input type="text" id="newSubjCdc" class="search-input" placeholder="CDC (es. A018)" style="width:140px;font-family:var(--font-mono);font-weight:600;" title="${isEn ? 'Qualified teaching certificate class' : 'Classe di concorso abilitata'}">
+        <input type="text" id="newSubjShortName" class="search-input" placeholder="${isEn ? 'Short name (e.g. FIL)' : 'Sigla stampa (es. FIL)'}" style="width:120px;text-transform:uppercase;" title="${isEn ? 'Optional short name / acronym for timetable prints' : 'Sigla o nome breve opzionale per le stampe'}">
+        <input type="text" id="newSubjCdc" class="search-input" placeholder="CDC (es. A018)" style="width:120px;font-family:var(--font-mono);font-weight:600;" title="${isEn ? 'Qualified teaching certificate class' : 'Classe di concorso abilitata'}">
         <button class="btn btn-primary" onclick="addSubject()">+ ${isEn ? 'Add Subject' : 'Aggiungi Materia'}</button>
       </div>
     </div>
@@ -7567,6 +7587,11 @@ async function renderSubjects() {
               <td style="color:var(--text-sub);">${idx + 1}</td>
               <td>
                 <b style="font-size:13.5px;color:var(--text-main);cursor:pointer;" onclick="openEditSubjectModal('${escapeJs(s.name)}')" title="${isEn ? 'Click to edit subject rules' : 'Clicca per modificare regole materia'}">📚 ${escapeHtml(s.name)}</b>
+                ${s.short_name ? `
+                  <span class="item-chip" style="font-size:11px;font-weight:700;color:var(--primary);margin-left:6px;background:#e0f2fe;border:1px solid #bae6fd;" title="${isEn ? 'Short name for prints: ' + escapeHtml(s.short_name) : 'Sigla usata nelle stampe: ' + escapeHtml(s.short_name)}">
+                    🖨️ ${escapeHtml(s.short_name)}
+                  </span>
+                ` : ''}
               </td>
               <td style="text-align:center;">
                 ${s.cdc ? `
@@ -7625,7 +7650,7 @@ async function renderSubjects() {
               </td>
               <td style="color:var(--text-muted);font-size:12px;">${escapeHtml(s.comments || '-')}</td>
               <td style="text-align:right;white-space:nowrap;">
-                <button class="btn btn-sm btn-sec" onclick="openEditSubjectModal('${escapeJs(s.name)}')" title="${isEn ? 'Edit rules: CDC, afternoons, preferred slot, notes' : 'Modifica regole: CDC, rientri pomeridiani, fascia oraria, note'}">
+                <button class="btn btn-sm btn-sec" onclick="openEditSubjectModal('${escapeJs(s.name)}')" title="${isEn ? 'Edit rules: name, print short name, CDC, afternoons, preferred slot, notes' : 'Modifica: nome materia, nome breve per stampe, CDC, rientri pomeridiani, fascia oraria, note'}">
                   ✏️ ${isEn ? 'Edit' : 'Modifica'}
                 </button>
                 <button class="btn btn-sm btn-primary" onclick="openNewCattedraModal({ subject: '${escapeJs(s.name)}' })" title="${isEn ? 'Assign teacher and class for ' + escapeJs(s.name) : 'Assegna un docente e una classe per ' + escapeJs(s.name)}">
@@ -7646,26 +7671,37 @@ async function renderSubjects() {
 }
 
 function openEditSubjectModal(subjectName) {
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
   const subj = (stateData.subjects || []).find(s => s.name === subjectName) || { name: subjectName };
   const noRientri = !!subj.no_rientri;
   const prefHours = subj.pref_hours || 'INDIFFERENTE';
   const cdc = subj.cdc || '';
+  const shortName = subj.short_name || '';
   const comments = subj.comments || '';
 
   showModal(`
-    <div class="modal-dialog">
+    <div class="modal-dialog" style="max-width:620px;">
       <div class="modal-header">
-        <div class="modal-title">📚 Disciplina & Regole: ${escapeHtml(subjectName)}</div>
+        <div class="modal-title">📚 ${isEn ? 'Edit Subject & Print Settings' : 'Disciplina & Regole di Stampa'}: ${escapeHtml(subjectName)}</div>
         <button class="modal-close" onclick="closeModal()">×</button>
       </div>
       <div class="modal-body">
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
           <div class="form-group">
-            <label class="form-label">Nome Materia / Disciplina</label>
-            <input type="text" class="form-input" value="${escapeHtml(subjectName)}" disabled style="background:#f1f5f9;">
+            <label class="form-label">${isEn ? 'Subject Name' : 'Nome Materia / Disciplina'} <span style="color:#ef4444;">*</span></label>
+            <input type="text" id="editSubjName" class="form-input" value="${escapeHtml(subjectName)}" placeholder="${isEn ? 'Subject name' : 'Nome materia'}">
+            <span class="form-hint">${isEn ? 'Renaming automatically updates all connected lessons.' : 'Rinominando la materia verranno aggiornate tutte le cattedre e le lezioni collegate.'}</span>
           </div>
           <div class="form-group">
-            <label class="form-label">Classe di Concorso (CDC)</label>
+            <label class="form-label">${isEn ? 'Short Name for Prints (optional)' : 'Nome Breve per le Stampe (opzionale)'}</label>
+            <input type="text" id="editSubjShortName" class="form-input" value="${escapeHtml(shortName)}" placeholder="es. MAT, FIS, ITA, ING" style="text-transform:uppercase;font-weight:600;">
+            <span class="form-hint">${isEn ? 'Used in timetable grids, Word & PDF printouts instead of full name.' : 'Se impostato, viene usato nei tabelloni e nei file Word/PDF al posto del nome esteso.'}</span>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr;gap:12px;">
+          <div class="form-group">
+            <label class="form-label">${isEn ? 'Teaching Certificate Class (CDC)' : 'Classe di Concorso (CDC)'}</label>
             <input type="text" id="editSubjCdc" class="form-input" value="${escapeHtml(cdc)}" placeholder="es. A018 - Filosofia e Scienze Umane" style="font-family:var(--font-mono);font-weight:600;">
           </div>
         </div>
@@ -7675,49 +7711,61 @@ function openEditSubjectModal(subjectName) {
             <input type="checkbox" id="editSubjNoRientri" ${noRientri ? 'checked' : ''} style="width:18px;height:18px;margin-top:2px;">
             <div>
               <span style="font-weight:700;font-size:13px;color:#991b1b;">
-                🚫 Escludi categoricamente dai Rientri Pomeridiani
+                🚫 ${isEn ? 'Categorically Exclude from Afternoon Sessions' : 'Escludi categoricamente dai Rientri Pomeridiani'}
               </span>
               <div style="font-size:11.5px;color:var(--text-muted);margin-top:2px;line-height:1.4;">
-                Impedisce a FET di collocare questa materia nelle ore pomeridiane (7ª e 8ª ora). Consigliato per materie ad alto carico cognitivo come <b>Matematica</b>, <b>Latino</b>, <b>Greco</b> o prove scritte.
+                ${isEn
+                  ? 'Prevents FET from placing this subject in afternoon periods (7th and 8th). Recommended for heavy subjects like <b>Mathematics</b>, <b>Latin</b>, <b>Greek</b> or written tests.'
+                  : 'Impedisce a FET di collocare questa materia nelle ore pomeridiane (7ª e 8ª ora). Consigliato per materie ad alto carico cognitivo come <b>Matematica</b>, <b>Latino</b>, <b>Greco</b> o prove scritte.'}
               </div>
             </div>
           </label>
         </div>
 
         <div class="form-group">
-          <label class="form-label">Fascia Oraria Preferita (Constraint FET)</label>
+          <label class="form-label">${isEn ? 'Preferred Time Slot (FET Constraint)' : 'Fascia Oraria Preferita (Constraint FET)'}</label>
           <select id="editSubjPrefHours" class="form-select">
-            <option value="INDIFFERENTE" ${prefHours === 'INDIFFERENTE' ? 'selected' : ''}>⚖️ Indifferente (Nessuna preferenza di fascia)</option>
-            <option value="PRIME" ${prefHours === 'PRIME' ? 'selected' : ''}>🌅 Prime Ore del Mattino (1ª, 2ª, 3ª ora)</option>
-            <option value="ULTIME" ${prefHours === 'ULTIME' ? 'selected' : ''}>🌇 Ultime Ore della Giornata (Ore finali / Pomeriggio)</option>
+            <option value="INDIFFERENTE" ${prefHours === 'INDIFFERENTE' ? 'selected' : ''}>⚖️ ${isEn ? 'Indifferent (No slot preference)' : 'Indifferente (Nessuna preferenza di fascia)'}</option>
+            <option value="PRIME" ${prefHours === 'PRIME' ? 'selected' : ''}>🌅 ${isEn ? 'Early Morning Hours (1st, 2nd, 3rd period)' : 'Prime Ore del Mattino (1ª, 2ª, 3ª ora)'}</option>
+            <option value="ULTIME" ${prefHours === 'ULTIME' ? 'selected' : ''}>🌇 ${isEn ? 'Late Hours / Afternoon' : 'Ultime Ore della Giornata (Ore finali / Pomeriggio)'}</option>
           </select>
-          <span class="form-hint">Ideale per favorire materie laboratoriali o motorie (es. Scienze Motorie / Arte) nelle ultime ore.</span>
+          <span class="form-hint">${isEn ? 'Ideal for lab, sports, or art subjects during late periods.' : 'Ideale per favorire materie laboratoriali o motorie (es. Scienze Motorie / Arte) nelle ultime ore.'}</span>
         </div>
 
         <div class="form-group">
-          <label class="form-label">Note / Raggruppamento</label>
-          <input type="text" id="editSubjComments" class="form-input" value="${escapeHtml(comments)}" placeholder="Note didattiche o blocchi previsti">
+          <label class="form-label">${_t('teachers.th_notes', 'Note / Raggruppamento')}</label>
+          <input type="text" id="editSubjComments" class="form-input" value="${escapeHtml(comments)}" placeholder="${isEn ? 'Didactic notes or planning blocks' : 'Note didattiche o blocchi previsti'}">
         </div>
       </div>
       <div class="modal-footer">
         <button class="btn btn-sec" onclick="closeModal()" data-i18n="common.cancel">${_t('common.cancel', 'Annulla')}</button>
-        <button class="btn btn-primary" onclick="submitEditSubject('${escapeJs(subjectName)}')">💾 Salva Parametri</button>
+        <button class="btn btn-primary" onclick="submitEditSubject('${escapeJs(subjectName)}')">💾 ${isEn ? 'Save Changes' : 'Salva Modifiche'}</button>
       </div>
     </div>
   `);
 }
 
 async function submitEditSubject(origName) {
-  const cdc = document.getElementById('editSubjCdc')?.value.trim() || '';
-  const noRientri = document.getElementById('editSubjNoRientri').checked;
-  const prefHours = document.getElementById('editSubjPrefHours').value;
-  const comments = document.getElementById('editSubjComments').value.trim();
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
+  const newName = (document.getElementById('editSubjName')?.value || '').trim();
+  const shortName = (document.getElementById('editSubjShortName')?.value || '').trim();
+  const cdc = (document.getElementById('editSubjCdc')?.value || '').trim();
+  const noRientri = !!document.getElementById('editSubjNoRientri')?.checked;
+  const prefHours = document.getElementById('editSubjPrefHours')?.value || 'INDIFFERENTE';
+  const comments = (document.getElementById('editSubjComments')?.value || '').trim();
+
+  if (!newName) {
+    alert(isEn ? 'Subject name cannot be empty.' : 'Il nome della materia non può essere vuoto.');
+    return;
+  }
 
   const res = await fetch('/api/subjects/update', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       name: origName,
+      new_name: newName,
+      short_name: shortName,
       cdc: cdc,
       no_rientri: noRientri,
       pref_hours: prefHours,
@@ -7727,31 +7775,35 @@ async function submitEditSubject(origName) {
 
   if (res.ok) {
     closeModal();
-    showToast(`Disciplina "${origName}" aggiornata con successo!`);
-    renderSubjects();
+    showToast(isEn ? `Subject "${newName}" updated successfully!` : `Disciplina "${newName}" aggiornata con successo!`);
+    await renderSubjects();
   } else {
-    alert('Errore durante l\'aggiornamento della materia.');
+    alert(isEn ? 'Error updating subject. Please ensure the new name does not conflict with another existing subject.' : 'Errore durante l\'aggiornamento della materia. Verifica che il nuovo nome non sia già utilizzato.');
   }
 }
 
 async function addSubject() {
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
   const inp = document.getElementById('newSubjName');
+  const shortInp = document.getElementById('newSubjShortName');
   const cdcInp = document.getElementById('newSubjCdc');
   const name = inp ? inp.value.trim() : '';
+  const shortName = shortInp ? shortInp.value.trim() : '';
   const cdc = cdcInp ? cdcInp.value.trim() : '';
   if (!name) return;
   const res = await fetch('/api/subjects', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ name: name, cdc: cdc })
+    body: JSON.stringify({ name: name, short_name: shortName, cdc: cdc })
   });
   if (res.ok) {
     if (inp) inp.value = '';
+    if (shortInp) shortInp.value = '';
     if (cdcInp) cdcInp.value = '';
-    showToast(`Materia "${name}" creata!`);
-    renderSubjects();
+    showToast(isEn ? `Subject "${name}" created!` : `Materia "${name}" creata!`);
+    await renderSubjects();
   } else {
-    alert('Materia già presente.');
+    alert(isEn ? 'Subject already exists.' : 'Materia già presente.');
   }
 }
 
