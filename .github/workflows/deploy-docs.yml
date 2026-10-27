@@ -1,4 +1,4 @@
-name: Deploy Docs to Cloudflare Pages
+name: Validate Documentation Build
 
 on:
   push:
@@ -7,16 +7,20 @@ on:
       - 'docs/**'
       - 'zensical.toml'
       - '.github/workflows/deploy-docs.yml'
+  pull_request:
+    branches: [ "main", "master" ]
+    paths:
+      - 'docs/**'
+      - 'zensical.toml'
   workflow_dispatch:
 
 permissions:
   contents: read
-  deployments: write
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
-    name: Build & Deploy to Cloudflare Pages
+    name: Build & Validate Zensical Docs
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -33,12 +37,3 @@ jobs:
 
       - name: Build documentation site
         run: zensical build
-
-      - name: Deploy to Cloudflare Pages
-        uses: cloudflare/pages-action@v1
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: 'eurario-docs'
-          directory: 'site'
-          gitHubToken: ${{ secrets.GITHUB_TOKEN }}

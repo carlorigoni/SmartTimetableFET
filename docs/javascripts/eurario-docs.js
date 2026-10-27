@@ -111,9 +111,59 @@
     });
   }
 
+  // 6. Return to Eurario.it Header & Drawer Button
+  function injectEurarioReturnButton() {
+    const isEn = window.location.pathname.includes('/en/');
+    const label = isEn ? '← Eurario.it' : '← Eurario.it';
+    const title = isEn ? 'Return to Eurario.it main website' : 'Torna al sito principale Eurario.it';
+    const drawerLabel = isEn ? '🏠 Return to Eurario.it' : '🏠 Torna al sito principale (Eurario.it)';
+
+    // Inject into Desktop Header
+    const headerInner = document.querySelector('.md-header__inner');
+    if (headerInner) {
+      let btn = document.getElementById('eurarioReturnBtn');
+      if (!btn) {
+        btn = document.createElement('a');
+        btn.id = 'eurarioReturnBtn';
+        btn.href = 'https://eurario.it';
+        btn.className = 'eurario-return-btn';
+        const titleEl = headerInner.querySelector('.md-header__title');
+        if (titleEl && titleEl.nextSibling) {
+          headerInner.insertBefore(btn, titleEl.nextSibling);
+        } else {
+          headerInner.appendChild(btn);
+        }
+      }
+      btn.textContent = label;
+      btn.title = title;
+      btn.setAttribute('aria-label', title);
+    }
+
+    // Inject into Mobile Drawer Navigation
+    const drawerNav = document.querySelector('.md-nav--primary');
+    if (drawerNav) {
+      let drawerBtn = document.getElementById('eurarioDrawerReturnBtn');
+      if (!drawerBtn) {
+        drawerBtn = document.createElement('a');
+        drawerBtn.id = 'eurarioDrawerReturnBtn';
+        drawerBtn.href = 'https://eurario.it';
+        drawerBtn.className = 'eurario-drawer-return-btn';
+        const drawerTitle = drawerNav.querySelector('.md-nav__title');
+        if (drawerTitle && drawerTitle.nextSibling) {
+          drawerNav.insertBefore(drawerBtn, drawerTitle.nextSibling);
+        } else {
+          drawerNav.prepend(drawerBtn);
+        }
+      }
+      drawerBtn.textContent = drawerLabel;
+      drawerBtn.title = title;
+    }
+  }
+
   function initDocsEnhancements() {
     enhanceNativeLanguageSwitcher();
     isolateSidebarLanguage();
+    injectEurarioReturnButton();
   }
 
   // Run on load and after instant navigation updates
