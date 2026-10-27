@@ -2644,6 +2644,14 @@ const FLYOUT_GROUP_ITEMS = {
       adminOnly: true
     },
     {
+      icon: '📖',
+      title: 'Documentazione',
+      key: 'docs',
+      desc: 'Guida utente, casi d\'uso e manuale vincoli FET',
+      action: "window.open('https://docs.eurario.it/', '_blank')",
+      external: true
+    },
+    {
       icon: 'ℹ️',
       title: 'Info & Crediti',
       key: 'about',
@@ -2718,9 +2726,7 @@ function openRailFlyout(groupId, triggerEl, isPersistent) {
             </div>
             <div class="flyout-item-desc">${escapeHtml(displayDesc)}</div>
           </div>
-          <svg class="flyout-item-chevron" viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
-            <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/>
-          </svg>
+          ${it.external ? '<span style="font-size:12px;opacity:0.7;margin-right:2px;font-weight:700;">↗</span>' : '<svg class="flyout-item-chevron" viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>'}
         </div>
       `;
     });
@@ -11961,6 +11967,32 @@ async function renderParameters() {
   const params = cfg.parameters || {};
 
   container.innerHTML = `
+    <!-- Card Documentazione Ufficiale & Manuale FET -->
+    <div class="card" style="margin-bottom:16px;background:linear-gradient(135deg, rgba(37,99,235,0.06), rgba(99,102,241,0.08));border:1px solid rgba(59,130,246,0.3);padding:14px 18px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
+        <div style="display:flex;align-items:center;gap:14px;">
+          <span style="font-size:28px;">📖</span>
+          <div>
+            <div style="font-weight:750;font-size:14px;color:var(--text-title);display:flex;align-items:center;gap:8px;">
+              <span>${isEn ? 'Official Eurario Documentation & Knowledge Base' : 'Documentazione Ufficiale & Manuale Operativo Eurario'}</span>
+              <span class="badge badge-info" style="font-size:10.5px;padding:2px 6px;">docs.eurario.it</span>
+            </div>
+            <div style="font-size:12px;color:var(--text-muted);margin-top:3px;line-height:1.45;">
+              ${isEn 
+                ? 'Comprehensive guide, FET manual cross-reference, constraints catalog and Italian school scheduling use cases.' 
+                : 'Guida utente completa, correlazione con il manuale FET, catalogo vincoli orario e 18 casistiche per la scuola italiana.'}
+            </div>
+          </div>
+        </div>
+        <div>
+          <a href="https://docs.eurario.it/" target="_blank" rel="noopener" class="btn btn-sm btn-primary" style="display:inline-flex;align-items:center;gap:6px;text-decoration:none;font-weight:600;padding:7px 14px;box-shadow:0 2px 6px rgba(37,99,235,0.2);">
+            <span>${isEn ? 'Consult Documentation' : 'Consulta Documentazione'}</span>
+            <span style="font-size:13px;">↗</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
     <!-- Sezione 1: Anagrafica Istituto & Profilo Scuola -->
     <div class="card" style="margin-bottom:16px;">
       <div class="card-title">${isEn ? '🏛️ School / Institution Profile & Metadata' : '🏛️ Anagrafica e Profilo Istituto'}</div>
