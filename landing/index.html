@@ -408,6 +408,101 @@
       justify-content: center;
       box-shadow: 0 4px 10px rgba(27,42,74,0.15);
     }
+    .nav-links-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+      flex: 1 1 auto;
+      min-width: 0;
+      overflow: hidden;
+      margin: 0 4px;
+    }
+    .nav-links-wrapper::before,
+    .nav-links-wrapper::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 38px;
+      pointer-events: none;
+      z-index: 5;
+      opacity: 0;
+      transition: opacity 0.25s ease;
+    }
+    .nav-links-wrapper::before {
+      left: 0;
+      background: linear-gradient(to right, var(--navbar-bg) 20%, transparent);
+    }
+    .nav-links-wrapper::after {
+      right: 0;
+      background: linear-gradient(to left, var(--navbar-bg) 20%, transparent);
+    }
+    .nav-links-wrapper.has-overflow-left::before {
+      opacity: 1;
+    }
+    .nav-links-wrapper.has-overflow-right::after {
+      opacity: 1;
+    }
+
+    .nav-scroll-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--bg-surface, #ffffff);
+      border: 1px solid var(--border-color, #e2e8f0);
+      color: var(--text-title, #1B2A4A);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.14);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 700;
+      line-height: 1;
+      cursor: pointer;
+      z-index: 10;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      padding: 0;
+      user-select: none;
+    }
+    .nav-scroll-arrow:hover {
+      background: var(--emerald, #059669);
+      color: #ffffff;
+      border-color: var(--emerald, #059669);
+      transform: translateY(-50%) scale(1.1);
+      box-shadow: 0 6px 16px rgba(5, 150, 105, 0.35);
+    }
+    .nav-scroll-left {
+      left: 2px;
+    }
+    .nav-scroll-right {
+      right: 2px;
+      animation: navArrowPulse 2.2s infinite ease-in-out;
+    }
+    @keyframes navArrowPulse {
+      0%, 100% {
+        transform: translateY(-50%) translateX(0);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.14);
+      }
+      50% {
+        transform: translateY(-50%) translateX(2px);
+        box-shadow: 0 4px 16px rgba(5, 150, 105, 0.4);
+      }
+    }
+    [data-theme="dark"] .nav-scroll-arrow {
+      background: var(--bg-card, #152238);
+      border-color: var(--border-color, #233554);
+      color: var(--text-main, #f1f5f9);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+    }
+    [data-theme="dark"] .nav-scroll-arrow:hover {
+      background: var(--emerald, #059669);
+      color: #ffffff;
+      border-color: var(--emerald, #059669);
+    }
+
     .nav-links {
       display: flex;
       align-items: center;
@@ -417,18 +512,14 @@
       overflow-x: auto;
       overflow-y: hidden;
       white-space: nowrap;
-      scrollbar-width: thin;
-      scrollbar-color: var(--border-color) transparent;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
       -webkit-overflow-scrolling: touch;
-      padding: 6px 4px;
+      padding: 6px 14px;
       scroll-behavior: smooth;
     }
     .nav-links::-webkit-scrollbar {
-      height: 3px;
-    }
-    .nav-links::-webkit-scrollbar-thumb {
-      background: var(--border-color);
-      border-radius: 4px;
+      display: none;
     }
     .nav-link {
       text-decoration: none;
@@ -1588,6 +1679,7 @@
       .contact-grid { grid-template-columns: 1fr; }
       .footer-cols { grid-template-columns: 1fr; gap: 30px; }
       .form-row { grid-template-columns: 1fr; }
+      .nav-links-wrapper { display: none; }
       .nav-links { display: none; }
       .mobile-nav-toggle { display: flex; }
       .table-scroll-hint { display: inline-block; }
@@ -1810,16 +1902,24 @@
         </div>
         <span>Eurario</span>
       </a>
-      <div class="nav-links" role="navigation" aria-label="Menu Desktop">
-        <a href="#funzionalita" class="nav-link" id="navLinkFeatures">Funzionalità</a>
-        <a href="#maschere" class="nav-link" id="navLinkShowcase">Maschere & Demo</a>
-        <a href="#confronto" class="nav-link" id="navLinkWhy">Perché Eurario</a>
-        <a href="#modelli" class="nav-link" id="navLinkPlans">Piani & Cloud</a>
-        <a href="#installazione" class="nav-link" id="navLinkInstall">Installazione</a>
-        <a href="#faq" class="nav-link" id="navLinkFaq">Domande Frequenti</a>
-        <a href="#contatti" class="nav-link" id="navLinkContact">Contatti</a>
-        <a href="https://docs.eurario.it/" target="_blank" rel="noopener" class="nav-link" id="navLinkDocs">Documentazione</a>
-        <a href="https://github.com/carlorigoni/eurario" target="_blank" rel="noopener" class="nav-link">GitHub</a>
+      <div class="nav-links-wrapper" id="navLinksWrapper">
+        <button type="button" class="nav-scroll-arrow nav-scroll-left" id="navScrollLeft" aria-label="Scorri menu a sinistra" title="Scorri indietro a sinistra" style="display:none;">
+          ‹
+        </button>
+        <div class="nav-links" id="mainNavLinks" role="navigation" aria-label="Menu Desktop">
+          <a href="#funzionalita" class="nav-link" id="navLinkFeatures">Funzionalità</a>
+          <a href="#maschere" class="nav-link" id="navLinkShowcase">Maschere & Demo</a>
+          <a href="#confronto" class="nav-link" id="navLinkWhy">Perché Eurario</a>
+          <a href="#modelli" class="nav-link" id="navLinkPlans">Piani & Cloud</a>
+          <a href="#installazione" class="nav-link" id="navLinkInstall">Installazione</a>
+          <a href="#faq" class="nav-link" id="navLinkFaq">Domande Frequenti</a>
+          <a href="#contatti" class="nav-link" id="navLinkContact">Contatti</a>
+          <a href="https://docs.eurario.it/" target="_blank" rel="noopener" class="nav-link" id="navLinkDocs">Documentazione</a>
+          <a href="https://github.com/carlorigoni/eurario" target="_blank" rel="noopener" class="nav-link">GitHub</a>
+        </div>
+        <button type="button" class="nav-scroll-arrow nav-scroll-right" id="navScrollRight" aria-label="Scorri menu a destra" title="Altri menu a destra (clicca o scorri per visualizzarli)" style="display:none;">
+          ›
+        </button>
       </div>
       <div class="nav-controls">
         <!-- THEME DROPDOWN -->
@@ -2407,17 +2507,74 @@
       document.body.style.overflow = '';
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
-      const desktopNav = document.querySelector('.nav-links');
-      if (desktopNav) {
-        desktopNav.addEventListener('wheel', (e) => {
-          if (e.deltaY !== 0 && desktopNav.scrollWidth > desktopNav.clientWidth) {
-            e.preventDefault();
-            desktopNav.scrollLeft += e.deltaY;
-          }
-        }, { passive: false });
+    function checkNavOverflow() {
+      const wrapper = document.getElementById('navLinksWrapper');
+      const navLinks = document.getElementById('mainNavLinks');
+      const leftArrow = document.getElementById('navScrollLeft');
+      const rightArrow = document.getElementById('navScrollRight');
+      if (!wrapper || !navLinks) return;
+      if (wrapper.offsetParent === null) return; // Nascosto su schermi mobile
+
+      const scrollLeft = navLinks.scrollLeft;
+      const maxScroll = navLinks.scrollWidth - navLinks.clientWidth;
+      const hasOverflow = maxScroll > 6;
+
+      if (hasOverflow && scrollLeft < maxScroll - 6) {
+        wrapper.classList.add('has-overflow-right');
+        if (rightArrow) rightArrow.style.display = 'flex';
+      } else {
+        wrapper.classList.remove('has-overflow-right');
+        if (rightArrow) rightArrow.style.display = 'none';
       }
-    });
+
+      if (hasOverflow && scrollLeft > 6) {
+        wrapper.classList.add('has-overflow-left');
+        if (leftArrow) leftArrow.style.display = 'flex';
+      } else {
+        wrapper.classList.remove('has-overflow-left');
+        if (leftArrow) leftArrow.style.display = 'none';
+      }
+    }
+
+    function setupNavScrollIndicators() {
+      const navLinks = document.getElementById('mainNavLinks');
+      const leftArrow = document.getElementById('navScrollLeft');
+      const rightArrow = document.getElementById('navScrollRight');
+      if (!navLinks) return;
+
+      if (leftArrow) {
+        leftArrow.addEventListener('click', (e) => {
+          e.preventDefault();
+          navLinks.scrollBy({ left: -160, behavior: 'smooth' });
+        });
+      }
+
+      if (rightArrow) {
+        rightArrow.addEventListener('click', (e) => {
+          e.preventDefault();
+          navLinks.scrollBy({ left: 160, behavior: 'smooth' });
+        });
+      }
+
+      navLinks.addEventListener('wheel', (e) => {
+        if (e.deltaY !== 0 && navLinks.scrollWidth > navLinks.clientWidth) {
+          e.preventDefault();
+          navLinks.scrollLeft += e.deltaY;
+        }
+      }, { passive: false });
+
+      navLinks.addEventListener('scroll', checkNavOverflow, { passive: true });
+      window.addEventListener('resize', checkNavOverflow, { passive: true });
+
+      checkNavOverflow();
+      setTimeout(checkNavOverflow, 120);
+      setTimeout(checkNavOverflow, 500);
+      if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(checkNavOverflow);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', setupNavScrollIndicators);
 
     document.addEventListener('click', (e) => {
       if (!e.target.closest('.nav-dropdown')) {
@@ -3214,6 +3371,8 @@
         const fGdpr = document.getElementById('footerGdpr');
         if (fGdpr) fGdpr.textContent = t.footer.gdpr;
       }
+
+      checkNavOverflow();
     }
 
     let lastGeneratedMailto = '';
