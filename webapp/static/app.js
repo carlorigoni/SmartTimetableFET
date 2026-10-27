@@ -22,7 +22,7 @@ let pollSolverTimer = null;
 let currentSolverRunning = false;
 
 // --- VERSIONE E IDENTITÀ APPLICATIVA ---
-const APP_VERSION = '1.9.7';
+const APP_VERSION = '1.9.8';
 
 // --- OPTIMISTIC CONCURRENCY CONTROL (OCC) & FETCH INTERCEPTOR ---
 window.CURRENT_DATA_VERSION = null;
@@ -5553,10 +5553,10 @@ function openEditTeacherModal(name) {
         </div>
 
         <!-- Box Calcolo e Evidenziazione Disposizione D -->
-        <div id="dispPreviewBox" style="background:#f5f3ff;border:1px solid #ddd6fe;border-radius:6px;padding:10px 14px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+        <div id="dispPreviewBox" class="disp-preview-box">
           <div>
-            <span style="font-size:12px;color:#5b21b6;font-weight:600;">${isEn ? 'Assigned Teaching Hours:' : 'Ore Lezione Frontale Assegnate:'}</span>
-            <b style="font-size:14px;color:#4c1d95;margin-left:4px;">${lessonH} h</b>
+            <span class="disp-preview-label">${isEn ? 'Assigned Teaching Hours:' : 'Ore Lezione Frontale Assegnate:'}</span>
+            <b class="disp-preview-val">${lessonH} h</b>
           </div>
           <div id="dispCalculationResult">
             ${(teacher.custom_disp_hours !== undefined && teacher.custom_disp_hours !== null) ? `
@@ -5624,7 +5624,7 @@ function openEditTeacherModal(name) {
               </div>
             </div>
 
-            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;background:#fff;padding:8px 12px;border:1px solid #e2e8f0;border-radius:6px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;background:var(--bg-card);padding:8px 12px;border:1px solid var(--border);border-radius:6px;">
               <span style="font-size:11.5px;color:var(--text-sub);font-weight:600;">${isEn ? 'Shift Preference Strictness:' : 'Rigidità Preferenza Fascia:'}</span>
               <input type="hidden" id="editTeacherPrefWeight" value="${prefWeight}">
               <div class="pref-pills-row">
@@ -5656,7 +5656,7 @@ function openEditTeacherModal(name) {
               }).join('')}
             </div>
 
-            <div style="background:#fff;padding:8px 12px;border:1px solid #e2e8f0;border-radius:6px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+            <div style="background:var(--bg-card);padding:8px 12px;border:1px solid var(--border);border-radius:6px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
               <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer;margin:0;">
                 <input type="checkbox" id="editTeacherFreeDayStrict" ${freeDayStrict ? 'checked' : ''} style="cursor:pointer;">
                 <span>🔒 <b>${isEn ? '100% Strict Free Day' : 'Giorno Libero 100% Tassativo'}</b> (${isEn ? 'Absolute contractual unavailability' : 'Indisponibilità contrattuale assoluta'})</span>
@@ -5982,7 +5982,7 @@ function openAggiornaOrganicoModal() {
         <!-- Contenitore Risultati Analisi / Diff -->
         <div id="organicoDiffContainer" style="display:none;"></div>
       </div>
-      <div class="modal-footer" style="padding:12px 20px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;background:#f8fafc;">
+      <div class="modal-footer" style="padding:12px 20px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
         <button class="btn btn-sec" onclick="closeModal()" data-i18n="common.close">${_t('common.close', 'Chiudi')}</button>
         <div id="organicoFooterActions" style="display:none;gap:10px;">
           <button class="btn btn-primary" onclick="submitApplyOrganico()" style="padding:8px 18px;font-weight:700;">
@@ -7236,7 +7236,7 @@ function openEditClassModal(className) {
       <div class="modal-body">
         <div class="form-group">
           <label class="form-label">Nome Classe</label>
-          <input type="text" class="form-input" value="${escapeHtml(cls.name)}" disabled style="background:#f3f4f6;">
+          <input type="text" class="form-input" value="${escapeHtml(cls.name)}" disabled>
         </div>
         <div class="form-group">
           <label class="form-label">Numero Alunni (Studenti nella classe)</label>
@@ -7489,7 +7489,7 @@ function openImportStudentsModal() {
         </div>
 
         <!-- Opzione 1: Sincronizzazione istantanea dal file Excel / Seed originale -->
-        <div class="card" style="margin-bottom:14px;background:#f8fafc;border:1px solid var(--border);">
+        <div class="card" style="margin-bottom:14px;border:1px solid var(--border);">
           <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
             <div style="flex:1;min-width:280px;">
               <b style="font-size:13.5px;color:var(--text-main);">⚡ 1. Sincronizza da Foglio Excel Ufficiale (Parametri Orario)</b>
@@ -7504,7 +7504,7 @@ function openImportStudentsModal() {
         </div>
 
         <!-- Opzione 2: Incolla o Carica File CSV / Testo -->
-        <div class="card" style="background:#fff;border:1px solid var(--border);margin-bottom:14px;">
+        <div class="card" style="border:1px solid var(--border);margin-bottom:14px;">
           <b style="font-size:13.5px;color:var(--text-main);">📋 2. Incolla o Carica Elenco Alunni Personalizzato (Testo / CSV / Excel)</b>
           <div style="font-size:12px;color:var(--text-muted);margin-top:2px;margin-bottom:10px;">
             Puoi incollare direttamente le colonne copiate da un foglio Excel, oppure caricare un file <code>.csv</code> o <code>.txt</code>. Formati supportati: <code>1A 25</code>, <code>1A;25</code>, <code>1A	25</code> o righe separate da virgola/tabulatore.
@@ -7966,7 +7966,7 @@ async function renderRooms() {
     </div>
 
     <!-- Schede di Gestione Sedi / Plessi -->
-    <div style="background:#fff;border:1px solid var(--border);border-radius:var(--radius-md);padding:16px;margin-bottom:16px;">
+    <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-md);padding:16px;margin-bottom:16px;">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
         <div style="font-weight:700;font-size:14px;color:var(--text-main);">
           🏛️ ${isEn ? `Campus & Buildings Configuration (${stateData.buildingsList.length} Active Campuses)` : `Configurazione Sedi & Plessi dell'Istituto (${stateData.buildingsList.length} Sedi Attive)`}
@@ -7981,7 +7981,7 @@ async function renderRooms() {
           const capTot = rList.reduce((acc, r) => acc + (r.capacity || 30), 0);
 
           return `
-            <div style="background:#f8fafc;border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px;">
+            <div style="background:var(--bg-main);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px;">
               <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
                 <div style="display:flex;align-items:center;gap:6px;">
                   <span style="font-size:16px;">${isSucc ? '🏢' : '🏛️'}</span>
