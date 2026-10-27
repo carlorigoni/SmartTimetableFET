@@ -7,7 +7,7 @@
     "repo_url": "https://github.com/carlorigoni/eurario",
     "docker_hub": "https://hub.docker.com/r/carlorigoni/eurario",
     "contact_email": "carlo.rigoni@gmail.com",
-    "current_version": "v1.9.3",
+    "current_version": "v1.9.4",
     "fet_version": "7.12.0",
     "author": "Carlo Rigoni",
     "mentor": "Federico Rettore"
@@ -67,9 +67,9 @@
     },
     "announcements": [
       {
-        "badge": "Novità v1.9.3",
+        "badge": "Novità v1.9.4",
         "date": "Ottobre 2026",
-        "text": "Ridenominazione materie con sigle brevi per le stampe, anteprime link social e ottimizzazione salvataggi concorrenti."
+        "text": "Protezione avanzata da attacchi brute-force con PBKDF2 a 600.000 iterazioni, tarpit progressivo e cambio password obbligatorio per l'amministratore."
       }
     ],
     "pillars_header": {
@@ -565,9 +565,9 @@
     },
     "announcements": [
       {
-        "badge": "What's New in v1.9.3",
+        "badge": "What's New in v1.9.4",
         "date": "October 2026",
-        "text": "Subject renaming with optional short names for prints, rich social link previews, and enhanced concurrency safeguard."
+        "text": "Enterprise brute-force defense with 600k-iteration PBKDF2 hashing, progressive tarpit delay, and mandatory first-login administrator password update."
       }
     ],
     "pillars_header": {
