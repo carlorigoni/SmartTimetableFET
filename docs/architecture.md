@@ -231,26 +231,39 @@ version: '3.8'
 services:
   eurario:
     image: carlorigoni/eurario:latest
-    container_name: eurario-app
+    container_name: eurario
     restart: unless-stopped
     ports:
       - "8000:8000"
     volumes:
-      - ./data:/app/data
+      - ./data:/app/webapp/data
     environment:
       - PORT=8000
+      - WATCHTOWER_API_URL=http://eurario_watchtower:8080/v1/update
+      - WATCHTOWER_TOKEN=eurario-update-token
 
   watchtower:
     image: containrrr/watchtower
-    container_name: eurario-watchtower
+    container_name: eurario_watchtower
     restart: unless-stopped
+    environment:
+      - DOCKER_API_VERSION=1.41
+      - WATCHTOWER_HTTP_API_UPDATE=true
+      - WATCHTOWER_HTTP_API_TOKEN=eurario-update-token
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-    command: --interval 86400 --cleanup eurario-app
+    command: --interval 3600 --http-api-update --cleanup eurario
 ```
 
 > [!NOTE]
-> Con questa configurazione, ogni 24 ore Watchtower verifica se su Docker Hub è presente un'immagine più recente di `carlorigoni/eurario:latest`. Se presente, la scarica, riavvia `eurario-app` e rimuove la vecchia immagine inutilizzata.
+> Con questa configurazione, ogni ora Watchtower verifica se su Docker Hub è presente un'immagine più recente di `carlorigoni/eurario:latest`. Se presente, la scarica, riavvia `eurario` e rimuove la vecchia immagine inutilizzata.
+
+### 4. Aggiornamento Diretto In-App ("Aggiorna ora")
+All'interno del modal *"Aggiornamento Eurario"* della WebApp, qualora sia disponibile una nuova versione, compare il pulsante attivo **🚀 Aggiorna ora** accanto al comando di copia. Cliccando il pulsante:
+1. La WebApp invia una richiesta autenticata all'endpoint server `POST /api/version/upgrade`.
+2. Il server innesca la procedura di upgrade tramite l'API HTTP di Watchtower, il socket Docker locale (`/var/run/docker.sock`) o tramite `git pull` se installato da sorgenti.
+3. Il container scarica la nuova release a caldo e si riavvia mantenendo intatti al 100% tutti i dati nei volumi persistenti (`./data`).
+4. Il frontend monitora il riavvio del servizio e mostra la notifica di successo con il pulsante per ricaricare la pagina aggiornata.
 
 ---
 

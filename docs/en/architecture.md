@@ -231,23 +231,36 @@ version: '3.8'
 services:
   eurario:
     image: carlorigoni/eurario:latest
-    container_name: eurario-app
+    container_name: eurario
     restart: unless-stopped
     ports:
       - "8000:8000"
     volumes:
-      - ./data:/app/data
+      - ./data:/app/webapp/data
     environment:
       - PORT=8000
+      - WATCHTOWER_API_URL=http://eurario_watchtower:8080/v1/update
+      - WATCHTOWER_TOKEN=eurario-update-token
 
   watchtower:
     image: containrrr/watchtower
-    container_name: eurario-watchtower
+    container_name: eurario_watchtower
     restart: unless-stopped
+    environment:
+      - DOCKER_API_VERSION=1.41
+      - WATCHTOWER_HTTP_API_UPDATE=true
+      - WATCHTOWER_HTTP_API_TOKEN=eurario-update-token
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-    command: --interval 86400 --cleanup eurario-app
+    command: --interval 3600 --http-api-update --cleanup eurario
 ```
+
+### 4. Direct In-App Instant Upgrade ("Update Now")
+Inside the *"Eurario Updates"* modal in the WebApp, when a new release is detected, the **🚀 Update now** button becomes active next to the copy command:
+1. The WebApp dispatches an authenticated request to `POST /api/version/upgrade`.
+2. The server triggers the upgrade via the Watchtower HTTP API, the local Docker socket (`/var/run/docker.sock`), or `git pull` if running from source.
+3. The container pulls the fresh release and performs a graceful restart, keeping all persistent database files (`./data`) 100% intact.
+4. The client polls the service health and surfaces a one-click button to reload the page once the new release is live.
 
 ---
 

@@ -22,7 +22,7 @@ let pollSolverTimer = null;
 let currentSolverRunning = false;
 
 // --- VERSIONE E IDENTITÀ APPLICATIVA ---
-const APP_VERSION = '1.9.9';
+const APP_VERSION = '1.9.10';
 
 // --- OPTIMISTIC CONCURRENCY CONTROL (OCC) & FETCH INTERCEPTOR ---
 window.CURRENT_DATA_VERSION = null;
@@ -3134,6 +3134,10 @@ function populateUpdateModal(info) {
     }
   }
 
+  const btnApply = document.getElementById('btnApplyUpdateNow');
+  const btnApplyText = document.getElementById('btnApplyUpdateText');
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
+
   if (info.update_available) {
     if (banner) {
       banner.style.background = '#fef3c7';
@@ -3147,6 +3151,15 @@ function populateUpdateModal(info) {
     if (desc) {
       desc.innerText = 'Una nuova build con miglioramenti e fix è pronta su Docker Hub per il download.';
       desc.style.color = '#b45309';
+    }
+    if (btnApply) {
+      btnApply.disabled = false;
+      btnApply.style.opacity = '1';
+      btnApply.style.cursor = 'pointer';
+      btnApply.title = isEn ? 'Trigger server update now' : 'Avvia subito l\'aggiornamento automatico sul server';
+    }
+    if (btnApplyText) {
+      btnApplyText.innerText = isEn ? 'Update now' : 'Aggiorna ora';
     }
   } else {
     if (banner) {
@@ -3162,6 +3175,150 @@ function populateUpdateModal(info) {
       desc.innerText = `Sei all'ultima versione disponibile (v${APP_VERSION}). Non sono richiesti aggiornamenti.`;
       desc.style.color = '#15803d';
     }
+    if (btnApply) {
+      btnApply.disabled = true;
+      btnApply.style.opacity = '0.55';
+      btnApply.style.cursor = 'not-allowed';
+      btnApply.title = isEn ? 'No update available' : 'Nessun aggiornamento disponibile';
+    }
+    if (btnApplyText) {
+      btnApplyText.innerText = isEn ? 'Update now' : 'Aggiorna ora';
+    }
+  }
+}
+
+async function triggerServerUpdate() {
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
+  const btnApply = document.getElementById('btnApplyUpdateNow');
+  const btnCopy = document.getElementById('btnCopyUpdateCmd');
+  const btnForce = document.getElementById('btnForceCheckUpdate');
+  const progBox = document.getElementById('updateProgressBox');
+
+  const confirmMsg = window.I18N && window.I18N.t
+    ? window.I18N.t('modals.updates.confirm_update')
+    : (isEn 
+        ? 'Do you want to start the automatic server update now? All school data, rosters, and timetables are safely preserved in persistent storage.' 
+        : 'Vuoi avviare l\'aggiornamento automatico di Eurario sul server? Tutti i dati scolastici, le anagrafiche e gli orari sono al sicuro nei volumi persistenti.');
+  
+  if (!confirm(confirmMsg)) return;
+
+  if (btnApply) {
+    btnApply.disabled = true;
+    btnApply.innerHTML = `<span>⏳ ${isEn ? 'Updating...' : 'Aggiornamento...'}</span>`;
+  }
+  if (btnCopy) btnCopy.disabled = true;
+  if (btnForce) btnForce.disabled = true;
+
+  if (progBox) {
+    progBox.style.display = 'block';
+    progBox.className = 'info-banner info-banner-blue';
+    progBox.style.marginTop = '10px';
+    progBox.innerHTML = `
+      <div style="display:flex;align-items:center;gap:12px;">
+        <span class="spinner" style="width:20px;height:20px;border-width:2.5px;flex-shrink:0;"></span>
+        <div>
+          <b>${isEn ? 'Server update in progress...' : 'Aggiornamento del server in corso...'}</b><br>
+          <span style="font-size:11.5px;color:var(--text-muted);">${isEn ? 'Downloading new release and applying updates. Please do not close this window.' : 'Scaricamento della nuova versione e applicazione delle modifiche. Non chiudere questa finestra.'}</span>
+        </div>
+      </div>
+    `;
+  }
+
+  try {
+    const res = await fetch('/api/version/upgrade', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({})
+    });
+    const data = await res.json().catch(() => ({}));
+
+    if (res.ok && data.success) {
+      if (progBox) {
+        progBox.className = 'info-banner info-banner-blue';
+        progBox.innerHTML = `
+          <div style="display:flex;align-items:center;gap:12px;">
+            <span class="spinner" style="width:20px;height:20px;border-width:2.5px;flex-shrink:0;"></span>
+            <div>
+              <b>${isEn ? 'Restarting service with new version...' : 'Riavvio del servizio con la nuova versione...'}</b><br>
+              <span style="font-size:11.5px;color:var(--text-muted);">${isEn ? 'Reconnecting to the server...' : 'Verifica della riattivazione del server in corso...'}</span>
+            </div>
+          </div>
+        `;
+      }
+
+      // Attesa e polling periodico per verificare quando il server è nuovamente online
+      let reconnected = false;
+      for (let attempt = 1; attempt <= 20; attempt++) {
+        await new Promise(r => setTimeout(r, 2000));
+        try {
+          const ping = await fetch('/api/version/check?force=1', { cache: 'no-store' });
+          if (ping.ok) {
+            reconnected = true;
+            break;
+          }
+        } catch (e) {
+          // In attesa del riavvio
+        }
+      }
+
+      if (progBox) {
+        progBox.className = 'info-banner';
+        progBox.style.background = 'rgba(34, 197, 94, 0.15)';
+        progBox.style.borderColor = 'rgba(34, 197, 94, 0.35)';
+        progBox.style.borderLeft = '4px solid #16a34a';
+        progBox.style.color = 'var(--text-main)';
+        progBox.innerHTML = `
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+            <div>
+              <div style="font-size:13.5px;font-weight:700;color:#16a34a;display:flex;align-items:center;gap:6px;">
+                <span>✅</span> <span>${isEn ? 'Update completed successfully!' : 'Aggiornamento terminato con successo!'}</span>
+              </div>
+              <div style="font-size:12px;color:var(--text-muted);margin-top:3px;">
+                ${isEn ? 'The new version is installed and active on the server. Please reload the page to apply all changes.' : 'La nuova versione è installata e attiva sul server. Ricarica la pagina per iniziare a utilizzarla.'}
+              </div>
+            </div>
+            <button class="btn btn-sm btn-primary" onclick="window.location.reload(true)" style="padding:6px 14px;font-weight:700;white-space:nowrap;">
+              🔄 ${isEn ? 'Reload Page Now' : 'Ricarica la Pagina Ora'}
+            </button>
+          </div>
+        `;
+      }
+
+      if (btnApply) {
+        btnApply.innerHTML = `<span>✅ ${isEn ? 'Completed' : 'Completato'}</span>`;
+        btnApply.disabled = true;
+      }
+      if (btnCopy) btnCopy.disabled = false;
+      if (btnForce) btnForce.disabled = false;
+    } else {
+      throw new Error(data.error || (isEn ? 'Server update failed.' : 'Aggiornamento fallito sul server.'));
+    }
+  } catch (err) {
+    console.error('Update error:', err);
+    if (progBox) {
+      progBox.className = 'modal-notice';
+      progBox.style.background = 'rgba(239, 68, 68, 0.15)';
+      progBox.style.borderColor = 'rgba(239, 68, 68, 0.4)';
+      progBox.style.borderLeft = '4px solid #dc2626';
+      progBox.style.color = 'var(--text-main)';
+      progBox.innerHTML = `
+        <div style="font-size:13px;font-weight:700;color:#dc2626;">
+          ❌ ${isEn ? 'Could not complete automated update' : 'Impossibile completare l\'aggiornamento automatico'}
+        </div>
+        <div style="font-size:11.5px;color:var(--text-muted);margin-top:4px;">
+          ${escapeHtml(err.message || String(err))}
+        </div>
+        <div style="font-size:11.5px;margin-top:6px;color:var(--text-sub);">
+          💡 ${isEn ? 'You can apply the update manually via terminal using the command above.' : 'Puoi applicare l\'aggiornamento manualmente da terminale sul server usando il comando indicato sopra.'}
+        </div>
+      `;
+    }
+    if (btnApply) {
+      btnApply.disabled = false;
+      btnApply.innerHTML = `🚀 <span id="btnApplyUpdateText">${isEn ? 'Update now' : 'Aggiorna ora'}</span>`;
+    }
+    if (btnCopy) btnCopy.disabled = false;
+    if (btnForce) btnForce.disabled = false;
   }
 }
 

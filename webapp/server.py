@@ -97,7 +97,7 @@ def fetch_google_doc_docx_bytes(url):
     except Exception as e:
         raise ValueError(f"Impossibile scaricare il Google Doc: {e}")
 
-APP_VERSION = "1.9.9"
+APP_VERSION = "1.9.10"
 FET_VERSION = "7.12.0"
 APP_AUTHOR = "Carlo Rigoni"
 APP_MENTOR = "Federico Rettore"
@@ -2084,6 +2084,21 @@ class EurarioHandler(BaseHTTPRequestHandler):
                 self._json(200, {"success": True, "message": msg})
             except Exception as e:
                 self._json(500, {"success": False, "error": str(e)})
+
+        elif path == "/api/version/upgrade":
+            has_google_auth = bool(auth_manager.config.get("google_client_id"))
+            if has_google_auth:
+                admin = self._require_admin()
+                if not admin:
+                    return
+            elif user and user.get("role") not in ("admin", "owner") and not user.get("is_superadmin"):
+                self._json(403, {"error": "Permesso negato: solo gli amministratori possono avviare l'aggiornamento del server."})
+                return
+
+            res = updater.apply_update()
+            status_code = 200 if res.get("success") else 500
+            self._json(status_code, res)
+            return
 
         elif path == "/api/snapshots":
             if not body:
