@@ -13,6 +13,14 @@
     "mentor": "Federico Rettore"
   },
   "it": {
+    "a11y": {
+      "skip_link": "Salta al contenuto principale",
+      "open_menu": "Apri menu di navigazione",
+      "close_menu": "Chiudi menu di navigazione",
+      "theme_menu": "Seleziona tema",
+      "lang_menu": "Seleziona lingua",
+      "table_scroll_hint": "👆 Scorri orizzontalmente per vedere tutte le colonne"
+    },
     "nav": {
       "features": "Funzionalità",
       "why": "Perché Eurario",
@@ -502,6 +510,14 @@
     }
   },
   "en": {
+    "a11y": {
+      "skip_link": "Skip to main content",
+      "open_menu": "Open navigation menu",
+      "close_menu": "Close navigation menu",
+      "theme_menu": "Select theme",
+      "lang_menu": "Select language",
+      "table_scroll_hint": "👆 Swipe horizontally to view all columns"
+    },
     "nav": {
       "features": "Features",
       "why": "Why Eurario",
