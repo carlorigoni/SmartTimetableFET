@@ -288,7 +288,7 @@ flowchart LR
     BrowserDocs --> EdgeDNS --> EdgeTLS --> EdgeDocs
     BrowserLanding --> EdgeDNS --> EdgeTLS --> EdgeLanding
     BrowserApp --> EdgeDNS --> EdgeTLS --> EdgeTunnelEndpoint
-    EdgeTunnelEndpoint <==|"Outbound QUIC/TLS Tunnel (NAT & Firewall Bypass)"|==> Cloudflared
+    EdgeTunnelEndpoint <-->|"Outbound QUIC/TLS Tunnel (NAT & Firewall Bypass)"| Cloudflared
     Cloudflared -->|"Internal HTTP :8000"| EurarioContainer
     EurarioContainer <--> SchoolData
 ```
