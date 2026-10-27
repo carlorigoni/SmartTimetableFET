@@ -22,7 +22,7 @@ let pollSolverTimer = null;
 let currentSolverRunning = false;
 
 // --- VERSIONE E IDENTITÀ APPLICATIVA ---
-const APP_VERSION = '1.9.8';
+const APP_VERSION = '1.9.9';
 
 // --- OPTIMISTIC CONCURRENCY CONTROL (OCC) & FETCH INTERCEPTOR ---
 window.CURRENT_DATA_VERSION = null;
@@ -3616,7 +3616,7 @@ async function renderTimetable() {
     statsHtml = `
       <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
         <span class="badge badge-info" title="${isEn ? 'Front-line teaching lessons' : 'Ore di lezione frontale con studenti'}">${isEn ? 'Lesson hours:' : 'Ore lezione:'} <b>${teachH}h</b></span>
-        ${dispH > 0 ? `<span class="badge badge-disp" style="background:#fef3c7;color:#92400e;border:1px solid #f59e0b;padding:2px 8px;font-size:12px;font-weight:700;" title="${isEn ? 'On-duty / substitute hours' : 'Ore a disposizione / potenziamento'}">📌 ${isEn ? 'Duty:' : 'Disposizione:'} <b>${dispH}h</b></span>` : ''}
+        ${dispH > 0 ? `<span class="badge badge-disp" style="padding:2px 8px;font-size:12px;font-weight:700;" title="${isEn ? 'On-duty / substitute hours' : 'Ore a disposizione / potenziamento'}">📌 ${isEn ? 'Duty:' : 'Disposizione:'} <b>${dispH}h</b></span>` : ''}
         <span class="badge ${totH >= targetH ? 'badge-ok' : 'badge-warn'}" title="${isEn ? `Scheduled ${totH}h out of ${targetH}h contractual target` : `Collocate ${totH}h su ${targetH}h contrattuali`}">${isEn ? 'Total:' : 'Totale:'} <b>${totH}h / ${targetH}h</b></span>
         <span class="badge ${st.total_gaps > 0 ? 'badge-warn' : 'badge-ok'}">${isEn ? 'Gap hours:' : 'Ore buche:'} <b>${st.total_gaps}</b></span>
         <span class="badge ${st.total_transfers > 0 ? 'badge-warn' : 'badge-ok'}">${isEn ? 'Building changes:' : 'Cambi plesso:'} <b>${st.total_transfers}</b></span>
@@ -5413,7 +5413,7 @@ function updateDispPreview(lessonH) {
   const resEl = document.getElementById('dispCalculationResult');
   if (!resEl) return;
   if (customDispVal !== null && !isNaN(customDispVal)) {
-    resEl.innerHTML = `<span class="badge-disp" style="font-size:12px;padding:3px 10px;background:#fef3c7;color:#92400e;border:1px solid #f59e0b;">📌 D = ${customDispVal}h ${isEn ? 'On-Duty (manual override)' : 'Disposizione (impostata manualmente)'}</span>`;
+    resEl.innerHTML = `<span class="badge-disp" style="font-size:12px;padding:3px 10px;">📌 D = ${customDispVal}h ${isEn ? 'On-Duty (manual override)' : 'Disposizione (impostata manualmente)'}</span>`;
   } else if (targetVal > lessonH) {
     const d = targetVal - lessonH;
     resEl.innerHTML = `<span class="badge-disp" style="font-size:12px;padding:3px 10px;">📌 D = ${d}h ${isEn ? 'Duty Hours (uncovered by lessons)' : 'Disposizione (non coperte da lezioni)'}</span>`;
@@ -5560,7 +5560,7 @@ function openEditTeacherModal(name) {
           </div>
           <div id="dispCalculationResult">
             ${(teacher.custom_disp_hours !== undefined && teacher.custom_disp_hours !== null) ? `
-              <span class="badge-disp" style="font-size:12px;padding:3px 10px;background:#fef3c7;color:#92400e;border:1px solid #f59e0b;">
+              <span class="badge-disp" style="font-size:12px;padding:3px 10px;">
                 📌 D = ${teacher.custom_disp_hours}h ${isEn ? 'On-Duty (manual override)' : 'Disposizione (impostata manualmente)'}
               </span>
             ` : (targetH > lessonH ? `

@@ -329,9 +329,9 @@
   color: #fef3c7;
 }
 [data-theme="dark"] .lesson-card.disposizione {
-  background: rgba(109, 40, 217, 0.35);
-  border-left-color: #a78bfa;
-  color: #ede9fe;
+  background: rgba(217, 119, 6, 0.22) !important;
+  border-left-color: #f59e0b !important;
+  color: #fde68a !important;
 }
 [data-theme="dark"] .lesson-card.centrale .lesson-subj {
   color: #bae6fd !important;
@@ -340,7 +340,8 @@
   color: #fde68a !important;
 }
 [data-theme="dark"] .lesson-card.disposizione .lesson-subj {
-  color: #ddd6fe !important;
+  color: #fef08a !important;
+  font-weight: 700 !important;
 }
 [data-theme="dark"] .lesson-subj {
   color: #f8fafc;
@@ -681,9 +682,9 @@
   border-color: rgba(148, 163, 184, 0.3);
 }
 [data-theme="dark"] .badge-disp {
-  background: rgba(147, 51, 234, 0.2);
-  color: #c084fc;
-  border-color: rgba(147, 51, 234, 0.4);
+  background: rgba(245, 158, 11, 0.22) !important;
+  color: #fde68a !important;
+  border-color: rgba(245, 158, 11, 0.45) !important;
 }
 [data-theme="dark"] .badge-no-rientri {
   background: rgba(239, 68, 68, 0.2);
@@ -3475,6 +3476,30 @@ input:checked + .slider:before {
   line-height: 1.5;
 }
 
+[data-theme="dark"] .info-banner {
+  background: rgba(22, 101, 52, 0.22) !important;
+  border: 1px solid rgba(34, 197, 94, 0.35) !important;
+  border-left: 4px solid #4ade80 !important;
+  color: #bbf7d0 !important;
+}
+
+[data-theme="dark"] .info-banner b,
+[data-theme="dark"] .info-banner strong {
+  color: #86efac !important;
+}
+
+[data-theme="dark"] .info-banner-blue {
+  background: rgba(30, 58, 138, 0.25) !important;
+  border: 1px solid rgba(59, 130, 246, 0.35) !important;
+  border-left: 4px solid #38bdf8 !important;
+  color: #bae6fd !important;
+}
+
+[data-theme="dark"] .info-banner-blue b,
+[data-theme="dark"] .info-banner-blue strong {
+  color: #38bdf8 !important;
+}
+
 /* --- STATS CARDS GRID --- */
 .stat-cards-grid {
   display: grid;
@@ -5448,12 +5473,31 @@ input:checked + .slider:before {
 
 /* --- DRAG & DROP PER DISPOSIZIONI IN ORARIO RISOLTO --- */
 .lesson-card.disposizione {
-  background: #fef3c7 !important;
-  border-left: 3.5px solid #d97706 !important;
-  color: #92400e !important;
-  cursor: grab !important;
+  background: #fef3c7;
+  border-left: 3.5px solid #d97706;
+  color: #92400e;
+  cursor: grab;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
   user-select: none;
+}
+
+[data-theme="dark"] .lesson-card.disposizione {
+  background: rgba(217, 119, 6, 0.22) !important;
+  border: 1px solid rgba(245, 158, 11, 0.35) !important;
+  border-left: 3.5px solid #f59e0b !important;
+  color: #fde68a !important;
+  cursor: grab;
+}
+
+[data-theme="dark"] .lesson-card.disposizione .lesson-subj {
+  color: #fef08a !important;
+  font-weight: 700 !important;
+}
+
+[data-theme="dark"] .lesson-card.disposizione .lesson-meta,
+[data-theme="dark"] .lesson-card.disposizione .lesson-room {
+  color: #fcd34d !important;
+  opacity: 0.9 !important;
 }
 
 .lesson-card.disposizione:active {
@@ -5484,10 +5528,87 @@ input:checked + .slider:before {
 }
 
 .slider-quick-entity {
+  -webkit-appearance: none;
+  appearance: none;
   width: 130px;
-  accent-color: var(--primary);
-  cursor: pointer;
   height: 6px;
+  background: #cbd5e1;
+  border-radius: 4px;
+  outline: none;
+  cursor: pointer;
+  accent-color: var(--primary);
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  vertical-align: middle;
+}
+
+.slider-quick-entity::-webkit-slider-runnable-track {
+  height: 6px;
+  background: #cbd5e1;
+  border-radius: 4px;
+  border: none;
+}
+
+.slider-quick-entity::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--primary);
+  cursor: pointer;
+  margin-top: -4px;
+  border: 2px solid #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+  transition: transform 0.1s ease;
+}
+
+.slider-quick-entity::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+}
+
+.slider-quick-entity::-moz-range-track {
+  height: 6px;
+  background: #cbd5e1;
+  border-radius: 4px;
+  border: none;
+}
+
+.slider-quick-entity::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--primary);
+  cursor: pointer;
+  border: 2px solid #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+}
+
+/* Dark mode styling per cursore/slider entity */
+[data-theme="dark"] .slider-quick-entity {
+  background: #1e293b !important;
+  border: none !important;
+}
+
+[data-theme="dark"] .slider-quick-entity::-webkit-slider-runnable-track {
+  background: #334155 !important;
+}
+
+[data-theme="dark"] .slider-quick-entity::-webkit-slider-thumb {
+  background: #38bdf8 !important;
+  border: 2px solid #0f172a !important;
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.6) !important;
+}
+
+[data-theme="dark"] .slider-quick-entity::-moz-range-track {
+  background: #334155 !important;
+}
+
+[data-theme="dark"] .slider-quick-entity::-moz-range-thumb {
+  background: #38bdf8 !important;
+  border: 2px solid #0f172a !important;
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.6) !important;
 }
 
 /* Pulsanti Preferenze Rapide in Griglia Indisponibilità */
