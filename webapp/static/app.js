@@ -22,7 +22,7 @@ let pollSolverTimer = null;
 let currentSolverRunning = false;
 
 // --- VERSIONE E IDENTITÀ APPLICATIVA ---
-let APP_VERSION = '1.9.21';
+let APP_VERSION = '1.9.22';
 
 // --- OPTIMISTIC CONCURRENCY CONTROL (OCC) & FETCH INTERCEPTOR ---
 window.CURRENT_DATA_VERSION = null;
@@ -7886,24 +7886,30 @@ function handleStudentsFileUpload(event) {
 // ============================================================================
 function extractCdcTokens(cdcRaw) {
   if (!cdcRaw) return [];
-  const parts = String(cdcRaw).split(/[,;/\n]+/).map(p => p.trim()).filter(Boolean);
+  const rawText = Array.isArray(cdcRaw) ? cdcRaw.join(' ') : String(cdcRaw);
+  // Pattern ufficiale per classi di concorso ministeriali (A050, A50, B023, B15, AB24, ADSS, ecc.)
+  const cdcRegex = /\b((?:[AB][-_ ]?\d{2,3})|(?:[A-Za-z]{2}[-_ ]?\d{2})|(?:AD(?:SS|MM|EE|AA)))\b/gi;
+  const matches = rawText.match(cdcRegex);
+  if (matches && matches.length > 0) {
+    const res = [];
+    for (const m of matches) {
+      let code = m.replace(/[-_ ]/g, '').toUpperCase();
+      if (/^A\d{2}$/.test(code)) {
+        code = 'A0' + code.slice(1);
+      } else if (/^B\d{2}$/.test(code)) {
+        code = 'B0' + code.slice(1);
+      }
+      if (!res.includes(code)) res.push(code);
+    }
+    return res;
+  }
+  // Fallback per sigle o codici personalizzati (es. IRC, REL, SOST), ignorando descrizioni lunghe con virgole
+  const parts = rawText.split(/[,;/\n]+/).map(p => p.trim()).filter(Boolean);
   const res = [];
   for (const part of parts) {
-    const clean = part.trim();
-    if (!clean) continue;
-    const m = clean.match(/^([A-Za-z]{1,2})[-_ ]?(\d{2,3})/);
-    if (m) {
-      const prefix = m[1].toUpperCase();
-      let num = m[2];
-      if (prefix.length === 1 && num.length === 2) {
-        num = '0' + num;
-      }
-      const code = prefix + num;
-      if (!res.includes(code)) res.push(code);
-    } else {
-      const simple = clean.split(/[\s\-:]+/)[0].toUpperCase();
-      if (simple && !res.includes(simple)) res.push(simple);
-    }
+    if (part.split(/\s+/).length > 2 || part.length > 12) continue;
+    const clean = part.toUpperCase();
+    if (!res.includes(clean)) res.push(clean);
   }
   return res;
 }
@@ -8066,14 +8072,21 @@ function formatSubjectCdcPills(cdcRaw, subjectName, isEn) {
   if (!cdcRaw || !String(cdcRaw).trim()) {
     return `<span style="color:var(--text-muted);font-size:12px;cursor:pointer;" onclick="openEditSubjectModal('${escapeJs(subjectName)}')">+ ${isEn ? 'Assign CDC' : 'Assegna CDC'}</span>`;
   }
-  const parts = String(cdcRaw).split(/[,;/\n]+/).map(p => p.trim()).filter(Boolean);
-  if (parts.length === 0) {
-    return `<span style="color:var(--text-muted);font-size:12px;cursor:pointer;" onclick="openEditSubjectModal('${escapeJs(subjectName)}')">+ ${isEn ? 'Assign CDC' : 'Assegna CDC'}</span>`;
+  const tokens = extractCdcTokens(cdcRaw);
+  if (tokens.length === 0) {
+    const clean = String(cdcRaw).trim();
+    return `
+      <div style="display:flex;flex-wrap:wrap;gap:4px;justify-content:center;">
+        <span class="item-chip" style="font-family:var(--font-mono);font-size:11.5px;font-weight:700;cursor:pointer;" onclick="openEditSubjectModal('${escapeJs(subjectName)}')" title="${escapeHtml(clean)}">
+          🏷️ ${escapeHtml(clean.length > 22 ? clean.slice(0, 20) + '...' : clean)}
+        </span>
+      </div>
+    `;
   }
   return `
     <div style="display:flex;flex-wrap:wrap;gap:4px;justify-content:center;">
-      ${parts.map(p => `
-        <span class="item-chip" style="font-family:var(--font-mono);font-size:11.5px;font-weight:700;color:var(--primary);cursor:pointer;" onclick="openEditSubjectModal('${escapeJs(subjectName)}')" title="${isEn ? 'Teaching Certificate: ' + escapeHtml(p) : 'Classe di concorso abilitata: ' + escapeHtml(p)}">
+      ${tokens.map(p => `
+        <span class="item-chip" style="font-family:var(--font-mono);font-size:11.5px;font-weight:700;cursor:pointer;" onclick="openEditSubjectModal('${escapeJs(subjectName)}')" title="${isEn ? 'Teaching Certificate: ' + escapeHtml(p) : 'Classe di concorso: ' + escapeHtml(p)}">
           🏷️ ${escapeHtml(p)}
         </span>
       `).join('')}
@@ -8114,24 +8127,24 @@ function formatTeacherClassAssignments(grp, s, isEn) {
   return `
     <div style="display:flex;flex-direction:column;gap:5px;">
       ${taList.map(ta => `
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:3.5px 8px;background:rgba(255,255,255,0.75);border-radius:6px;border:1px solid rgba(0,0,0,0.06);">
-          <div style="display:flex;align-items:center;gap:6px;white-space:nowrap;">
+        <div class="ta-assignment-card">
+          <div class="ta-assignment-teacher-col">
             ${ta.teacher === 'Da assegnare' ? `
-              <span style="font-weight:700;font-size:12px;color:#d97706;">⚠️ ${isEn ? 'Unassigned' : 'Da assegnare'}</span>
+              <span class="ta-unassigned-badge">⚠️ ${isEn ? 'Unassigned' : 'Da assegnare'}</span>
             ` : `
-              <span style="font-weight:600;font-size:12.5px;color:var(--text-main);cursor:pointer;" onclick="jumpToActivities({ teacher: '${escapeJs(ta.teacher)}', subject: '${escapeJs(s.name)}' })" title="${isEn ? 'View assignments of ' + escapeHtml(ta.teacher) : 'Vedi cattedre di ' + escapeHtml(ta.teacher)}">
+              <span class="ta-teacher-name" onclick="jumpToActivities({ teacher: '${escapeJs(ta.teacher)}', subject: '${escapeJs(s.name)}' })" title="${isEn ? 'View assignments of ' + escapeHtml(ta.teacher) : 'Vedi cattedre di ' + escapeHtml(ta.teacher)}">
                 👨‍🏫 ${escapeHtml(ta.teacher)}
               </span>
             `}
-            ${ta.hours !== '-' ? `<span class="badge" style="font-size:10px;padding:1px 5px;" title="${ta.hours} ${isEn ? 'weekly hours' : 'ore settimanali'}">${ta.hours}h</span>` : ''}
+            ${ta.hours !== '-' ? `<span class="ta-hours-badge" title="${ta.hours} ${isEn ? 'weekly hours' : 'ore settimanali'}">${ta.hours}h</span>` : ''}
             ${(ta.co_teachers && ta.co_teachers.length > 0) ? `
-              <span style="font-size:10px;color:var(--text-muted);" title="${isEn ? 'Co-teaching with ' : 'Compresenza con '}${escapeHtml(ta.co_teachers.join(', '))}">+${escapeHtml(ta.co_teachers.join(', '))}</span>
+              <span class="ta-coteacher-badge" title="${isEn ? 'Co-teaching with ' : 'Compresenza con '}${escapeHtml(ta.co_teachers.join(', '))}">+${escapeHtml(ta.co_teachers.join(', '))}</span>
             ` : ''}
           </div>
-          <span style="color:var(--primary);font-size:12px;font-weight:700;opacity:0.6;">➔</span>
-          <div style="display:flex;flex-wrap:wrap;gap:3px;align-items:center;justify-content:flex-end;">
+          <span class="ta-arrow">➔</span>
+          <div class="ta-assignment-classes-col">
             ${(ta.classes || []).map(c => `
-              <span class="item-chip primary" style="font-size:11px;padding:1px 6px;cursor:pointer;" onclick="jumpToActivities({ className: '${escapeJs(c)}', subject: '${escapeJs(s.name)}' })" title="${isEn ? 'View assignments of class ' + escapeHtml(c) : 'Vedi cattedre classe ' + escapeHtml(c)}">
+              <span class="ta-class-chip" onclick="jumpToActivities({ className: '${escapeJs(c)}', subject: '${escapeJs(s.name)}' })" title="${isEn ? 'View assignments of class ' + escapeHtml(c) : 'Vedi cattedre classe ' + escapeHtml(c)}">
                 🎓 ${escapeHtml(c)}
               </span>
             `).join('')}
@@ -8263,12 +8276,10 @@ async function renderSubjects() {
             // Materia con più Classi di Concorso (CDC multiple) -> righe separate e raggruppate per CDC
             return cdcGroups.map((grp, grpIdx) => {
               const isFirst = (grpIdx === 0);
-              const rowStyle = isFirst
-                ? 'border-top: 2px solid var(--primary); border-left: 3px solid var(--primary); background: #ffffff;'
-                : 'border-top: 1px dashed rgba(0,0,0,0.08); border-left: 3px solid var(--primary); background: rgba(59, 130, 246, 0.02);';
+              const rowClass = isFirst ? 'subj-multi-parent' : 'subj-multi-child';
 
               return `
-              <tr style="${rowStyle}" data-subject-group="${escapeHtml(s.name)}">
+              <tr class="${rowClass}" data-subject-group="${escapeHtml(s.name)}">
                 <td style="color:var(--text-sub);font-size:12px;">
                   ${isFirst ? `<b>${idx + 1}</b>` : ''}
                 </td>
@@ -8285,8 +8296,8 @@ async function renderSubjects() {
                     </div>
                   ` : `
                     <div style="padding-left:14px;display:flex;align-items:center;gap:8px;">
-                      <span style="color:var(--primary);font-weight:700;font-size:14px;">↳</span>
-                      <span style="font-size:13px;font-weight:500;color:var(--text-sub);cursor:pointer;" onclick="openEditSubjectModal('${escapeJs(s.name)}')" title="${isEn ? 'Click to edit subject rules' : 'Clicca per modificare regole materia'}">${escapeHtml(s.name)}</span>
+                      <span class="subj-subrow-arrow">↳</span>
+                      <span class="subj-subrow-title" onclick="openEditSubjectModal('${escapeJs(s.name)}')" title="${isEn ? 'Click to edit subject rules' : 'Clicca per modificare regole materia'}">${escapeHtml(s.name)}</span>
                     </div>
                   `}
                 </td>

@@ -1734,33 +1734,51 @@ class Database:
     @staticmethod
     def _extract_cdc_list(cdc_val):
         """
-        Estrae e normalizza una lista di codici CDC (es. da 'A026, A027 - Mat e Fis; A47' -> ['A026', 'A027', 'A047']).
-        Supporta formati sia estesi (A026) sia abbreviati (A26 -> A026, A47 -> A047, B15 -> B015).
+        Estrae e normalizza una lista di codici CDC ufficiali (es. 'A050 - Scienze Naturali, Chimica e Biologia' -> ['A050'],
+        'A026, A027 - Mat e Fis; A47' -> ['A026', 'A027', 'A047']).
+        Non si fa ingannare da descrizioni o titoli ministeriali contenenti virgole.
         """
         if not cdc_val:
             return []
+        
         if isinstance(cdc_val, list):
-            raw_items = cdc_val
+            raw_text = " ".join(str(x) for x in cdc_val)
         else:
-            raw_items = re.split(r"[,;/\n]+", str(cdc_val))
-        res = []
-        for item in raw_items:
-            clean = str(item).strip()
-            if not clean:
-                continue
-            m = re.match(r"^([A-Za-z0-9\-_]+)", clean)
-            if m:
-                code = m.group(1).replace("-", "").upper()
-                if re.match(r"^A\d{2}$", code):
+            raw_text = str(cdc_val)
+
+        # Pattern ufficiale per CDC italiane:
+        # A o B seguito da 2 o 3 cifre (es. A027, A27, B023, B15, A-27)
+        # Coppie di lettere + 2 cifre (es. AB24, AA24, BC02, AS12)
+        # Sostegno (ADSS, ADMM, ADEE, ADAA)
+        cdc_pattern = re.compile(
+            r'\b((?:[AB][-_ ]?\d{2,3})|(?:[A-Za-z]{2}[-_ ]?\d{2})|(?:AD(?:SS|MM|EE|AA)))\b',
+            re.IGNORECASE
+        )
+        
+        matches = cdc_pattern.findall(raw_text)
+        if matches:
+            res = []
+            for m in matches:
+                code = re.sub(r'[-_ ]', '', m).upper()
+                if re.match(r'^A\d{2}$', code):
                     code = f"A0{code[1:]}"
-                elif re.match(r"^B\d{2}$", code):
+                elif re.match(r'^B\d{2}$', code):
                     code = f"B0{code[1:]}"
                 if code not in res:
                     res.append(code)
-            else:
-                code = clean.upper()
-                if code not in res:
-                    res.append(code)
+            return res
+
+        # Fallback per sigle o codici personalizzati privi del classico formato (es. 'IRC', 'REL', 'SOST')
+        # Filtra descrizioni o frasi lunghe con virgole
+        raw_items = re.split(r"[,;/\n]+", raw_text)
+        res = []
+        for item in raw_items:
+            clean = item.strip()
+            if not clean or len(clean.split()) > 2 or len(clean) > 12:
+                continue
+            code = clean.upper()
+            if code not in res:
+                res.append(code)
         return res
 
     def update_subject(self, name, subject_data, merge=False):
