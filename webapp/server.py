@@ -97,7 +97,7 @@ def fetch_google_doc_docx_bytes(url):
     except Exception as e:
         raise ValueError(f"Impossibile scaricare il Google Doc: {e}")
 
-APP_VERSION = "1.9.16"
+APP_VERSION = "1.9.17"
 FET_VERSION = "7.12.0"
 APP_AUTHOR = "Carlo Rigoni"
 APP_MENTOR = "Federico Rettore"
@@ -1828,8 +1828,27 @@ class EurarioHandler(BaseHTTPRequestHandler):
             if not body or not body.get("name"):
                 self._json(400, {"error": "Nome materia mancante"})
                 return
-            ok = db.update_subject(body["name"], body)
-            self._json(200 if ok else 400, {"success": ok})
+            merge = bool(body.get("merge", False))
+            res = db.update_subject(body["name"], body, merge=merge)
+            if isinstance(res, dict) and res.get("error") == "subject_exists":
+                self._json(409, {"error": "subject_exists", "message": res.get("message", "Materia già esistente")})
+                return
+            if isinstance(res, dict) and res.get("ok"):
+                self._json(200, res)
+                return
+            self._json(200 if res else 400, {"success": bool(res)})
+            return
+
+        elif path == "/api/subjects/merge":
+            if not body or not body.get("source_subject") or not body.get("target_subject"):
+                self._json(400, {"error": "Parametri source_subject e target_subject obbligatori"})
+                return
+            res = db.merge_subjects(body["source_subject"], body["target_subject"])
+            if isinstance(res, dict) and res.get("ok"):
+                self._json(200, res)
+            else:
+                self._json(400, res if isinstance(res, dict) else {"error": "Impossibile unificare le materie"})
+            return
 
         elif path == "/api/rooms":
             if not body or not body.get("name"):

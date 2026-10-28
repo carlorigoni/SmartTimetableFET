@@ -1547,7 +1547,39 @@ class Database:
                 return True
             return False
 
-    def update_subject(self, name, subject_data):
+    @staticmethod
+    def _extract_cdc_list(cdc_val):
+        """
+        Estrae e normalizza una lista di codici CDC (es. da 'A026, A027 - Mat e Fis; A47' -> ['A026', 'A027', 'A047']).
+        Supporta formati sia estesi (A026) sia abbreviati (A26 -> A026, A47 -> A047, B15 -> B015).
+        """
+        if not cdc_val:
+            return []
+        if isinstance(cdc_val, list):
+            raw_items = cdc_val
+        else:
+            raw_items = re.split(r"[,;/\n]+", str(cdc_val))
+        res = []
+        for item in raw_items:
+            clean = str(item).strip()
+            if not clean:
+                continue
+            m = re.match(r"^([A-Za-z0-9\-_]+)", clean)
+            if m:
+                code = m.group(1).replace("-", "").upper()
+                if re.match(r"^A\d{2}$", code):
+                    code = f"A0{code[1:]}"
+                elif re.match(r"^B\d{2}$", code):
+                    code = f"B0{code[1:]}"
+                if code not in res:
+                    res.append(code)
+            else:
+                code = clean.upper()
+                if code not in res:
+                    res.append(code)
+        return res
+
+    def update_subject(self, name, subject_data, merge=False):
         with self.lock:
             for s in self.data.get("subjects", []):
                 if s["name"].lower() == name.lower():
@@ -1565,23 +1597,80 @@ class Database:
                         new_name = subject_data["new_name"].strip()
                         old_name = s["name"]
                         if new_name.lower() != old_name.lower():
-                            if any(other["name"].lower() == new_name.lower() for other in self.data.get("subjects", []) if other != s):
-                                return False
-                        if new_name != old_name:
-                            s["name"] = new_name
-                            for a in self.data.get("activities", []):
-                                if a.get("subject") == old_name:
-                                    a["subject"] = new_name
-                            for r in self.data.get("block_rules", []):
-                                if r.get("subject") == old_name:
-                                    r["subject"] = new_name
-                            for rule in self.data.get("accorpamenti_rules", []):
-                                if "components" in rule and isinstance(rule["components"], list):
-                                    rule["components"] = [new_name if c == old_name else c for c in rule["components"]]
+                            existing_target = next((other for other in self.data.get("subjects", []) if other != s and other["name"].lower() == new_name.lower()), None)
+                            if existing_target:
+                                if not merge:
+                                    return {"error": "subject_exists", "message": f"La materia '{new_name}' esiste già."}
+                                # Unifica s in existing_target!
+                                cdcs_tgt = self._extract_cdc_list(existing_target.get("cdc", ""))
+                                cdcs_src = self._extract_cdc_list(s.get("cdc", ""))
+                                merged_cdcs = []
+                                for c in cdcs_tgt + cdcs_src:
+                                    if c not in merged_cdcs:
+                                        merged_cdcs.append(c)
+                                existing_target["cdc"] = ", ".join(merged_cdcs)
+                                for a in self.data.get("activities", []):
+                                    if a.get("subject") == old_name:
+                                        a["subject"] = existing_target["name"]
+                                for r in self.data.get("block_rules", []):
+                                    if r.get("subject") == old_name:
+                                        r["subject"] = existing_target["name"]
+                                for rule in self.data.get("accorpamenti_rules", []):
+                                    if "components" in rule and isinstance(rule["components"], list):
+                                        rule["components"] = [existing_target["name"] if c == old_name else c for c in rule["components"]]
+                                self.data["subjects"] = [item for item in self.data["subjects"] if item != s]
+                                self.data["subjects"].sort(key=lambda x: x["name"].lower())
+                                self._save_to_disk(self.data)
+                                return {"ok": True, "merged": True, "target": existing_target["name"]}
+                            else:
+                                s["name"] = new_name
+                                for a in self.data.get("activities", []):
+                                    if a.get("subject") == old_name:
+                                        a["subject"] = new_name
+                                for r in self.data.get("block_rules", []):
+                                    if r.get("subject") == old_name:
+                                        r["subject"] = new_name
+                                for rule in self.data.get("accorpamenti_rules", []):
+                                    if "components" in rule and isinstance(rule["components"], list):
+                                        rule["components"] = [new_name if c == old_name else c for c in rule["components"]]
                     self.data["subjects"].sort(key=lambda x: x["name"].lower())
                     self._save_to_disk(self.data)
-                    return True
-            return False
+                    return {"ok": True}
+            return {"error": "not_found"}
+
+    def merge_subjects(self, source_name, target_name):
+        with self.lock:
+            src = next((s for s in self.data.get("subjects", []) if s["name"].lower() == str(source_name).strip().lower()), None)
+            tgt = next((s for s in self.data.get("subjects", []) if s["name"].lower() == str(target_name).strip().lower()), None)
+            if not src or not tgt:
+                return {"error": "Materia sorgente o di destinazione non trovata"}
+            if src == tgt:
+                return {"error": "Impossibile unificare una materia con se stessa"}
+
+            cdcs_tgt = self._extract_cdc_list(tgt.get("cdc", ""))
+            cdcs_src = self._extract_cdc_list(src.get("cdc", ""))
+            merged_cdcs = []
+            for c in cdcs_tgt + cdcs_src:
+                if c not in merged_cdcs:
+                    merged_cdcs.append(c)
+            tgt["cdc"] = ", ".join(merged_cdcs)
+
+            for a in self.data.get("activities", []):
+                if a.get("subject") == src["name"]:
+                    a["subject"] = tgt["name"]
+
+            for r in self.data.get("block_rules", []):
+                if r.get("subject") == src["name"]:
+                    r["subject"] = tgt["name"]
+
+            for rule in self.data.get("accorpamenti_rules", []):
+                if "components" in rule and isinstance(rule["components"], list):
+                    rule["components"] = [tgt["name"] if c == src["name"] else c for c in rule["components"]]
+
+            self.data["subjects"] = [s for s in self.data["subjects"] if s != src]
+            self.data["subjects"].sort(key=lambda x: x["name"].lower())
+            self._save_to_disk(self.data)
+            return {"ok": True, "merged_into": tgt["name"], "unified_cdcs": tgt["cdc"]}
 
     def delete_subject(self, name):
         with self.lock:
@@ -3635,12 +3724,12 @@ class Database:
                 if s["name"].lower() == cand.lower():
                     return s["name"]
 
-        # 2. Match per CDC (es. 'AS2A', 'A027', ecc.)
+        # 2. Match per CDC (supporta classi multiple per materia es. 'A026, A027, A047')
         if cdc:
-            cdc_code = cdc.split("-")[0].strip().upper()
+            cdc_codes = self._extract_cdc_list(cdc)
             for s in subjects:
-                s_cdc = s.get("cdc", "").strip().upper()
-                if s_cdc and (s_cdc == cdc_code or cdc_code in s_cdc or s_cdc in cdc_code):
+                s_cdcs = self._extract_cdc_list(s.get("cdc", ""))
+                if any(c in s_cdcs for c in cdc_codes):
                     return s["name"]
 
         # 3. Match parziale sul nome (rimuovendo eventuale prefisso CDC tipo 'AS2A - ')

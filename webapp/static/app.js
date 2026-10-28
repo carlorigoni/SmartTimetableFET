@@ -22,7 +22,7 @@ let pollSolverTimer = null;
 let currentSolverRunning = false;
 
 // --- VERSIONE E IDENTITÀ APPLICATIVA ---
-let APP_VERSION = '1.9.16';
+let APP_VERSION = '1.9.17';
 
 // --- OPTIMISTIC CONCURRENCY CONTROL (OCC) & FETCH INTERCEPTOR ---
 window.CURRENT_DATA_VERSION = null;
@@ -104,11 +104,13 @@ window.fetch = async function(resource, init = {}) {
     init = init || {};
     init.headers = init.headers || {};
     
-    // Iniezione scuola attiva
+    // Iniezione scuola attiva: localStorage è la fonte di verità prioritizzazione utente
     let activeSid = null;
     try {
-      activeSid = (currentSchool && currentSchool.id) ? currentSchool.id : localStorage.getItem('eurario_active_school');
-    } catch (e) {}
+      activeSid = localStorage.getItem('eurario_active_school') || (currentSchool && currentSchool.id);
+    } catch (e) {
+      activeSid = (currentSchool && currentSchool.id);
+    }
 
     const isNonDataEndpoint = url.includes('/api/schools/') || url.includes('/api/auth/') || url.includes('/api/version/');
 
@@ -454,8 +456,10 @@ async function loadMySchools() {
     if (!res.ok) return;
     const data = await res.json();
     mySchools = data.schools || [];
-    currentSchool = data.current_school || null;
-    const activeId = data.active_school_id || (currentSchool ? currentSchool.id : null);
+    const storedSid = localStorage.getItem('eurario_active_school');
+    currentSchool = (storedSid && mySchools.find(s => s.id === storedSid)) || data.current_school || null;
+    window.currentSchool = currentSchool;
+    const activeId = (currentSchool && currentSchool.id) || storedSid || data.active_school_id || null;
     const isEn = window.I18N && window.I18N.getLanguage() === 'en';
 
     // Aggiorna indicatore scuola in topbar
@@ -464,6 +468,10 @@ async function loadMySchools() {
       const displayName = (currentSchool && currentSchool.name) ? currentSchool.name : (isEn ? 'No Institution' : 'Nessun Istituto');
       nameEl.innerText = displayName;
       nameEl.title = displayName;
+    }
+    const b = document.getElementById('instBadge');
+    if (b && currentSchool && currentSchool.name) {
+      b.innerText = currentSchool.name;
     }
 
     // Badge Trial e Banner di Avviso
@@ -530,6 +538,10 @@ async function switchSchool(schoolId) {
       document.cookie = `eurario_active_school=${encodeURIComponent(schoolId)}; Path=/; Max-Age=31536000; SameSite=Lax`;
     } catch (e) {}
 
+    // Imposta subito la scuola in memoria per orientare tutte le chiamate fetch successive
+    currentSchool = { id: schoolId };
+    window.currentSchool = currentSchool;
+
     // Esegui la richiesta con retry trasparente in caso di cold-start o breve ritardo di rete/NAS
     let res = null;
     let data = null;
@@ -565,12 +577,31 @@ async function switchSchool(schoolId) {
     }
 
     if (res && res.ok && data && data.success) {
+      currentSchool = data.school || { id: schoolId };
+      window.currentSchool = currentSchool;
+      if (currentSchool.id) {
+        try {
+          localStorage.setItem('eurario_active_school', currentSchool.id);
+        } catch (e) {}
+      }
       window.CURRENT_DATA_VERSION = null;
       // Resetta selezioni contestuali ed entità che appartenevano alla scuola precedente
       activeEntity = '';
       activeAvailEntity = '';
       pendingActivityFilter = null;
       stateData = { summary: null, timetableViews: null, teachers: null, classes: null, groups: null, subjects: null, rooms: null, activities: null, availability: null, settings: null };
+
+      // Aggiorna subito l'indicatore in barra di navigazione
+      const nameEl = document.getElementById('currentSchoolName');
+      if (nameEl && currentSchool.name) {
+        nameEl.innerText = currentSchool.name;
+        nameEl.title = currentSchool.name;
+      }
+      const b = document.getElementById('instBadge');
+      if (b && currentSchool.name) {
+        b.innerText = currentSchool.name;
+      }
+
       await loadMySchools();
       await refreshAppState();
       await navigate(currentView || 'dashboard', false);
@@ -7842,8 +7873,40 @@ function handleStudentsFileUpload(event) {
 // ============================================================================
 // 6. GESTIONE MATERIE (CON SALTO DIRETTO AD ASSEGNAZIONE DOCENTE & CATTEDRE)
 // ============================================================================
-// 6. GESTIONE MATERIE (CON CARICO POMERIDIANO, ORE PREFERITE E SALTO CATTEDRE)
+// 6. GESTIONE MATERIE (CON CARICO POMERIDIANO, ORE PREFERITE E CLASSI DI CONCORSO MULTIPLE)
 // ============================================================================
+function formatSubjectCdcPills(cdcRaw, subjectName, isEn) {
+  if (!cdcRaw || !String(cdcRaw).trim()) {
+    return `<span style="color:var(--text-muted);font-size:12px;cursor:pointer;" onclick="openEditSubjectModal('${escapeJs(subjectName)}')">+ ${isEn ? 'Assign CDC' : 'Assegna CDC'}</span>`;
+  }
+  const parts = String(cdcRaw).split(/[,;/\n]+/).map(p => p.trim()).filter(Boolean);
+  if (parts.length === 0) {
+    return `<span style="color:var(--text-muted);font-size:12px;cursor:pointer;" onclick="openEditSubjectModal('${escapeJs(subjectName)}')">+ ${isEn ? 'Assign CDC' : 'Assegna CDC'}</span>`;
+  }
+  return `
+    <div style="display:flex;flex-wrap:wrap;gap:4px;justify-content:center;">
+      ${parts.map(p => `
+        <span class="item-chip" style="font-family:var(--font-mono);font-size:11.5px;font-weight:700;color:var(--primary);cursor:pointer;" onclick="openEditSubjectModal('${escapeJs(subjectName)}')" title="${isEn ? 'Teaching Certificate: ' + escapeHtml(p) : 'Classe di concorso abilitata: ' + escapeHtml(p)}">
+          🏷️ ${escapeHtml(p)}
+        </span>
+      `).join('')}
+    </div>
+  `;
+}
+
+function toggleSubjCdcToken(code) {
+  const inp = document.getElementById('editSubjCdc') || document.getElementById('newSubjCdc');
+  if (!inp) return;
+  const currentTokens = inp.value.split(/[,;/]+/).map(t => t.trim()).filter(Boolean);
+  const exists = currentTokens.some(t => t.toUpperCase() === code.toUpperCase() || t.toUpperCase().startsWith(code.toUpperCase() + ' '));
+  if (exists) {
+    inp.value = currentTokens.filter(t => t.toUpperCase() !== code.toUpperCase() && !t.toUpperCase().startsWith(code.toUpperCase() + ' ')).join(', ');
+  } else {
+    currentTokens.push(code);
+    inp.value = currentTokens.join(', ');
+  }
+}
+
 async function renderSubjects() {
   const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
   const res = await fetch('/api/subjects');
@@ -7896,13 +7959,7 @@ async function renderSubjects() {
                 ` : ''}
               </td>
               <td style="text-align:center;">
-                ${s.cdc ? `
-                  <span class="item-chip" style="font-family:var(--font-mono);font-size:11.5px;font-weight:700;color:var(--primary);cursor:pointer;" onclick="openEditSubjectModal('${escapeJs(s.name)}')" title="${isEn ? 'Associated teaching certificate (click to edit)' : 'Classe di concorso associata (clicca per modificare)'}">
-                    🏷️ ${escapeHtml(s.cdc)}
-                  </span>
-                ` : `
-                  <span style="color:var(--text-muted);font-size:12px;cursor:pointer;" onclick="openEditSubjectModal('${escapeJs(s.name)}')">+ ${isEn ? 'Assign CDC' : 'Assegna CDC'}</span>
-                `}
+                ${formatSubjectCdcPills(s.cdc, s.name, isEn)}
               </td>
               <td style="text-align:center;">
                 ${noRientri ? `
@@ -7955,6 +8012,9 @@ async function renderSubjects() {
                 <button class="btn btn-sm btn-sec" onclick="openEditSubjectModal('${escapeJs(s.name)}')" title="${isEn ? 'Edit rules: name, print short name, CDC, afternoons, preferred slot, notes' : 'Modifica: nome materia, nome breve per stampe, CDC, rientri pomeridiani, fascia oraria, note'}">
                   ✏️ ${isEn ? 'Edit' : 'Modifica'}
                 </button>
+                <button class="btn btn-sm btn-sec" onclick="openMergeSubjectModal('${escapeJs(s.name)}')" title="${isEn ? 'Unify this subject into another (e.g. merge Matematica A027 into Matematica)' : 'Unifica questa materia in un\'altra (es. unisci Matematica A027 in Matematica)'}">
+                  🔗 ${isEn ? 'Merge' : 'Unisci'}
+                </button>
                 <button class="btn btn-sm btn-primary" onclick="openNewCattedraModal({ subject: '${escapeJs(s.name)}' })" title="${isEn ? 'Assign teacher and class for ' + escapeJs(s.name) : 'Assegna un docente e una classe per ' + escapeJs(s.name)}">
                   ➕ ${isEn ? 'Assignment' : 'Cattedra'}
                 </button>
@@ -8003,8 +8063,22 @@ function openEditSubjectModal(subjectName) {
 
         <div style="display:grid;grid-template-columns:1fr;gap:12px;">
           <div class="form-group">
-            <label class="form-label">${isEn ? 'Teaching Certificate Class (CDC)' : 'Classe di Concorso (CDC)'}</label>
-            <input type="text" id="editSubjCdc" class="form-input" value="${escapeHtml(cdc)}" placeholder="es. A018 - Filosofia e Scienze Umane" style="font-family:var(--font-mono);font-weight:600;">
+            <label class="form-label" style="display:flex;justify-content:space-between;align-items:center;">
+              <span>${isEn ? 'Teaching Certificate Classes (CDC)' : 'Classi di Concorso Abilitate (CDC)'}</span>
+              <span class="form-hint" style="font-weight:normal;color:var(--primary);">${isEn ? 'Multiple classes allowed (comma-separated)' : 'Più classi consentite (separate da virgola)'}</span>
+            </label>
+            <input type="text" id="editSubjCdc" class="form-input" value="${escapeHtml(cdc)}" placeholder="es. A026, A027, A047 oppure A011, A012" style="font-family:var(--font-mono);font-weight:600;">
+            <div style="font-size:11.5px;color:var(--text-muted);margin-top:4px;line-height:1.4;">
+              ${isEn
+                ? '💡 The same subject (e.g. <b>Mathematics</b> or <b>History</b>) can be taught by teachers of different classes of contest (e.g. <b>A026, A027, A047</b>) across different sections, levels or curricula.'
+                : '💡 La stessa materia (es. <b>Matematica</b>, <b>Storia</b> o <b>Fisica</b>) può essere associata a più Classi di Concorso (es. <b>A026, A027, A047</b>) se in diversi indirizzi, biennio/triennio o sezioni può essere insegnata da docenti con abilitazioni diverse.'}
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:8px;">
+              <span style="font-size:11px;color:var(--text-muted);align-self:center;margin-right:4px;">${isEn ? 'Quick add:' : 'Aggiunta rapida:'}</span>
+              ${['A026', 'A027', 'A047', 'A011', 'A012', 'A019', 'A018', 'A020', 'A050', 'A048', 'A054', 'AA24'].map(code => `
+                <button type="button" class="btn btn-sm btn-sec" style="font-size:11px;padding:2px 6px;font-family:var(--font-mono);" onclick="toggleSubjCdcToken('${code}')">+ ${code}</button>
+              `).join('')}
+            </div>
           </div>
         </div>
 
@@ -8079,8 +8153,101 @@ async function submitEditSubject(origName) {
     closeModal();
     showToast(isEn ? `Subject "${newName}" updated successfully!` : `Disciplina "${newName}" aggiornata con successo!`);
     await renderSubjects();
+    return;
+  }
+
+  let data = null;
+  try {
+    data = await res.json();
+  } catch (e) {}
+
+  if (res.status === 409 && data && data.error === 'subject_exists') {
+    const doMerge = confirm(isEn
+      ? `The subject "${newName}" already exists in the catalog.\n\nDo you want to UNIFY "${origName}" into "${newName}"?\nAll lessons/assignments of "${origName}" will be transferred to "${newName}", and their Teaching Certificate Classes (CDC) will be combined.`
+      : `La materia "${newName}" è già presente in anagrafica.\n\nVuoi UNIFICARE "${origName}" in "${newName}"?\nTutte le cattedre e le lezioni assegnate a "${origName}" verranno trasferite a "${newName}", e le relative Classi di Concorso (CDC) verranno unite.`);
+    if (doMerge) {
+      const resMerge = await fetch('/api/subjects/update', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: origName,
+          new_name: newName,
+          short_name: shortName,
+          cdc: cdc,
+          no_rientri: noRientri,
+          pref_hours: prefHours,
+          comments: comments,
+          merge: true
+        })
+      });
+      if (resMerge.ok) {
+        closeModal();
+        showToast(isEn ? `Merged into "${newName}" successfully!` : `Unificata con successo in "${newName}"!`);
+        await renderSubjects();
+        return;
+      }
+    }
   } else {
-    alert(isEn ? 'Error updating subject. Please ensure the new name does not conflict with another existing subject.' : 'Errore durante l\'aggiornamento della materia. Verifica che il nuovo nome non sia già utilizzato.');
+    alert(isEn ? 'Error updating subject. Please ensure the new name is valid.' : 'Errore durante l\'aggiornamento della materia. Verifica che il nuovo nome sia valido.');
+  }
+}
+
+function openMergeSubjectModal(sourceName) {
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
+  const otherSubjects = (stateData.subjects || []).filter(s => s.name !== sourceName);
+  if (otherSubjects.length === 0) {
+    alert(isEn ? 'No other subjects available for merge.' : 'Nessun\'altra materia disponibile con cui unificare.');
+    return;
+  }
+  const opts = otherSubjects.map(s => `
+    <option value="${escapeHtml(s.name)}">${escapeHtml(s.name)}${s.cdc ? ` [${escapeHtml(s.cdc)}]` : ''}</option>
+  `).join('');
+
+  showModal(`
+    <div class="modal-dialog" style="max-width:540px;">
+      <div class="modal-header">
+        <div class="modal-title">🔗 ${isEn ? 'Unify Subject' : 'Unifica Materia'}: ${escapeHtml(sourceName)}</div>
+        <button class="modal-close" onclick="closeModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size:13px;color:var(--text-main);margin-bottom:14px;line-height:1.5;">
+          ${isEn
+            ? `Select the target subject into which <b>${escapeHtml(sourceName)}</b> will be absorbed. All teaching assignments, activities and block rules will be transferred, and the Teaching Certificate Classes (CDC) will be combined.`
+            : `Seleziona la materia di destinazione in cui confluirà <b>${escapeHtml(sourceName)}</b>. Tutte le cattedre, le lezioni e i vincoli orari verranno trasferiti, e le Classi di Concorso (CDC) abilitate verranno unite.`}
+        </p>
+        <div class="form-group">
+          <label class="form-label">${isEn ? 'Destination Subject' : 'Materia di Destinazione (Principale)'}</label>
+          <select id="mergeTargetSelect" class="form-select">
+            ${opts}
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-sec" onclick="closeModal()">${isEn ? 'Cancel' : 'Annulla'}</button>
+        <button class="btn btn-primary" onclick="submitMergeSubjects('${escapeJs(sourceName)}')">🔗 ${isEn ? 'Confirm Merge' : 'Conferma Unificazione'}</button>
+      </div>
+    </div>
+  `);
+}
+
+async function submitMergeSubjects(sourceName) {
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
+  const targetSelect = document.getElementById('mergeTargetSelect');
+  const targetName = targetSelect ? targetSelect.value : '';
+  if (!targetName) return;
+
+  const res = await fetch('/api/subjects/merge', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ source_subject: sourceName, target_subject: targetName })
+  });
+
+  if (res.ok) {
+    closeModal();
+    showToast(isEn ? `Merged "${sourceName}" into "${targetName}"!` : `Materia "${sourceName}" unificata con successo in "${targetName}"!`);
+    await renderSubjects();
+  } else {
+    alert(isEn ? 'Error merging subjects.' : 'Errore durante l\'unificazione delle materie.');
   }
 }
 
@@ -10017,7 +10184,7 @@ async function openNewCattedraModal(preset = {}) {
   stateData.buildings = roomsData.buildings || ['Centrale', 'Succursale'];
 
   const teacherOpts = teachers.map(t => `
-    <option value="${escapeHtml(t.name)}" ${preset.teacher === t.name ? 'selected' : ''}>${escapeHtml(t.name)}</option>
+    <option value="${escapeHtml(t.name)}" ${preset.teacher === t.name ? 'selected' : ''}>${escapeHtml(t.name)}${t.cdc ? ` (${escapeHtml(t.cdc)})` : ''}</option>
   `).join('');
 
   let targetOpts = `<optgroup label="${isEn ? 'Entire Classes' : 'Classi Intere'}">` +
@@ -10041,7 +10208,7 @@ async function openNewCattedraModal(preset = {}) {
   </optgroup>`;
 
   const subjOpts = subjects.map(s => `
-    <option value="${escapeHtml(s.name)}" ${preset.subject === s.name ? 'selected' : ''}>${escapeHtml(s.name)}</option>
+    <option value="${escapeHtml(s.name)}" ${preset.subject === s.name ? 'selected' : ''}>${escapeHtml(s.name)}${s.cdc ? ` [${escapeHtml(s.cdc)}]` : ''}</option>
   `).join('');
 
   // Spazi fisici (Aule, Lab, Palestre)
@@ -10420,7 +10587,7 @@ async function openEditCattedraModal(idxOrId) {
   editSelectedCoTeachers = (g.teachers && g.teachers.length > 1) ? g.teachers.slice(1) : [];
 
   const teacherOpts = teachers.map(t => `
-    <option value="${escapeHtml(t.name)}" ${primaryTeacher === t.name ? 'selected' : ''}>${escapeHtml(t.name)}</option>
+    <option value="${escapeHtml(t.name)}" ${primaryTeacher === t.name ? 'selected' : ''}>${escapeHtml(t.name)}${t.cdc ? ` (${escapeHtml(t.cdc)})` : ''}</option>
   `).join('');
 
   // Destinatari
@@ -10448,7 +10615,7 @@ async function openEditCattedraModal(idxOrId) {
   </optgroup>`;
 
   const subjOpts = subjects.map(s => `
-    <option value="${escapeHtml(s.name)}" ${g.subject === s.name ? 'selected' : ''}>${escapeHtml(s.name)}</option>
+    <option value="${escapeHtml(s.name)}" ${g.subject === s.name ? 'selected' : ''}>${escapeHtml(s.name)}${s.cdc ? ` [${escapeHtml(s.cdc)}]` : ''}</option>
   `).join('');
 
   // Spazi fisici (Aule, Lab, Palestre)
