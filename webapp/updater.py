@@ -132,20 +132,139 @@ def check_for_updates(current_version, force=False):
     return result
 
 
+def apply_in_place_github_update():
+    """
+    Scarica l'archivio dell'ultima versione da GitHub e aggiorna i file dell'applicazione
+    direttamente in-place (preservando rigorosamente webapp/data/), riavviando il processo
+    Python in modo trasparente e autonomo senza dipendere da Watchtower o Docker socket.
+    """
+    import io
+    import sys
+    import tarfile
+    import threading
+
+    app_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    # Non eseguire l'in-place tarball update se siamo in un ambiente di sviluppo Git locale attivo
+    if os.path.isdir(os.path.join(app_dir, ".git")):
+        raise RuntimeError("Ambiente di sviluppo locale Git rilevato: usa git pull.")
+
+    tar_url = "https://codeload.github.com/carlorigoni/eurario/tar.gz/refs/heads/main"
+    ctx = ssl.create_default_context()
+    try:
+        import certifi
+        ctx.load_verify_locations(certifi.where())
+    except Exception:
+        ctx.check_hostname = False
+        ctx.verify_mode = ssl.CERT_NONE
+
+    req = urllib.request.Request(
+        tar_url,
+        headers={"User-Agent": "Eurario-Live-Updater/1.0"}
+    )
+
+    with urllib.request.urlopen(req, context=ctx, timeout=30) as resp:
+        tar_bytes = resp.read()
+
+    with tarfile.open(fileobj=io.BytesIO(tar_bytes), mode="r:gz") as tar:
+        members = tar.getmembers()
+        # Trova il prefisso radice (es. 'eurario-main/')
+        prefix = ""
+        for m in members:
+            if m.name.endswith("/webapp") or "/webapp/" in m.name:
+                prefix = m.name.split("/webapp")[0] + "/"
+                break
+
+        if not prefix:
+            raise ValueError("Struttura archivio non riconosciuta (cartella webapp mancante).")
+
+        updated_files = 0
+        for m in members:
+            if not m.name.startswith(prefix):
+                continue
+            rel_path = m.name[len(prefix):]
+            if not rel_path:
+                continue
+
+            # PROTEZIONE ASSOLUTA: NON toccare MAI la cartella dei dati persistenti
+            if rel_path.startswith("webapp/data/") or rel_path == "webapp/data":
+                continue
+
+            if rel_path == "README.md":
+                dest_file = os.path.join(app_dir, "README.md")
+                f = tar.extractfile(m)
+                if f:
+                    with open(dest_file, "wb") as out:
+                        out.write(f.read())
+                continue
+
+            if not rel_path.startswith("webapp/"):
+                continue
+
+            dest_path = os.path.join(app_dir, rel_path)
+            if m.isdir():
+                os.makedirs(dest_path, exist_ok=True)
+            elif m.isfile():
+                os.makedirs(os.path.dirname(dest_path), exist_ok=True)
+                f = tar.extractfile(m)
+                if f:
+                    content = f.read()
+                    tmp_dest = f"{dest_path}.tmp.{os.getpid()}"
+                    with open(tmp_dest, "wb") as out:
+                        out.write(content)
+                    os.replace(tmp_dest, dest_path)
+                    updated_files += 1
+
+    # Invalida cache interna degli aggiornamenti
+    _update_cache["timestamp"] = 0
+    _update_cache["data"] = None
+
+    # Pianifica il riavvio del processo Python dopo 1.2 secondi per consentire l'invio della risposta HTTP al client
+    def _delayed_restart():
+        time.sleep(1.2)
+        try:
+            python_bin = sys.executable
+            script = os.path.abspath(sys.argv[0])
+            args = [python_bin, script] + sys.argv[1:]
+            print(f"[LIVE-UPDATER] Riavvio processo in corso con {args}...")
+            os.execv(python_bin, args)
+        except Exception as e_restart:
+            print(f"[LIVE-UPDATER] Errore execv: {e_restart}, uscita processo per riavvio container...")
+            os._exit(0)
+
+    t = threading.Thread(target=_delayed_restart, daemon=True)
+    t.start()
+
+    return {
+        "success": True,
+        "method": "in_place_live_update",
+        "updated_files": updated_files,
+        "message": "Aggiornamento completato con successo! Il server si sta riavviando con la nuova versione..."
+    }
+
+
 def apply_update():
     """
     Innesca l'aggiornamento automatico dell'applicazione Eurario sul server.
     Supporta in cascata:
-    1. Watchtower HTTP API (deploy in container Docker con container Watchtower attivo)
-    2. Socket Docker UNIX (/var/run/docker.sock)
-    3. Docker Compose CLI su host (docker compose pull && docker compose up -d)
-    4. Git pull (se esegue da repository locale con .git)
-    5. Script hook personalizzato (scripts/update.sh o update.sh)
+    1. Live In-Place Update da GitHub (per Docker container)
+    2. Watchtower HTTP API (deploy in container Docker con container Watchtower attivo)
+    3. Socket Docker UNIX (/var/run/docker.sock)
+    4. Docker Compose CLI su host (docker compose pull && docker compose up -d)
+    5. Git pull (se esegue da repository locale con .git)
+    6. Script hook personalizzato (scripts/update.sh o update.sh)
     """
     root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     errors = []
 
-    # 1. Tentativo tramite Watchtower HTTP API (container Docker)
+    # 1. Tentativo prioritario: Live In-Place Update da GitHub (per container Docker)
+    try:
+        live_res = apply_in_place_github_update()
+        if live_res and live_res.get("success"):
+            return live_res
+    except Exception as e:
+        errors.append(f"Live In-Place: {e}")
+
+    # 2. Tentativo tramite Watchtower HTTP API (container Docker)
     watchtower_url = os.environ.get("WATCHTOWER_API_URL") or "http://eurario_watchtower:8080/v1/update"
     token = os.environ.get("WATCHTOWER_TOKEN", "eurario-update-token")
     candidate_urls = [
