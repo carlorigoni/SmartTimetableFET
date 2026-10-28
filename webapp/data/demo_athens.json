@@ -69,7 +69,7 @@
   "teachers": [
     {
       "name": "Galileo Galilei",
-      "short_name": "GYRO",
+      "short_name": "GALI",
       "cdc": "A020",
       "target_hours": 18,
       "contract_type": "intera",
@@ -78,11 +78,11 @@
       "pref_shift_weight": 85,
       "free_day_1": "Fri",
       "free_day_strict": false,
-      "comments": "Physics & Lab Laboratory"
+      "comments": "Physics & Lab Practice"
     },
     {
       "name": "Aristotle",
-      "short_name": "SCRO",
+      "short_name": "ARIS",
       "cdc": "A046",
       "target_hours": 18,
       "contract_type": "intera",
@@ -91,11 +91,11 @@
       "pref_shift_weight": 90,
       "free_day_1": "Mon",
       "free_day_strict": true,
-      "comments": "Corporate Finance & Wealth Management (Vault counting on Mondays)"
+      "comments": "Corporate Finance & Business Administration"
     },
     {
       "name": "Plato",
-      "short_name": "LUDW",
+      "short_name": "PLAT",
       "cdc": "A019",
       "target_hours": 18,
       "contract_type": "intera",
@@ -108,7 +108,7 @@
     },
     {
       "name": "Milo of Croton",
-      "short_name": "DONA",
+      "short_name": "MILO",
       "cdc": "A048",
       "target_hours": 18,
       "contract_type": "intera",
@@ -117,11 +117,11 @@
       "pref_shift_weight": 85,
       "free_day_1": "Wed",
       "free_day_strict": false,
-      "comments": "Physical Education (dislikes 1st period morning alarms)"
+      "comments": "Physical Education & Athletics"
     },
     {
       "name": "Marie Curie",
-      "short_name": "GRAN",
+      "short_name": "CURI",
       "cdc": "A050",
       "target_hours": 18,
       "contract_type": "intera",
@@ -130,11 +130,11 @@
       "pref_shift_weight": 85,
       "free_day_1": "Thu",
       "free_day_strict": false,
-      "comments": "Natural Sciences, Chemistry & Agriculture"
+      "comments": "Natural Sciences & Chemistry"
     },
     {
       "name": "Dante Alighieri",
-      "short_name": "GLAD",
+      "short_name": "DANT",
       "cdc": "A012",
       "target_hours": 18,
       "contract_type": "intera",
@@ -147,7 +147,7 @@
     },
     {
       "name": "Euclid",
-      "short_name": "MOE",
+      "short_name": "EUCL",
       "cdc": "A026",
       "target_hours": 18,
       "contract_type": "intera",
@@ -160,7 +160,7 @@
     },
     {
       "name": "William Shakespeare",
-      "short_name": "DUCK",
+      "short_name": "SHAK",
       "cdc": "A024",
       "target_hours": 15,
       "contract_type": "intera",
@@ -169,7 +169,7 @@
       "pref_shift_weight": 85,
       "free_day_1": "",
       "free_day_strict": false,
-      "comments": "Foreign Languages & On-Duty Staff"
+      "comments": "Foreign Languages & Literature"
     }
   ],
   "subjects": [

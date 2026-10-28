@@ -183,13 +183,13 @@
       <Comments>Physical Education (ama dormire la 1ª ora)</Comments>
     </Teacher>
     <Teacher>
-      <Name>Paperon de&apos; Paperoni</Name>
+      <Name>Aristotle</Name>
       <Long_Name></Long_Name>
       <Code></Code>
       <Target_Number_of_Hours>0</Target_Number_of_Hours>
       <Qualified_Subjects>
       </Qualified_Subjects>
-      <Comments>Economia Aziendale e Gestione Finanziaria (Lunedì conteggio caveau)</Comments>
+      <Comments>Corporate Finance & Business Administration</Comments>
     </Teacher>
     <Teacher>
       <Name>Plato</Name>
@@ -909,7 +909,7 @@
       <Comments>History &amp; Philosophy per 5A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Paperon de&apos; Paperoni</Teacher>
+      <Teacher>Aristotle</Teacher>
       <Subject>Economics &amp; Law</Subject>
       <Students>1A</Students>
       <Duration>2</Duration>
@@ -920,7 +920,7 @@
       <Comments>Economics &amp; Law per 1A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Paperon de&apos; Paperoni</Teacher>
+      <Teacher>Aristotle</Teacher>
       <Subject>Economics &amp; Law</Subject>
       <Students>1A</Students>
       <Duration>1</Duration>
@@ -931,7 +931,7 @@
       <Comments>Economics &amp; Law per 1A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Paperon de&apos; Paperoni</Teacher>
+      <Teacher>Aristotle</Teacher>
       <Subject>Economics &amp; Law</Subject>
       <Students>2A</Students>
       <Duration>2</Duration>
@@ -942,7 +942,7 @@
       <Comments>Economics &amp; Law per 2A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Paperon de&apos; Paperoni</Teacher>
+      <Teacher>Aristotle</Teacher>
       <Subject>Economics &amp; Law</Subject>
       <Students>2A</Students>
       <Duration>1</Duration>
@@ -953,7 +953,7 @@
       <Comments>Economics &amp; Law per 2A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Paperon de&apos; Paperoni</Teacher>
+      <Teacher>Aristotle</Teacher>
       <Subject>Economics &amp; Law</Subject>
       <Students>3A</Students>
       <Duration>2</Duration>
@@ -964,7 +964,7 @@
       <Comments>Economics &amp; Law per 3A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Paperon de&apos; Paperoni</Teacher>
+      <Teacher>Aristotle</Teacher>
       <Subject>Economics &amp; Law</Subject>
       <Students>3A</Students>
       <Duration>2</Duration>
@@ -975,7 +975,7 @@
       <Comments>Economics &amp; Law per 3A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Paperon de&apos; Paperoni</Teacher>
+      <Teacher>Aristotle</Teacher>
       <Subject>Economics &amp; Law</Subject>
       <Students>4A</Students>
       <Duration>2</Duration>
@@ -986,7 +986,7 @@
       <Comments>Economics &amp; Law per 4A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Paperon de&apos; Paperoni</Teacher>
+      <Teacher>Aristotle</Teacher>
       <Subject>Economics &amp; Law</Subject>
       <Students>4A</Students>
       <Duration>2</Duration>
@@ -997,7 +997,7 @@
       <Comments>Economics &amp; Law per 4A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Paperon de&apos; Paperoni</Teacher>
+      <Teacher>Aristotle</Teacher>
       <Subject>Economics &amp; Law</Subject>
       <Students>5A</Students>
       <Duration>2</Duration>
@@ -1008,7 +1008,7 @@
       <Comments>Economics &amp; Law per 5A</Comments>
     </Activity>
     <Activity>
-      <Teacher>Paperon de&apos; Paperoni</Teacher>
+      <Teacher>Aristotle</Teacher>
       <Subject>Economics &amp; Law</Subject>
       <Students>5A</Students>
       <Duration>2</Duration>
@@ -1344,7 +1344,7 @@
     </ConstraintBreakTimes>
     <ConstraintTeacherNotAvailableTimes>
       <Weight_Percentage>100</Weight_Percentage>
-      <Teacher>Paperon de&apos; Paperoni</Teacher>
+      <Teacher>Aristotle</Teacher>
       <Number_of_Not_Available_Times>6</Number_of_Not_Available_Times>
       <Not_Available_Time>
         <Day>Mon</Day>
@@ -2149,7 +2149,7 @@
     </ConstraintActivitiesPreferredTimeSlots>
     <ConstraintActivitiesPreferredTimeSlots>
       <Weight_Percentage>90</Weight_Percentage>
-      <Teacher>Paperon de&apos; Paperoni</Teacher>
+      <Teacher>Aristotle</Teacher>
       <Students></Students>
       <Subject></Subject>
       <Activity_Tag></Activity_Tag>
@@ -2236,7 +2236,7 @@
         <Hour>4</Hour>
       </Preferred_Time_Slot>
       <Active>true</Active>
-      <Comments>Paperon de&apos; Paperoni: preferenza fascia prime (90%)</Comments>
+      <Comments>Aristotle: preferenza fascia prime (90%)</Comments>
     </ConstraintActivitiesPreferredTimeSlots>
     <ConstraintActivitiesPreferredTimeSlots>
       <Weight_Percentage>85</Weight_Percentage>
@@ -3023,7 +3023,7 @@
     </ConstraintTeacherMaxGapsPerDay>
     <ConstraintTeacherMaxGapsPerDay>
       <Weight_Percentage>100</Weight_Percentage>
-      <Teacher>Paperon de&apos; Paperoni</Teacher>
+      <Teacher>Aristotle</Teacher>
       <Max_Gaps>1</Max_Gaps>
       <Active>true</Active>
       <Comments></Comments>
@@ -3079,7 +3079,7 @@
     </ConstraintTeacherMaxGapsPerWeek>
     <ConstraintTeacherMaxGapsPerWeek>
       <Weight_Percentage>100</Weight_Percentage>
-      <Teacher>Paperon de&apos; Paperoni</Teacher>
+      <Teacher>Aristotle</Teacher>
       <Max_Gaps>1</Max_Gaps>
       <Active>true</Active>
       <Comments></Comments>

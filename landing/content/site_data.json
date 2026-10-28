@@ -337,7 +337,7 @@
             "details": "18 Ore settimanali • 3 Classi (1A, 2A, 3A) • 4h Laboratorio in compresenza • Max 4 ore/die • Zero buchi"
           },
           {
-            "name": "Paperon de' Paperoni",
+            "name": "Aristotele",
             "subject": "Economia Aziendale & Diritto",
             "type_badge": "Cattedra COE Esterna (12h + 6h)",
             "type_class": "badge-warning",
@@ -388,7 +388,7 @@
         ],
         "console_output": [
           "[FET 7.12] Inizializzazione matrice attività: 8 docenti, 5 classi, 3 plessi...",
-          "[FET 7.12] Applicazione vincolo COE: Paperon de' Paperoni vincolato su Lun/Mer/Ven...",
+          "[FET 7.12] Applicazione vincolo COE: Aristotele vincolato su Lun/Mer/Ven...",
           "[FET 7.12] Applicazione vincolo Part-Time: Milone di Crotone bloccato OFF il Giovedì...",
           "[FET 7.12] Collocazione 120 attività didattiche in corso...",
           "[FET 7.12] SUCCESSO! Soluzione ottimale trovata alla generazione #184 (1.34s). Orario completo al 100%!"
