@@ -22,7 +22,7 @@ let pollSolverTimer = null;
 let currentSolverRunning = false;
 
 // --- VERSIONE E IDENTITÀ APPLICATIVA ---
-let APP_VERSION = '1.9.15';
+let APP_VERSION = '1.9.16';
 
 // --- OPTIMISTIC CONCURRENCY CONTROL (OCC) & FETCH INTERCEPTOR ---
 window.CURRENT_DATA_VERSION = null;
@@ -110,22 +110,24 @@ window.fetch = async function(resource, init = {}) {
       activeSid = (currentSchool && currentSchool.id) ? currentSchool.id : localStorage.getItem('eurario_active_school');
     } catch (e) {}
 
+    const isNonDataEndpoint = url.includes('/api/schools/') || url.includes('/api/auth/') || url.includes('/api/version/');
+
     if (init.headers instanceof Headers) {
-      if (method !== 'GET' && window.CURRENT_DATA_VERSION !== null && !init.headers.has('X-Base-Version')) {
+      if (!isNonDataEndpoint && method !== 'GET' && window.CURRENT_DATA_VERSION !== null && !init.headers.has('X-Base-Version')) {
         init.headers.set('X-Base-Version', String(window.CURRENT_DATA_VERSION));
       }
       if (activeSid && !init.headers.has('X-School-Id')) {
         init.headers.set('X-School-Id', activeSid);
       }
     } else if (Array.isArray(init.headers)) {
-      if (method !== 'GET' && window.CURRENT_DATA_VERSION !== null) {
+      if (!isNonDataEndpoint && method !== 'GET' && window.CURRENT_DATA_VERSION !== null) {
         init.headers.push(['X-Base-Version', String(window.CURRENT_DATA_VERSION)]);
       }
       if (activeSid) {
         init.headers.push(['X-School-Id', activeSid]);
       }
     } else {
-      if (method !== 'GET' && window.CURRENT_DATA_VERSION !== null && !init.headers['X-Base-Version']) {
+      if (!isNonDataEndpoint && method !== 'GET' && window.CURRENT_DATA_VERSION !== null && !init.headers['X-Base-Version']) {
         init.headers['X-Base-Version'] = String(window.CURRENT_DATA_VERSION);
       }
       if (activeSid && !init.headers['X-School-Id']) {
@@ -519,26 +521,50 @@ async function switchSchool(schoolId) {
     const isEn = window.I18N && window.I18N.getLanguage() === 'en';
     showToast(isEn ? 'Switching institution...' : 'Caricamento istituto in corso...');
 
+    // Resetta preventivamente la versione dei dati per evitare collisioni OCC tra scuole
+    window.CURRENT_DATA_VERSION = null;
+
     // Salva preventivamente l'istituto attivo sia in cookie che in localStorage
     try {
       localStorage.setItem('eurario_active_school', schoolId);
       document.cookie = `eurario_active_school=${encodeURIComponent(schoolId)}; Path=/; Max-Age=31536000; SameSite=Lax`;
     } catch (e) {}
 
-    const res = await fetch('/api/schools/switch', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-School-Id': schoolId },
-      body: JSON.stringify({ school_id: schoolId })
-    });
-
+    // Esegui la richiesta con retry trasparente in caso di cold-start o breve ritardo di rete/NAS
+    let res = null;
     let data = null;
-    try {
-      data = await res.json();
-    } catch (parseErr) {
-      console.warn('Risposta non-JSON da /api/schools/switch:', parseErr);
+    let lastErr = null;
+
+    for (let attempt = 1; attempt <= 2; attempt++) {
+      try {
+        res = await fetch('/api/schools/switch', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'X-School-Id': schoolId },
+          body: JSON.stringify({ school_id: schoolId })
+        });
+        try {
+          data = await res.json();
+        } catch (parseErr) {
+          data = null;
+        }
+        if (res.ok && data && data.success) {
+          break;
+        }
+        if (attempt === 1 && (!res || res.status >= 500)) {
+          console.warn(`[switchSchool] Tentativo 1 fallito con HTTP ${res ? res.status : 'ERR'}, secondo tentativo in corso...`);
+          await new Promise(r => setTimeout(r, 400));
+          continue;
+        }
+      } catch (netErr) {
+        lastErr = netErr;
+        if (attempt === 1) {
+          await new Promise(r => setTimeout(r, 400));
+          continue;
+        }
+      }
     }
 
-    if (res.ok && data && data.success) {
+    if (res && res.ok && data && data.success) {
       window.CURRENT_DATA_VERSION = null;
       // Resetta selezioni contestuali ed entità che appartenevano alla scuola precedente
       activeEntity = '';
@@ -550,7 +576,7 @@ async function switchSchool(schoolId) {
       await navigate(currentView || 'dashboard', false);
       showToast(`${isEn ? 'Switched to:' : 'Passato a:'} ${data.school ? data.school.name : schoolId}`, 'ok');
     } else {
-      const errMsg = (data && data.error) ? data.error : (data && data.message ? data.message : `HTTP ${res.status}`);
+      const errMsg = (data && data.error) ? data.error : (data && data.message ? data.message : (res ? `HTTP ${res.status}` : (lastErr ? lastErr.message : 'Connessione non riuscita')));
       alert((isEn ? 'Cannot switch to selected school: ' : 'Impossibile passare alla scuola selezionata: ') + errMsg);
     }
   } catch (err) {

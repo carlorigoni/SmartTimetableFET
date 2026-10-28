@@ -97,7 +97,7 @@ def fetch_google_doc_docx_bytes(url):
     except Exception as e:
         raise ValueError(f"Impossibile scaricare il Google Doc: {e}")
 
-APP_VERSION = "1.9.15"
+APP_VERSION = "1.9.16"
 FET_VERSION = "7.12.0"
 APP_AUTHOR = "Carlo Rigoni"
 APP_MENTOR = "Federico Rettore"
@@ -315,22 +315,28 @@ class EurarioHandler(BaseHTTPRequestHandler):
         self.end_headers()
 
     def _json(self, code, data, set_cookie=None, clear_cookie=False, extra_headers=None):
-        if hasattr(db, "data") and isinstance(getattr(db, "data", None), dict):
-            cur_ver = db.data.get("data_version")
-            if cur_ver is not None:
-                if isinstance(data, dict) and "data_version" not in data:
-                    data["data_version"] = cur_ver
-                    if "last_modified_by" not in data and "last_modified_by" in db.data:
-                        data["last_modified_by"] = db.data.get("last_modified_by")
+        try:
+            if hasattr(db, "data") and isinstance(getattr(db, "data", None), dict):
+                cur_ver = db.data.get("data_version")
+                if cur_ver is not None:
+                    if isinstance(data, dict) and "data_version" not in data:
+                        data["data_version"] = cur_ver
+                        if "last_modified_by" not in data and "last_modified_by" in db.data:
+                            data["last_modified_by"] = db.data.get("last_modified_by")
+        except Exception:
+            pass
 
         body = json.dumps(data, ensure_ascii=False).encode("utf-8")
         self.send_response(code)
         self.send_header("Content-Type", "application/json; charset=utf-8")
         self.send_header("Content-Length", str(len(body)))
-        if hasattr(db, "data") and isinstance(getattr(db, "data", None), dict):
-            cur_ver = db.data.get("data_version")
-            if cur_ver is not None:
-                self.send_header("X-Data-Version", str(cur_ver))
+        try:
+            if hasattr(db, "data") and isinstance(getattr(db, "data", None), dict):
+                cur_ver = db.data.get("data_version")
+                if cur_ver is not None:
+                    self.send_header("X-Data-Version", str(cur_ver))
+        except Exception:
+            pass
         if extra_headers:
             for hname, hval in extra_headers:
                 self.send_header(hname, hval)
@@ -532,6 +538,22 @@ class EurarioHandler(BaseHTTPRequestHandler):
         self.wfile.write(content)
 
     def do_GET(self):
+        try:
+            self._handle_GET()
+        except Exception as e:
+            import traceback
+            traceback.print_exc()
+            try:
+                self._json(500, {
+                    "error": str(e),
+                    "message": f"Errore interno del server: {e}"
+                })
+            except Exception:
+                pass
+        finally:
+            clear_request_context()
+
+    def _handle_GET(self):
         parsed = urlparse(self.path)
         path = parsed.path
         query = parse_qs(parsed.query)
@@ -1070,34 +1092,42 @@ class EurarioHandler(BaseHTTPRequestHandler):
             self._json(404, {"error": "Endpoint non trovato"})
 
     def do_POST(self):
-        parsed = urlparse(self.path)
-        path = parsed.path
-        query = parse_qs(parsed.query)
-        self._setup_request_school(query)
-        body = self._read_json()
-
-        user = self._get_current_user()
-        base_ver = self.headers.get("X-Base-Version") or (body.get("base_version") if isinstance(body, dict) else None)
-        user_email = user.get("email") if isinstance(user, dict) else None
-        set_request_context(user_email=user_email, expected_version=base_ver)
-
         try:
+            parsed = urlparse(self.path)
+            path = parsed.path
+            query = parse_qs(parsed.query)
+            self._setup_request_school(query)
+            body = self._read_json()
+
+            user = self._get_current_user()
+            # Gli endpoint non legati a mutazioni di dati del progetto non devono ereditare controlli OCC (X-Base-Version)
+            is_non_data = path.startswith("/api/schools/") or path.startswith("/api/auth/") or path.startswith("/api/version/")
+            base_ver = None if is_non_data else (self.headers.get("X-Base-Version") or (body.get("base_version") if isinstance(body, dict) else None))
+            user_email = user.get("email") if isinstance(user, dict) else None
+            set_request_context(user_email=user_email, expected_version=base_ver)
+
             self._dispatch_POST(path, query, body, user)
         except ConcurrentModificationError as e:
-            self._json(409, {
-                "error": "concurrent_modification_conflict",
-                "message": f"I dati sono stati modificati da un altro utente ({e.last_modified_by}). Ricarica per sincronizzare.",
-                "server_version": e.current_version,
-                "last_modified_by": e.last_modified_by,
-                "last_modified": e.last_modified
-            })
+            try:
+                self._json(409, {
+                    "error": "concurrent_modification_conflict",
+                    "message": f"I dati sono stati modificati da un altro utente ({e.last_modified_by}). Ricarica per sincronizzare.",
+                    "server_version": e.current_version,
+                    "last_modified_by": e.last_modified_by,
+                    "last_modified": e.last_modified
+                })
+            except Exception:
+                pass
         except Exception as e:
             import traceback
             traceback.print_exc()
-            self._json(500, {
-                "error": str(e),
-                "message": f"Errore interno del server: {e}"
-            })
+            try:
+                self._json(500, {
+                    "error": str(e),
+                    "message": f"Errore interno del server: {e}"
+                })
+            except Exception:
+                pass
         finally:
             clear_request_context()
 
@@ -1424,6 +1454,11 @@ class EurarioHandler(BaseHTTPRequestHandler):
             if tok:
                 auth_manager.set_session_school(tok, target_sid)
             set_current_school_id(target_sid)
+            # Pre-carica e isola in modo sicuro l'istanza Database per la scuola selezionata
+            try:
+                get_db(target_sid)
+            except Exception as e_db:
+                print(f"[SWITCH] Avviso pre-warming database istituto {target_sid}: {e_db}")
             extra_headers = [
                 ("Set-Cookie", f"eurario_active_school={target_sid}; Path=/; Max-Age=31536000; SameSite=Lax")
             ]

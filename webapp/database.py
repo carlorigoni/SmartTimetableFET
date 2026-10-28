@@ -478,7 +478,7 @@ class Database:
                 "has_timetable": False,
                 "config_name": "Configurazione Iniziale"
             }
-            self._save_to_disk(data)
+            self._save_to_disk(data, ignore_occ=True)
             return data
 
         if not os.path.exists(self.project_file):
@@ -518,7 +518,7 @@ class Database:
                             data["notes"] = "Scuola di esempio precaricata con orario completo e vincoli FET."
                             cleaned = True
                         if cleaned:
-                            self._save_to_disk(data)
+                            self._save_to_disk(data, ignore_occ=True)
             except Exception:
                 pass
 
@@ -690,10 +690,10 @@ class Database:
             except Exception as e:
                 print("Errore creazione snapshot baseline:", e)
 
-        self._save_to_disk(data)
+        self._save_to_disk(data, ignore_occ=True)
         return data
 
-    def _save_to_disk(self, data, user_email=None, expected_version=None):
+    def _save_to_disk(self, data, user_email=None, expected_version=None, ignore_occ=False):
         with self.lock:
             target_data = data if data is not None else getattr(self, "data", {})
             self.data = target_data
@@ -701,10 +701,10 @@ class Database:
             cur_ver = int(target_data.get("data_version") or 1)
 
             # Usa parametri espliciti o eredita dal thread-local request context
-            exp_v = expected_version if expected_version is not None else getattr(_request_context, "expected_version", None)
+            exp_v = None if ignore_occ else (expected_version if expected_version is not None else getattr(_request_context, "expected_version", None))
             u_email = user_email if user_email is not None else getattr(_request_context, "user_email", None)
 
-            if exp_v is not None and str(exp_v).strip():
+            if not ignore_occ and exp_v is not None and str(exp_v).strip():
                 try:
                     exp_int = int(str(exp_v).strip())
                     if exp_int != cur_ver:
