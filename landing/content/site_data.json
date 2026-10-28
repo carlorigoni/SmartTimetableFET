@@ -7,7 +7,7 @@
     "repo_url": "https://github.com/carlorigoni/eurario",
     "docker_hub": "https://hub.docker.com/r/carlorigoni/eurario",
     "contact_email": "carlo.rigoni@gmail.com",
-    "current_version": "v1.9.10",
+    "current_version": "v1.9.11",
     "fet_version": "7.12.0",
     "author": "Carlo Rigoni",
     "mentor": "Federico Rettore"
@@ -67,9 +67,9 @@
     },
     "announcements": [
       {
-        "badge": "Novità v1.9.10",
+        "badge": "Novità v1.9.11",
         "date": "Ottobre 2026",
-        "text": "Nuova sezione Architettura & DevOps con diagrammi E2E, apertura documentazione con sincronizzazione automatica della lingua dall'app e controlli di versione avanzati."
+        "text": "Raffinamento dark theme completo per banner solutore FET e preflight, pulsante di aggiornamento rapido 'Aggiorna ora' e ottimizzazioni dell'interfaccia utente."
       }
     ],
     "pillars_header": {
@@ -565,9 +565,9 @@
     },
     "announcements": [
       {
-        "badge": "What's New in v1.9.10",
+        "badge": "What's New in v1.9.11",
         "date": "October 2026",
-        "text": "New Architecture & DevOps section with E2E diagrams, language-synchronized documentation launch from WebApp, and automated versioning controls."
+        "text": "Full dark theme refinement for FET solver and preflight banners, one-click 'Update now' in updater modal, and UI visual improvements."
       }
     ],
     "pillars_header": {

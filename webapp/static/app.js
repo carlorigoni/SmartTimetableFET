@@ -22,7 +22,7 @@ let pollSolverTimer = null;
 let currentSolverRunning = false;
 
 // --- VERSIONE E IDENTITÀ APPLICATIVA ---
-const APP_VERSION = '1.9.10';
+const APP_VERSION = '1.9.11';
 
 // --- OPTIMISTIC CONCURRENCY CONTROL (OCC) & FETCH INTERCEPTOR ---
 window.CURRENT_DATA_VERSION = null;
@@ -4507,6 +4507,10 @@ async function pollSolverStatus() {
 
         const bannerSlot = document.getElementById('preflightSolverBanner');
         if (bannerSlot) {
+          bannerSlot.className = '';
+          bannerSlot.style.background = 'transparent';
+          bannerSlot.style.border = 'none';
+          bannerSlot.style.padding = '0';
           bannerSlot.innerHTML = `
             <div style="background:rgba(34,197,94,0.15);border:1.5px solid rgba(34,197,94,0.4);border-radius:var(--radius-md);padding:14px 18px;display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:10px;">
               <div style="display:flex;align-items:center;gap:10px;">
@@ -4540,6 +4544,10 @@ async function pollSolverStatus() {
       if (!s.success && s.has_timetable) {
         const bannerSlot = document.getElementById('preflightSolverBanner');
         if (bannerSlot) {
+          bannerSlot.className = '';
+          bannerSlot.style.background = 'transparent';
+          bannerSlot.style.border = 'none';
+          bannerSlot.style.padding = '0';
           bannerSlot.innerHTML = `
             <div style="background:rgba(59,130,246,0.12);border:1.5px solid rgba(59,130,246,0.35);border-radius:var(--radius-md);padding:12px 16px;display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:10px;">
               <div style="display:flex;align-items:center;gap:10px;">
