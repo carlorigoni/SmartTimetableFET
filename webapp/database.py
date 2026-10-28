@@ -502,6 +502,23 @@ class Database:
                 with open(self.project_file, "r", encoding="utf-8") as f:
                     data = json.load(f)
                     data = normalize_legacy_gym_rooms(data)
+                    # Bonifica retroattiva automatica residui Disney / Duckburg da progetti caricati
+                    if isinstance(data, dict):
+                        cleaned = False
+                        if "ludwig" in (data.get("institution") or "").lower():
+                            data["institution"] = 'Liceo Classico e Scientifico Statale "Scuola di Atene"'
+                            cleaned = True
+                        if (data.get("city") or "").strip().lower() in ("duckburg", "paperopoli"):
+                            data["city"] = "Atene"
+                            cleaned = True
+                        if (data.get("country") or "").strip().lower() in ("united states", "usa", "stati uniti") and ("atene" in (data.get("city") or "").lower() or "atene" in (data.get("institution") or "").lower()):
+                            data["country"] = "Italia"
+                            cleaned = True
+                        if "preloaded sample school" in (data.get("notes") or "").lower() and "atene" in (data.get("institution") or "").lower():
+                            data["notes"] = "Scuola di esempio precaricata con orario completo e vincoli FET."
+                            cleaned = True
+                        if cleaned:
+                            self._save_to_disk(data)
             except Exception:
                 pass
 
@@ -922,6 +939,24 @@ class Database:
                     shutil.copyfile(demo_fet, self.solved_file)
                 except Exception as e:
                     print("Could not copy demo solved timetable:", e)
+
+            try:
+                from webapp.schools import school_manager
+                inst = self.data.get("institution")
+                city = self.data.get("city") or ("Athens" if lang == "en" else "Atene")
+                country = self.data.get("country") or ("Greece" if lang == "en" else "Italia")
+                notes = self.data.get("notes") or ("Preloaded sample school with complete timetable and FET constraints." if lang == "en" else "Scuola di esempio precaricata con orario completo e vincoli FET.")
+                if inst:
+                    school_manager.update_school_info(
+                        self.school_id,
+                        name=inst,
+                        city=city,
+                        country=country,
+                        notes=notes
+                    )
+            except Exception:
+                pass
+
             self.create_snapshot(snap_name, snap_desc)
             return True
 
@@ -930,6 +965,9 @@ class Database:
         with self.lock:
             return {
                 "institution": self.data.get("institution", ""),
+                "city": self.data.get("city", "Atene"),
+                "country": self.data.get("country", "Italia"),
+                "notes": self.data.get("notes", ""),
                 "comments": self.data.get("comments", ""),
                 "meccanografico": self.data.get("meccanografico", ""),
                 "contact_email": self.data.get("contact_email", ""),
@@ -950,29 +988,38 @@ class Database:
         with self.lock:
             if "institution" in settings:
                 self.data["institution"] = settings["institution"]
+            if "city" in settings:
+                self.data["city"] = settings["city"]
+            if "country" in settings:
+                self.data["country"] = settings["country"]
+            if "notes" in settings:
+                self.data["notes"] = settings["notes"]
             if "comments" in settings:
                 self.data["comments"] = settings["comments"]
             if "contact_email" in settings:
                 self.data["contact_email"] = (settings["contact_email"] or "").strip().lower()
-                try:
-                    from webapp.schools import school_manager
-                    school_manager.update_school_info(
-                        self.school_id,
-                        contact_email=self.data["contact_email"]
-                    )
-                except Exception:
-                    pass
             if "meccanografico" in settings:
                 self.data["meccanografico"] = (settings["meccanografico"] or "").strip().upper()
-                try:
-                    from webapp.schools import school_manager
-                    school_manager.update_school_info(
-                        self.school_id,
-                        meccanografico=self.data["meccanografico"],
-                        name=self.data.get("institution")
-                    )
-                except Exception:
-                    pass
+
+            try:
+                from webapp.schools import school_manager
+                sch_up = {}
+                if "institution" in settings and settings["institution"]:
+                    sch_up["name"] = settings["institution"]
+                if "city" in settings:
+                    sch_up["city"] = settings["city"]
+                if "country" in settings:
+                    sch_up["country"] = settings["country"]
+                if "notes" in settings:
+                    sch_up["notes"] = settings["notes"]
+                if "meccanografico" in settings:
+                    sch_up["meccanografico"] = self.data["meccanografico"]
+                if "contact_email" in settings:
+                    sch_up["contact_email"] = self.data["contact_email"]
+                if sch_up:
+                    school_manager.update_school_info(self.school_id, **sch_up)
+            except Exception:
+                pass
             if "days" in settings and settings["days"]:
                 self.data["days"] = settings["days"]
             if "hours" in settings and settings["hours"]:

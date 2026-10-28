@@ -22,7 +22,7 @@ let pollSolverTimer = null;
 let currentSolverRunning = false;
 
 // --- VERSIONE E IDENTITÀ APPLICATIVA ---
-const APP_VERSION = '1.9.11';
+const APP_VERSION = '1.9.12';
 
 // --- OPTIMISTIC CONCURRENCY CONTROL (OCC) & FETCH INTERCEPTOR ---
 window.CURRENT_DATA_VERSION = null;
@@ -12574,6 +12574,7 @@ async function saveParametersSettings() {
     }
     const sName = document.getElementById('currentSchoolName');
     if (sName && instName) sName.innerText = instName;
+    await loadMySchools();
     renderParameters();
   } else {
     alert(resData.error || (isEn ? 'Error saving parameters.' : 'Errore durante il salvataggio dei parametri.'));
@@ -12956,6 +12957,7 @@ async function executeLoadDemo(lang = 'it') {
       activeTimetableView = 'teacher';
       stateData.timetableViews = null;
       await refreshAppState();
+      await loadMySchools();
       renderSnapshots();
     } else {
       showToast('Errore nel caricamento demo: ' + (data.error || 'Errore sconosciuto'), 'err');
@@ -13012,6 +13014,7 @@ async function executeResetEmpty() {
       activeTimetableView = 'teacher';
       stateData.timetableViews = null;
       await refreshAppState();
+      await loadMySchools();
       renderSnapshots();
     } else {
       showToast((isEn ? 'Error during reset: ' : 'Errore durante l\'azzeramento: ') + (data.error || (isEn ? 'Unknown error' : 'Errore sconosciuto')), 'err');
@@ -13188,6 +13191,7 @@ async function restoreSnapshot(sid, snapName) {
       activeTimetableView = 'teacher';
       stateData.timetableViews = null;
       await refreshAppState();
+      await loadMySchools();
       renderSnapshots();
     } else {
       alert(isEn ? 'Error restoring snapshot.' : 'Errore durante il ripristino dello snapshot.');

@@ -84,6 +84,60 @@ class SchoolManager:
                 self.schools["default"]["meccanografico"] = "PDIS017007"
                 self._save()
 
+            # Assicura sincronizzazione e pulizia automatica per tutte le scuole registrate
+            for sid, s in list(self.schools.items()):
+                self._sync_school_from_project(sid, s)
+
+    def _sync_school_from_project(self, school_id, s):
+        changed = False
+        proj_file = os.path.join(TENANTS_DIR, school_id, "current_project.json") if school_id != "default" else os.path.join(DATA_DIR, "current_project.json")
+        if os.path.exists(proj_file):
+            try:
+                with open(proj_file, "r", encoding="utf-8") as pf:
+                    pj = json.load(pf)
+                    inst = pj.get("institution")
+                    if inst and isinstance(inst, str) and inst.strip() and s.get("name") != inst.strip():
+                        s["name"] = inst.strip()
+                        changed = True
+                    city = pj.get("city")
+                    if city and isinstance(city, str) and city.strip() and s.get("city") != city.strip():
+                        s["city"] = city.strip()
+                        changed = True
+                    country = pj.get("country")
+                    if country and isinstance(country, str) and country.strip() and s.get("country") != country.strip():
+                        s["country"] = country.strip()
+                        changed = True
+                    notes = pj.get("notes")
+                    if notes and isinstance(notes, str) and notes.strip() and s.get("notes") != notes.strip():
+                        s["notes"] = notes.strip()
+                        changed = True
+                    m = pj.get("meccanografico")
+                    if m and isinstance(m, str) and m.strip() and s.get("meccanografico") != m.strip().upper():
+                        s["meccanografico"] = m.strip().upper()
+                        changed = True
+            except Exception:
+                pass
+
+        # Bonifica retroattiva automatica di vecchi residui Disney / Duckburg
+        name_lower = (s.get("name") or "").lower()
+        if "ludwig" in name_lower or "paperopoli" in name_lower or "duckburg" in name_lower:
+            s["name"] = 'Liceo Classico e Scientifico Statale "Scuola di Atene"'
+            changed = True
+        city_lower = (s.get("city") or "").strip().lower()
+        if city_lower in ("duckburg", "paperopoli"):
+            s["city"] = "Atene"
+            changed = True
+        country_lower = (s.get("country") or "").strip().lower()
+        if country_lower in ("united states", "usa", "stati uniti") and ("atene" in (s.get("city") or "").lower() or "atene" in (s.get("name") or "").lower()):
+            s["country"] = "Italia"
+            changed = True
+        if "preloaded sample school" in (s.get("notes") or "").lower() and "atene" in (s.get("name") or "").lower():
+            s["notes"] = "Scuola di esempio precaricata con orario completo e vincoli FET."
+            changed = True
+
+        if changed:
+            self._save()
+
     def _save(self):
         with self.lock:
             try:
@@ -97,13 +151,17 @@ class SchoolManager:
 
     def get_school(self, school_id):
         with self.lock:
-            return self.schools.get(school_id)
+            s = self.schools.get(school_id)
+            if s:
+                self._sync_school_from_project(school_id, s)
+            return s
 
     def list_all_schools(self):
         """Restituisce l'elenco completo di tutte le scuole per la console SuperAdmin."""
         with self.lock:
             out = []
             for sid, s in self.schools.items():
+                self._sync_school_from_project(sid, s)
                 item = dict(s)
                 item["tenant_dir_exists"] = (sid == "default") or os.path.exists(os.path.join(TENANTS_DIR, sid))
                 out.append(item)
@@ -122,6 +180,7 @@ class SchoolManager:
 
             out = []
             for sid, s in self.schools.items():
+                self._sync_school_from_project(sid, s)
                 owner_clean = (s.get("owner_email") or "").strip().lower()
                 is_owner = (owner_clean == user_email_clean and bool(user_email_clean))
                 is_member = (sid in user_mems and user_mems[sid].get("status") == "approved")

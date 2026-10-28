@@ -130,6 +130,30 @@
   border-color: #334155;
 }
 
+[data-theme="dark"] .flyout-item.active {
+  background-color: rgba(56, 189, 248, 0.18) !important;
+  border-left: 4px solid #38bdf8 !important;
+  border-color: rgba(56, 189, 248, 0.4) !important;
+}
+
+[data-theme="dark"] .flyout-item.active .flyout-item-title {
+  color: #38bdf8 !important;
+  font-weight: 700 !important;
+}
+
+[data-theme="dark"] .flyout-item.active .flyout-item-desc {
+  color: #94a3b8 !important;
+}
+
+[data-theme="dark"] .flyout-item.active .flyout-item-chevron {
+  color: #38bdf8 !important;
+}
+
+[data-theme="dark"] .flyout-active-badge {
+  background: #0284c7 !important;
+  color: #ffffff !important;
+}
+
 [data-theme="dark"] .modal-dialog {
   background: #131b2e;
   border-color: #243049;

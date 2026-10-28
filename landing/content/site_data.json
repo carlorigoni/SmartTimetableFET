@@ -7,7 +7,7 @@
     "repo_url": "https://github.com/carlorigoni/eurario",
     "docker_hub": "https://hub.docker.com/r/carlorigoni/eurario",
     "contact_email": "carlo.rigoni@gmail.com",
-    "current_version": "v1.9.11",
+    "current_version": "v1.9.12",
     "fet_version": "7.12.0",
     "author": "Carlo Rigoni",
     "mentor": "Federico Rettore"
@@ -67,9 +67,9 @@
     },
     "announcements": [
       {
-        "badge": "Novità v1.9.11",
+        "badge": "Novità v1.9.12",
         "date": "Ottobre 2026",
-        "text": "Raffinamento dark theme completo per banner solutore FET e preflight, pulsante di aggiornamento rapido 'Aggiorna ora' e ottimizzazioni dell'interfaccia utente."
+        "text": "Perfezionamento contrasto Dark Theme per flyout di configurazione e sincronizzazione anagrafica dinamica del selettore istituti (Scuola di Atene)."
       }
     ],
     "pillars_header": {
@@ -565,9 +565,9 @@
     },
     "announcements": [
       {
-        "badge": "What's New in v1.9.11",
+        "badge": "What's New in v1.9.12",
         "date": "October 2026",
-        "text": "Full dark theme refinement for FET solver and preflight banners, one-click 'Update now' in updater modal, and UI visual improvements."
+        "text": "Dark theme contrast refinement for configuration flyouts and dynamic metadata synchronization across multi-school switcher."
       }
     ],
     "pillars_header": {
