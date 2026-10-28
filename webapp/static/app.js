@@ -22,7 +22,7 @@ let pollSolverTimer = null;
 let currentSolverRunning = false;
 
 // --- VERSIONE E IDENTITÀ APPLICATIVA ---
-let APP_VERSION = '1.9.19';
+let APP_VERSION = '1.9.20';
 
 // --- OPTIMISTIC CONCURRENCY CONTROL (OCC) & FETCH INTERCEPTOR ---
 window.CURRENT_DATA_VERSION = null;
@@ -8217,14 +8217,14 @@ async function renderSubjects() {
             // Materia con più Classi di Concorso (CDC multiple) -> righe separate e raggruppate per CDC
             return cdcGroups.map((grp, grpIdx) => {
               const isFirst = (grpIdx === 0);
-              const rowBorder = isFirst
-                ? 'border-top: 2px solid var(--primary); background: #ffffff;'
-                : 'border-top: 1px dashed #cbd5e1; background: #f8fafc;';
+              const rowStyle = isFirst
+                ? 'border-top: 2px solid var(--primary); border-left: 3px solid var(--primary); background: #ffffff;'
+                : 'border-top: 1px dashed rgba(0,0,0,0.08); border-left: 3px solid var(--primary); background: rgba(59, 130, 246, 0.02);';
 
               return `
-              <tr style="${rowBorder}" data-subject-group="${escapeHtml(s.name)}">
+              <tr style="${rowStyle}" data-subject-group="${escapeHtml(s.name)}">
                 <td style="color:var(--text-sub);font-size:12px;">
-                  ${isFirst ? `<b>${idx + 1}</b>` : `<span style="color:var(--primary);font-weight:700;">↳</span>`}
+                  ${isFirst ? `<b>${idx + 1}</b>` : ''}
                 </td>
                 <td>
                   ${isFirst ? `
@@ -8238,10 +8238,9 @@ async function renderSubjects() {
                       ${isEn ? 'Total:' : 'Totale complessivo:'} <b>${s.total_hours || 0} h</b> (${s.cattedre_count || 0} ${isEn ? 'assignments' : 'cattedre'})
                     </div>
                   ` : `
-                    <div style="padding-left:14px;display:flex;align-items:center;gap:6px;">
-                      <span style="color:var(--primary);font-weight:700;">↳</span>
-                      <b style="font-size:12.5px;color:var(--text-sub);cursor:pointer;" onclick="openEditSubjectModal('${escapeJs(s.name)}')">${escapeHtml(s.name)}</b>
-                      <span style="font-family:var(--font-mono);font-size:10.5px;background:#e0e7ff;color:#3730a3;font-weight:700;padding:1px 6px;border-radius:4px;">${escapeHtml(grp.cdc)}</span>
+                    <div style="padding-left:14px;display:flex;align-items:center;gap:8px;">
+                      <span style="color:var(--primary);font-weight:700;font-size:14px;">↳</span>
+                      <span style="font-size:13px;font-weight:500;color:var(--text-sub);cursor:pointer;" onclick="openEditSubjectModal('${escapeJs(s.name)}')" title="${isEn ? 'Click to edit subject rules' : 'Clicca per modificare regole materia'}">${escapeHtml(s.name)}</span>
                     </div>
                   `}
                 </td>
@@ -8296,7 +8295,7 @@ async function renderSubjects() {
                     `).join('') : '<span style="color:var(--text-muted);font-size:11.5px;">-</span>'}
                   </div>
                 </td>
-                <td style="color:var(--text-muted);font-size:12px;">${isFirst ? escapeHtml(s.comments || '-') : '<span style="font-size:10.5px;color:var(--text-muted);">(stessa materia)</span>'}</td>
+                <td style="color:var(--text-muted);font-size:12px;">${isFirst ? escapeHtml(s.comments || '-') : '<span style="font-size:10.5px;color:var(--text-muted);font-style:italic;">(stessa materia)</span>'}</td>
                 <td style="text-align:right;white-space:nowrap;">
                   <button class="btn btn-sm btn-primary" onclick="openNewCattedraModal({ subject: '${escapeJs(s.name)}', cdc: '${escapeJs(grp.cdc || '')}' })" title="${isEn ? 'Assign teacher on CDC ' + escapeJs(grp.cdc) : 'Assegna cattedra per ' + escapeJs(s.name) + ' su CDC ' + escapeJs(grp.cdc)}">
                     ➕ ${isEn ? 'Assignment' : 'Cattedra'}
