@@ -37,6 +37,7 @@ services:
       - DOCKER_API_VERSION=1.41
       - WATCHTOWER_HTTP_API_UPDATE=true
       - WATCHTOWER_HTTP_API_TOKEN=eurario-update-token
+      - WATCHTOWER_HTTP_API_PERIODIC_POLLS=true
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-    command: --interval 3600 --http-api-update --cleanup eurario
+    command: --interval 3600 --http-api-update --http-api-periodic-polls --cleanup eurario

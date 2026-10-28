@@ -156,10 +156,12 @@ def apply_update():
         try:
             req = urllib.request.Request(
                 url,
-                headers={"Authorization": f"Bearer {token}", "User-Agent": "Eurario-Web-Updater"}
+                data=b"",
+                headers={"Authorization": f"Bearer {token}", "User-Agent": "Eurario-Web-Updater"},
+                method="POST"
             )
-            with urllib.request.urlopen(req, timeout=10) as resp:
-                if resp.status in (200, 204):
+            with urllib.request.urlopen(req, timeout=15) as resp:
+                if resp.status in (200, 202, 204):
                     return {
                         "success": True,
                         "method": "watchtower",
