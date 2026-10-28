@@ -22,7 +22,7 @@ let pollSolverTimer = null;
 let currentSolverRunning = false;
 
 // --- VERSIONE E IDENTITÀ APPLICATIVA ---
-let APP_VERSION = '1.9.14';
+let APP_VERSION = '1.9.15';
 
 // --- OPTIMISTIC CONCURRENCY CONTROL (OCC) & FETCH INTERCEPTOR ---
 window.CURRENT_DATA_VERSION = null;
@@ -99,21 +99,37 @@ window.fetch = async function(resource, init = {}) {
   const url = typeof resource === 'string' ? resource : (resource?.url || '');
   const method = (init?.method || 'GET').toUpperCase();
 
-  // Invia X-Base-Version per mutazioni API
-  if (url.includes('/api/') && method !== 'GET') {
+  // Invia X-School-Id e X-Base-Version per le chiamate API
+  if (url.includes('/api/')) {
     init = init || {};
     init.headers = init.headers || {};
+    
+    // Iniezione scuola attiva
+    let activeSid = null;
+    try {
+      activeSid = (currentSchool && currentSchool.id) ? currentSchool.id : localStorage.getItem('eurario_active_school');
+    } catch (e) {}
+
     if (init.headers instanceof Headers) {
-      if (window.CURRENT_DATA_VERSION !== null && !init.headers.has('X-Base-Version')) {
+      if (method !== 'GET' && window.CURRENT_DATA_VERSION !== null && !init.headers.has('X-Base-Version')) {
         init.headers.set('X-Base-Version', String(window.CURRENT_DATA_VERSION));
       }
+      if (activeSid && !init.headers.has('X-School-Id')) {
+        init.headers.set('X-School-Id', activeSid);
+      }
     } else if (Array.isArray(init.headers)) {
-      if (window.CURRENT_DATA_VERSION !== null) {
+      if (method !== 'GET' && window.CURRENT_DATA_VERSION !== null) {
         init.headers.push(['X-Base-Version', String(window.CURRENT_DATA_VERSION)]);
       }
+      if (activeSid) {
+        init.headers.push(['X-School-Id', activeSid]);
+      }
     } else {
-      if (window.CURRENT_DATA_VERSION !== null && !init.headers['X-Base-Version']) {
+      if (method !== 'GET' && window.CURRENT_DATA_VERSION !== null && !init.headers['X-Base-Version']) {
         init.headers['X-Base-Version'] = String(window.CURRENT_DATA_VERSION);
+      }
+      if (activeSid && !init.headers['X-School-Id']) {
+        init.headers['X-School-Id'] = activeSid;
       }
     }
   }
@@ -142,17 +158,6 @@ window.fetch = async function(resource, init = {}) {
         showSolverAlreadyRunningModal(errData);
       }
     } catch (e) {}
-  } else if (response.ok) {
-    const ct = response.headers.get('content-type') || '';
-    if (ct.includes('application/json')) {
-      try {
-        const cloned = response.clone();
-        const data = await cloned.json();
-        if (data && data.data_version !== undefined) {
-          updateLocalDataVersion(data.data_version, data.last_modified_by);
-        }
-      } catch (e) {}
-    }
   }
 
   return response;
@@ -511,14 +516,29 @@ async function switchSchool(schoolId) {
   try {
     const menu = document.getElementById('schoolMenuPopup');
     if (menu) menu.style.display = 'none';
-    showToast('Caricamento istituto in corso...');
+    const isEn = window.I18N && window.I18N.getLanguage() === 'en';
+    showToast(isEn ? 'Switching institution...' : 'Caricamento istituto in corso...');
+
+    // Salva preventivamente l'istituto attivo sia in cookie che in localStorage
+    try {
+      localStorage.setItem('eurario_active_school', schoolId);
+      document.cookie = `eurario_active_school=${encodeURIComponent(schoolId)}; Path=/; Max-Age=31536000; SameSite=Lax`;
+    } catch (e) {}
+
     const res = await fetch('/api/schools/switch', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'X-School-Id': schoolId },
       body: JSON.stringify({ school_id: schoolId })
     });
-    const data = await res.json();
-    if (data.success) {
+
+    let data = null;
+    try {
+      data = await res.json();
+    } catch (parseErr) {
+      console.warn('Risposta non-JSON da /api/schools/switch:', parseErr);
+    }
+
+    if (res.ok && data && data.success) {
       window.CURRENT_DATA_VERSION = null;
       // Resetta selezioni contestuali ed entità che appartenevano alla scuola precedente
       activeEntity = '';
@@ -528,13 +548,15 @@ async function switchSchool(schoolId) {
       await loadMySchools();
       await refreshAppState();
       await navigate(currentView || 'dashboard', false);
-      showToast(`Passato a: ${data.school ? data.school.name : schoolId}`, 'ok');
+      showToast(`${isEn ? 'Switched to:' : 'Passato a:'} ${data.school ? data.school.name : schoolId}`, 'ok');
     } else {
-      alert(data.error || 'Impossibile passare alla scuola selezionata.');
+      const errMsg = (data && data.error) ? data.error : (data && data.message ? data.message : `HTTP ${res.status}`);
+      alert((isEn ? 'Cannot switch to selected school: ' : 'Impossibile passare alla scuola selezionata: ') + errMsg);
     }
   } catch (err) {
     console.error('Errore switch scuola:', err);
-    alert('Errore di connessione durante il cambio istituto.');
+    const isEn = window.I18N && window.I18N.getLanguage() === 'en';
+    alert((isEn ? 'Error switching institution: ' : 'Errore durante il cambio istituto: ') + (err.message || String(err)));
   }
 }
 

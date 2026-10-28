@@ -97,7 +97,7 @@ def fetch_google_doc_docx_bytes(url):
     except Exception as e:
         raise ValueError(f"Impossibile scaricare il Google Doc: {e}")
 
-APP_VERSION = "1.9.14"
+APP_VERSION = "1.9.15"
 FET_VERSION = "7.12.0"
 APP_AUTHOR = "Carlo Rigoni"
 APP_MENTOR = "Federico Rettore"
@@ -305,17 +305,16 @@ class EurarioHandler(BaseHTTPRequestHandler):
             self.send_header("Access-Control-Allow-Origin", origin)
             self.send_header("Access-Control-Allow-Credentials", "true")
             self.send_header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-            self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With, Accept, X-Base-Version")
-            self.send_header("Access-Control-Expose-Headers", "X-Data-Version")
+            self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With, Accept, X-Base-Version, X-School-Id")
+            self.send_header("Access-Control-Expose-Headers", "X-Data-Version, X-School-Id")
 
     def do_OPTIONS(self):
         self.send_response(204)
-        self.send_header("Connection", "close")
         self._send_cors()
         self.send_header("Content-Length", "0")
         self.end_headers()
 
-    def _json(self, code, data, set_cookie=None, clear_cookie=False):
+    def _json(self, code, data, set_cookie=None, clear_cookie=False, extra_headers=None):
         if hasattr(db, "data") and isinstance(getattr(db, "data", None), dict):
             cur_ver = db.data.get("data_version")
             if cur_ver is not None:
@@ -328,11 +327,13 @@ class EurarioHandler(BaseHTTPRequestHandler):
         self.send_response(code)
         self.send_header("Content-Type", "application/json; charset=utf-8")
         self.send_header("Content-Length", str(len(body)))
-        self.send_header("Connection", "close")
         if hasattr(db, "data") and isinstance(getattr(db, "data", None), dict):
             cur_ver = db.data.get("data_version")
             if cur_ver is not None:
                 self.send_header("X-Data-Version", str(cur_ver))
+        if extra_headers:
+            for hname, hval in extra_headers:
+                self.send_header(hname, hval)
         if set_cookie:
             self.send_header("Set-Cookie", f"eurario_session={set_cookie}; Path=/; HttpOnly; SameSite=Lax; Max-Age=2592000")
         elif clear_cookie:
@@ -409,7 +410,16 @@ class EurarioHandler(BaseHTTPRequestHandler):
             q_sid = query["school_id"][0].strip()
             if school_manager.get_school(q_sid):
                 return q_sid
-        # 3. Sessione utente loggato
+        # 3. Cookie esplicito eurario_active_school (per persistenza attiva su tutti i client)
+        cookie_header = self.headers.get("Cookie", "")
+        if "eurario_active_school=" in cookie_header:
+            for part in cookie_header.split(";"):
+                part = part.strip()
+                if part.startswith("eurario_active_school="):
+                    c_sid = part.split("eurario_active_school=")[1].strip()
+                    if c_sid and school_manager.get_school(c_sid):
+                        return c_sid
+        # 4. Sessione utente loggato
         user = self._get_current_user()
         if user:
             if user.get("is_superadmin"):
@@ -426,7 +436,7 @@ class EurarioHandler(BaseHTTPRequestHandler):
             if user.get("active_school_id") and any(s["id"] == user["active_school_id"] for s in user_schools):
                 return str(user["active_school_id"]).strip()
             return user_schools[0]["id"]
-        # 4. Fallback predefinito (per connessioni locali/script)
+        # 5. Fallback predefinito (per connessioni locali/script)
         return "default"
 
     def _setup_request_school(self, query=None):
@@ -1081,6 +1091,13 @@ class EurarioHandler(BaseHTTPRequestHandler):
                 "last_modified_by": e.last_modified_by,
                 "last_modified": e.last_modified
             })
+        except Exception as e:
+            import traceback
+            traceback.print_exc()
+            self._json(500, {
+                "error": str(e),
+                "message": f"Errore interno del server: {e}"
+            })
         finally:
             clear_request_context()
 
@@ -1407,11 +1424,14 @@ class EurarioHandler(BaseHTTPRequestHandler):
             if tok:
                 auth_manager.set_session_school(tok, target_sid)
             set_current_school_id(target_sid)
+            extra_headers = [
+                ("Set-Cookie", f"eurario_active_school={target_sid}; Path=/; Max-Age=31536000; SameSite=Lax")
+            ]
             self._json(200, {
                 "success": True,
                 "active_school_id": target_sid,
                 "school": target_school
-            })
+            }, extra_headers=extra_headers)
             return
 
         elif path == "/api/schools/create":
