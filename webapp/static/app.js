@@ -22,7 +22,7 @@ let pollSolverTimer = null;
 let currentSolverRunning = false;
 
 // --- VERSIONE E IDENTITÀ APPLICATIVA ---
-let APP_VERSION = '1.9.18';
+let APP_VERSION = '1.9.19';
 
 // --- OPTIMISTIC CONCURRENCY CONTROL (OCC) & FETCH INTERCEPTOR ---
 window.CURRENT_DATA_VERSION = null;
@@ -7875,6 +7875,184 @@ function handleStudentsFileUpload(event) {
 // ============================================================================
 // 6. GESTIONE MATERIE (CON CARICO POMERIDIANO, ORE PREFERITE E CLASSI DI CONCORSO MULTIPLE)
 // ============================================================================
+function extractCdcTokens(cdcRaw) {
+  if (!cdcRaw) return [];
+  const parts = String(cdcRaw).split(/[,;/\n]+/).map(p => p.trim()).filter(Boolean);
+  const res = [];
+  for (const part of parts) {
+    const clean = part.trim();
+    if (!clean) continue;
+    const m = clean.match(/^([A-Za-z]{1,2})[-_ ]?(\d{2,3})/);
+    if (m) {
+      const prefix = m[1].toUpperCase();
+      let num = m[2];
+      if (prefix.length === 1 && num.length === 2) {
+        num = '0' + num;
+      }
+      const code = prefix + num;
+      if (!res.includes(code)) res.push(code);
+    } else {
+      const simple = clean.split(/[\s\-:]+/)[0].toUpperCase();
+      if (simple && !res.includes(simple)) res.push(simple);
+    }
+  }
+  return res;
+}
+
+function filterTeachersForSubject(subjectName, specificCdc = null) {
+  const subj = (stateData.subjects || []).find(s => s.name === subjectName);
+  const allTeachers = stateData.teachers || [];
+  if (!subj && !specificCdc) {
+    return { matching: allTeachers, others: [], cdcList: [] };
+  }
+
+  let cdcList = [];
+  if (specificCdc) {
+    cdcList = extractCdcTokens(specificCdc);
+  }
+  if (cdcList.length === 0 && subj && subj.cdc) {
+    cdcList = extractCdcTokens(subj.cdc);
+  }
+
+  if (cdcList.length === 0) {
+    return { matching: allTeachers, others: [], cdcList: [] };
+  }
+
+  const matching = [];
+  const others = [];
+
+  for (const t of allTeachers) {
+    const tCdcs = extractCdcTokens(t.cdc || '');
+    const isMatch = tCdcs.some(c => cdcList.includes(c)) ||
+      cdcList.some(c => (t.cdc || '').toUpperCase().includes(c));
+    if (isMatch) {
+      matching.push(t);
+    } else {
+      others.push(t);
+    }
+  }
+
+  return { matching, others, cdcList };
+}
+
+function buildTeacherSelectOptions(subjectName, currentSelectedTeacher = '', specificCdc = null, showAll = false, isCoTeacher = false) {
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
+  const { matching, others, cdcList } = filterTeachersForSubject(subjectName, specificCdc);
+
+  const defaultLabel = isCoTeacher
+    ? (isEn ? '-- Select Co-Teacher --' : '-- Seleziona Docente per compresenza --')
+    : (isEn ? '-- Select Primary Teacher --' : '-- Seleziona Docente Titolare --');
+
+  let html = `<option value="">${defaultLabel}</option>`;
+
+  if (cdcList.length > 0) {
+    const cdcLabel = cdcList.join(', ');
+    if (matching.length > 0) {
+      html += `<optgroup label="${isEn ? 'Qualified Teachers on CDC (' + cdcLabel + ')' : 'Docenti Abilitati CDC (' + cdcLabel + ')'}">`;
+      for (const t of matching) {
+        const isSel = (t.name === currentSelectedTeacher);
+        html += `<option value="${escapeHtml(t.name)}" ${isSel ? 'selected' : ''}>${escapeHtml(t.name)}${t.cdc ? ` (${escapeHtml(t.cdc)})` : ''}</option>`;
+      }
+      html += `</optgroup>`;
+    } else {
+      html += `<optgroup label="⚠️ ${isEn ? 'No teachers found with CDC ' + cdcLabel : 'Nessun docente registrato con CDC ' + cdcLabel}">`;
+      html += `</optgroup>`;
+    }
+
+    const currentInOthers = others.find(t => t.name === currentSelectedTeacher);
+    if (currentInOthers && !showAll) {
+      html += `<optgroup label="${isEn ? 'Currently Assigned Teacher' : 'Docente Attualmente Assegnato'}">`;
+      html += `<option value="${escapeHtml(currentInOthers.name)}" selected>${escapeHtml(currentInOthers.name)}${currentInOthers.cdc ? ` (${escapeHtml(currentInOthers.cdc)})` : ''} ⚠️ [${isEn ? 'Different CDC' : 'Fuori CDC'}]</option>`;
+      html += `</optgroup>`;
+    }
+
+    if (showAll && others.length > 0) {
+      html += `<optgroup label="${isEn ? 'Other Teachers in Faculty' : 'Altri Docenti dell\'Istituto'}">`;
+      for (const t of others) {
+        if (t.name === currentSelectedTeacher && currentInOthers) continue;
+        const isSel = (t.name === currentSelectedTeacher);
+        html += `<option value="${escapeHtml(t.name)}" ${isSel ? 'selected' : ''}>${escapeHtml(t.name)}${t.cdc ? ` (${escapeHtml(t.cdc)})` : ''}</option>`;
+      }
+      html += `</optgroup>`;
+    } else if (others.length > 0) {
+      html += `<option value="__SHOW_ALL__">🔍 ${isEn ? 'Show all other teachers in faculty (' + others.length + ')...' : 'Mostra tutti gli altri docenti dell\'istituto (' + others.length + ')...'}</option>`;
+    }
+  } else {
+    for (const t of (stateData.teachers || [])) {
+      const isSel = (t.name === currentSelectedTeacher);
+      html += `<option value="${escapeHtml(t.name)}" ${isSel ? 'selected' : ''}>${escapeHtml(t.name)}${t.cdc ? ` (${escapeHtml(t.cdc)})` : ''}</option>`;
+    }
+  }
+
+  return html;
+}
+
+function onModalSubjectChanged() {
+  const subjSel = document.getElementById('modalSubject');
+  const teachSel = document.getElementById('modalTeacher');
+  const coTeachSel = document.getElementById('modalCoTeacherSelect');
+  if (!subjSel || !teachSel) return;
+  const subjName = subjSel.value;
+  const currTeacher = teachSel.value;
+  teachSel.innerHTML = buildTeacherSelectOptions(subjName, currTeacher);
+  if (coTeachSel) {
+    coTeachSel.innerHTML = buildTeacherSelectOptions(subjName, '', null, false, true);
+  }
+}
+
+function onModalTeacherChanged() {
+  const subjSel = document.getElementById('modalSubject');
+  const teachSel = document.getElementById('modalTeacher');
+  if (!teachSel) return;
+  if (teachSel.value === '__SHOW_ALL__') {
+    const subjName = subjSel ? subjSel.value : '';
+    teachSel.innerHTML = buildTeacherSelectOptions(subjName, '', null, true);
+  }
+}
+
+function onModalCoTeacherChanged() {
+  const subjSel = document.getElementById('modalSubject');
+  const coTeachSel = document.getElementById('modalCoTeacherSelect');
+  if (!coTeachSel) return;
+  if (coTeachSel.value === '__SHOW_ALL__') {
+    const subjName = subjSel ? subjSel.value : '';
+    coTeachSel.innerHTML = buildTeacherSelectOptions(subjName, '', null, true, true);
+  }
+}
+
+function onEditModalSubjectChanged() {
+  const subjSel = document.getElementById('editModalSubject');
+  const teachSel = document.getElementById('editModalTeacher');
+  const coTeachSel = document.getElementById('editModalCoTeacherSelect');
+  if (!subjSel || !teachSel) return;
+  const subjName = subjSel.value;
+  const currTeacher = teachSel.value;
+  teachSel.innerHTML = buildTeacherSelectOptions(subjName, currTeacher);
+  if (coTeachSel) {
+    coTeachSel.innerHTML = buildTeacherSelectOptions(subjName, '', null, false, true);
+  }
+}
+
+function onEditModalTeacherChanged() {
+  const subjSel = document.getElementById('editModalSubject');
+  const teachSel = document.getElementById('editModalTeacher');
+  if (!teachSel) return;
+  if (teachSel.value === '__SHOW_ALL__') {
+    const subjName = subjSel ? subjSel.value : '';
+    teachSel.innerHTML = buildTeacherSelectOptions(subjName, '', null, true);
+  }
+}
+
+function onEditModalCoTeacherChanged() {
+  const subjSel = document.getElementById('editModalSubject');
+  const coTeachSel = document.getElementById('editModalCoTeacherSelect');
+  if (!coTeachSel) return;
+  if (coTeachSel.value === '__SHOW_ALL__') {
+    const subjName = subjSel ? subjSel.value : '';
+    coTeachSel.innerHTML = buildTeacherSelectOptions(subjName, '', null, true, true);
+  }
+}
+
 function formatSubjectCdcPills(cdcRaw, subjectName, isEn) {
   if (!cdcRaw || !String(cdcRaw).trim()) {
     return `<span style="color:var(--text-muted);font-size:12px;cursor:pointer;" onclick="openEditSubjectModal('${escapeJs(subjectName)}')">+ ${isEn ? 'Assign CDC' : 'Assegna CDC'}</span>`;
@@ -7946,85 +8124,201 @@ async function renderSubjects() {
           ${subjects.map((s, idx) => {
             const noRientri = !!s.no_rientri;
             const prefHours = s.pref_hours || 'INDIFFERENTE';
+            const cdcGroups = (s.cdc_groups && s.cdc_groups.length > 0) ? s.cdc_groups : [{
+              cdc: s.cdc || '',
+              hours: s.total_hours || 0,
+              cattedre_count: s.cattedre_count || 0,
+              teachers: s.teachers || [],
+              classes: s.classes || []
+            }];
 
-            return `
-            <tr>
-              <td style="color:var(--text-sub);">${idx + 1}</td>
-              <td>
-                <b style="font-size:13.5px;color:var(--text-main);cursor:pointer;" onclick="openEditSubjectModal('${escapeJs(s.name)}')" title="${isEn ? 'Click to edit subject rules' : 'Clicca per modificare regole materia'}">📚 ${escapeHtml(s.name)}</b>
-                ${s.short_name ? `
-                  <span class="item-chip" style="font-size:11px;font-weight:700;color:var(--primary);margin-left:6px;background:#e0f2fe;border:1px solid #bae6fd;" title="${isEn ? 'Short name for prints: ' + escapeHtml(s.short_name) : 'Sigla usata nelle stampe: ' + escapeHtml(s.short_name)}">
-                    🖨️ ${escapeHtml(s.short_name)}
+            if (cdcGroups.length <= 1) {
+              const grp = cdcGroups[0];
+              return `
+              <tr>
+                <td style="color:var(--text-sub);">${idx + 1}</td>
+                <td>
+                  <b style="font-size:13.5px;color:var(--text-main);cursor:pointer;" onclick="openEditSubjectModal('${escapeJs(s.name)}')" title="${isEn ? 'Click to edit subject rules' : 'Clicca per modificare regole materia'}">📚 ${escapeHtml(s.name)}</b>
+                  ${s.short_name ? `
+                    <span class="item-chip" style="font-size:11px;font-weight:700;color:var(--primary);margin-left:6px;background:#e0f2fe;border:1px solid #bae6fd;" title="${isEn ? 'Short name for prints: ' + escapeHtml(s.short_name) : 'Sigla usata nelle stampe: ' + escapeHtml(s.short_name)}">
+                      🖨️ ${escapeHtml(s.short_name)}
+                    </span>
+                  ` : ''}
+                </td>
+                <td style="text-align:center;">
+                  ${formatSubjectCdcPills(grp.cdc || s.cdc, s.name, isEn)}
+                </td>
+                <td style="text-align:center;">
+                  ${noRientri ? `
+                    <span class="badge-no-rientri" title="${isEn ? 'Categorically excluded from afternoon sessions (7th and 8th periods)' : 'Esclusa categoricamente dai pomeriggi (ore 7 e 8)'}">
+                      🚫 ${isEn ? 'No Afternoons' : 'No Rientri'}
+                    </span>
+                  ` : `
+                    <span class="badge badge-ok" style="font-size:10.5px;" title="${isEn ? 'Allowed in both morning and afternoon periods' : 'Ammessa sia al mattino sia al pomeriggio'}">
+                      ✅ ${isEn ? 'Allowed' : 'Ammessa'}
+                    </span>
+                  `}
+                </td>
+                <td style="text-align:center;">
+                  ${prefHours === 'PRIME' ? `
+                    <span class="badge-pref-prime" title="${isEn ? 'FET prefers placing this in early morning periods (1st-3rd)' : 'FET favorisce la collocazione nelle prime 2-3 ore del mattino'}">
+                      🌅 ${isEn ? 'Early Hours' : 'Prime Ore'}
+                    </span>
+                  ` : prefHours === 'ULTIME' ? `
+                    <span class="badge-pref-ultime" title="${isEn ? 'FET prefers placing this in later periods' : 'FET favorisce la collocazione nelle ultime ore di lezione'}">
+                      🌇 ${isEn ? 'Late Hours' : 'Ultime Ore'}
+                    </span>
+                  ` : `
+                    <span style="font-size:11.5px;color:var(--text-muted);">⚖️ ${isEn ? 'Indifferent' : 'Indifferente'}</span>
+                  `}
+                </td>
+                <td style="text-align:center;">
+                  <span class="badge ${s.total_hours > 0 ? 'badge-info' : ''}" style="font-weight:700;font-size:12px;">
+                    ${s.total_hours || 0} h
                   </span>
-                ` : ''}
-              </td>
-              <td style="text-align:center;">
-                ${formatSubjectCdcPills(s.cdc, s.name, isEn)}
-              </td>
-              <td style="text-align:center;">
-                ${noRientri ? `
-                  <span class="badge-no-rientri" title="${isEn ? 'Categorically excluded from afternoon sessions (7th and 8th periods)' : 'Esclusa categoricamente dai pomeriggi (ore 7 e 8)'}">
-                    🚫 ${isEn ? 'No Afternoons' : 'No Rientri'}
+                  <div style="font-size:10.5px;color:var(--text-muted);margin-top:2px;">
+                    (${s.cattedre_count || 0} ${isEn ? 'assignments' : 'cattedre'})
+                  </div>
+                </td>
+                <td>
+                  <div style="display:flex;flex-wrap:wrap;gap:4px;">
+                    ${(grp.teachers || []).length > 0 ? (grp.teachers || []).map(t => `
+                      <span class="item-chip" title="${isEn ? 'Assigned teacher' : 'Docente assegnato'}">👨‍🏫 ${escapeHtml(t)}</span>
+                    `).join('') : `<span style="color:var(--text-muted);font-size:12px;">${isEn ? 'No teachers' : 'Nessun docente'}</span>`}
+                  </div>
+                </td>
+                <td>
+                  <div style="display:flex;flex-wrap:wrap;gap:4px;">
+                    ${(grp.classes || []).length > 0 ? (grp.classes || []).map(c => `
+                      <span class="item-chip primary" title="${isEn ? 'Class with this subject' : 'Classe con questa materia'}">🎓 ${escapeHtml(c)}</span>
+                    `).join('') : '<span style="color:var(--text-muted);font-size:12px;">-</span>'}
+                  </div>
+                </td>
+                <td style="color:var(--text-muted);font-size:12px;">${escapeHtml(s.comments || '-')}</td>
+                <td style="text-align:right;white-space:nowrap;">
+                  <button class="btn btn-sm btn-sec" onclick="openEditSubjectModal('${escapeJs(s.name)}')" title="${isEn ? 'Edit rules: name, print short name, CDC, afternoons, preferred slot, notes' : 'Modifica: nome materia, nome breve per stampe, CDC, rientri pomeridiani, fascia oraria, note'}">
+                    ✏️ ${isEn ? 'Edit' : 'Modifica'}
+                  </button>
+                  <button class="btn btn-sm btn-sec" onclick="openMergeSubjectModal('${escapeJs(s.name)}')" title="${isEn ? 'Unify this subject into another (e.g. merge Matematica A027 into Matematica)' : 'Unifica questa materia in un\'altra (es. unisci Matematica A027 in Matematica)'}">
+                    🔗 ${isEn ? 'Merge' : 'Unisci'}
+                  </button>
+                  <button class="btn btn-sm btn-primary" onclick="openNewCattedraModal({ subject: '${escapeJs(s.name)}', cdc: '${escapeJs(grp.cdc || '')}' })" title="${isEn ? 'Assign teacher and class for ' + escapeJs(s.name) : 'Assegna un docente e una classe per ' + escapeJs(s.name)}">
+                    ➕ ${isEn ? 'Assignment' : 'Cattedra'}
+                  </button>
+                  <button class="btn btn-sm btn-sec" onclick="jumpToActivities({ subject: '${escapeJs(s.name)}' })" title="${isEn ? 'View all assignments of ' + escapeJs(s.name) : 'Vedi tutte le cattedre di ' + escapeJs(s.name)}">
+                    📚 ${isEn ? 'Assignments' : 'Cattedre'}
+                  </button>
+                  <button class="btn btn-sm btn-danger" onclick="deleteSubject('${escapeJs(s.name)}')">🗑️</button>
+                </td>
+              </tr>
+              `;
+            }
+
+            // Materia con più Classi di Concorso (CDC multiple) -> righe separate e raggruppate per CDC
+            return cdcGroups.map((grp, grpIdx) => {
+              const isFirst = (grpIdx === 0);
+              const rowBorder = isFirst
+                ? 'border-top: 2px solid var(--primary); background: #ffffff;'
+                : 'border-top: 1px dashed #cbd5e1; background: #f8fafc;';
+
+              return `
+              <tr style="${rowBorder}" data-subject-group="${escapeHtml(s.name)}">
+                <td style="color:var(--text-sub);font-size:12px;">
+                  ${isFirst ? `<b>${idx + 1}</b>` : `<span style="color:var(--primary);font-weight:700;">↳</span>`}
+                </td>
+                <td>
+                  ${isFirst ? `
+                    <b style="font-size:13.5px;color:var(--text-main);cursor:pointer;" onclick="openEditSubjectModal('${escapeJs(s.name)}')" title="${isEn ? 'Click to edit subject rules' : 'Clicca per modificare regole materia'}">📚 ${escapeHtml(s.name)}</b>
+                    ${s.short_name ? `
+                      <span class="item-chip" style="font-size:11px;font-weight:700;color:var(--primary);margin-left:6px;background:#e0f2fe;border:1px solid #bae6fd;" title="${isEn ? 'Short name for prints: ' + escapeHtml(s.short_name) : 'Sigla usata nelle stampe: ' + escapeHtml(s.short_name)}">
+                        🖨️ ${escapeHtml(s.short_name)}
+                      </span>
+                    ` : ''}
+                    <div style="font-size:10.5px;color:var(--text-muted);margin-top:2px;">
+                      ${isEn ? 'Total:' : 'Totale complessivo:'} <b>${s.total_hours || 0} h</b> (${s.cattedre_count || 0} ${isEn ? 'assignments' : 'cattedre'})
+                    </div>
+                  ` : `
+                    <div style="padding-left:14px;display:flex;align-items:center;gap:6px;">
+                      <span style="color:var(--primary);font-weight:700;">↳</span>
+                      <b style="font-size:12.5px;color:var(--text-sub);cursor:pointer;" onclick="openEditSubjectModal('${escapeJs(s.name)}')">${escapeHtml(s.name)}</b>
+                      <span style="font-family:var(--font-mono);font-size:10.5px;background:#e0e7ff;color:#3730a3;font-weight:700;padding:1px 6px;border-radius:4px;">${escapeHtml(grp.cdc)}</span>
+                    </div>
+                  `}
+                </td>
+                <td style="text-align:center;">
+                  <span class="item-chip" style="font-family:var(--font-mono);font-size:11.5px;font-weight:700;color:var(--primary);cursor:pointer;" onclick="openEditSubjectModal('${escapeJs(s.name)}')" title="${isEn ? 'Teaching Certificate: ' + escapeHtml(grp.cdc) : 'Classe di concorso abilitata: ' + escapeHtml(grp.cdc)}">
+                    🏷️ ${escapeHtml(grp.cdc || '-')}
                   </span>
-                ` : `
-                  <span class="badge badge-ok" style="font-size:10.5px;" title="${isEn ? 'Allowed in both morning and afternoon periods' : 'Ammessa sia al mattino sia al pomeriggio'}">
-                    ✅ ${isEn ? 'Allowed' : 'Ammessa'}
+                </td>
+                <td style="text-align:center;">
+                  ${isFirst ? (noRientri ? `
+                    <span class="badge-no-rientri" title="${isEn ? 'Categorically excluded from afternoon sessions (7th and 8th periods)' : 'Esclusa categoricamente dai pomeriggi (ore 7 e 8)'}">
+                      🚫 ${isEn ? 'No Afternoons' : 'No Rientri'}
+                    </span>
+                  ` : `
+                    <span class="badge badge-ok" style="font-size:10.5px;" title="${isEn ? 'Allowed in both morning and afternoon periods' : 'Ammessa sia al mattino sia al pomeriggio'}">
+                      ✅ ${isEn ? 'Allowed' : 'Ammessa'}
+                    </span>
+                  `) : `<span style="font-size:10.5px;color:var(--text-muted);">${noRientri ? '🚫 No Rientri' : '✅ Ammessa'}</span>`}
+                </td>
+                <td style="text-align:center;">
+                  ${isFirst ? (prefHours === 'PRIME' ? `
+                    <span class="badge-pref-prime" title="${isEn ? 'FET prefers placing this in early morning periods (1st-3rd)' : 'FET favorisce la collocazione nelle prime 2-3 ore del mattino'}">
+                      🌅 ${isEn ? 'Early Hours' : 'Prime Ore'}
+                    </span>
+                  ` : prefHours === 'ULTIME' ? `
+                    <span class="badge-pref-ultime" title="${isEn ? 'FET prefers placing this in later periods' : 'FET favorisce la collocazione nelle ultime ore di lezione'}">
+                      🌇 ${isEn ? 'Late Hours' : 'Ultime Ore'}
+                    </span>
+                  ` : `
+                    <span style="font-size:11.5px;color:var(--text-muted);">⚖️ ${isEn ? 'Indifferent' : 'Indifferente'}</span>
+                  `) : `<span style="font-size:10.5px;color:var(--text-muted);">${prefHours === 'PRIME' ? '🌅 Prime' : (prefHours === 'ULTIME' ? '🌇 Ultime' : '⚖️ Indiff.')}</span>`}
+                </td>
+                <td style="text-align:center;">
+                  <span class="badge ${grp.hours > 0 ? 'badge-info' : ''}" style="font-weight:700;font-size:12px;">
+                    ${grp.hours || 0} h
                   </span>
-                `}
-              </td>
-              <td style="text-align:center;">
-                ${prefHours === 'PRIME' ? `
-                  <span class="badge-pref-prime" title="${isEn ? 'FET prefers placing this in early morning periods (1st-3rd)' : 'FET favorisce la collocazione nelle prime 2-3 ore del mattino'}">
-                    🌅 ${isEn ? 'Early Hours' : 'Prime Ore'}
-                  </span>
-                ` : prefHours === 'ULTIME' ? `
-                  <span class="badge-pref-ultime" title="${isEn ? 'FET prefers placing this in later periods' : 'FET favorisce la collocazione nelle ultime ore di lezione'}">
-                    🌇 ${isEn ? 'Late Hours' : 'Ultime Ore'}
-                  </span>
-                ` : `
-                  <span style="font-size:11.5px;color:var(--text-muted);">⚖️ ${isEn ? 'Indifferent' : 'Indifferente'}</span>
-                `}
-              </td>
-              <td style="text-align:center;">
-                <span class="badge ${s.total_hours > 0 ? 'badge-info' : ''}" style="font-weight:700;font-size:12px;">
-                  ${s.total_hours || 0} h
-                </span>
-                <div style="font-size:10.5px;color:var(--text-muted);margin-top:2px;">
-                  (${s.cattedre_count || 0} ${isEn ? 'assignments' : 'cattedre'})
-                </div>
-              </td>
-              <td>
-                <div style="display:flex;flex-wrap:wrap;gap:4px;">
-                  ${(s.teachers || []).length > 0 ? (s.teachers || []).map(t => `
-                    <span class="item-chip" title="${isEn ? 'Assigned teacher' : 'Docente assegnato'}">👨‍🏫 ${escapeHtml(t)}</span>
-                  `).join('') : `<span style="color:var(--text-muted);font-size:12px;">${isEn ? 'No teachers' : 'Nessun docente'}</span>`}
-                </div>
-              </td>
-              <td>
-                <div style="display:flex;flex-wrap:wrap;gap:4px;">
-                  ${(s.classes || []).length > 0 ? (s.classes || []).map(c => `
-                    <span class="item-chip primary" title="${isEn ? 'Class with this subject' : 'Classe con questa materia'}">🎓 ${escapeHtml(c)}</span>
-                  `).join('') : '<span style="color:var(--text-muted);font-size:12px;">-</span>'}
-                </div>
-              </td>
-              <td style="color:var(--text-muted);font-size:12px;">${escapeHtml(s.comments || '-')}</td>
-              <td style="text-align:right;white-space:nowrap;">
-                <button class="btn btn-sm btn-sec" onclick="openEditSubjectModal('${escapeJs(s.name)}')" title="${isEn ? 'Edit rules: name, print short name, CDC, afternoons, preferred slot, notes' : 'Modifica: nome materia, nome breve per stampe, CDC, rientri pomeridiani, fascia oraria, note'}">
-                  ✏️ ${isEn ? 'Edit' : 'Modifica'}
-                </button>
-                <button class="btn btn-sm btn-sec" onclick="openMergeSubjectModal('${escapeJs(s.name)}')" title="${isEn ? 'Unify this subject into another (e.g. merge Matematica A027 into Matematica)' : 'Unifica questa materia in un\'altra (es. unisci Matematica A027 in Matematica)'}">
-                  🔗 ${isEn ? 'Merge' : 'Unisci'}
-                </button>
-                <button class="btn btn-sm btn-primary" onclick="openNewCattedraModal({ subject: '${escapeJs(s.name)}' })" title="${isEn ? 'Assign teacher and class for ' + escapeJs(s.name) : 'Assegna un docente e una classe per ' + escapeJs(s.name)}">
-                  ➕ ${isEn ? 'Assignment' : 'Cattedra'}
-                </button>
-                <button class="btn btn-sm btn-sec" onclick="jumpToActivities({ subject: '${escapeJs(s.name)}' })" title="${isEn ? 'View all assignments of ' + escapeJs(s.name) : 'Vedi tutte le cattedre di ' + escapeJs(s.name)}">
-                  📚 ${isEn ? 'Assignments' : 'Cattedre'}
-                </button>
-                <button class="btn btn-sm btn-danger" onclick="deleteSubject('${escapeJs(s.name)}')">🗑️</button>
-              </td>
-            </tr>
-          `;
+                  <div style="font-size:10px;color:var(--text-muted);margin-top:2px;">
+                    (${grp.cattedre_count || 0} ${isEn ? 'assignments' : 'cattedre'})
+                  </div>
+                </td>
+                <td>
+                  <div style="display:flex;flex-wrap:wrap;gap:4px;">
+                    ${(grp.teachers || []).length > 0 ? (grp.teachers || []).map(t => `
+                      <span class="item-chip" title="${isEn ? 'Teacher under CDC ' + escapeHtml(grp.cdc) : 'Docente per la CDC ' + escapeHtml(grp.cdc)}">👨‍🏫 ${escapeHtml(t)}</span>
+                    `).join('') : `<span style="color:var(--text-muted);font-size:11.5px;font-style:italic;">${isEn ? 'No teacher on this CDC' : 'Nessun docente su questa CDC'}</span>`}
+                  </div>
+                </td>
+                <td>
+                  <div style="display:flex;flex-wrap:wrap;gap:4px;">
+                    ${(grp.classes || []).length > 0 ? (grp.classes || []).map(c => `
+                      <span class="item-chip primary" title="${isEn ? 'Class assigned under CDC ' + escapeHtml(grp.cdc) : 'Classe con cattedra su CDC ' + escapeHtml(grp.cdc)}">🎓 ${escapeHtml(c)}</span>
+                    `).join('') : '<span style="color:var(--text-muted);font-size:11.5px;">-</span>'}
+                  </div>
+                </td>
+                <td style="color:var(--text-muted);font-size:12px;">${isFirst ? escapeHtml(s.comments || '-') : '<span style="font-size:10.5px;color:var(--text-muted);">(stessa materia)</span>'}</td>
+                <td style="text-align:right;white-space:nowrap;">
+                  <button class="btn btn-sm btn-primary" onclick="openNewCattedraModal({ subject: '${escapeJs(s.name)}', cdc: '${escapeJs(grp.cdc || '')}' })" title="${isEn ? 'Assign teacher on CDC ' + escapeJs(grp.cdc) : 'Assegna cattedra per ' + escapeJs(s.name) + ' su CDC ' + escapeJs(grp.cdc)}">
+                    ➕ ${isEn ? 'Assignment' : 'Cattedra'}
+                  </button>
+                  ${isFirst ? `
+                    <button class="btn btn-sm btn-sec" onclick="openEditSubjectModal('${escapeJs(s.name)}')" title="${isEn ? 'Edit rules: name, print short name, CDC, afternoons, preferred slot, notes' : 'Modifica materia, sigla, CDC, rientri, fascia, note'}">
+                      ✏️
+                    </button>
+                    <button class="btn btn-sm btn-sec" onclick="openMergeSubjectModal('${escapeJs(s.name)}')" title="${isEn ? 'Unify this subject into another' : 'Unisci materia in un\'altra'}">
+                      🔗
+                    </button>
+                  ` : ''}
+                  <button class="btn btn-sm btn-sec" onclick="jumpToActivities({ subject: '${escapeJs(s.name)}' })" title="${isEn ? 'View all assignments of ' + escapeJs(s.name) : 'Vedi tutte le cattedre di ' + escapeJs(s.name)}">
+                    📚
+                  </button>
+                  ${isFirst ? `
+                    <button class="btn btn-sm btn-danger" onclick="deleteSubject('${escapeJs(s.name)}')">🗑️</button>
+                  ` : ''}
+                </td>
+              </tr>
+              `;
+            }).join('');
           }).join('')}
         </tbody>
       </table>
@@ -10183,9 +10477,8 @@ async function openNewCattedraModal(preset = {}) {
   stateData.rooms = roomsData.rooms || [];
   stateData.buildings = roomsData.buildings || ['Centrale', 'Succursale'];
 
-  const teacherOpts = teachers.map(t => `
-    <option value="${escapeHtml(t.name)}" ${preset.teacher === t.name ? 'selected' : ''}>${escapeHtml(t.name)}${t.cdc ? ` (${escapeHtml(t.cdc)})` : ''}</option>
-  `).join('');
+  const teacherOpts = buildTeacherSelectOptions(preset.subject || '', preset.teacher || '', preset.cdc || null);
+  const coTeacherOpts = buildTeacherSelectOptions(preset.subject || '', '', preset.cdc || null, false, true);
 
   let targetOpts = `<optgroup label="${isEn ? 'Entire Classes' : 'Classi Intere'}">` +
     classes.map(c => `
@@ -10227,10 +10520,9 @@ async function openNewCattedraModal(preset = {}) {
         <div class="form-group">
           <label class="form-label">
             <span>${isEn ? 'Primary Teacher' : 'Docente Titolare'}</span>
-            <span class="form-hint">${isEn ? 'Sorted alphabetically' : 'Ordinati alfabeticamente'}</span>
+            <span class="form-hint">${isEn ? 'Filtered by subject CDC' : 'Filtrato per CDC della materia'}</span>
           </label>
-          <select id="modalTeacher" class="form-select">
-            <option value="">-- ${isEn ? 'Select Primary Teacher' : 'Seleziona Docente Titolare'} --</option>
+          <select id="modalTeacher" class="form-select" onchange="onModalTeacherChanged()">
             ${teacherOpts}
           </select>
         </div>
@@ -10242,9 +10534,8 @@ async function openNewCattedraModal(preset = {}) {
           </div>
           <div id="coTeacherRow" style="display:none;margin-bottom:6px;">
             <div style="display:flex;gap:6px;">
-              <select id="modalCoTeacherSelect" class="form-select">
-                <option value="">-- ${isEn ? 'Select Co-Teacher' : 'Seleziona Docente per compresenza'} --</option>
-                ${teachers.map(t => `<option value="${escapeHtml(t.name)}">${escapeHtml(t.name)}</option>`).join('')}
+              <select id="modalCoTeacherSelect" class="form-select" onchange="onModalCoTeacherChanged()">
+                ${coTeacherOpts}
               </select>
               <button class="btn btn-sm btn-sec" type="button" onclick="addCoTeacherChip()">${isEn ? 'Add' : 'Aggiungi'}</button>
             </div>
@@ -10265,7 +10556,7 @@ async function openNewCattedraModal(preset = {}) {
 
         <div class="form-group">
           <label class="form-label">${isEn ? 'Subject / Discipline' : 'Materia / Disciplina'}</label>
-          <select id="modalSubject" class="form-select">
+          <select id="modalSubject" class="form-select" onchange="onModalSubjectChanged()">
             <option value="">-- ${isEn ? 'Select Subject' : 'Seleziona Materia'} --</option>
             ${subjOpts}
           </select>
@@ -10586,9 +10877,8 @@ async function openEditCattedraModal(idxOrId) {
   const primaryTeacher = (g.teachers && g.teachers.length > 0) ? g.teachers[0] : '';
   editSelectedCoTeachers = (g.teachers && g.teachers.length > 1) ? g.teachers.slice(1) : [];
 
-  const teacherOpts = teachers.map(t => `
-    <option value="${escapeHtml(t.name)}" ${primaryTeacher === t.name ? 'selected' : ''}>${escapeHtml(t.name)}${t.cdc ? ` (${escapeHtml(t.cdc)})` : ''}</option>
-  `).join('');
+  const teacherOpts = buildTeacherSelectOptions(g.subject || '', primaryTeacher);
+  const coTeacherOpts = buildTeacherSelectOptions(g.subject || '', '', null, false, true);
 
   // Destinatari
   const singleStudent = (g.students && g.students.length === 1) ? g.students[0] : '';
@@ -10648,10 +10938,9 @@ async function openEditCattedraModal(idxOrId) {
         <div class="form-group">
           <label class="form-label">
             <span>${isEn ? 'Primary Teacher' : 'Docente Titolare'}</span>
-            <span class="form-hint">${isEn ? 'Sorted alphabetically' : 'Ordinati alfabeticamente'}</span>
+            <span class="form-hint">${isEn ? 'Filtered by subject CDC' : 'Filtrato per CDC della materia'}</span>
           </label>
-          <select id="editModalTeacher" class="form-select">
-            <option value="">-- ${isEn ? 'Select Primary Teacher' : 'Seleziona Docente Titolare'} --</option>
+          <select id="editModalTeacher" class="form-select" onchange="onEditModalTeacherChanged()">
             ${teacherOpts}
           </select>
         </div>
@@ -10663,9 +10952,8 @@ async function openEditCattedraModal(idxOrId) {
           </div>
           <div id="editCoTeacherRow" style="display:none;margin-bottom:6px;">
             <div style="display:flex;gap:6px;">
-              <select id="editModalCoTeacherSelect" class="form-select">
-                <option value="">-- ${isEn ? 'Select Co-Teacher' : 'Seleziona Docente per compresenza'} --</option>
-                ${teachers.map(t => `<option value="${escapeHtml(t.name)}">${escapeHtml(t.name)}</option>`).join('')}
+              <select id="editModalCoTeacherSelect" class="form-select" onchange="onEditModalCoTeacherChanged()">
+                ${coTeacherOpts}
               </select>
               <button class="btn btn-sm btn-sec" type="button" onclick="addEditCoTeacherChip()">${isEn ? 'Add' : 'Aggiungi'}</button>
             </div>
@@ -10686,7 +10974,7 @@ async function openEditCattedraModal(idxOrId) {
 
         <div class="form-group">
           <label class="form-label">${isEn ? 'Subject / Discipline' : 'Materia / Disciplina'}</label>
-          <select id="editModalSubject" class="form-select">
+          <select id="editModalSubject" class="form-select" onchange="onEditModalSubjectChanged()">
             <option value="">-- ${isEn ? 'Select Subject' : 'Seleziona Materia'} --</option>
             ${subjOpts}
           </select>

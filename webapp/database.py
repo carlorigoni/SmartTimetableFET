@@ -1497,6 +1497,12 @@ class Database:
     # --- MATERIE ---
     def get_subjects(self):
         with self.lock:
+            teacher_map = {t["name"]: t for t in self.data.get("teachers", []) if "name" in t}
+            subj_cdc_map = {
+                s["name"].lower(): self._extract_cdc_list(s.get("cdc", ""))
+                for s in self.data.get("subjects", []) if "name" in s
+            }
+
             s_stats = {}
             for a in self.data.get("activities", []):
                 subj = (a.get("subject") or "").strip()
@@ -1504,7 +1510,13 @@ class Database:
                     continue
                 dur = a.get("duration", 1)
                 if subj not in s_stats:
-                    s_stats[subj] = {"hours": 0, "classes": set(), "teachers": set(), "cattedre": set()}
+                    s_stats[subj] = {
+                        "hours": 0,
+                        "classes": set(),
+                        "teachers": set(),
+                        "cattedre": set(),
+                        "by_cdc": {}
+                    }
                 s_stats[subj]["hours"] += dur
                 for t in a.get("teachers", []):
                     s_stats[subj]["teachers"].add(t)
@@ -1513,12 +1525,50 @@ class Database:
                 gid = a.get("group_id") or a.get("id")
                 s_stats[subj]["cattedre"].add(gid)
 
+                # Trova la CDC associata all'attività in base al docente titolare
+                act_teachers = a.get("teachers", [])
+                act_cdc = ""
+                if act_teachers:
+                    t_obj = teacher_map.get(act_teachers[0], {})
+                    t_cdcs = self._extract_cdc_list(t_obj.get("cdc", ""))
+                    s_cdcs = subj_cdc_map.get(subj.lower(), [])
+                    matched = next((c for c in t_cdcs if c in s_cdcs), None)
+                    if matched:
+                        act_cdc = matched
+                    elif t_cdcs:
+                        act_cdc = t_cdcs[0]
+                    elif t_obj.get("cdc", "").strip():
+                        act_cdc = t_obj.get("cdc", "").strip().split()[0].upper()
+
+                if not act_cdc:
+                    act_cdc = "SENZA_CDC"
+
+                if act_cdc not in s_stats[subj]["by_cdc"]:
+                    s_stats[subj]["by_cdc"][act_cdc] = {
+                        "hours": 0,
+                        "classes": set(),
+                        "teachers": set(),
+                        "cattedre": set()
+                    }
+                s_stats[subj]["by_cdc"][act_cdc]["hours"] += dur
+                s_stats[subj]["by_cdc"][act_cdc]["cattedre"].add(gid)
+                for s in a.get("students", []):
+                    s_stats[subj]["by_cdc"][act_cdc]["classes"].add(s)
+                for t in act_teachers:
+                    s_stats[subj]["by_cdc"][act_cdc]["teachers"].add(t)
+
             result = []
             for s in sorted(self.data.get("subjects", []), key=lambda x: x["name"].lower()):
                 if s.get("name", "").strip().lower().startswith("disposiz"):
                     continue
                 s_copy = copy.deepcopy(s)
-                st = s_stats.get(s["name"], {"hours": 0, "classes": set(), "teachers": set(), "cattedre": set()})
+                st = s_stats.get(s["name"], {
+                    "hours": 0,
+                    "classes": set(),
+                    "teachers": set(),
+                    "cattedre": set(),
+                    "by_cdc": {}
+                })
                 s_copy["total_hours"] = st["hours"]
                 s_copy["cattedre_count"] = len(st["cattedre"])
                 s_copy["classes"] = sorted(list(st["classes"]), key=natural_class_sort_key)
@@ -1527,6 +1577,60 @@ class Database:
                 s_copy["pref_hours"] = s.get("pref_hours", "INDIFFERENTE")
                 s_copy["cdc"] = s.get("cdc", "")
                 s_copy["short_name"] = s.get("short_name", "")
+
+                # Costruzione gruppi per CDC (cdc_groups)
+                decl_cdcs = self._extract_cdc_list(s.get("cdc", ""))
+                cdc_groups = []
+                covered_cdcs = set()
+
+                for cdc_code in decl_cdcs:
+                    covered_cdcs.add(cdc_code)
+                    grp_data = st["by_cdc"].get(cdc_code, {
+                        "hours": 0, "classes": set(), "teachers": set(), "cattedre": set()
+                    })
+                    cdc_groups.append({
+                        "cdc": cdc_code,
+                        "hours": grp_data["hours"],
+                        "cattedre_count": len(grp_data["cattedre"]),
+                        "classes": sorted(list(grp_data["classes"]), key=natural_class_sort_key),
+                        "teachers": sorted(list(grp_data["teachers"]))
+                    })
+
+                # Eventuali CDC emerse dalle attività ma fuori da quelle dichiarate
+                for extra_cdc, grp_data in sorted(st["by_cdc"].items()):
+                    if extra_cdc not in covered_cdcs and extra_cdc != "SENZA_CDC":
+                        covered_cdcs.add(extra_cdc)
+                        cdc_groups.append({
+                            "cdc": extra_cdc,
+                            "hours": grp_data["hours"],
+                            "cattedre_count": len(grp_data["cattedre"]),
+                            "classes": sorted(list(grp_data["classes"]), key=natural_class_sort_key),
+                            "teachers": sorted(list(grp_data["teachers"])),
+                            "is_extra": True
+                        })
+
+                if "SENZA_CDC" in st["by_cdc"] and len(st["by_cdc"]["SENZA_CDC"]["cattedre"]) > 0:
+                    grp_data = st["by_cdc"]["SENZA_CDC"]
+                    cdc_groups.append({
+                        "cdc": "Da Assegnare",
+                        "hours": grp_data["hours"],
+                        "cattedre_count": len(grp_data["cattedre"]),
+                        "classes": sorted(list(grp_data["classes"]), key=natural_class_sort_key),
+                        "teachers": sorted(list(grp_data["teachers"])),
+                        "is_extra": True
+                    })
+
+                # Se non c'erano CDC dichiarate e nessun gruppo trovato, metti gruppo base
+                if not cdc_groups:
+                    cdc_groups.append({
+                        "cdc": s.get("cdc", ""),
+                        "hours": st["hours"],
+                        "cattedre_count": len(st["cattedre"]),
+                        "classes": s_copy["classes"],
+                        "teachers": s_copy["teachers"]
+                    })
+
+                s_copy["cdc_groups"] = cdc_groups
                 result.append(s_copy)
             return result
 
