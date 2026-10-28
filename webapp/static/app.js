@@ -22,7 +22,7 @@ let pollSolverTimer = null;
 let currentSolverRunning = false;
 
 // --- VERSIONE E IDENTITÀ APPLICATIVA ---
-let APP_VERSION = '1.9.20';
+let APP_VERSION = '1.9.21';
 
 // --- OPTIMISTIC CONCURRENCY CONTROL (OCC) & FETCH INTERCEPTOR ---
 window.CURRENT_DATA_VERSION = null;
@@ -5623,10 +5623,19 @@ async function renderTeachers() {
                 </div>
               </td>
               <td>
-                <div style="display:flex;flex-wrap:wrap;gap:4px;">
-                  ${(t.classes || []).length > 0 ? (t.classes || []).map(c => `
-                    <span class="item-chip" title="Classe assegnata">🎓 ${escapeHtml(c)}</span>
-                  `).join('') : '<span style="color:var(--text-muted);font-size:12px;">-</span>'}
+                <div style="display:flex;flex-direction:column;gap:4px;">
+                  ${(t.subject_assignments && t.subject_assignments.length > 1) ? (
+                    t.subject_assignments.map(sa => `
+                      <div style="font-size:11.5px;display:flex;align-items:center;gap:4px;flex-wrap:wrap;">
+                        <span style="font-size:10.5px;color:var(--text-muted);font-weight:600;">📚 ${escapeHtml(sa.subject)}:</span>
+                        ${(sa.classes || []).map(c => `<span class="item-chip" style="font-size:10.5px;padding:1px 5px;">🎓 ${escapeHtml(c)}</span>`).join('')}
+                      </div>
+                    `).join('')
+                  ) : (
+                    (t.classes || []).length > 0 ? (t.classes || []).map(c => `
+                      <span class="item-chip" title="Classe assegnata">🎓 ${escapeHtml(c)}</span>
+                    `).join('') : '<span style="color:var(--text-muted);font-size:12px;">-</span>'
+                  )}
                 </div>
               </td>
               <td style="color:var(--text-muted);font-size:12px;">${escapeHtml(t.comments || '-')}</td>
@@ -8085,6 +8094,54 @@ function toggleSubjCdcToken(code) {
   }
 }
 
+function formatTeacherClassAssignments(grp, s, isEn) {
+  let taList = grp.teacher_assignments;
+  if (!taList || taList.length === 0) {
+    if ((grp.teachers || []).length > 0 || (grp.classes || []).length > 0) {
+      taList = (grp.teachers || []).map(t => ({
+        teacher: t,
+        hours: '-',
+        classes: grp.classes || [],
+        co_teachers: []
+      }));
+    }
+  }
+
+  if (!taList || taList.length === 0) {
+    return `<span style="color:var(--text-muted);font-size:12px;font-style:italic;">${isEn ? 'No assignments yet' : 'Nessuna cattedra assegnata'}</span>`;
+  }
+
+  return `
+    <div style="display:flex;flex-direction:column;gap:5px;">
+      ${taList.map(ta => `
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:3.5px 8px;background:rgba(255,255,255,0.75);border-radius:6px;border:1px solid rgba(0,0,0,0.06);">
+          <div style="display:flex;align-items:center;gap:6px;white-space:nowrap;">
+            ${ta.teacher === 'Da assegnare' ? `
+              <span style="font-weight:700;font-size:12px;color:#d97706;">⚠️ ${isEn ? 'Unassigned' : 'Da assegnare'}</span>
+            ` : `
+              <span style="font-weight:600;font-size:12.5px;color:var(--text-main);cursor:pointer;" onclick="jumpToActivities({ teacher: '${escapeJs(ta.teacher)}', subject: '${escapeJs(s.name)}' })" title="${isEn ? 'View assignments of ' + escapeHtml(ta.teacher) : 'Vedi cattedre di ' + escapeHtml(ta.teacher)}">
+                👨‍🏫 ${escapeHtml(ta.teacher)}
+              </span>
+            `}
+            ${ta.hours !== '-' ? `<span class="badge" style="font-size:10px;padding:1px 5px;" title="${ta.hours} ${isEn ? 'weekly hours' : 'ore settimanali'}">${ta.hours}h</span>` : ''}
+            ${(ta.co_teachers && ta.co_teachers.length > 0) ? `
+              <span style="font-size:10px;color:var(--text-muted);" title="${isEn ? 'Co-teaching with ' : 'Compresenza con '}${escapeHtml(ta.co_teachers.join(', '))}">+${escapeHtml(ta.co_teachers.join(', '))}</span>
+            ` : ''}
+          </div>
+          <span style="color:var(--primary);font-size:12px;font-weight:700;opacity:0.6;">➔</span>
+          <div style="display:flex;flex-wrap:wrap;gap:3px;align-items:center;justify-content:flex-end;">
+            ${(ta.classes || []).map(c => `
+              <span class="item-chip primary" style="font-size:11px;padding:1px 6px;cursor:pointer;" onclick="jumpToActivities({ className: '${escapeJs(c)}', subject: '${escapeJs(s.name)}' })" title="${isEn ? 'View assignments of class ' + escapeHtml(c) : 'Vedi cattedre classe ' + escapeHtml(c)}">
+                🎓 ${escapeHtml(c)}
+              </span>
+            `).join('')}
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
 async function renderSubjects() {
   const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
   const res = await fetch('/api/subjects');
@@ -8111,11 +8168,10 @@ async function renderSubjects() {
             <th style="width:40px;">#</th>
             <th style="min-width:180px;">${_t('subjects.th_name', 'Materia / Disciplina')}</th>
             <th style="width:145px;text-align:center;">${_t('teachers.th_cdc', 'Classe di Concorso (CDC)')}</th>
-            <th style="width:145px;text-align:center;">${isEn ? 'Afternoon Periods' : 'Rientri Pomeridiani'}</th>
-            <th style="width:145px;text-align:center;">${isEn ? 'Preferred Time Slot' : 'Fascia Preferita'}</th>
+            <th style="width:135px;text-align:center;">${isEn ? 'Afternoon Periods' : 'Rientri Pomeridiani'}</th>
+            <th style="width:135px;text-align:center;">${isEn ? 'Preferred Time Slot' : 'Fascia Preferita'}</th>
             <th style="width:110px;text-align:center;">${_t('subjects.th_hours', 'Ore Totali')}</th>
-            <th style="min-width:180px;">${isEn ? 'Teachers' : 'Docenti che la Insegnano'}</th>
-            <th style="min-width:160px;">${isEn ? 'Assigned Classes' : 'Classi Destinatarie'}</th>
+            <th style="min-width:340px;">${isEn ? 'Teachers ➔ Assigned Classes' : 'Docenti ➔ Classi Assegnate'}</th>
             <th>${_t('teachers.th_notes', 'Note')}</th>
             <th style="text-align:right;min-width:260px;">${_t('teachers.th_actions', 'Azioni Rapide')}</th>
           </tr>
@@ -8129,7 +8185,8 @@ async function renderSubjects() {
               hours: s.total_hours || 0,
               cattedre_count: s.cattedre_count || 0,
               teachers: s.teachers || [],
-              classes: s.classes || []
+              classes: s.classes || [],
+              teacher_assignments: s.teacher_assignments || []
             }];
 
             if (cdcGroups.length <= 1) {
@@ -8180,19 +8237,8 @@ async function renderSubjects() {
                     (${s.cattedre_count || 0} ${isEn ? 'assignments' : 'cattedre'})
                   </div>
                 </td>
-                <td>
-                  <div style="display:flex;flex-wrap:wrap;gap:4px;">
-                    ${(grp.teachers || []).length > 0 ? (grp.teachers || []).map(t => `
-                      <span class="item-chip" title="${isEn ? 'Assigned teacher' : 'Docente assegnato'}">👨‍🏫 ${escapeHtml(t)}</span>
-                    `).join('') : `<span style="color:var(--text-muted);font-size:12px;">${isEn ? 'No teachers' : 'Nessun docente'}</span>`}
-                  </div>
-                </td>
-                <td>
-                  <div style="display:flex;flex-wrap:wrap;gap:4px;">
-                    ${(grp.classes || []).length > 0 ? (grp.classes || []).map(c => `
-                      <span class="item-chip primary" title="${isEn ? 'Class with this subject' : 'Classe con questa materia'}">🎓 ${escapeHtml(c)}</span>
-                    `).join('') : '<span style="color:var(--text-muted);font-size:12px;">-</span>'}
-                  </div>
+                <td style="min-width:320px;">
+                  ${formatTeacherClassAssignments(grp, s, isEn)}
                 </td>
                 <td style="color:var(--text-muted);font-size:12px;">${escapeHtml(s.comments || '-')}</td>
                 <td style="text-align:right;white-space:nowrap;">
@@ -8281,19 +8327,8 @@ async function renderSubjects() {
                     (${grp.cattedre_count || 0} ${isEn ? 'assignments' : 'cattedre'})
                   </div>
                 </td>
-                <td>
-                  <div style="display:flex;flex-wrap:wrap;gap:4px;">
-                    ${(grp.teachers || []).length > 0 ? (grp.teachers || []).map(t => `
-                      <span class="item-chip" title="${isEn ? 'Teacher under CDC ' + escapeHtml(grp.cdc) : 'Docente per la CDC ' + escapeHtml(grp.cdc)}">👨‍🏫 ${escapeHtml(t)}</span>
-                    `).join('') : `<span style="color:var(--text-muted);font-size:11.5px;font-style:italic;">${isEn ? 'No teacher on this CDC' : 'Nessun docente su questa CDC'}</span>`}
-                  </div>
-                </td>
-                <td>
-                  <div style="display:flex;flex-wrap:wrap;gap:4px;">
-                    ${(grp.classes || []).length > 0 ? (grp.classes || []).map(c => `
-                      <span class="item-chip primary" title="${isEn ? 'Class assigned under CDC ' + escapeHtml(grp.cdc) : 'Classe con cattedra su CDC ' + escapeHtml(grp.cdc)}">🎓 ${escapeHtml(c)}</span>
-                    `).join('') : '<span style="color:var(--text-muted);font-size:11.5px;">-</span>'}
-                  </div>
+                <td style="min-width:320px;">
+                  ${formatTeacherClassAssignments(grp, s, isEn)}
                 </td>
                 <td style="color:var(--text-muted);font-size:12px;">${isFirst ? escapeHtml(s.comments || '-') : '<span style="font-size:10.5px;color:var(--text-muted);font-style:italic;">(stessa materia)</span>'}</td>
                 <td style="text-align:right;white-space:nowrap;">

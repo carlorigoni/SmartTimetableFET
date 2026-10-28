@@ -1075,7 +1075,11 @@ class Database:
                 is_disp = subj.lower().startswith("disposiz")
                 for t in a.get("teachers", []):
                     if t not in t_stats:
-                        t_stats[t] = {"lesson_hours": 0, "disp_hours": 0, "hours": 0, "classes": set(), "subjects": set(), "cattedre": set()}
+                        t_stats[t] = {
+                            "lesson_hours": 0, "disp_hours": 0, "hours": 0,
+                            "classes": set(), "subjects": set(), "cattedre": set(),
+                            "subject_assignments": {}
+                        }
                     if is_disp:
                         t_stats[t]["disp_hours"] += dur
                     else:
@@ -1088,10 +1092,22 @@ class Database:
                     gid = a.get("group_id") or a.get("id")
                     t_stats[t]["cattedre"].add(gid)
 
+                    if subj and not is_disp:
+                        s_dict = t_stats[t]["subject_assignments"]
+                        if subj not in s_dict:
+                            s_dict[subj] = {"hours": 0, "classes": set()}
+                        s_dict[subj]["hours"] += dur
+                        for s in a.get("students", []):
+                            s_dict[subj]["classes"].add(s)
+
             result = []
             for t in sorted(self.data.get("teachers", []), key=lambda x: x["name"].lower()):
                 t_copy = copy.deepcopy(t)
-                st = t_stats.get(t["name"], {"lesson_hours": 0, "disp_hours": 0, "hours": 0, "classes": set(), "subjects": set(), "cattedre": set()})
+                st = t_stats.get(t["name"], {
+                    "lesson_hours": 0, "disp_hours": 0, "hours": 0,
+                    "classes": set(), "subjects": set(), "cattedre": set(),
+                    "subject_assignments": {}
+                })
                 t_copy["lesson_hours"] = st["lesson_hours"]
                 t_copy["disp_hours"] = st["disp_hours"]
                 t_copy["total_hours"] = st["hours"]
@@ -1099,6 +1115,15 @@ class Database:
                 t_copy["classes"] = sorted(list(st["classes"]), key=natural_class_sort_key)
                 t_copy["subjects"] = sorted(list(st["subjects"]))
                 t_copy["cdc"] = t.get("cdc", "")
+
+                sub_assign = []
+                for sub_name, sub_info in sorted(st.get("subject_assignments", {}).items(), key=lambda x: x[0].lower()):
+                    sub_assign.append({
+                        "subject": sub_name,
+                        "hours": sub_info["hours"],
+                        "classes": sorted(list(sub_info["classes"]), key=natural_class_sort_key)
+                    })
+                t_copy["subject_assignments"] = sub_assign
 
                 target = t.get("target_hours", 18)
                 t_copy["target_hours"] = target
@@ -1515,7 +1540,8 @@ class Database:
                         "classes": set(),
                         "teachers": set(),
                         "cattedre": set(),
-                        "by_cdc": {}
+                        "by_cdc": {},
+                        "teacher_assignments": {}
                     }
                 s_stats[subj]["hours"] += dur
                 for t in a.get("teachers", []):
@@ -1548,7 +1574,8 @@ class Database:
                         "hours": 0,
                         "classes": set(),
                         "teachers": set(),
-                        "cattedre": set()
+                        "cattedre": set(),
+                        "teacher_assignments": {}
                     }
                 s_stats[subj]["by_cdc"][act_cdc]["hours"] += dur
                 s_stats[subj]["by_cdc"][act_cdc]["cattedre"].add(gid)
@@ -1556,6 +1583,53 @@ class Database:
                     s_stats[subj]["by_cdc"][act_cdc]["classes"].add(s)
                 for t in act_teachers:
                     s_stats[subj]["by_cdc"][act_cdc]["teachers"].add(t)
+
+                t_name = act_teachers[0] if act_teachers else "Da assegnare"
+                co_t_list = act_teachers[1:] if len(act_teachers) > 1 else []
+
+                # Registra mappatura docente -> classi per la specifica CDC
+                cdc_t_dict = s_stats[subj]["by_cdc"][act_cdc]["teacher_assignments"]
+                if t_name not in cdc_t_dict:
+                    cdc_t_dict[t_name] = {
+                        "hours": 0,
+                        "classes": set(),
+                        "cattedre": set(),
+                        "co_teachers": set()
+                    }
+                cdc_t_dict[t_name]["hours"] += dur
+                cdc_t_dict[t_name]["cattedre"].add(gid)
+                for s in a.get("students", []):
+                    cdc_t_dict[t_name]["classes"].add(s)
+                for ct in co_t_list:
+                    cdc_t_dict[t_name]["co_teachers"].add(ct)
+
+                # Registra mappatura docente -> classi complessiva per la materia
+                tot_t_dict = s_stats[subj]["teacher_assignments"]
+                if t_name not in tot_t_dict:
+                    tot_t_dict[t_name] = {
+                        "hours": 0,
+                        "classes": set(),
+                        "cattedre": set(),
+                        "co_teachers": set()
+                    }
+                tot_t_dict[t_name]["hours"] += dur
+                tot_t_dict[t_name]["cattedre"].add(gid)
+                for s in a.get("students", []):
+                    tot_t_dict[t_name]["classes"].add(s)
+                for ct in co_t_list:
+                    tot_t_dict[t_name]["co_teachers"].add(ct)
+
+            def format_ta(ta_dict):
+                res = []
+                for t_name, t_info in sorted(ta_dict.items(), key=lambda x: (x[0] == "Da assegnare", x[0].lower())):
+                    res.append({
+                        "teacher": t_name,
+                        "hours": t_info["hours"],
+                        "cattedre_count": len(t_info["cattedre"]),
+                        "classes": sorted(list(t_info["classes"]), key=natural_class_sort_key),
+                        "co_teachers": sorted(list(t_info["co_teachers"]))
+                    })
+                return res
 
             result = []
             for s in sorted(self.data.get("subjects", []), key=lambda x: x["name"].lower()):
@@ -1567,7 +1641,8 @@ class Database:
                     "classes": set(),
                     "teachers": set(),
                     "cattedre": set(),
-                    "by_cdc": {}
+                    "by_cdc": {},
+                    "teacher_assignments": {}
                 })
                 s_copy["total_hours"] = st["hours"]
                 s_copy["cattedre_count"] = len(st["cattedre"])
@@ -1577,6 +1652,7 @@ class Database:
                 s_copy["pref_hours"] = s.get("pref_hours", "INDIFFERENTE")
                 s_copy["cdc"] = s.get("cdc", "")
                 s_copy["short_name"] = s.get("short_name", "")
+                s_copy["teacher_assignments"] = format_ta(st.get("teacher_assignments", {}))
 
                 # Costruzione gruppi per CDC (cdc_groups)
                 decl_cdcs = self._extract_cdc_list(s.get("cdc", ""))
@@ -1586,14 +1662,15 @@ class Database:
                 for cdc_code in decl_cdcs:
                     covered_cdcs.add(cdc_code)
                     grp_data = st["by_cdc"].get(cdc_code, {
-                        "hours": 0, "classes": set(), "teachers": set(), "cattedre": set()
+                        "hours": 0, "classes": set(), "teachers": set(), "cattedre": set(), "teacher_assignments": {}
                     })
                     cdc_groups.append({
                         "cdc": cdc_code,
                         "hours": grp_data["hours"],
                         "cattedre_count": len(grp_data["cattedre"]),
                         "classes": sorted(list(grp_data["classes"]), key=natural_class_sort_key),
-                        "teachers": sorted(list(grp_data["teachers"]))
+                        "teachers": sorted(list(grp_data["teachers"])),
+                        "teacher_assignments": format_ta(grp_data.get("teacher_assignments", {}))
                     })
 
                 # Eventuali CDC emerse dalle attività ma fuori da quelle dichiarate
@@ -1606,6 +1683,7 @@ class Database:
                             "cattedre_count": len(grp_data["cattedre"]),
                             "classes": sorted(list(grp_data["classes"]), key=natural_class_sort_key),
                             "teachers": sorted(list(grp_data["teachers"])),
+                            "teacher_assignments": format_ta(grp_data.get("teacher_assignments", {})),
                             "is_extra": True
                         })
 
@@ -1617,6 +1695,7 @@ class Database:
                         "cattedre_count": len(grp_data["cattedre"]),
                         "classes": sorted(list(grp_data["classes"]), key=natural_class_sort_key),
                         "teachers": sorted(list(grp_data["teachers"])),
+                        "teacher_assignments": format_ta(grp_data.get("teacher_assignments", {})),
                         "is_extra": True
                     })
 
@@ -1627,7 +1706,8 @@ class Database:
                         "hours": st["hours"],
                         "cattedre_count": len(st["cattedre"]),
                         "classes": s_copy["classes"],
-                        "teachers": s_copy["teachers"]
+                        "teachers": s_copy["teachers"],
+                        "teacher_assignments": s_copy["teacher_assignments"]
                     })
 
                 s_copy["cdc_groups"] = cdc_groups
