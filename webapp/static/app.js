@@ -22,7 +22,7 @@ let pollSolverTimer = null;
 let currentSolverRunning = false;
 
 // --- VERSIONE E IDENTITÀ APPLICATIVA ---
-const APP_VERSION = '1.9.12';
+let APP_VERSION = '1.9.13';
 
 // --- OPTIMISTIC CONCURRENCY CONTROL (OCC) & FETCH INTERCEPTOR ---
 window.CURRENT_DATA_VERSION = null;
@@ -3041,7 +3041,8 @@ function renderUpdateStatus(data) {
   const verTag = document.getElementById('sidebarVerTag');
   const aboutVerStatus = document.getElementById('aboutUpdateStatusText');
 
-  const curVer = APP_VERSION;
+  const curVer = (data && data.current_version) ? data.current_version : APP_VERSION;
+  if (data && data.current_version) APP_VERSION = data.current_version;
   if (verTag) verTag.innerText = `v${curVer}`;
 
     const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
@@ -3109,7 +3110,9 @@ function populateUpdateModal(info) {
   const remDate = document.getElementById('updateRemoteDate');
   const lastCheck = document.getElementById('updateLastCheckedTime');
 
-  if (curVer) curVer.innerText = `v${APP_VERSION}`;
+  const currentVerStr = (info && info.current_version) ? info.current_version : APP_VERSION;
+  if (info && info.current_version) APP_VERSION = info.current_version;
+  if (curVer) curVer.innerText = `v${currentVerStr}`;
   if (lastCheck) lastCheck.innerText = info && info.checked_at ? info.checked_at : new Date().toLocaleTimeString();
 
   if (!info) {
@@ -3172,7 +3175,7 @@ function populateUpdateModal(info) {
       title.style.color = '#166534';
     }
     if (desc) {
-      desc.innerText = `Sei all'ultima versione disponibile (v${APP_VERSION}). Non sono richiesti aggiornamenti.`;
+      desc.innerText = `Sei all'ultima versione disponibile (v${currentVerStr}). Non sono richiesti aggiornamenti.`;
       desc.style.color = '#15803d';
     }
     if (btnApply) {

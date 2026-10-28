@@ -97,17 +97,24 @@ def check_for_updates(current_version, force=False):
     except Exception as e:
         result["error"] = str(e)
 
-    # 2. Controllo metadati ultimo push su Docker Hub
+    # 2. Controllo metadati ultimo push e tag su Docker Hub
     try:
-        dh_url = "https://hub.docker.com/v2/repositories/carlorigoni/eurario/tags?page_size=5"
+        dh_url = "https://hub.docker.com/v2/repositories/carlorigoni/eurario/tags?page_size=10"
         req = urllib.request.Request(dh_url, headers={"User-Agent": f"Eurario-Updater/{current_version}"})
         with urllib.request.urlopen(req, context=ctx, timeout=4) as resp:
             data = json.loads(resp.read().decode("utf-8", errors="ignore"))
             results = data.get("results", [])
+            latest_dh_ver = None
             for r in results:
-                if r.get("name") == "latest":
+                tname = r.get("name", "")
+                if tname == "latest":
                     result["docker_hub_last_updated"] = r.get("last_updated") or r.get("tag_last_pushed")
-                    break
+                elif re.match(r"^v?\d+\.\d+\.\d+$", tname):
+                    v_clean = tname.lstrip("v")
+                    if not latest_dh_ver or parse_semver(v_clean) > parse_semver(latest_dh_ver):
+                        latest_dh_ver = v_clean
+            if latest_dh_ver and (not remote_found_version or parse_semver(latest_dh_ver) > parse_semver(remote_found_version)):
+                remote_found_version = latest_dh_ver
     except Exception:
         pass
 
