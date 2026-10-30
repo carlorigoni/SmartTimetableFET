@@ -103,10 +103,13 @@
       },
       filter: {
         all_subjects: "Tutte le Materie",
-        popup_title: "Filtro Globale per Materia",
-        reset_all: "Mostra Tutte le Materie (Nessun Filtro)",
-        active_banner: "Filtro globale attivo: <b>{subject}</b>. Sono mostrati esclusivamente docenti, classi, cattedre e regole collegati.",
-        remove_filter: "Rimuovi Filtro",
+        popup_title: "Filtro Globale Materie",
+        reset_all: "Azzera Filtro",
+        select_all: "Seleziona Tutte",
+        deselect_all: "Deseleziona Tutte",
+        close_apply: "Chiudi",
+        active_banner: "Filtro globale materie attivo:",
+        remove_filter: "Azzera Filtro",
         search_placeholder: "Cerca materia..."
       },
       contact: {
@@ -845,10 +848,13 @@
       },
       filter: {
         all_subjects: "All Subjects",
-        popup_title: "Global Subject Filter",
-        reset_all: "Show All Subjects (No Filter)",
-        active_banner: "Global filter active: <b>{subject}</b>. Displaying only linked teachers, classes, assignments, and rules.",
-        remove_filter: "Remove Filter",
+        popup_title: "Global Subjects Filter",
+        reset_all: "Reset Filter",
+        select_all: "Select All",
+        deselect_all: "Deselect All",
+        close_apply: "Close",
+        active_banner: "Active subjects filter:",
+        remove_filter: "Reset Filter",
         search_placeholder: "Search subject..."
       },
       contact: {

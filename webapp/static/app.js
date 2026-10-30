@@ -22,7 +22,7 @@ let pollSolverTimer = null;
 let currentSolverRunning = false;
 
 // --- VERSIONE E IDENTITÀ APPLICATIVA ---
-let APP_VERSION = '1.9.25';
+let APP_VERSION = '1.9.26';
 
 // --- OPTIMISTIC CONCURRENCY CONTROL (OCC) & FETCH INTERCEPTOR ---
 window.CURRENT_DATA_VERSION = null;
@@ -442,9 +442,39 @@ document.addEventListener('click', (e) => {
 });
 
 // ============================================================================
-// FILTRO GLOBALE PER MATERIA (TESTATA PERSISTENTE PER TUTTE LE MASCHERE)
+// FILTRO GLOBALE PER MATERIA (TESTATA PERSISTENTE CON SELEZIONE MULTIPLA)
 // ============================================================================
-window.GLOBAL_SUBJECT_FILTER = localStorage.getItem('eurario_global_subject_filter') || '';
+function getActiveGlobalSubjectFilters() {
+  const raw = localStorage.getItem('eurario_global_subject_filters') || localStorage.getItem('eurario_global_subject_filter') || '';
+  if (!raw) return [];
+  try {
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed)) return parsed.map(s => String(s).trim()).filter(Boolean);
+    if (typeof parsed === 'string' && parsed.trim()) return [parsed.trim()];
+  } catch (e) {}
+  return raw.trim() ? [raw.trim()] : [];
+}
+
+window.GLOBAL_SUBJECT_FILTERS = getActiveGlobalSubjectFilters();
+window.GLOBAL_SUBJECT_FILTER = window.GLOBAL_SUBJECT_FILTERS.join(', ');
+
+function hasGlobalSubjectFilter() {
+  return Array.isArray(window.GLOBAL_SUBJECT_FILTERS) && window.GLOBAL_SUBJECT_FILTERS.length > 0;
+}
+
+function getGlobalSubjectFilterSet() {
+  return new Set((window.GLOBAL_SUBJECT_FILTERS || []).map(s => String(s).trim().toLowerCase()));
+}
+
+function saveActiveGlobalSubjectFilters(list) {
+  const cleanList = Array.from(new Set((list || []).map(s => String(s).trim()).filter(Boolean)));
+  window.GLOBAL_SUBJECT_FILTERS = cleanList;
+  window.GLOBAL_SUBJECT_FILTER = cleanList.join(', ');
+  localStorage.setItem('eurario_global_subject_filters', JSON.stringify(cleanList));
+  localStorage.setItem('eurario_global_subject_filter', window.GLOBAL_SUBJECT_FILTER);
+  initGlobalSubjectFilter();
+  refreshCurrentViewWithGlobalFilter();
+}
 
 function initGlobalSubjectFilter() {
   const isEn = window.I18N && window.I18N.getLanguage() === 'en';
@@ -453,10 +483,17 @@ function initGlobalSubjectFilter() {
   const clearBtn = document.getElementById('globalFilterClearBtn');
   if (!textEl) return;
 
-  const currentFlt = (window.GLOBAL_SUBJECT_FILTER || '').trim();
-  if (currentFlt) {
-    textEl.innerText = currentFlt;
-    textEl.title = (isEn ? 'Global filter active: ' : 'Filtro globale attivo: ') + currentFlt;
+  const filters = getActiveGlobalSubjectFilters();
+  if (filters.length === 1) {
+    textEl.innerText = filters[0];
+    textEl.title = (isEn ? 'Global filter active: ' : 'Filtro globale attivo: ') + filters[0];
+    if (clearBtn) clearBtn.style.display = 'inline-flex';
+    if (btn) btn.classList.add('is-active');
+  } else if (filters.length > 1) {
+    const preview = filters.slice(0, 2).join(', ');
+    const countLabel = filters.length === 2 ? preview : `${preview} (+${filters.length - 2})`;
+    textEl.innerText = countLabel;
+    textEl.title = (isEn ? 'Active subjects: ' : 'Materie attive: ') + filters.join(', ');
     if (clearBtn) clearBtn.style.display = 'inline-flex';
     if (btn) btn.classList.add('is-active');
   } else {
@@ -505,18 +542,58 @@ async function populateGlobalSubjectFilterMenu() {
   }
 
   const sortedSubjs = [...(subjects || [])].sort((a, b) => (a.name || '').localeCompare(b.name || ''));
-  const currentFlt = (window.GLOBAL_SUBJECT_FILTER || '').trim().toLowerCase();
+  const currentSet = getGlobalSubjectFilterSet();
 
   listEl.innerHTML = sortedSubjs.map(s => {
-    const isSelected = currentFlt && s.name.toLowerCase() === currentFlt;
+    const isSelected = currentSet.has((s.name || '').toLowerCase());
     return `
-      <button type="button" class="topbar-popup-item global-filter-item" onclick="selectGlobalSubjectFilter('${escapeJs(s.name)}')">
+      <div class="topbar-popup-item global-filter-item ${isSelected ? 'is-selected' : ''}" onclick="toggleGlobalSubjectFilterItem('${escapeJs(s.name)}', event)">
+        <input type="checkbox" class="global-filter-checkbox" ${isSelected ? 'checked' : ''} onclick="event.stopPropagation(); toggleGlobalSubjectFilterItem('${escapeJs(s.name)}', event)">
         <span>📖</span>
         <span style="font-weight:${isSelected ? '700' : '500'};flex:1;text-align:left;">${escapeHtml(s.name)}${s.cdc ? ` <small style="color:var(--text-muted);font-size:11px;">[${escapeHtml(s.cdc)}]</small>` : ''}</span>
-        ${isSelected ? `<span class="popup-check" style="color:var(--primary);font-weight:700;">✓</span>` : ''}
-      </button>
+      </div>
     `;
   }).join('');
+}
+
+function toggleGlobalSubjectFilterItem(subjectName, event) {
+  if (event) event.stopPropagation();
+  const name = (subjectName || '').trim();
+  if (!name) return;
+  const currentList = getActiveGlobalSubjectFilters();
+  const idx = currentList.findIndex(s => s.toLowerCase() === name.toLowerCase());
+  if (idx >= 0) {
+    currentList.splice(idx, 1);
+  } else {
+    currentList.push(name);
+  }
+  saveActiveGlobalSubjectFilters(currentList);
+  populateGlobalSubjectFilterMenu();
+}
+
+function removeGlobalSubjectFilter(subjectName, event) {
+  if (event) event.stopPropagation();
+  const name = (subjectName || '').trim().toLowerCase();
+  const currentList = getActiveGlobalSubjectFilters().filter(s => s.toLowerCase() !== name);
+  saveActiveGlobalSubjectFilters(currentList);
+  populateGlobalSubjectFilterMenu();
+}
+
+function selectAllGlobalSubjectFilters() {
+  const subjects = stateData.subjects || [];
+  const allNames = subjects.map(s => s.name).filter(Boolean);
+  saveActiveGlobalSubjectFilters(allNames);
+  populateGlobalSubjectFilterMenu();
+  const isEn = window.I18N && window.I18N.getLanguage() === 'en';
+  showToast(isEn ? `All ${allNames.length} subjects selected` : `Tutte le ${allNames.length} materie selezionate`, 'ok');
+}
+
+function clearGlobalSubjectFilter(event) {
+  if (event) event.stopPropagation();
+  saveActiveGlobalSubjectFilters([]);
+  populateGlobalSubjectFilterMenu();
+  const isEn = window.I18N && window.I18N.getLanguage() === 'en';
+  showToast(isEn ? 'Global filter cleared: showing all subjects.' : 'Filtro globale rimosso: mostrate tutte le materie.', 'info');
 }
 
 function filterGlobalSubjectList(query) {
@@ -528,85 +605,76 @@ function filterGlobalSubjectList(query) {
   });
 }
 
-function selectGlobalSubjectFilter(subjectName) {
-  const m = document.getElementById('globalSubjectFilterPopup');
-  if (m) m.style.display = 'none';
-
-  window.GLOBAL_SUBJECT_FILTER = (subjectName || '').trim();
-  localStorage.setItem('eurario_global_subject_filter', window.GLOBAL_SUBJECT_FILTER);
-  initGlobalSubjectFilter();
-
-  const isEn = window.I18N && window.I18N.getLanguage() === 'en';
-  if (window.GLOBAL_SUBJECT_FILTER) {
-    showToast(isEn ? `Global filter set: ${window.GLOBAL_SUBJECT_FILTER}` : `Filtro globale impostato: ${window.GLOBAL_SUBJECT_FILTER}`, 'ok');
-  } else {
-    showToast(isEn ? 'Global filter cleared: showing all subjects.' : 'Filtro globale rimosso: mostrate tutte le materie.', 'info');
-  }
-
-  refreshCurrentViewWithGlobalFilter();
-}
-
-function clearGlobalSubjectFilter(event) {
-  if (event) event.stopPropagation();
-  selectGlobalSubjectFilter('');
-}
-
 function getGlobalFilterBannerHtml() {
-  const currentFlt = (window.GLOBAL_SUBJECT_FILTER || '').trim();
-  if (!currentFlt) return '';
+  const filters = getActiveGlobalSubjectFilters();
+  if (filters.length === 0) return '';
   const isEn = window.I18N && window.I18N.getLanguage() === 'en';
   return `
     <div class="global-filter-active-banner" role="status">
-      <div style="display:flex;align-items:center;gap:8px;">
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
         <span style="font-size:16px;">🎯</span>
-        <span>
-          ${isEn 
-            ? `Global filter active: <b>${escapeHtml(currentFlt)}</b>. Showing only linked teachers, classes, assignments, and rules.`
-            : `Filtro globale attivo: <b>${escapeHtml(currentFlt)}</b>. Visualizzazione limitata a docenti, classi, cattedre e regole collegate.`}
+        <span style="font-weight:600;">
+          ${isEn ? `Active subjects filter (${filters.length}):` : `Filtro globale materie attivo (${filters.length}):`}
         </span>
+        <div style="display:flex;gap:5px;flex-wrap:wrap;align-items:center;">
+          ${filters.map(s => `
+            <span class="global-filter-chip">
+              <b>${escapeHtml(s)}</b>
+              <span class="chip-remove" onclick="removeGlobalSubjectFilter('${escapeJs(s)}', event)" title="${isEn ? 'Remove ' + escapeHtml(s) : 'Rimuovi ' + escapeHtml(s)}">✕</span>
+            </span>
+          `).join('')}
+        </div>
       </div>
       <button type="button" onclick="clearGlobalSubjectFilter(event)" title="${isEn ? 'Remove global filter' : 'Rimuovi filtro globale'}">
-        ✕ ${isEn ? 'Remove Filter' : 'Rimuovi Filtro'}
+        ✕ ${isEn ? 'Reset Filter' : 'Azzera Filtro'}
       </button>
     </div>
   `;
 }
 
-function getTeachersForGlobalSubject(subjectName) {
-  if (!subjectName) return [];
-  const sLow = subjectName.toLowerCase();
+function getTeachersForGlobalSubjects(subjectsList) {
+  if (!subjectsList || subjectsList.length === 0) return [];
+  const sLowSet = new Set(subjectsList.map(s => s.toLowerCase()));
   const teachersSet = new Set();
   (stateData.activities || []).forEach(a => {
-    if ((a.subject || '').toLowerCase() === sLow) {
+    if (sLowSet.has((a.subject || '').toLowerCase())) {
       (a.teachers || []).forEach(t => teachersSet.add(t));
     }
     if (a.teacher_subjects) {
       for (const [t, s] of Object.entries(a.teacher_subjects)) {
-        if (s.toLowerCase() === sLow) teachersSet.add(t);
+        if (sLowSet.has(s.toLowerCase())) teachersSet.add(t);
       }
     }
   });
   (stateData.groupedActivities || []).forEach(g => {
-    if ((g.subject || '').toLowerCase() === sLow) {
+    if (sLowSet.has((g.subject || '').toLowerCase())) {
       (g.teachers || []).forEach(t => teachersSet.add(t));
     }
     if (g.teacher_subjects) {
       for (const [t, s] of Object.entries(g.teacher_subjects)) {
-        if (s.toLowerCase() === sLow) teachersSet.add(t);
+        if (sLowSet.has(s.toLowerCase())) teachersSet.add(t);
       }
     }
   });
-  const subjObj = (stateData.subjects || []).find(s => s.name.toLowerCase() === sLow);
-  const subjCdc = subjObj ? (subjObj.cdc || '') : '';
+  const cdcSet = new Set();
+  (stateData.subjects || []).forEach(s => {
+    if (sLowSet.has(s.name.toLowerCase()) && s.cdc) {
+      s.cdc.split(/[,;\s]+/).forEach(c => { if (c) cdcSet.add(c); });
+    }
+  });
   (stateData.teachers || []).forEach(t => {
-    if (t.cdc && subjCdc && t.cdc.split(/[,;\s]+/).some(c => c && subjCdc.includes(c))) {
+    if (t.cdc && cdcSet.size > 0 && t.cdc.split(/[,;\s]+/).some(c => c && cdcSet.has(c))) {
       teachersSet.add(t.name);
     }
-    if (Array.isArray(t.subjects) && t.subjects.some(s => s.toLowerCase() === sLow)) {
+    if (Array.isArray(t.subjects) && t.subjects.some(s => sLowSet.has(s.toLowerCase()))) {
       teachersSet.add(t.name);
     }
   });
   return Array.from(teachersSet);
+}
+
+function getTeachersForGlobalSubject(subjectName) {
+  return getTeachersForGlobalSubjects([subjectName]);
 }
 
 function refreshCurrentViewWithGlobalFilter() {
@@ -4164,10 +4232,9 @@ async function renderTimetable() {
   const rooms = Object.keys(views.by_room || {}).sort();
 
   // Filtraggio docenti se il filtro globale per materia è attivo
-  const globalSubjFlt = (window.GLOBAL_SUBJECT_FILTER || '').trim();
   let availableTeachers = teachers;
-  if (globalSubjFlt) {
-    const linked = new Set(getTeachersForGlobalSubject(globalSubjFlt));
+  if (hasGlobalSubjectFilter()) {
+    const linked = new Set(getTeachersForGlobalSubjects(window.GLOBAL_SUBJECT_FILTERS));
     const fltList = teachers.filter(t => linked.has(t));
     if (fltList.length > 0) availableTeachers = fltList;
   }
@@ -4250,6 +4317,7 @@ async function renderTimetable() {
       <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
         ${statsHtml}
         ${lockedBadgeHtml}
+        <button class="btn btn-sec btn-sm" onclick="openDisposizioniOverviewModal()" title="${isEn ? 'View institute-wide on-duty distribution matrix per hour' : 'Visualizza la matrice d\'istituto di distribuzione delle disposizioni per verificare la copertura omogenea delle supplenze'}">📊 ${isEn ? 'On-Duty Board' : 'Quadro Disposizioni'}</button>
         <button class="btn btn-sec btn-sm" onclick="recalcDisposizioni()" title="${isEn ? 'Recalculate and place on-duty periods post-FET' : 'Colloca o ricalcola le ore a disposizione post-calcolo FET (copre buchi orari, preferisce 1ª ora)'}">📍 ${isEn ? 'Recalculate On-Duty' : 'Ricalcola Disposizioni'}</button>
         <button class="btn btn-primary btn-sm" onclick="openPrintClassesModal()" title="${isEn ? 'Procedure 9: Print weekly timetable per class in A4 Landscape with articulated classes' : 'Procedura 9: Stampa orario settimanale per classe in A4 Landscape con classi articolate'}">🖨️ ${isEn ? 'Print Classes (PDF)' : 'Stampa Classi (PDF)'}</button>
         <button class="btn btn-sec btn-sm" onclick="openPrintTeachersModal()" title="${isEn ? 'Procedure 12: Generate faculty master board in A3 Landscape' : 'Procedura 12: Genera tabellone generale docenti in A3 Landscape con bande verticali'}">📄 ${isEn ? 'Faculty Board (A3)' : 'Tabellone Docenti (A3)'}</button>
@@ -4388,11 +4456,13 @@ function onDragStartDisposizione(event, aid) {
   event.dataTransfer.setData('text/plain', aid);
   event.dataTransfer.effectAllowed = 'move';
   event.currentTarget.classList.add('is-dragging');
+  document.body.classList.add('is-dragging-disposizione');
 }
 
 function onDragEndDisposizione(event) {
   draggedDisposizioneId = null;
   event.currentTarget.classList.remove('is-dragging');
+  document.body.classList.remove('is-dragging-disposizione');
   document.querySelectorAll('.tt-cell.drop-target').forEach(c => c.classList.remove('drop-target'));
 }
 
@@ -4413,6 +4483,7 @@ function onDragLeaveTimetableSlot(event) {
 async function onDropTimetableSlot(event, targetDay, targetHour) {
   event.preventDefault();
   event.currentTarget.classList.remove('drop-target');
+  document.body.classList.remove('is-dragging-disposizione');
   const aid = event.dataTransfer.getData('text/plain') || draggedDisposizioneId;
   if (!aid) return;
 
@@ -4486,6 +4557,7 @@ function formatDayName(d, isShort = true) {
 }
 
 function renderTimetableGridHtml(views, mode, entity) {
+  stateData.timetableViews = views;
   const days = (views && views.days && views.days.length) ? views.days : (stateData.summary?.days || []);
   const hours = (views && views.hours && views.hours.length) ? views.hours : (stateData.summary?.hours || []);
   const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
@@ -4494,6 +4566,31 @@ function renderTimetableGridHtml(views, mode, entity) {
   if (mode === 'teacher') matrix = (views.by_teacher || {})[entity] || {};
   else if (mode === 'class') matrix = (views.by_class || {})[entity] || {};
   else if (mode === 'room') matrix = (views.by_room || {})[entity] || {};
+
+  // Mappa d'istituto per la distribuzione omogenea delle disposizioni
+  const dispPerSlot = {};
+  const dispTeachersPerSlot = {};
+  for (const d of days) {
+    dispPerSlot[d] = {};
+    dispTeachersPerSlot[d] = {};
+    for (const h of hours) {
+      dispPerSlot[d][h] = 0;
+      dispTeachersPerSlot[d][h] = [];
+    }
+  }
+
+  for (const [tname, tgrid] of Object.entries(views.by_teacher || {})) {
+    for (const d of days) {
+      for (const h of hours) {
+        const tLessons = (tgrid[d] && tgrid[d][h]) ? tgrid[d][h] : [];
+        const hasDisp = tLessons.some(l => (l.subject || '').toLowerCase().startsWith('disposiz') || !!l.is_disposizione);
+        if (hasDisp) {
+          dispPerSlot[d][h] += 1;
+          dispTeachersPerSlot[d][h].push(tname);
+        }
+      }
+    }
+  }
 
   const hourHeaderLbl = isEn ? 'Period' : 'Ora';
   let headerHtml = `<div class="tt-header" role="columnheader" style="background:#153d61;">${hourHeaderLbl}</div>` + days.map(d => `<div class="tt-header" role="columnheader">${escapeHtml(formatDayName(d, false))}</div>`).join('');
@@ -4515,6 +4612,14 @@ function renderTimetableGridHtml(views, mode, entity) {
         rowsHtml += `<div class="tt-cell is-break">${isEn ? 'RECESS' : 'INTERVALLO'}</div>`;
         continue;
       }
+
+      const count = dispPerSlot[d] ? (dispPerSlot[d][h] || 0) : 0;
+      const tList = dispTeachersPerSlot[d] ? (dispTeachersPerSlot[d][h] || []) : [];
+      const dispLvlClass = count === 0 ? 'disp-lvl-zero' : (count <= 2 ? 'disp-lvl-balanced' : 'disp-lvl-high');
+      const dispListStr = tList.length > 0 ? tList.join(', ') : '';
+      const dispTooltip = count === 0
+        ? (isEn ? '0 teachers on duty in this period (uncovered slot - ideal to place duty)' : '0 docenti a disposizione (ora scoperta - ideale per distribuire)')
+        : (isEn ? `${count} teacher(s) on duty in this period: ${dispListStr}` : `${count} docenti a disposizione in quest'ora: ${dispListStr}`);
 
       const lessons = (matrix[d] && matrix[d][h]) ? matrix[d][h] : [];
       let cellInner = '';
@@ -4559,11 +4664,19 @@ function renderTimetableGridHtml(views, mode, entity) {
             </div>
           `;
         }
+
+        const dispBadgeCorner = mode === 'teacher' ? `
+          <div class="tt-slot-disp-indicator tt-slot-disp-corner ${dispLvlClass}" title="${dispTooltip}" data-disp-count="${count}">
+            👥 <b>${count}</b> D
+          </div>
+        ` : '';
+
         rowsHtml += `
-          <div class="tt-cell" data-day="${d}" data-hour="${h}" 
+          <div class="tt-cell" data-day="${d}" data-hour="${h}" data-disp-count="${count}"
                ondragover="onDragOverTimetableSlot(event)" 
                ondragleave="onDragLeaveTimetableSlot(event)" 
                ondrop="onDropTimetableSlot(event, '${d}', '${h}')">
+            ${dispBadgeCorner}
             ${cellInner}
           </div>
         `;
@@ -4573,11 +4686,20 @@ function renderTimetableGridHtml(views, mode, entity) {
           const lbl = d === 'Sab' ? (isEn ? 'SATURDAY CLOSED' : 'SABATO CHIUSO') : (isEn ? 'BREAK' : 'PAUSA');
           rowsHtml += `<div class="tt-cell is-institute-break">${lbl}</div>`;
         } else {
+          const emptySlotContent = mode === 'teacher' ? `
+            <div class="tt-cell-empty-slot">
+              <div class="tt-slot-disp-indicator in-empty-cell ${dispLvlClass}" title="${dispTooltip}" data-disp-count="${count}">
+                <span>👥</span> <span><b>${count}</b> ${count === 1 ? (isEn ? 'on duty' : 'in disp.') : (isEn ? 'on duty' : 'in disp.')}</span>
+              </div>
+            </div>
+          ` : '';
+
           rowsHtml += `
-            <div class="tt-cell" data-day="${d}" data-hour="${h}" 
+            <div class="tt-cell" data-day="${d}" data-hour="${h}" data-disp-count="${count}"
                  ondragover="onDragOverTimetableSlot(event)" 
                  ondragleave="onDragLeaveTimetableSlot(event)" 
                  ondrop="onDropTimetableSlot(event, '${d}', '${h}')">
+              ${emptySlotContent}
             </div>
           `;
         }
@@ -4591,6 +4713,171 @@ function renderTimetableGridHtml(views, mode, entity) {
       ${rowsHtml}
     </div>
   `;
+}
+
+async function openDisposizioniOverviewModal() {
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
+  let views = stateData.timetableViews;
+  if (!views || !views.by_teacher) {
+    try {
+      const res = await fetch('/api/timetable');
+      views = await res.json();
+      stateData.timetableViews = views;
+    } catch (e) {
+      alert("Impossibile caricare l'orario: " + e.message);
+      return;
+    }
+  }
+
+  const days = (views && views.days && views.days.length) ? views.days : (stateData.summary?.days || []);
+  const hours = (views && views.hours && views.hours.length) ? views.hours : (stateData.summary?.hours || []);
+
+  const dispPerSlot = {};
+  const dispTeachersPerSlot = {};
+  let totalDisposizioni = 0;
+  for (const d of days) {
+    dispPerSlot[d] = {};
+    dispTeachersPerSlot[d] = {};
+    for (const h of hours) {
+      dispPerSlot[d][h] = 0;
+      dispTeachersPerSlot[d][h] = [];
+    }
+  }
+
+  for (const [tname, tgrid] of Object.entries(views.by_teacher || {})) {
+    for (const d of days) {
+      for (const h of hours) {
+        const lessons = (tgrid[d] && tgrid[d][h]) ? tgrid[d][h] : [];
+        const hasDisp = lessons.some(l => (l.subject || '').toLowerCase().startsWith('disposiz') || !!l.is_disposizione);
+        if (hasDisp) {
+          dispPerSlot[d][h] += 1;
+          dispTeachersPerSlot[d][h].push(tname);
+          totalDisposizioni += 1;
+        }
+      }
+    }
+  }
+
+  const activeHours = hours.filter(h => !h.toUpperCase().startsWith('INT'));
+  const totalSlots = days.length * activeHours.length;
+  const avgPerSlot = totalSlots > 0 ? (totalDisposizioni / totalSlots).toFixed(1) : '0';
+  let minCount = 999;
+  let maxCount = 0;
+  let zeroSlots = 0;
+
+  for (const d of days) {
+    for (const h of activeHours) {
+      const c = dispPerSlot[d][h];
+      if (c === 0) zeroSlots += 1;
+      if (c < minCount) minCount = c;
+      if (c > maxCount) maxCount = c;
+    }
+  }
+  if (minCount === 999) minCount = 0;
+
+  const tableHeader = `
+    <thead>
+      <tr>
+        <th style="width:70px;">${isEn ? 'Period' : 'Ora'}</th>
+        ${days.map(d => `<th>${escapeHtml(formatDayName(d, false))}</th>`).join('')}
+      </tr>
+    </thead>
+  `;
+
+  let tableRows = '';
+  for (const h of hours) {
+    const isBreak = h.toUpperCase().startsWith('INT');
+    let hourLbl = h;
+    if (isBreak) hourLbl = isEn ? 'Recess' : 'Intervallo';
+    else if (/^\d+$/.test(h)) hourLbl = `${h}ª ora`;
+
+    tableRows += `<tr>`;
+    tableRows += `<td style="font-weight:700;background:var(--bg-hover);">${hourLbl}</td>`;
+
+    for (const d of days) {
+      if (isBreak) {
+        tableRows += `<td style="background:var(--bg-hover);color:var(--text-muted);font-size:11px;">${isEn ? 'RECESS' : 'PAUSA'}</td>`;
+        continue;
+      }
+
+      const count = dispPerSlot[d][h] || 0;
+      const tList = dispTeachersPerSlot[d][h] || [];
+      const lvlClass = count === 0 ? 'is-zero' : (count <= 2 ? 'is-balanced' : 'is-high');
+
+      tableRows += `
+        <td class="disp-overview-cell ${lvlClass}">
+          <div style="display:flex;align-items:center;justify-content:center;gap:4px;margin-bottom:4px;">
+            <span style="font-size:13px;font-weight:800;color:${count === 0 ? '#ef4444' : (count <= 2 ? '#15803d' : '#b45309')};">
+              ${count} ${count === 1 ? (isEn ? 'teacher' : 'docente') : (isEn ? 'teachers' : 'docenti')}
+            </span>
+            ${count === 0 ? `<span title="${isEn ? 'Uncovered period: consider placing on-duty here' : 'Ora scoperta: ideale per collocare una disposizione'}">⚠️</span>` : ''}
+          </div>
+          <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:3px;max-height:85px;overflow-y:auto;">
+            ${tList.map(tn => `
+              <span class="disp-teacher-chip" onclick="closeModal(); switchTimetableMode('teacher'); switchEntity('${escapeJs(tn)}');" title="${isEn ? 'Click to open timetable of ' + escapeHtml(tn) : 'Clicca per aprire l\'orario di ' + escapeHtml(tn) + ' e spostare la sua disposizione'}">
+                👨‍🏫 ${escapeHtml(tn)}
+              </span>
+            `).join('')}
+          </div>
+        </td>
+      `;
+    }
+    tableRows += `</tr>`;
+  }
+
+  showModal(`
+    <div class="modal-dialog modal-xl" style="max-width:960px;">
+      <div class="modal-header">
+        <div>
+          <div class="modal-title">📊 ${isEn ? 'Institute On-Duty Distribution Board (Substitutions)' : 'Quadro Distribuzione Disposizioni per Ora (Copertura Supplenze)'}</div>
+          <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">
+            ${isEn ? 'Homogeneous distribution matrix across all timetable periods. Click any teacher to jump to their schedule and balance on-duty slots.' : 'Matrice di bilanciamento delle ore a disposizione nell\'istituto. Clicca sul nome di un docente per aprire il suo orario e ridistribuire la sua ora D.'}
+          </div>
+        </div>
+        <button class="modal-close" onclick="closeModal()">×</button>
+      </div>
+      <div class="modal-body" style="padding:14px 18px;">
+        <div style="display:flex;gap:12px;margin-bottom:14px;flex-wrap:wrap;">
+          <div class="stat-box" style="flex:1;min-width:140px;padding:8px 12px;">
+            <div class="stat-lbl">${isEn ? 'Total On-Duty Hours' : 'Totale Disposizioni'}</div>
+            <div class="stat-val" style="font-size:18px;">📌 ${totalDisposizioni} h</div>
+          </div>
+          <div class="stat-box" style="flex:1;min-width:140px;padding:8px 12px;">
+            <div class="stat-lbl">${isEn ? 'Average per Period' : 'Media per Ora'}</div>
+            <div class="stat-val" style="font-size:18px;">⚖️ ${avgPerSlot} ${isEn ? 'doc./hr' : 'doc./ora'}</div>
+          </div>
+          <div class="stat-box" style="flex:1;min-width:140px;padding:8px 12px;">
+            <div class="stat-lbl">${isEn ? 'Min - Max per Period' : 'Min - Max per Ora'}</div>
+            <div class="stat-val" style="font-size:18px;">📊 ${minCount} - ${maxCount}</div>
+          </div>
+          <div class="stat-box" style="flex:1;min-width:140px;padding:8px 12px;">
+            <div class="stat-lbl">${isEn ? 'Uncovered Periods (0 D)' : 'Ore Scoperte (0 D)'}</div>
+            <div class="stat-val" style="font-size:18px;color:${zeroSlots > 0 ? 'var(--warn)' : 'var(--color-ok)'};">${zeroSlots > 0 ? `⚠️ ${zeroSlots}` : '✅ 0'}</div>
+          </div>
+        </div>
+
+        <div style="overflow-x:auto;">
+          <table class="disp-overview-table">
+            ${tableHeader}
+            <tbody>
+              ${tableRows}
+            </tbody>
+          </table>
+        </div>
+
+        <div style="display:flex;gap:14px;margin-top:12px;font-size:11.5px;color:var(--text-muted);align-items:center;">
+          <span><b>Legenda:</b></span>
+          <span style="display:inline-flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;background:#ef4444;border-radius:2px;display:inline-block;"></span> ${isEn ? '0 Teachers (Uncovered)' : '0 Docenti (Scoperta)'}</span>
+          <span style="display:inline-flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;background:#22c55e;border-radius:2px;display:inline-block;"></span> ${isEn ? '1-2 Teachers (Balanced)' : '1-2 Docenti (Bilanciata)'}</span>
+          <span style="display:inline-flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;background:#f59e0b;border-radius:2px;display:inline-block;"></span> ${isEn ? '3+ Teachers (Ample)' : '3+ Docenti (Abbondante)'}</span>
+        </div>
+      </div>
+      <div class="modal-footer" style="display:flex;justify-content:space-between;">
+        <button class="btn btn-sec" onclick="recalcDisposizioni(); closeModal();">📍 ${isEn ? 'Recalculate On-Duty' : 'Ricalcola Disposizioni Automaticamente'}</button>
+        <button class="btn btn-primary" onclick="closeModal()">✕ ${isEn ? 'Close' : 'Chiudi'}</button>
+      </div>
+    </div>
+  `);
 }
 
 // Navigazione rapida da tastiera (Frecce ◀ ▶) in Orario Risolto e Indisponibilità Singola
@@ -5786,9 +6073,8 @@ async function renderTeachers() {
   stateData.teachers = teachers;
 
   // Applicazione filtro globale materia se attivo
-  const globalSubjFlt = (window.GLOBAL_SUBJECT_FILTER || '').trim();
-  if (globalSubjFlt) {
-    const linkedTeachers = new Set(getTeachersForGlobalSubject(globalSubjFlt));
+  if (hasGlobalSubjectFilter()) {
+    const linkedTeachers = new Set(getTeachersForGlobalSubjects(window.GLOBAL_SUBJECT_FILTERS));
     teachers = teachers.filter(t => linkedTeachers.has(t.name));
   }
 
@@ -8513,9 +8799,9 @@ async function renderSubjects() {
   let subjects = (rawSubjects || []).filter(s => !(s.name || '').toLowerCase().startsWith('disposiz'));
   stateData.subjects = subjects;
 
-  const globalSubjFlt = (window.GLOBAL_SUBJECT_FILTER || '').trim().toLowerCase();
-  if (globalSubjFlt) {
-    subjects = subjects.filter(s => (s.name || '').toLowerCase() === globalSubjFlt);
+  if (hasGlobalSubjectFilter()) {
+    const fltSet = getGlobalSubjectFilterSet();
+    subjects = subjects.filter(s => fltSet.has((s.name || '').toLowerCase()));
   }
 
   const container = document.getElementById('mainContent');
@@ -9597,16 +9883,16 @@ async function renderActivities() {
   stateData.groupedActivities = cleanGrouped;
 
   // Applicazione filtro globale per materia se impostato in testata
-  const globalSubjFlt = (window.GLOBAL_SUBJECT_FILTER || '').trim().toLowerCase();
-  if (globalSubjFlt) {
+  if (hasGlobalSubjectFilter()) {
+    const fltSet = getGlobalSubjectFilterSet();
     cleanGrouped = cleanGrouped.filter(g => {
-      const matchMain = (g.subject || '').toLowerCase() === globalSubjFlt;
-      const matchCo = g.teacher_subjects && Object.values(g.teacher_subjects).some(s => s.toLowerCase() === globalSubjFlt);
+      const matchMain = fltSet.has((g.subject || '').toLowerCase());
+      const matchCo = g.teacher_subjects && Object.values(g.teacher_subjects).some(s => fltSet.has(s.toLowerCase()));
       return matchMain || matchCo;
     });
     cleanActs = cleanActs.filter(a => {
-      const matchMain = (a.subject || '').toLowerCase() === globalSubjFlt;
-      const matchCo = a.teacher_subjects && Object.values(a.teacher_subjects).some(s => s.toLowerCase() === globalSubjFlt);
+      const matchMain = fltSet.has((a.subject || '').toLowerCase());
+      const matchCo = a.teacher_subjects && Object.values(a.teacher_subjects).some(s => fltSet.has(s.toLowerCase()));
       return matchMain || matchCo;
     });
   }
@@ -9989,12 +10275,12 @@ async function renderAccorpamenti() {
     const pendingCount = candidates.filter(c => !c.is_merged).length;
 
     // Filtro globale per materia se attivo
-    const globalSubjFlt = (window.GLOBAL_SUBJECT_FILTER || '').trim().toLowerCase();
-    if (globalSubjFlt) {
+    if (hasGlobalSubjectFilter()) {
+      const fltSet = getGlobalSubjectFilterSet();
       candidates = candidates.filter(c => {
         const mSubjs = (c.subjects || []).map(s => s.toLowerCase());
         const mTarget = (c.target_macro_subject || '').toLowerCase();
-        return mSubjs.some(s => s.includes(globalSubjFlt)) || mTarget.includes(globalSubjFlt);
+        return mSubjs.some(s => Array.from(fltSet).some(f => s.includes(f))) || Array.from(fltSet).some(f => mTarget.includes(f));
       });
     }
 
@@ -10482,8 +10768,7 @@ async function renderBlockRulesView() {
     const standardCount = totalCattedre - exceptions.length;
 
     // Se il filtro globale per materia è attivo, filtra le regole
-    const globalSubjFlt = (window.GLOBAL_SUBJECT_FILTER || '').trim().toLowerCase();
-    const displayRules = globalSubjFlt ? rules.filter(r => (r.subject || '').toLowerCase() === globalSubjFlt) : rules;
+    const displayRules = hasGlobalSubjectFilter() ? rules.filter(r => getGlobalSubjectFilterSet().has((r.subject || '').toLowerCase())) : rules;
 
     container.innerHTML = `
       ${getGlobalFilterBannerHtml()}
@@ -12315,10 +12600,9 @@ async function renderAvailability() {
   const liceoSet = new Set(av.liceo_classes || []);
 
   // Filtraggio docenti se filtro globale per materia è attivo
-  const globalSubjFlt = (window.GLOBAL_SUBJECT_FILTER || '').trim();
   let teacherList = rawTeacherList;
-  if (globalSubjFlt) {
-    const linked = new Set(getTeachersForGlobalSubject(globalSubjFlt));
+  if (hasGlobalSubjectFilter()) {
+    const linked = new Set(getTeachersForGlobalSubjects(window.GLOBAL_SUBJECT_FILTERS));
     const flt = rawTeacherList.filter(t => linked.has(t));
     if (flt.length > 0) teacherList = flt;
   }

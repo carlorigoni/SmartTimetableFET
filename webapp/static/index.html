@@ -48,7 +48,7 @@
   <meta name="twitter:title" content="Eurario — Gestione Orario Scolastico & Solver FET 7.12">
   <meta name="twitter:description" content="Applicazione web per la generazione e gestione dell'orario scolastico italiano con motore solutore FET 7.12.">
   <meta name="twitter:image" content="https://app.eurario.it/og-image.png">
-  <link rel="stylesheet" href="styles.css?v=1.9.25">
+  <link rel="stylesheet" href="styles.css?v=1.9.26">
   <!-- Google Identity Services OAuth -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
@@ -357,20 +357,30 @@
               <path d="M7 10l5 5 5-5z"/>
             </svg>
           </button>
-          <div id="globalSubjectFilterPopup" class="topbar-popup-menu global-filter-popup-menu" style="display:none;">
-            <div class="global-filter-popup-header">
-              <span style="font-weight:700;font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;" data-i18n="filter.popup_title">Filtro Globale Materia</span>
+          <div id="globalSubjectFilterPopup" class="topbar-popup-menu global-filter-popup-menu" style="display:none;min-width:320px;">
+            <div class="global-filter-popup-header" style="display:flex;justify-content:space-between;align-items:center;">
+              <span style="font-weight:700;font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;" data-i18n="filter.popup_title">Filtro Globale Materie (Selezione Multipla)</span>
+              <span style="font-size:11px;cursor:pointer;color:var(--text-muted);font-weight:700;" onclick="toggleGlobalSubjectFilterMenu(event)">✕</span>
             </div>
-            <div style="padding:6px 8px;">
+            <div style="padding:6px 8px;display:flex;flex-direction:column;gap:6px;">
               <input type="text" id="globalFilterSearchInput" class="form-input" style="width:100%;font-size:12px;padding:5px 8px;" placeholder="Cerca materia..." oninput="filterGlobalSubjectList(this.value)">
+              <div style="display:flex;gap:6px;justify-content:space-between;">
+                <button type="button" class="btn btn-sm btn-sec" style="flex:1;padding:3px 6px;font-size:11px;font-weight:600;" onclick="selectAllGlobalSubjectFilters()">✓ Seleziona Tutte</button>
+                <button type="button" class="btn btn-sm btn-sec" style="flex:1;padding:3px 6px;font-size:11px;font-weight:600;" onclick="clearGlobalSubjectFilter(event)">✕ Deseleziona Tutte</button>
+              </div>
             </div>
-            <div id="globalSubjectFilterList" class="global-filter-menu-items" style="max-height:260px;overflow-y:auto;">
-              <!-- Elenco generato dinamicamente da app.js -->
+            <div id="globalSubjectFilterList" class="global-filter-menu-items" style="max-height:280px;overflow-y:auto;padding:2px 4px;">
+              <!-- Elenco con checkbox generato dinamicamente da app.js -->
             </div>
             <div class="school-popup-divider"></div>
-            <button type="button" class="topbar-popup-item" onclick="selectGlobalSubjectFilter('')">
-              <span>🔄</span> <span style="font-weight:600;" data-i18n="filter.reset_all">Mostra Tutte le Materie (Nessun Filtro)</span>
-            </button>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 8px;gap:6px;">
+              <button type="button" class="btn btn-sm btn-sec" style="padding:4px 8px;font-size:11px;font-weight:600;" onclick="clearGlobalSubjectFilter(event)">
+                <span>🔄</span> <span data-i18n="filter.reset_all">Azzera Filtro</span>
+              </button>
+              <button type="button" class="btn btn-sm btn-primary" style="padding:4px 12px;font-size:11px;font-weight:700;" onclick="toggleGlobalSubjectFilterMenu(event)">
+                <span>✓</span> <span data-i18n="filter.close_apply">Chiudi</span>
+              </button>
+            </div>
           </div>
         </div>
 
@@ -1261,7 +1271,7 @@
     </div>
   </div>
 
-  <script src="i18n.js?v=1.9.25"></script>
-  <script src="app.js?v=1.9.25"></script>
+  <script src="i18n.js?v=1.9.26"></script>
+  <script src="app.js?v=1.9.26"></script>
 </body>
 </html>
