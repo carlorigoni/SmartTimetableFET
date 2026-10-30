@@ -22,7 +22,7 @@ let pollSolverTimer = null;
 let currentSolverRunning = false;
 
 // --- VERSIONE E IDENTITÀ APPLICATIVA ---
-let APP_VERSION = '1.9.26';
+let APP_VERSION = '1.9.27';
 
 // --- OPTIMISTIC CONCURRENCY CONTROL (OCC) & FETCH INTERCEPTOR ---
 window.CURRENT_DATA_VERSION = null;
@@ -445,14 +445,18 @@ document.addEventListener('click', (e) => {
 // FILTRO GLOBALE PER MATERIA (TESTATA PERSISTENTE CON SELEZIONE MULTIPLA)
 // ============================================================================
 function getActiveGlobalSubjectFilters() {
-  const raw = localStorage.getItem('eurario_global_subject_filters') || localStorage.getItem('eurario_global_subject_filter') || '';
-  if (!raw) return [];
-  try {
-    const parsed = JSON.parse(raw);
-    if (Array.isArray(parsed)) return parsed.map(s => String(s).trim()).filter(Boolean);
-    if (typeof parsed === 'string' && parsed.trim()) return [parsed.trim()];
-  } catch (e) {}
-  return raw.trim() ? [raw.trim()] : [];
+  const rawList = localStorage.getItem('eurario_global_subject_filters');
+  if (rawList) {
+    try {
+      const parsed = JSON.parse(rawList);
+      if (Array.isArray(parsed)) return parsed.map(s => String(s).trim()).filter(Boolean);
+    } catch (e) {}
+  }
+  const rawSingle = localStorage.getItem('eurario_global_subject_filter') || '';
+  if (rawSingle.trim()) {
+    return rawSingle.split(',').map(s => s.trim()).filter(Boolean);
+  }
+  return [];
 }
 
 window.GLOBAL_SUBJECT_FILTERS = getActiveGlobalSubjectFilters();
@@ -632,44 +636,70 @@ function getGlobalFilterBannerHtml() {
   `;
 }
 
-function getTeachersForGlobalSubjects(subjectsList) {
+function getTeachersForGlobalSubjects(subjectsList, teachersList = null) {
   if (!subjectsList || subjectsList.length === 0) return [];
-  const sLowSet = new Set(subjectsList.map(s => s.toLowerCase()));
+  const sLowSet = new Set(subjectsList.map(s => String(s).trim().toLowerCase()).filter(Boolean));
+  if (sLowSet.size === 0) return [];
+
   const teachersSet = new Set();
-  (stateData.activities || []).forEach(a => {
-    if (sLowSet.has((a.subject || '').toLowerCase())) {
-      (a.teachers || []).forEach(t => teachersSet.add(t));
+
+  // 1. Docenti forniti o in stateData.teachers: controllo effettivo sulle materie insegnate (esclude CDC per evitare falsi positivi)
+  const tList = teachersList || stateData.teachers || [];
+  tList.forEach(t => {
+    const tSubjs = Array.isArray(t.subjects) ? t.subjects : [];
+    if (tSubjs.some(s => sLowSet.has(String(s).trim().toLowerCase()))) {
+      teachersSet.add(t.name);
     }
-    if (a.teacher_subjects) {
-      for (const [t, s] of Object.entries(a.teacher_subjects)) {
-        if (sLowSet.has(s.toLowerCase())) teachersSet.add(t);
-      }
+    const tAssigns = Array.isArray(t.subject_assignments) ? t.subject_assignments : [];
+    if (tAssigns.some(sa => sLowSet.has(String(sa.subject || '').trim().toLowerCase()))) {
+      teachersSet.add(t.name);
     }
   });
+
+  // 2. Cattedre raggruppate
   (stateData.groupedActivities || []).forEach(g => {
-    if (sLowSet.has((g.subject || '').toLowerCase())) {
+    const mainSubj = String(g.subject || '').trim().toLowerCase();
+    if (sLowSet.has(mainSubj)) {
       (g.teachers || []).forEach(t => teachersSet.add(t));
     }
     if (g.teacher_subjects) {
       for (const [t, s] of Object.entries(g.teacher_subjects)) {
-        if (sLowSet.has(s.toLowerCase())) teachersSet.add(t);
+        if (sLowSet.has(String(s).trim().toLowerCase())) {
+          teachersSet.add(t);
+        }
       }
     }
   });
-  const cdcSet = new Set();
-  (stateData.subjects || []).forEach(s => {
-    if (sLowSet.has(s.name.toLowerCase()) && s.cdc) {
-      s.cdc.split(/[,;\s]+/).forEach(c => { if (c) cdcSet.add(c); });
+
+  // 3. Sotto-attività FET
+  (stateData.activities || []).forEach(a => {
+    const mainSubj = String(a.subject || '').trim().toLowerCase();
+    if (sLowSet.has(mainSubj)) {
+      (a.teachers || []).forEach(t => teachersSet.add(t));
+    }
+    if (a.teacher_subjects) {
+      for (const [t, s] of Object.entries(a.teacher_subjects)) {
+        if (sLowSet.has(String(s).trim().toLowerCase())) {
+          teachersSet.add(t);
+        }
+      }
     }
   });
-  (stateData.teachers || []).forEach(t => {
-    if (t.cdc && cdcSet.size > 0 && t.cdc.split(/[,;\s]+/).some(c => c && cdcSet.has(c))) {
-      teachersSet.add(t.name);
+
+  // 4. Quadri orario docenti se caricati
+  if (stateData.timetableViews && stateData.timetableViews.by_teacher) {
+    for (const [tname, tgrid] of Object.entries(stateData.timetableViews.by_teacher)) {
+      for (const d of Object.keys(tgrid)) {
+        for (const h of Object.keys(tgrid[d])) {
+          const lessons = tgrid[d][h] || [];
+          if (lessons.some(l => sLowSet.has(String(l.subject || '').trim().toLowerCase()))) {
+            teachersSet.add(tname);
+          }
+        }
+      }
     }
-    if (Array.isArray(t.subjects) && t.subjects.some(s => sLowSet.has(s.toLowerCase()))) {
-      teachersSet.add(t.name);
-    }
-  });
+  }
+
   return Array.from(teachersSet);
 }
 
@@ -6074,7 +6104,7 @@ async function renderTeachers() {
 
   // Applicazione filtro globale materia se attivo
   if (hasGlobalSubjectFilter()) {
-    const linkedTeachers = new Set(getTeachersForGlobalSubjects(window.GLOBAL_SUBJECT_FILTERS));
+    const linkedTeachers = new Set(getTeachersForGlobalSubjects(window.GLOBAL_SUBJECT_FILTERS, teachers));
     teachers = teachers.filter(t => linkedTeachers.has(t.name));
   }
 

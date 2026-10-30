@@ -1073,9 +1073,11 @@ class Database:
             t_stats = {}
             for a in self.data.get("activities", []):
                 dur = a.get("duration", 1)
-                subj = (a.get("subject") or "").strip()
-                is_disp = subj.lower().startswith("disposiz")
+                main_subj = (a.get("subject") or "").strip()
+                t_subjs_map = a.get("teacher_subjects") or {}
                 for t in a.get("teachers", []):
+                    subj = (t_subjs_map.get(t) or main_subj).strip()
+                    is_disp = subj.lower().startswith("disposiz")
                     if t not in t_stats:
                         t_stats[t] = {
                             "lesson_hours": 0, "disp_hours": 0, "hours": 0,

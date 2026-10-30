@@ -1234,13 +1234,89 @@ textarea:focus:not(:focus-visible) {
   color: var(--text-muted);
 }
 
+/* Eurario Brand Button (Sostituzione Hamburger) */
+.sidebar-brand-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 6px 8px;
+  border-radius: 8px;
+  transition: all 0.18s ease;
+  color: inherit;
+  text-align: left;
+  outline: none;
+  overflow: hidden;
+  flex: 1;
+}
+
+.sidebar-brand-btn:hover {
+  background-color: rgba(60, 64, 67, 0.08);
+}
+
+[data-theme="dark"] .sidebar-brand-btn:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+.eurario-brand-mark-wrap {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sidebar-brand-btn:hover .eurario-brand-mark-wrap {
+  transform: scale(1.08);
+}
+
+.sidebar-brand-btn:active .eurario-brand-mark-wrap {
+  transform: scale(0.95);
+}
+
+.topbar-brand-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.18s ease, transform 0.15s ease;
+  padding: 0;
+  margin-right: 6px;
+  outline: none;
+}
+
+.topbar-brand-btn:hover {
+  background-color: rgba(60, 64, 67, 0.08);
+  transform: scale(1.06);
+}
+
+[data-theme="dark"] .topbar-brand-btn:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
 /* Comportamento Header in stato compresso vs aperto */
 .sidebar-wrapper.collapsed .sidebar-header {
   padding: 0;
   justify-content: center;
 }
 
-.sidebar-wrapper.collapsed .sidebar-brand,
+.sidebar-wrapper.collapsed .sidebar-brand-btn {
+  padding: 0;
+  justify-content: center;
+  width: 100%;
+}
+
+.sidebar-wrapper.collapsed .sidebar-titles,
 .sidebar-wrapper.collapsed .sidebar-pin-btn {
   display: none !important;
 }
@@ -1250,8 +1326,12 @@ textarea:focus:not(:focus-visible) {
   justify-content: space-between;
 }
 
-.sidebar-wrapper:not(.collapsed) .sidebar-brand {
+.sidebar-wrapper:not(.collapsed) .sidebar-brand-btn {
   display: flex !important;
+}
+
+.sidebar-wrapper:not(.collapsed) .sidebar-titles {
+  display: block !important;
 }
 
 .sidebar-wrapper:not(.collapsed) .sidebar-pin-btn {
@@ -5139,9 +5219,10 @@ input:checked + .slider:before {
   border: 1px solid #bbf7d0;
 }
 
-/* Desktop: Topbar hamburger è nascosto perché c'è già il pulsante Google nel menu laterale */
+/* Desktop: Topbar brand/hamburger è nascosto perché c'è già il menu laterale */
 @media (min-width: 769px) {
-  .topbar-hamburger-btn {
+  .topbar-hamburger-btn,
+  .topbar-brand-btn {
     display: none !important;
   }
 }
@@ -5149,7 +5230,8 @@ input:checked + .slider:before {
 /* --- RESPONSIVE LAYOUT & SIDEBAR BREAKPOINTS (Standard Moderno UX/UI) --- */
 /* Mobile Drawer (< 768px) */
 @media (max-width: 768px) {
-  .topbar-hamburger-btn {
+  .topbar-hamburger-btn,
+  .topbar-brand-btn {
     display: inline-flex !important;
     margin-right: 8px;
   }
