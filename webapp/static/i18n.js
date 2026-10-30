@@ -93,8 +93,43 @@
         about: "Info & Crediti",
         about_title: "Info & Crediti",
         about_desc: "Versione FET 7.12, crediti e conformità GDPR",
+        contact_admin: "Contatta Amministratore",
+        contact_admin_desc: "Invia una richiesta o un messaggio all'amministratore del sistema o referente dell'orario",
         back: "Indietro",
         back_to: "Torna a"
+      },
+      footer: {
+        contact_admin: "Contatta Amministratore"
+      },
+      filter: {
+        all_subjects: "Tutte le Materie",
+        popup_title: "Filtro Globale per Materia",
+        reset_all: "Mostra Tutte le Materie (Nessun Filtro)",
+        active_banner: "Filtro globale attivo: <b>{subject}</b>. Sono mostrati esclusivamente docenti, classi, cattedre e regole collegati.",
+        remove_filter: "Rimuovi Filtro",
+        search_placeholder: "Cerca materia..."
+      },
+      contact: {
+        btn: "Contatta Admin",
+        modal_title: "💬 Contatta l'Amministratore",
+        modal_desc: "Invia una comunicazione o richiesta all'amministratore del sistema o referente dell'orario della scuola.",
+        admin_ref: "Referente amministrativo:",
+        sender_name: "Tuo Nome e Cognome",
+        sender_email: "Tua Email per la risposta",
+        subject: "Oggetto della richiesta",
+        subject_placeholder: "Seleziona o scrivi l'oggetto...",
+        subject_opt_info: "Richiesta chiarimenti / supporto sull'orario",
+        subject_opt_anomaly: "Segnalazione anomalia o errore nel calcolo",
+        subject_opt_constraints: "Richiesta variazione vincoli / desiderata",
+        subject_opt_trial: "Richiesta sblocco stampe ufficiali senza filigrana",
+        subject_opt_other: "Altro...",
+        message: "Messaggio / Dettagli",
+        message_placeholder: "Scrivi qui il messaggio dettagliato per l'amministratore...",
+        btn_send: "🚀 Invia Messaggio Diretto",
+        btn_mailto: "✉️ Apri nel Client di Posta (mailto)",
+        toast_sent: "Messaggio inviato all'amministratore con successo!",
+        err_msg_required: "Inserire il testo del messaggio prima di inviare.",
+        copy_email: "Copia Indirizzo Email"
       },
       theme: {
         auto: "Automatico (Sistema)",
@@ -800,8 +835,43 @@
         about: "Info & Credits",
         about_title: "Info & Credits",
         about_desc: "FET 7.12 version, authors, credits and GDPR compliance",
+        contact_admin: "Contact Administrator",
+        contact_admin_desc: "Send an inquiry or request to the timetable coordinator or administrator",
         back: "Back",
         back_to: "Back to"
+      },
+      footer: {
+        contact_admin: "Contact Administrator"
+      },
+      filter: {
+        all_subjects: "All Subjects",
+        popup_title: "Global Subject Filter",
+        reset_all: "Show All Subjects (No Filter)",
+        active_banner: "Global filter active: <b>{subject}</b>. Displaying only linked teachers, classes, assignments, and rules.",
+        remove_filter: "Remove Filter",
+        search_placeholder: "Search subject..."
+      },
+      contact: {
+        btn: "Contact Admin",
+        modal_title: "💬 Contact Administrator",
+        modal_desc: "Send a communication or inquiry to the timetable coordinator or system administrator.",
+        admin_ref: "Administrative contact:",
+        sender_name: "Your Full Name",
+        sender_email: "Your Reply Email",
+        subject: "Subject of request",
+        subject_placeholder: "Select or enter subject...",
+        subject_opt_info: "Timetable inquiry / support request",
+        subject_opt_anomaly: "Anomaly or calculation error report",
+        subject_opt_constraints: "Constraints / teacher preferences adjustment",
+        subject_opt_trial: "Request official watermark-free prints unlock",
+        subject_opt_other: "Other...",
+        message: "Message / Details",
+        message_placeholder: "Type your detailed message to the administrator...",
+        btn_send: "🚀 Send Direct Message",
+        btn_mailto: "✉️ Open in Email Client (mailto)",
+        toast_sent: "Message sent to administrator successfully!",
+        err_msg_required: "Please enter your message before sending.",
+        copy_email: "Copy Email Address"
       },
       theme: {
         auto: "Automatic (System)",

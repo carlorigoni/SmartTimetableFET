@@ -1537,18 +1537,116 @@
       "custom_desc": "Sportello"
     },
     {
-      "id": "86",
+      "id": "87",
       "teachers": [
-        "William Shakespeare"
+        "Milone di Crotone"
       ],
       "students": [],
       "subject": "Disposizione",
       "duration": 1,
       "total_hours": 1,
+      "group_id": "87",
       "room": "",
       "active": true,
-      "comments": "Ore a disposizione William Shakespeare (accoglienza)",
-      "custom_desc": "Accoglienza"
+      "comments": "Ore a disposizione di Milone di Crotone",
+      "is_custom_blocks": false,
+      "custom_blocks": ""
+    },
+    {
+      "id": "88",
+      "teachers": [
+        "Milone di Crotone"
+      ],
+      "students": [],
+      "subject": "Disposizione",
+      "duration": 1,
+      "total_hours": 1,
+      "group_id": "88",
+      "room": "",
+      "active": true,
+      "comments": "Ore a disposizione di Milone di Crotone",
+      "is_custom_blocks": false,
+      "custom_blocks": ""
+    },
+    {
+      "id": "89",
+      "teachers": [
+        "Milone di Crotone"
+      ],
+      "students": [],
+      "subject": "Disposizione",
+      "duration": 1,
+      "total_hours": 1,
+      "group_id": "89",
+      "room": "",
+      "active": true,
+      "comments": "Ore a disposizione di Milone di Crotone",
+      "is_custom_blocks": false,
+      "custom_blocks": ""
+    },
+    {
+      "id": "90",
+      "teachers": [
+        "Milone di Crotone"
+      ],
+      "students": [],
+      "subject": "Disposizione",
+      "duration": 1,
+      "total_hours": 1,
+      "group_id": "90",
+      "room": "",
+      "active": true,
+      "comments": "Ore a disposizione di Milone di Crotone",
+      "is_custom_blocks": false,
+      "custom_blocks": ""
+    },
+    {
+      "id": "91",
+      "teachers": [
+        "Milone di Crotone"
+      ],
+      "students": [],
+      "subject": "Disposizione",
+      "duration": 1,
+      "total_hours": 1,
+      "group_id": "91",
+      "room": "",
+      "active": true,
+      "comments": "Ore a disposizione di Milone di Crotone",
+      "is_custom_blocks": false,
+      "custom_blocks": ""
+    },
+    {
+      "id": "92",
+      "teachers": [
+        "Milone di Crotone"
+      ],
+      "students": [],
+      "subject": "Disposizione",
+      "duration": 1,
+      "total_hours": 1,
+      "group_id": "92",
+      "room": "",
+      "active": true,
+      "comments": "Ore a disposizione di Milone di Crotone",
+      "is_custom_blocks": false,
+      "custom_blocks": ""
+    },
+    {
+      "id": "93",
+      "teachers": [
+        "Milone di Crotone"
+      ],
+      "students": [],
+      "subject": "Disposizione",
+      "duration": 1,
+      "total_hours": 1,
+      "group_id": "93",
+      "room": "",
+      "active": true,
+      "comments": "Ore a disposizione di Milone di Crotone",
+      "is_custom_blocks": false,
+      "custom_blocks": ""
     }
   ],
   "teacher_availability": {
@@ -2209,25 +2307,581 @@
       "room": "Aula 5A"
     },
     "85": {
-      "day": "Mar",
+      "day": "Ven",
+      "hour": "2",
+      "room": ""
+    },
+    "87": {
+      "day": "Lun",
+      "hour": "4",
+      "room": ""
+    },
+    "88": {
+      "day": "Mer",
       "hour": "1",
       "room": ""
     },
-    "86": {
-      "day": "Ven",
+    "89": {
+      "day": "Gio",
       "hour": "1",
+      "room": ""
+    },
+    "90": {
+      "day": "Lun",
+      "hour": "3",
+      "room": ""
+    },
+    "91": {
+      "day": "Mer",
+      "hour": "2",
+      "room": ""
+    },
+    "92": {
+      "day": "Gio",
+      "hour": "2",
+      "room": ""
+    },
+    "93": {
+      "day": "Lun",
+      "hour": "2",
       "room": ""
     }
   },
-  "block_rules": [],
-  "buildings": [
+  "block_rules": [
     {
-      "name": "Centrale"
+      "id": "rule_sm_all",
+      "subject": "Scienze Motorie e Sportive II Grado",
+      "percorso": "tutti",
+      "period": "tutti",
+      "total_hours": 2,
+      "blocks": "2"
     },
     {
-      "name": "Succursale"
+      "id": "rule_info_all",
+      "subject": "Scienze e Tecnologie Informatiche",
+      "percorso": "tutti",
+      "period": "tutti",
+      "total_hours": 2,
+      "blocks": "2"
+    },
+    {
+      "id": "rule_rel_all",
+      "subject": "Religione",
+      "percorso": "tutti",
+      "period": "tutti",
+      "total_hours": 1,
+      "blocks": "1"
+    },
+    {
+      "id": "rule_eng_all",
+      "subject": "Lingua e Cultura Straniera (Inglese)",
+      "percorso": "tutti",
+      "period": "tutti",
+      "total_hours": 3,
+      "blocks": "1+1+1",
+      "note": "Lingua Inglese (3h)"
+    },
+    {
+      "id": "rule_fra_all",
+      "subject": "Lingua e Cultura Straniera (Francese)",
+      "percorso": "tutti",
+      "period": "tutti",
+      "total_hours": 3,
+      "blocks": "1+1+1",
+      "note": "Seconda lingua (3h)"
+    },
+    {
+      "id": "rule_ted_all",
+      "subject": "Lingua e Cultura Straniera (Tedesco)",
+      "percorso": "tutti",
+      "period": "tutti",
+      "total_hours": 3,
+      "blocks": "1+1+1",
+      "note": "Seconda lingua (3h)"
+    },
+    {
+      "id": "rule_spa_3h",
+      "subject": "Lingua e Cultura Straniera (Spagnolo)",
+      "percorso": "tutti",
+      "period": "tutti",
+      "total_hours": 3,
+      "blocks": "1+1+1",
+      "note": "Seconda lingua comunitaria (3h)"
+    },
+    {
+      "id": "rule_spa_2h",
+      "subject": "Lingua e Cultura Straniera (Spagnolo)",
+      "percorso": "tutti",
+      "period": "tutti",
+      "total_hours": 2,
+      "blocks": "1+1",
+      "note": "Terza lingua / Opzione (2h)"
+    },
+    {
+      "id": "rule_arte_all",
+      "subject": "Disegno Storia Arte Istituto II Grado",
+      "percorso": "tutti",
+      "period": "tutti",
+      "total_hours": 2,
+      "blocks": "1+1"
+    },
+    {
+      "id": "rule_dir_all",
+      "subject": "Diritto",
+      "percorso": "tutti",
+      "period": "tutti",
+      "total_hours": 2,
+      "blocks": "1+1"
+    },
+    {
+      "id": "rule_lett_6h",
+      "subject": "Discipline Letterarie Istituti II Grado",
+      "percorso": "tutti",
+      "period": "tutti",
+      "total_hours": 6,
+      "blocks": "2+2+1+1",
+      "note": "Italiano e Geostoria Biennio (6h)"
+    },
+    {
+      "id": "rule_lett_4h",
+      "subject": "Discipline Letterarie Istituti II Grado",
+      "percorso": "tutti",
+      "period": "tutti",
+      "total_hours": 4,
+      "blocks": "2+1+1",
+      "note": "Italiano o Storia (4h)"
+    },
+    {
+      "id": "rule_matfis_7h",
+      "subject": "Matematica e Fisica",
+      "percorso": "liceo",
+      "period": "triennio",
+      "total_hours": 7,
+      "blocks": "2+2+1+1+1",
+      "note": "Liceo Scientifico Triennio (7h)"
+    },
+    {
+      "id": "rule_mat_lic_5h",
+      "subject": "Matematica",
+      "percorso": "liceo",
+      "period": "biennio",
+      "total_hours": 5,
+      "blocks": "2+2+1",
+      "note": "Liceo Scientifico / Scienze Applicate (5h: 2+2+1)"
+    },
+    {
+      "id": "rule_mat_lic_4h",
+      "subject": "Matematica",
+      "percorso": "liceo",
+      "period": "biennio",
+      "total_hours": 4,
+      "blocks": "2+1+1",
+      "note": "Liceo Classico / Linguistico / Umanistico (4h: 2+1+1)"
+    },
+    {
+      "id": "rule_mat_prof_4h",
+      "subject": "Matematica",
+      "percorso": "professionale",
+      "period": "biennio",
+      "total_hours": 4,
+      "blocks": "2+1+1",
+      "note": "Istituti Professionali Biennio (4h: 2+1+1)"
+    },
+    {
+      "id": "rule_mat_prof_tri",
+      "subject": "Matematica",
+      "percorso": "professionale",
+      "period": "triennio",
+      "total_hours": 3,
+      "blocks": "2+1",
+      "note": "Istituti Professionali Triennio (3h: 2+1)"
+    },
+    {
+      "id": "rule_sma_tec_4h",
+      "subject": "Scienze Matematiche Applicate",
+      "percorso": "tecnico",
+      "period": "biennio",
+      "total_hours": 4,
+      "blocks": "2+1+1"
+    },
+    {
+      "id": "rule_sma_tec_3h",
+      "subject": "Scienze Matematiche Applicate",
+      "percorso": "tecnico",
+      "period": "triennio",
+      "total_hours": 3,
+      "blocks": "2+1"
+    },
+    {
+      "id": "rule_scienze_5h",
+      "subject": "Scienze Naturali, Chimica e Biologia",
+      "percorso": "tutti",
+      "period": "tutti",
+      "total_hours": 5,
+      "blocks": "2+2+1"
+    },
+    {
+      "id": "rule_scienze_4h",
+      "subject": "Scienze Naturali, Chimica e Biologia",
+      "percorso": "tutti",
+      "period": "tutti",
+      "total_hours": 4,
+      "blocks": "2+1+1"
+    },
+    {
+      "id": "rule_scienze_3h",
+      "subject": "Scienze Naturali, Chimica e Biologia",
+      "percorso": "tutti",
+      "period": "tutti",
+      "total_hours": 3,
+      "blocks": "2+1"
+    },
+    {
+      "id": "rule_scienze_2h",
+      "subject": "Scienze Naturali, Chimica e Biologia",
+      "percorso": "tutti",
+      "period": "tutti",
+      "total_hours": 2,
+      "blocks": "1+1"
+    },
+    {
+      "id": "rule_scienze_1h",
+      "subject": "Scienze Naturali, Chimica e Biologia",
+      "percorso": "tutti",
+      "period": "tutti",
+      "total_hours": 1,
+      "blocks": "1"
+    },
+    {
+      "id": "rule_geo_3h",
+      "subject": "Geografia",
+      "percorso": "tutti",
+      "period": "tutti",
+      "total_hours": 3,
+      "blocks": "2+1"
+    },
+    {
+      "id": "rule_geo_2h",
+      "subject": "Geografia",
+      "percorso": "tutti",
+      "period": "tutti",
+      "total_hours": 2,
+      "blocks": "1+1"
+    },
+    {
+      "id": "rule_storiageo_3h",
+      "subject": "Storia e Geografia",
+      "percorso": "tutti",
+      "period": "tutti",
+      "total_hours": 3,
+      "blocks": "2+1"
+    },
+    {
+      "id": "rule_filoumane_4h",
+      "subject": "Filosofia e Scienze Umane",
+      "percorso": "tutti",
+      "period": "triennio",
+      "total_hours": 4,
+      "blocks": "2+1+1"
+    },
+    {
+      "id": "rule_filoumane_3h",
+      "subject": "Filosofia e Scienze Umane",
+      "percorso": "tutti",
+      "period": "tutti",
+      "total_hours": 3,
+      "blocks": "2+1"
+    },
+    {
+      "id": "rule_filoumane_2h",
+      "subject": "Filosofia e Scienze Umane",
+      "percorso": "tutti",
+      "period": "tutti",
+      "total_hours": 2,
+      "blocks": "1+1"
+    },
+    {
+      "id": "rule_filoumane_1h",
+      "subject": "Filosofia e Scienze Umane",
+      "percorso": "tutti",
+      "period": "tutti",
+      "total_hours": 1,
+      "blocks": "1"
+    },
+    {
+      "id": "rule_filostoria_5h",
+      "subject": "Filosofia e Storia",
+      "percorso": "liceo",
+      "period": "triennio",
+      "total_hours": 5,
+      "blocks": "2+2+1"
+    },
+    {
+      "id": "rule_filostoria_4h",
+      "subject": "Filosofia e Storia",
+      "percorso": "liceo",
+      "period": "triennio",
+      "total_hours": 4,
+      "blocks": "2+1+1"
+    },
+    {
+      "id": "rule_metop_4h",
+      "subject": "Metodologie Operative",
+      "percorso": "professionale",
+      "period": "tutti",
+      "total_hours": 4,
+      "blocks": "2+2"
+    },
+    {
+      "id": "rule_metop_3h",
+      "subject": "Metodologie Operative",
+      "percorso": "professionale",
+      "period": "tutti",
+      "total_hours": 3,
+      "blocks": "2+1"
+    },
+    {
+      "id": "rule_san_4h",
+      "subject": "Discipline Sanitarie",
+      "percorso": "professionale",
+      "period": "triennio",
+      "total_hours": 4,
+      "blocks": "2+1+1"
+    },
+    {
+      "id": "rule_legsan_4h",
+      "subject": "Legislazione Sanitaria",
+      "percorso": "professionale",
+      "period": "triennio",
+      "total_hours": 4,
+      "blocks": "2+1+1"
+    },
+    {
+      "id": "rule_tecnamm_4h",
+      "subject": "Tecniche Amministrative",
+      "percorso": "professionale",
+      "period": "triennio",
+      "total_hours": 4,
+      "blocks": "2+2"
+    },
+    {
+      "id": "rule_tecnamm_3h",
+      "subject": "Tecniche Amministrative",
+      "percorso": "professionale",
+      "period": "triennio",
+      "total_hours": 3,
+      "blocks": "2+1"
+    },
+    {
+      "id": "rule_dirittopol_6h",
+      "subject": "Diritto ed Economia Politica",
+      "percorso": "tecnico",
+      "period": "triennio",
+      "total_hours": 6,
+      "blocks": "2+2+1+1"
+    },
+    {
+      "id": "rule_dirittopol_5h",
+      "subject": "Diritto ed Economia Politica",
+      "percorso": "tecnico",
+      "period": "triennio",
+      "total_hours": 5,
+      "blocks": "2+2+1"
+    },
+    {
+      "id": "rule_dir_rel_5h",
+      "subject": "Diritto e Relazioni Internazionali",
+      "percorso": "tecnico",
+      "period": "triennio",
+      "total_hours": 5,
+      "blocks": "2+2+1"
+    },
+    {
+      "id": "rule_dir_rel_4h",
+      "subject": "Diritto e Relazioni Internazionali",
+      "percorso": "tecnico",
+      "period": "triennio",
+      "total_hours": 4,
+      "blocks": "2+1+1"
+    },
+    {
+      "id": "rule_az_tec_8h",
+      "subject": "Scienze Economiche - Aziendali",
+      "percorso": "tecnico",
+      "period": "triennio",
+      "total_hours": 8,
+      "blocks": "2+2+2+2"
+    },
+    {
+      "id": "rule_az_tec_7h",
+      "subject": "Scienze Economiche - Aziendali",
+      "percorso": "tecnico",
+      "period": "triennio",
+      "total_hours": 7,
+      "blocks": "2+2+2+1"
+    },
+    {
+      "id": "rule_az_tec_6h",
+      "subject": "Scienze Economiche - Aziendali",
+      "percorso": "tecnico",
+      "period": "triennio",
+      "total_hours": 6,
+      "blocks": "2+2+1+1"
+    },
+    {
+      "id": "rule_az_tec_5h",
+      "subject": "Scienze Economiche - Aziendali",
+      "percorso": "tecnico",
+      "period": "triennio",
+      "total_hours": 5,
+      "blocks": "2+2+1"
+    },
+    {
+      "id": "rule_az_tec_2h",
+      "subject": "Scienze Economiche - Aziendali",
+      "percorso": "tecnico",
+      "period": "biennio",
+      "total_hours": 2,
+      "blocks": "1+1"
+    },
+    {
+      "id": "rule_ita_4h",
+      "subject": "Italiano",
+      "percorso": "tutti",
+      "period": "tutti",
+      "total_hours": 4,
+      "blocks": "2+1+1"
+    },
+    {
+      "id": "rule_fis_2h",
+      "subject": "Fisica",
+      "percorso": "tutti",
+      "period": "tutti",
+      "total_hours": 2,
+      "blocks": "1+1"
+    },
+    {
+      "id": "rule_mac_10h",
+      "subject": "Italiano Latino Storia e Geografia",
+      "percorso": "tutti",
+      "period": "tutti",
+      "total_hours": 10,
+      "blocks": "2+2+2+2+2"
+    },
+    {
+      "id": "rule_mac_7h_a",
+      "subject": "Italiano Storia e Geografia",
+      "percorso": "tutti",
+      "period": "tutti",
+      "total_hours": 7,
+      "blocks": "2+2+2+1"
+    },
+    {
+      "id": "rule_mac_7h_b",
+      "subject": "Italiano e Latino",
+      "percorso": "tutti",
+      "period": "tutti",
+      "total_hours": 7,
+      "blocks": "2+2+2+1"
+    }
+  ],
+  "buildings": [
+    {
+      "name": "Centrale",
+      "short_code": "C",
+      "comments": ""
+    },
+    {
+      "name": "Succursale",
+      "short_code": "S",
+      "comments": ""
     }
   ],
   "has_timetable": true,
-  "city": "Atene"
+  "city": "Atene",
+  "parameters": {
+    "Nome istituto": "Liceo Classico e Scientifico Statale \"Scuola di Atene\"",
+    "Commenti": "Orario configurato con Eurario Suite FET",
+    "Nome file .fet": "ParametriOrario",
+    "Versione FET dichiarata": "7.12.0",
+    "Crea aula per classi senza aula (SI/NO)": "SI",
+    "Peso aula classe %": 100,
+    "Nomi ore in FET con orario (SI/NO)": "SI",
+    "Le classi non cambiano plesso durante la giornata (SI/NO)": "SI",
+    "Aule di appoggio automatiche (SI/NO)": "SI",
+    "Intervalli come righe dell'orario FET (SI/NO)": "SI",
+    "Min ore/giorno docenti: conta anche le ore a disposizione (SI/NO)": "NO",
+    "Ore cattedra completa": 18,
+    "Cattedra completa: giorni minimi di presenza": 5,
+    "Aule libere di riserva in ogni ora (Centrale)": 0,
+    "Docenti: ore preferite nel giorno (PRIME/ULTIME/INDIFFERENTE)": "INDIFFERENTE",
+    "Docenti: distribuzione nella settimana (COMPATTA/INDIFFERENTE)": "INDIFFERENTE",
+    "Peso delle preferenze dei docenti %": 60,
+    "Docenti 'con D' per i limiti di ore buche: almeno N ore a disposizione": 3,
+    "Ore a disposizione: tutte dopo FET (SI/NO)": "NO",
+    "Peso delle preferenze delle materie %": 70
+  },
+  "accorpamenti_rules": [
+    {
+      "id": "ita_lat_sto_geo",
+      "name": "Italiano Latino Storia e Geografia",
+      "components": [
+        "Italiano",
+        "Latino",
+        "Storia e Geografia"
+      ],
+      "active": true
+    },
+    {
+      "id": "ita_lat",
+      "name": "Italiano Latino",
+      "components": [
+        "Italiano",
+        "Latino"
+      ],
+      "active": true
+    },
+    {
+      "id": "ita_sto_geo",
+      "name": "Italiano Storia e Geografia",
+      "components": [
+        "Italiano",
+        "Storia e Geografia"
+      ],
+      "active": true
+    },
+    {
+      "id": "dir_econ",
+      "name": "Diritto ed Economia Politica",
+      "components": [
+        "Diritto",
+        "Economia Politica"
+      ],
+      "active": true
+    },
+    {
+      "id": "dir_rel_int",
+      "name": "Diritto e Relazioni Internazionali",
+      "components": [
+        "Diritto",
+        "Relazioni Internazionali"
+      ],
+      "active": true
+    }
+  ],
+  "section_percorsi": {
+    "A": "tecnico",
+    "B": "tecnico",
+    "C": "liceo",
+    "D": "liceo",
+    "E": "tecnico",
+    "F": "tecnico",
+    "G": "professionale",
+    "H": "professionale",
+    "L": "liceo"
+  },
+  "config_name": "Configurazione Corrente",
+  "data_version": 15,
+  "last_modified": "2026-10-30T17:10:45.480980+01:00",
+  "admin_messages": []
 }

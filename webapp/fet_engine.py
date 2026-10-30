@@ -318,12 +318,19 @@ def get_grouped_activities(activities):
         rooms = sorted(list(set(a.get("room") for a in act_list if a.get("room"))))
         rooms_display = ", ".join(rooms) if rooms else ""
 
+        # Raccoglie eventuali materie distinte per docenti in compresenza (es. Teorico + ITP)
+        ts_map = {}
+        for a in act_list:
+            if a.get("teacher_subjects"):
+                ts_map.update(a["teacher_subjects"])
+
         result.append({
             "id": f"grp_{sub_ids[0]}",
             "students": st_key.split("+") if st_key != "[Nessuna classe]" else [],
             "students_display": st_key,
             "teachers": tc_key.split("+") if tc_key != "[Nessun docente]" else [],
             "teachers_display": tc_key,
+            "teacher_subjects": ts_map,
             "subject": subj,
             "total_hours": total_hours,
             "blocks": blocks,
@@ -717,15 +724,24 @@ def build_timetable_views(data):
         for h_slot in occupied_slot_hours:
             if h_slot not in hours:
                 continue
-            # Vista Docente
+            # Vista Docente: assegna la materia specifica di quel docente se definita in compresenza
             for t in act.get("teachers", []):
                 if t in by_teacher:
-                    by_teacher[t][p_day][h_slot].append(item)
+                    item_t = dict(item)
+                    if act.get("teacher_subjects") and t in act["teacher_subjects"]:
+                        item_t["subject"] = act["teacher_subjects"][t]
+                    by_teacher[t][p_day][h_slot].append(item_t)
 
-            # Vista Classe
+            # Vista Classe: se i docenti in compresenza hanno materie diverse, mostra entrambe
             for s in act.get("students", []):
                 if s in by_class:
-                    by_class[s][p_day][h_slot].append(item)
+                    item_c = dict(item)
+                    ts = act.get("teacher_subjects", {})
+                    if ts and len(set(ts.values())) > 1:
+                        # Unione ordinata delle materie distinte
+                        unique_subjs = list(dict.fromkeys(ts.values()))
+                        item_c["subject"] = " / ".join(unique_subjs)
+                    by_class[s][p_day][h_slot].append(item_c)
 
             # Vista Aula
             if room and room in by_room:

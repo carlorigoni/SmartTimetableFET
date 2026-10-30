@@ -1,127 +1,96 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
-<fet version="7.12.0">
-  <Mode>Official</Mode>
-  <Institution_Name>Liceo &amp; Tecnico &quot;Platone&quot; - Atene</Institution_Name>
+<?xml version="1.0" encoding="UTF-8"?>
+<fet version="7.10.5">
+  <Institution_Name>Liceo Classico e Scientifico Statale "Scuola di Atene"</Institution_Name>
   <Comments>Anno Scolastico 2026/2027 - Database Dimostrativo Completo</Comments>
   <Days_List>
     <Number_of_Days>5</Number_of_Days>
     <Day>
       <Name>Lun</Name>
-      <Long_Name></Long_Name>
     </Day>
     <Day>
       <Name>Mar</Name>
-      <Long_Name></Long_Name>
     </Day>
     <Day>
       <Name>Mer</Name>
-      <Long_Name></Long_Name>
     </Day>
     <Day>
       <Name>Gio</Name>
-      <Long_Name></Long_Name>
     </Day>
     <Day>
       <Name>Ven</Name>
-      <Long_Name></Long_Name>
     </Day>
   </Days_List>
   <Hours_List>
     <Number_of_Hours>10</Number_of_Hours>
     <Hour>
       <Name>1</Name>
-      <Long_Name></Long_Name>
     </Hour>
     <Hour>
       <Name>2</Name>
-      <Long_Name></Long_Name>
     </Hour>
     <Hour>
       <Name>INT1</Name>
-      <Long_Name></Long_Name>
     </Hour>
     <Hour>
       <Name>3</Name>
-      <Long_Name></Long_Name>
     </Hour>
     <Hour>
       <Name>4</Name>
-      <Long_Name></Long_Name>
     </Hour>
     <Hour>
       <Name>INT2</Name>
-      <Long_Name></Long_Name>
     </Hour>
     <Hour>
       <Name>5</Name>
-      <Long_Name></Long_Name>
     </Hour>
     <Hour>
       <Name>6</Name>
-      <Long_Name></Long_Name>
     </Hour>
     <Hour>
       <Name>7</Name>
-      <Long_Name></Long_Name>
     </Hour>
     <Hour>
       <Name>8</Name>
-      <Long_Name></Long_Name>
     </Hour>
   </Hours_List>
   <Subjects_List>
     <Subject>
       <Name>Arte e Disegno</Name>
-      <Long_Name></Long_Name>
-      <Code></Code>
-      <Comments>Disegno Tecnico e Storia dell&apos;Arte</Comments>
+      <Comments>Disegno Tecnico e Storia dell'Arte</Comments>
+    </Subject>
+    <Subject>
+      <Name>Disposizione</Name>
     </Subject>
     <Subject>
       <Name>Economia e Diritto</Name>
-      <Long_Name></Long_Name>
-      <Code></Code>
       <Comments>Economia Politica e Finanza</Comments>
     </Subject>
     <Subject>
       <Name>Fisica e Laboratorio</Name>
-      <Long_Name></Long_Name>
-      <Code></Code>
       <Comments>Fisica Sperimentale</Comments>
     </Subject>
     <Subject>
       <Name>Inglese</Name>
-      <Long_Name></Long_Name>
-      <Code></Code>
       <Comments>Lingua Straniera</Comments>
     </Subject>
     <Subject>
       <Name>Italiano e Letteratura</Name>
-      <Long_Name></Long_Name>
-      <Code></Code>
       <Comments>Discipline Letterarie</Comments>
     </Subject>
     <Subject>
       <Name>Matematica</Name>
-      <Long_Name></Long_Name>
-      <Code></Code>
       <Comments>Scienze Matematiche</Comments>
     </Subject>
     <Subject>
       <Name>Scienze Motorie</Name>
-      <Long_Name></Long_Name>
-      <Code></Code>
       <Comments>Educazione Fisica</Comments>
     </Subject>
     <Subject>
       <Name>Scienze Naturali e Chimica</Name>
-      <Long_Name></Long_Name>
-      <Code></Code>
       <Comments>Scienze della Terra e Biologia</Comments>
     </Subject>
     <Subject>
       <Name>Storia e Filosofia</Name>
-      <Long_Name></Long_Name>
-      <Code></Code>
       <Comments>Storia e Filosofia</Comments>
     </Subject>
   </Subjects_List>
@@ -129,133 +98,63 @@
   </Activity_Tags_List>
   <Teachers_List>
     <Teacher>
-      <Name>Galileo Galilei</Name>
-      <Long_Name></Long_Name>
-      <Code></Code>
-      <Target_Number_of_Hours>0</Target_Number_of_Hours>
-      <Qualified_Subjects>
-      </Qualified_Subjects>
-      <Comments>Fisica e Laboratorio Invenzioni</Comments>
-    </Teacher>
-    <Teacher>
-      <Name>William Shakespeare</Name>
-      <Long_Name></Long_Name>
-      <Code></Code>
-      <Target_Number_of_Hours>0</Target_Number_of_Hours>
-      <Qualified_Subjects>
-      </Qualified_Subjects>
-      <Comments>Lingua Inglese (più ore a disposizione)</Comments>
-    </Teacher>
-    <Teacher>
-      <Name>Euclide</Name>
-      <Long_Name></Long_Name>
-      <Code></Code>
-      <Target_Number_of_Hours>0</Target_Number_of_Hours>
-      <Qualified_Subjects>
-      </Qualified_Subjects>
-      <Comments>Matematica</Comments>
-    </Teacher>
-    <Teacher>
-      <Name>Dante Alighieri</Name>
-      <Long_Name></Long_Name>
-      <Code></Code>
-      <Target_Number_of_Hours>0</Target_Number_of_Hours>
-      <Qualified_Subjects>
-      </Qualified_Subjects>
-      <Comments>Italiano e Letteratura Classica</Comments>
-    </Teacher>
-    <Teacher>
-      <Name>Marie Curie</Name>
-      <Long_Name></Long_Name>
-      <Code></Code>
-      <Target_Number_of_Hours>0</Target_Number_of_Hours>
-      <Qualified_Subjects>
-      </Qualified_Subjects>
-      <Comments>Scienze Naturali, Chimica e Agraria</Comments>
-    </Teacher>
-    <Teacher>
-      <Name>Milone di Crotone</Name>
-      <Long_Name></Long_Name>
-      <Code></Code>
-      <Target_Number_of_Hours>0</Target_Number_of_Hours>
-      <Qualified_Subjects>
-      </Qualified_Subjects>
-      <Comments>Scienze Motorie e Atletica</Comments>
-    </Teacher>
-    <Teacher>
       <Name>Aristotele</Name>
-      <Long_Name></Long_Name>
-      <Code></Code>
-      <Target_Number_of_Hours>0</Target_Number_of_Hours>
-      <Qualified_Subjects>
-      </Qualified_Subjects>
       <Comments>Economia Aziendale e Diritto</Comments>
     </Teacher>
     <Teacher>
+      <Name>Dante Alighieri</Name>
+      <Comments>Italiano e Letteratura Classica</Comments>
+    </Teacher>
+    <Teacher>
+      <Name>Euclide</Name>
+      <Comments>Matematica e Geometria</Comments>
+    </Teacher>
+    <Teacher>
+      <Name>Galileo Galilei</Name>
+      <Comments>Fisica e Laboratorio Applicato</Comments>
+    </Teacher>
+    <Teacher>
+      <Name>Marie Curie</Name>
+      <Comments>Scienze Naturali e Chimica</Comments>
+    </Teacher>
+    <Teacher>
+      <Name>Milone di Crotone</Name>
+      <Comments>Scienze Motorie e Atletica</Comments>
+    </Teacher>
+    <Teacher>
       <Name>Platone</Name>
-      <Long_Name></Long_Name>
-      <Code></Code>
-      <Target_Number_of_Hours>0</Target_Number_of_Hours>
-      <Qualified_Subjects>
-      </Qualified_Subjects>
       <Comments>Storia e Filosofia Universale</Comments>
+    </Teacher>
+    <Teacher>
+      <Name>William Shakespeare</Name>
+      <Comments>Lingua Inglese e Potenziamento | target_hours:15</Comments>
     </Teacher>
   </Teachers_List>
   <Students_List>
     <Year>
       <Name>1A</Name>
-      <Long_Name></Long_Name>
-      <Code></Code>
       <Number_of_Students>24</Number_of_Students>
       <Comments></Comments>
-      <!-- The information regarding categories, divisions of each category, and separator is only used in the divide year automatically by categories dialog. -->
-      <Number_of_Categories>0</Number_of_Categories>
-      <First_Category_Is_Permanent>false</First_Category_Is_Permanent>
-      <Separator> </Separator>
     </Year>
     <Year>
       <Name>2A</Name>
-      <Long_Name></Long_Name>
-      <Code></Code>
       <Number_of_Students>22</Number_of_Students>
       <Comments></Comments>
-      <!-- The information regarding categories, divisions of each category, and separator is only used in the divide year automatically by categories dialog. -->
-      <Number_of_Categories>0</Number_of_Categories>
-      <First_Category_Is_Permanent>false</First_Category_Is_Permanent>
-      <Separator> </Separator>
     </Year>
     <Year>
       <Name>3A</Name>
-      <Long_Name></Long_Name>
-      <Code></Code>
       <Number_of_Students>20</Number_of_Students>
       <Comments></Comments>
-      <!-- The information regarding categories, divisions of each category, and separator is only used in the divide year automatically by categories dialog. -->
-      <Number_of_Categories>0</Number_of_Categories>
-      <First_Category_Is_Permanent>false</First_Category_Is_Permanent>
-      <Separator> </Separator>
     </Year>
     <Year>
       <Name>4A</Name>
-      <Long_Name></Long_Name>
-      <Code></Code>
       <Number_of_Students>21</Number_of_Students>
       <Comments></Comments>
-      <!-- The information regarding categories, divisions of each category, and separator is only used in the divide year automatically by categories dialog. -->
-      <Number_of_Categories>0</Number_of_Categories>
-      <First_Category_Is_Permanent>false</First_Category_Is_Permanent>
-      <Separator> </Separator>
     </Year>
     <Year>
       <Name>5A</Name>
-      <Long_Name></Long_Name>
-      <Code></Code>
       <Number_of_Students>19</Number_of_Students>
       <Comments></Comments>
-      <!-- The information regarding categories, divisions of each category, and separator is only used in the divide year automatically by categories dialog. -->
-      <Number_of_Categories>0</Number_of_Categories>
-      <First_Category_Is_Permanent>false</First_Category_Is_Permanent>
-      <Separator> </Separator>
     </Year>
   </Students_List>
   <Activities_List>
@@ -1183,111 +1082,148 @@
       <Active>true</Active>
       <Comments>Inglese per 5A</Comments>
     </Activity>
+    <Activity>
+      <Teacher>Milone di Crotone</Teacher>
+      <Subject>Disposizione</Subject>
+      <Duration>1</Duration>
+      <Total_Duration>1</Total_Duration>
+      <Id>85</Id>
+      <Activity_Group_Id>85</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments>Ore a disposizione Milone di Crotone (sportello sportivo)</Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Milone di Crotone</Teacher>
+      <Subject>Disposizione</Subject>
+      <Duration>1</Duration>
+      <Total_Duration>1</Total_Duration>
+      <Id>87</Id>
+      <Activity_Group_Id>87</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments>Ore a disposizione di Milone di Crotone</Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Milone di Crotone</Teacher>
+      <Subject>Disposizione</Subject>
+      <Duration>1</Duration>
+      <Total_Duration>1</Total_Duration>
+      <Id>88</Id>
+      <Activity_Group_Id>88</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments>Ore a disposizione di Milone di Crotone</Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Milone di Crotone</Teacher>
+      <Subject>Disposizione</Subject>
+      <Duration>1</Duration>
+      <Total_Duration>1</Total_Duration>
+      <Id>89</Id>
+      <Activity_Group_Id>89</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments>Ore a disposizione di Milone di Crotone</Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Milone di Crotone</Teacher>
+      <Subject>Disposizione</Subject>
+      <Duration>1</Duration>
+      <Total_Duration>1</Total_Duration>
+      <Id>90</Id>
+      <Activity_Group_Id>90</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments>Ore a disposizione di Milone di Crotone</Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Milone di Crotone</Teacher>
+      <Subject>Disposizione</Subject>
+      <Duration>1</Duration>
+      <Total_Duration>1</Total_Duration>
+      <Id>91</Id>
+      <Activity_Group_Id>91</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments>Ore a disposizione di Milone di Crotone</Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Milone di Crotone</Teacher>
+      <Subject>Disposizione</Subject>
+      <Duration>1</Duration>
+      <Total_Duration>1</Total_Duration>
+      <Id>92</Id>
+      <Activity_Group_Id>92</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments>Ore a disposizione di Milone di Crotone</Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Milone di Crotone</Teacher>
+      <Subject>Disposizione</Subject>
+      <Duration>1</Duration>
+      <Total_Duration>1</Total_Duration>
+      <Id>93</Id>
+      <Activity_Group_Id>93</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments>Ore a disposizione di Milone di Crotone</Comments>
+    </Activity>
   </Activities_List>
   <Buildings_List>
     <Building>
       <Name>Centrale</Name>
-      <Long_Name></Long_Name>
-      <Code></Code>
-      <Comments></Comments>
     </Building>
     <Building>
       <Name>Succursale</Name>
-      <Long_Name></Long_Name>
-      <Code></Code>
-      <Comments></Comments>
     </Building>
   </Buildings_List>
   <Rooms_List>
     <Room>
       <Name>Aula 1A</Name>
-      <Long_Name></Long_Name>
-      <Code></Code>
       <Building>Centrale</Building>
       <Capacity>28</Capacity>
-      <Virtual>false</Virtual>
-      <Comments></Comments>
     </Room>
     <Room>
       <Name>Aula 2A</Name>
-      <Long_Name></Long_Name>
-      <Code></Code>
       <Building>Centrale</Building>
       <Capacity>28</Capacity>
-      <Virtual>false</Virtual>
-      <Comments></Comments>
     </Room>
     <Room>
       <Name>Aula 3A</Name>
-      <Long_Name></Long_Name>
-      <Code></Code>
       <Building>Centrale</Building>
       <Capacity>28</Capacity>
-      <Virtual>false</Virtual>
-      <Comments></Comments>
     </Room>
     <Room>
       <Name>Aula 4A</Name>
-      <Long_Name></Long_Name>
-      <Code></Code>
       <Building>Centrale</Building>
       <Capacity>28</Capacity>
-      <Virtual>false</Virtual>
-      <Comments></Comments>
     </Room>
     <Room>
       <Name>Aula 5A</Name>
-      <Long_Name></Long_Name>
-      <Code></Code>
       <Building>Centrale</Building>
       <Capacity>28</Capacity>
-      <Virtual>false</Virtual>
-      <Comments></Comments>
     </Room>
     <Room>
       <Name>Laboratorio di Fisica</Name>
-      <Long_Name></Long_Name>
-      <Code></Code>
       <Building>Centrale</Building>
       <Capacity>30</Capacity>
-      <Virtual>false</Virtual>
-      <Comments></Comments>
     </Room>
     <Room>
       <Name>Palestra-1</Name>
-      <Long_Name></Long_Name>
-      <Code></Code>
       <Building>Centrale</Building>
       <Capacity>29</Capacity>
-      <Virtual>false</Virtual>
       <Comments>Modulo interno 1/3 (Capienza max totale impianto 57)</Comments>
     </Room>
     <Room>
       <Name>Palestra-2</Name>
-      <Long_Name></Long_Name>
-      <Code></Code>
       <Building>Centrale</Building>
       <Capacity>29</Capacity>
-      <Virtual>false</Virtual>
       <Comments>Modulo interno 2/3 (Capienza max totale impianto 57)</Comments>
     </Room>
     <Room>
       <Name>Palestra-3</Name>
-      <Long_Name></Long_Name>
-      <Code></Code>
       <Building>Centrale</Building>
       <Capacity>18</Capacity>
-      <Virtual>false</Virtual>
       <Comments>Modulo interno 3/3 per terza classe piccola (Capienza max totale impianto 57)</Comments>
     </Room>
     <Room>
       <Name>Aula Magna Accademia</Name>
-      <Long_Name></Long_Name>
-      <Code></Code>
       <Building>Centrale</Building>
       <Capacity>100</Capacity>
-      <Virtual>false</Virtual>
-      <Comments></Comments>
     </Room>
   </Rooms_List>
   <Time_Constraints_List>
@@ -3147,758 +3083,830 @@
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>1</Activity_Id>
-      <Day>Lun</Day>
-      <Hour>3</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Lun</Preferred_Day>
+      <Preferred_Hour>3</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>2</Activity_Id>
-      <Day>Gio</Day>
-      <Hour>4</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Gio</Preferred_Day>
+      <Preferred_Hour>4</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>3</Activity_Id>
-      <Day>Mar</Day>
-      <Hour>2</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Mar</Preferred_Day>
+      <Preferred_Hour>2</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>4</Activity_Id>
-      <Day>Ven</Day>
-      <Hour>1</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Ven</Preferred_Day>
+      <Preferred_Hour>1</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>5</Activity_Id>
-      <Day>Mer</Day>
-      <Hour>4</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Mer</Preferred_Day>
+      <Preferred_Hour>4</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>6</Activity_Id>
-      <Day>Mar</Day>
-      <Hour>1</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Mar</Preferred_Day>
+      <Preferred_Hour>1</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>7</Activity_Id>
-      <Day>Ven</Day>
-      <Hour>3</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Ven</Preferred_Day>
+      <Preferred_Hour>3</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>8</Activity_Id>
-      <Day>Mer</Day>
-      <Hour>5</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Mer</Preferred_Day>
+      <Preferred_Hour>5</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>9</Activity_Id>
-      <Day>Gio</Day>
-      <Hour>2</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Gio</Preferred_Day>
+      <Preferred_Hour>2</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>10</Activity_Id>
-      <Day>Lun</Day>
-      <Hour>5</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Lun</Preferred_Day>
+      <Preferred_Hour>5</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>11</Activity_Id>
-      <Day>Gio</Day>
-      <Hour>5</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Gio</Preferred_Day>
+      <Preferred_Hour>5</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>12</Activity_Id>
-      <Day>Lun</Day>
-      <Hour>1</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Lun</Preferred_Day>
+      <Preferred_Hour>1</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>13</Activity_Id>
-      <Day>Mer</Day>
-      <Hour>3</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Mer</Preferred_Day>
+      <Preferred_Hour>3</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>14</Activity_Id>
-      <Day>Mar</Day>
-      <Hour>3</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Mar</Preferred_Day>
+      <Preferred_Hour>3</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>15</Activity_Id>
-      <Day>Gio</Day>
-      <Hour>2</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Gio</Preferred_Day>
+      <Preferred_Hour>2</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>16</Activity_Id>
-      <Day>Lun</Day>
-      <Hour>6</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Lun</Preferred_Day>
+      <Preferred_Hour>6</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>17</Activity_Id>
-      <Day>Lun</Day>
-      <Hour>1</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Lun</Preferred_Day>
+      <Preferred_Hour>1</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>18</Activity_Id>
-      <Day>Mar</Day>
-      <Hour>5</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Mar</Preferred_Day>
+      <Preferred_Hour>5</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>19</Activity_Id>
-      <Day>Mer</Day>
-      <Hour>3</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Mer</Preferred_Day>
+      <Preferred_Hour>3</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>20</Activity_Id>
-      <Day>Mer</Day>
-      <Hour>1</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Mer</Preferred_Day>
+      <Preferred_Hour>1</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>21</Activity_Id>
-      <Day>Gio</Day>
-      <Hour>1</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Gio</Preferred_Day>
+      <Preferred_Hour>1</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>22</Activity_Id>
-      <Day>Mar</Day>
-      <Hour>6</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Mar</Preferred_Day>
+      <Preferred_Hour>6</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>23</Activity_Id>
-      <Day>Lun</Day>
-      <Hour>3</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Lun</Preferred_Day>
+      <Preferred_Hour>3</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>24</Activity_Id>
-      <Day>Gio</Day>
-      <Hour>3</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Gio</Preferred_Day>
+      <Preferred_Hour>3</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>25</Activity_Id>
-      <Day>Ven</Day>
-      <Hour>1</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Ven</Preferred_Day>
+      <Preferred_Hour>1</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>26</Activity_Id>
-      <Day>Mer</Day>
-      <Hour>4</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Mer</Preferred_Day>
+      <Preferred_Hour>4</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>27</Activity_Id>
-      <Day>Mer</Day>
-      <Hour>1</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Mer</Preferred_Day>
+      <Preferred_Hour>1</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>28</Activity_Id>
-      <Day>Lun</Day>
-      <Hour>5</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Lun</Preferred_Day>
+      <Preferred_Hour>5</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>29</Activity_Id>
-      <Day>Gio</Day>
-      <Hour>1</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Gio</Preferred_Day>
+      <Preferred_Hour>1</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>30</Activity_Id>
-      <Day>Mer</Day>
-      <Hour>6</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Mer</Preferred_Day>
+      <Preferred_Hour>6</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>31</Activity_Id>
-      <Day>Mar</Day>
-      <Hour>1</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Mar</Preferred_Day>
+      <Preferred_Hour>1</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>32</Activity_Id>
-      <Day>Mer</Day>
-      <Hour>3</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Mer</Preferred_Day>
+      <Preferred_Hour>3</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>33</Activity_Id>
-      <Day>Lun</Day>
-      <Hour>1</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Lun</Preferred_Day>
+      <Preferred_Hour>1</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>34</Activity_Id>
-      <Day>Ven</Day>
-      <Hour>1</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Ven</Preferred_Day>
+      <Preferred_Hour>1</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>35</Activity_Id>
-      <Day>Gio</Day>
-      <Hour>3</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Gio</Preferred_Day>
+      <Preferred_Hour>3</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>36</Activity_Id>
-      <Day>Lun</Day>
-      <Hour>3</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Lun</Preferred_Day>
+      <Preferred_Hour>3</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>37</Activity_Id>
-      <Day>Mer</Day>
-      <Hour>3</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Mer</Preferred_Day>
+      <Preferred_Hour>3</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>38</Activity_Id>
-      <Day>Mar</Day>
-      <Hour>1</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Mar</Preferred_Day>
+      <Preferred_Hour>1</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>39</Activity_Id>
-      <Day>Gio</Day>
-      <Hour>3</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Gio</Preferred_Day>
+      <Preferred_Hour>3</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>40</Activity_Id>
-      <Day>Ven</Day>
-      <Hour>3</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Ven</Preferred_Day>
+      <Preferred_Hour>3</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>41</Activity_Id>
-      <Day>Mer</Day>
-      <Hour>5</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Mer</Preferred_Day>
+      <Preferred_Hour>5</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>42</Activity_Id>
-      <Day>Mar</Day>
-      <Hour>2</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Mar</Preferred_Day>
+      <Preferred_Hour>2</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>43</Activity_Id>
-      <Day>Lun</Day>
-      <Hour>1</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Lun</Preferred_Day>
+      <Preferred_Hour>1</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>44</Activity_Id>
-      <Day>Mer</Day>
-      <Hour>6</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Mer</Preferred_Day>
+      <Preferred_Hour>6</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>45</Activity_Id>
-      <Day>Mar</Day>
-      <Hour>5</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Mar</Preferred_Day>
+      <Preferred_Hour>5</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>46</Activity_Id>
-      <Day>Mar</Day>
-      <Hour>3</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Mar</Preferred_Day>
+      <Preferred_Hour>3</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>47</Activity_Id>
-      <Day>Ven</Day>
-      <Hour>5</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Ven</Preferred_Day>
+      <Preferred_Hour>5</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>48</Activity_Id>
-      <Day>Mer</Day>
-      <Hour>1</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Mer</Preferred_Day>
+      <Preferred_Hour>1</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>49</Activity_Id>
-      <Day>Gio</Day>
-      <Hour>1</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Gio</Preferred_Day>
+      <Preferred_Hour>1</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>50</Activity_Id>
-      <Day>Ven</Day>
-      <Hour>1</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Ven</Preferred_Day>
+      <Preferred_Hour>1</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>51</Activity_Id>
-      <Day>Lun</Day>
-      <Hour>3</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Lun</Preferred_Day>
+      <Preferred_Hour>3</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>52</Activity_Id>
-      <Day>Lun</Day>
-      <Hour>5</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Lun</Preferred_Day>
+      <Preferred_Hour>5</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>53</Activity_Id>
-      <Day>Gio</Day>
-      <Hour>5</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Gio</Preferred_Day>
+      <Preferred_Hour>5</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>54</Activity_Id>
-      <Day>Ven</Day>
-      <Hour>3</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Ven</Preferred_Day>
+      <Preferred_Hour>3</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>55</Activity_Id>
-      <Day>Mar</Day>
-      <Hour>5</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Mar</Preferred_Day>
+      <Preferred_Hour>5</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>56</Activity_Id>
-      <Day>Gio</Day>
-      <Hour>4</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Gio</Preferred_Day>
+      <Preferred_Hour>4</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>57</Activity_Id>
-      <Day>Mar</Day>
-      <Hour>3</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Mar</Preferred_Day>
+      <Preferred_Hour>3</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>58</Activity_Id>
-      <Day>Ven</Day>
-      <Hour>5</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Ven</Preferred_Day>
+      <Preferred_Hour>5</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>59</Activity_Id>
-      <Day>Gio</Day>
-      <Hour>2</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Gio</Preferred_Day>
+      <Preferred_Hour>2</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>60</Activity_Id>
-      <Day>Ven</Day>
-      <Hour>3</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Ven</Preferred_Day>
+      <Preferred_Hour>3</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>61</Activity_Id>
-      <Day>Mer</Day>
-      <Hour>5</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Mer</Preferred_Day>
+      <Preferred_Hour>5</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>62</Activity_Id>
-      <Day>Mer</Day>
-      <Hour>1</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Mer</Preferred_Day>
+      <Preferred_Hour>1</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>63</Activity_Id>
-      <Day>Mar</Day>
-      <Hour>3</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Mar</Preferred_Day>
+      <Preferred_Hour>3</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>64</Activity_Id>
-      <Day>Ven</Day>
-      <Hour>1</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Ven</Preferred_Day>
+      <Preferred_Hour>1</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>65</Activity_Id>
-      <Day>Gio</Day>
-      <Hour>3</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Gio</Preferred_Day>
+      <Preferred_Hour>3</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>66</Activity_Id>
-      <Day>Mer</Day>
-      <Hour>3</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Mer</Preferred_Day>
+      <Preferred_Hour>3</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>67</Activity_Id>
-      <Day>Gio</Day>
-      <Hour>1</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Gio</Preferred_Day>
+      <Preferred_Hour>1</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>68</Activity_Id>
-      <Day>Mar</Day>
-      <Hour>1</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Mar</Preferred_Day>
+      <Preferred_Hour>1</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>69</Activity_Id>
-      <Day>Gio</Day>
-      <Hour>5</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Gio</Preferred_Day>
+      <Preferred_Hour>5</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>70</Activity_Id>
-      <Day>Ven</Day>
-      <Hour>5</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Ven</Preferred_Day>
+      <Preferred_Hour>5</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>71</Activity_Id>
-      <Day>Lun</Day>
-      <Hour>5</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Lun</Preferred_Day>
+      <Preferred_Hour>5</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>72</Activity_Id>
-      <Day>Mar</Day>
-      <Hour>3</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Mar</Preferred_Day>
+      <Preferred_Hour>3</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>73</Activity_Id>
-      <Day>Mar</Day>
-      <Hour>1</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Mar</Preferred_Day>
+      <Preferred_Hour>1</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>74</Activity_Id>
-      <Day>Ven</Day>
-      <Hour>3</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Ven</Preferred_Day>
+      <Preferred_Hour>3</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>75</Activity_Id>
-      <Day>Lun</Day>
-      <Hour>1</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Lun</Preferred_Day>
+      <Preferred_Hour>1</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>76</Activity_Id>
-      <Day>Gio</Day>
-      <Hour>1</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Gio</Preferred_Day>
+      <Preferred_Hour>1</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>77</Activity_Id>
-      <Day>Gio</Day>
-      <Hour>3</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Gio</Preferred_Day>
+      <Preferred_Hour>3</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>78</Activity_Id>
-      <Day>Mar</Day>
-      <Hour>4</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Mar</Preferred_Day>
+      <Preferred_Hour>4</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>79</Activity_Id>
-      <Day>Lun</Day>
-      <Hour>3</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Lun</Preferred_Day>
+      <Preferred_Hour>3</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>80</Activity_Id>
-      <Day>Ven</Day>
-      <Hour>5</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Ven</Preferred_Day>
+      <Preferred_Hour>5</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>81</Activity_Id>
-      <Day>Mer</Day>
-      <Hour>1</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Mer</Preferred_Day>
+      <Preferred_Hour>1</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>82</Activity_Id>
-      <Day>Ven</Day>
-      <Hour>6</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Ven</Preferred_Day>
+      <Preferred_Hour>6</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>83</Activity_Id>
-      <Day>Mar</Day>
-      <Hour>5</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Mar</Preferred_Day>
+      <Preferred_Hour>5</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
     <ConstraintActivityPreferredStartingTime>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>84</Activity_Id>
-      <Day>Lun</Day>
-      <Hour>5</Hour>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Preferred_Day>Lun</Preferred_Day>
+      <Preferred_Hour>5</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>85</Activity_Id>
+      <Preferred_Day>Ven</Preferred_Day>
+      <Preferred_Hour>2</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
+      <Active>true</Active>
+      <Comments>Bloccato da utente</Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>87</Activity_Id>
+      <Preferred_Day>Lun</Preferred_Day>
+      <Preferred_Hour>4</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
+      <Active>true</Active>
+      <Comments>Bloccato da utente</Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>88</Activity_Id>
+      <Preferred_Day>Mer</Preferred_Day>
+      <Preferred_Hour>1</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
+      <Active>true</Active>
+      <Comments>Bloccato da utente</Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>89</Activity_Id>
+      <Preferred_Day>Gio</Preferred_Day>
+      <Preferred_Hour>1</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
+      <Active>true</Active>
+      <Comments>Bloccato da utente</Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>90</Activity_Id>
+      <Preferred_Day>Lun</Preferred_Day>
+      <Preferred_Hour>3</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
+      <Active>true</Active>
+      <Comments>Bloccato da utente</Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>91</Activity_Id>
+      <Preferred_Day>Mer</Preferred_Day>
+      <Preferred_Hour>2</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
+      <Active>true</Active>
+      <Comments>Bloccato da utente</Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>92</Activity_Id>
+      <Preferred_Day>Gio</Preferred_Day>
+      <Preferred_Hour>2</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
+      <Active>true</Active>
+      <Comments>Bloccato da utente</Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>93</Activity_Id>
+      <Preferred_Day>Lun</Preferred_Day>
+      <Preferred_Hour>2</Preferred_Hour>
+      <Permanently_Locked>true</Permanently_Locked>
+      <Active>true</Active>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredStartingTime>
   </Time_Constraints_List>
   <Space_Constraints_List>
@@ -3965,11 +3973,219 @@
     </ConstraintActivityPreferredRooms>
     <ConstraintActivityPreferredRoom>
       <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>1</Activity_Id>
+      <Room>Aula 1A</Room>
+      <Permanently_Locked>true</Permanently_Locked>
+      <Active>true</Active>
+      <Comments>Bloccato da utente</Comments>
+    </ConstraintActivityPreferredRoom>
+    <ConstraintActivityPreferredRoom>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>2</Activity_Id>
+      <Room>Aula 1A</Room>
+      <Permanently_Locked>true</Permanently_Locked>
+      <Active>true</Active>
+      <Comments>Bloccato da utente</Comments>
+    </ConstraintActivityPreferredRoom>
+    <ConstraintActivityPreferredRoom>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>3</Activity_Id>
+      <Room>Aula 1A</Room>
+      <Permanently_Locked>true</Permanently_Locked>
+      <Active>true</Active>
+      <Comments>Bloccato da utente</Comments>
+    </ConstraintActivityPreferredRoom>
+    <ConstraintActivityPreferredRoom>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>4</Activity_Id>
+      <Room>Aula 2A</Room>
+      <Permanently_Locked>true</Permanently_Locked>
+      <Active>true</Active>
+      <Comments>Bloccato da utente</Comments>
+    </ConstraintActivityPreferredRoom>
+    <ConstraintActivityPreferredRoom>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>5</Activity_Id>
+      <Room>Aula 2A</Room>
+      <Permanently_Locked>true</Permanently_Locked>
+      <Active>true</Active>
+      <Comments>Bloccato da utente</Comments>
+    </ConstraintActivityPreferredRoom>
+    <ConstraintActivityPreferredRoom>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>6</Activity_Id>
+      <Room>Aula 2A</Room>
+      <Permanently_Locked>true</Permanently_Locked>
+      <Active>true</Active>
+      <Comments>Bloccato da utente</Comments>
+    </ConstraintActivityPreferredRoom>
+    <ConstraintActivityPreferredRoom>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>7</Activity_Id>
+      <Room>Aula 3A</Room>
+      <Permanently_Locked>true</Permanently_Locked>
+      <Active>true</Active>
+      <Comments>Bloccato da utente</Comments>
+    </ConstraintActivityPreferredRoom>
+    <ConstraintActivityPreferredRoom>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>8</Activity_Id>
+      <Room>Aula 3A</Room>
+      <Permanently_Locked>true</Permanently_Locked>
+      <Active>true</Active>
+      <Comments>Bloccato da utente</Comments>
+    </ConstraintActivityPreferredRoom>
+    <ConstraintActivityPreferredRoom>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>9</Activity_Id>
+      <Room>Aula 3A</Room>
+      <Permanently_Locked>true</Permanently_Locked>
+      <Active>true</Active>
+      <Comments>Bloccato da utente</Comments>
+    </ConstraintActivityPreferredRoom>
+    <ConstraintActivityPreferredRoom>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>10</Activity_Id>
+      <Room>Aula 4A</Room>
+      <Permanently_Locked>true</Permanently_Locked>
+      <Active>true</Active>
+      <Comments>Bloccato da utente</Comments>
+    </ConstraintActivityPreferredRoom>
+    <ConstraintActivityPreferredRoom>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>11</Activity_Id>
+      <Room>Aula 4A</Room>
+      <Permanently_Locked>true</Permanently_Locked>
+      <Active>true</Active>
+      <Comments>Bloccato da utente</Comments>
+    </ConstraintActivityPreferredRoom>
+    <ConstraintActivityPreferredRoom>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>12</Activity_Id>
+      <Room>Aula 5A</Room>
+      <Permanently_Locked>true</Permanently_Locked>
+      <Active>true</Active>
+      <Comments>Bloccato da utente</Comments>
+    </ConstraintActivityPreferredRoom>
+    <ConstraintActivityPreferredRoom>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>13</Activity_Id>
+      <Room>Aula 5A</Room>
+      <Permanently_Locked>true</Permanently_Locked>
+      <Active>true</Active>
+      <Comments>Bloccato da utente</Comments>
+    </ConstraintActivityPreferredRoom>
+    <ConstraintActivityPreferredRoom>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>14</Activity_Id>
+      <Room>Aula 1A</Room>
+      <Permanently_Locked>true</Permanently_Locked>
+      <Active>true</Active>
+      <Comments>Bloccato da utente</Comments>
+    </ConstraintActivityPreferredRoom>
+    <ConstraintActivityPreferredRoom>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>15</Activity_Id>
+      <Room>Aula 1A</Room>
+      <Permanently_Locked>true</Permanently_Locked>
+      <Active>true</Active>
+      <Comments>Bloccato da utente</Comments>
+    </ConstraintActivityPreferredRoom>
+    <ConstraintActivityPreferredRoom>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>16</Activity_Id>
+      <Room>Aula 1A</Room>
+      <Permanently_Locked>true</Permanently_Locked>
+      <Active>true</Active>
+      <Comments>Bloccato da utente</Comments>
+    </ConstraintActivityPreferredRoom>
+    <ConstraintActivityPreferredRoom>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>17</Activity_Id>
+      <Room>Aula 2A</Room>
+      <Permanently_Locked>true</Permanently_Locked>
+      <Active>true</Active>
+      <Comments>Bloccato da utente</Comments>
+    </ConstraintActivityPreferredRoom>
+    <ConstraintActivityPreferredRoom>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>18</Activity_Id>
+      <Room>Aula 2A</Room>
+      <Permanently_Locked>true</Permanently_Locked>
+      <Active>true</Active>
+      <Comments>Bloccato da utente</Comments>
+    </ConstraintActivityPreferredRoom>
+    <ConstraintActivityPreferredRoom>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>19</Activity_Id>
+      <Room>Aula 2A</Room>
+      <Permanently_Locked>true</Permanently_Locked>
+      <Active>true</Active>
+      <Comments>Bloccato da utente</Comments>
+    </ConstraintActivityPreferredRoom>
+    <ConstraintActivityPreferredRoom>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>20</Activity_Id>
+      <Room>Aula 3A</Room>
+      <Permanently_Locked>true</Permanently_Locked>
+      <Active>true</Active>
+      <Comments>Bloccato da utente</Comments>
+    </ConstraintActivityPreferredRoom>
+    <ConstraintActivityPreferredRoom>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>21</Activity_Id>
+      <Room>Aula 3A</Room>
+      <Permanently_Locked>true</Permanently_Locked>
+      <Active>true</Active>
+      <Comments>Bloccato da utente</Comments>
+    </ConstraintActivityPreferredRoom>
+    <ConstraintActivityPreferredRoom>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>22</Activity_Id>
+      <Room>Aula 3A</Room>
+      <Permanently_Locked>true</Permanently_Locked>
+      <Active>true</Active>
+      <Comments>Bloccato da utente</Comments>
+    </ConstraintActivityPreferredRoom>
+    <ConstraintActivityPreferredRoom>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>23</Activity_Id>
+      <Room>Aula 4A</Room>
+      <Permanently_Locked>true</Permanently_Locked>
+      <Active>true</Active>
+      <Comments>Bloccato da utente</Comments>
+    </ConstraintActivityPreferredRoom>
+    <ConstraintActivityPreferredRoom>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>24</Activity_Id>
+      <Room>Aula 4A</Room>
+      <Permanently_Locked>true</Permanently_Locked>
+      <Active>true</Active>
+      <Comments>Bloccato da utente</Comments>
+    </ConstraintActivityPreferredRoom>
+    <ConstraintActivityPreferredRoom>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>25</Activity_Id>
+      <Room>Aula 5A</Room>
+      <Permanently_Locked>true</Permanently_Locked>
+      <Active>true</Active>
+      <Comments>Bloccato da utente</Comments>
+    </ConstraintActivityPreferredRoom>
+    <ConstraintActivityPreferredRoom>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>26</Activity_Id>
+      <Room>Aula 5A</Room>
+      <Permanently_Locked>true</Permanently_Locked>
+      <Active>true</Active>
+      <Comments>Bloccato da utente</Comments>
+    </ConstraintActivityPreferredRoom>
+    <ConstraintActivityPreferredRoom>
+      <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>27</Activity_Id>
       <Room>Laboratorio di Fisica</Room>
       <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredRoom>
     <ConstraintActivityPreferredRoom>
       <Weight_Percentage>100</Weight_Percentage>
@@ -3977,7 +4193,7 @@
       <Room>Laboratorio di Fisica</Room>
       <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredRoom>
     <ConstraintActivityPreferredRoom>
       <Weight_Percentage>100</Weight_Percentage>
@@ -3985,7 +4201,7 @@
       <Room>Laboratorio di Fisica</Room>
       <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredRoom>
     <ConstraintActivityPreferredRoom>
       <Weight_Percentage>100</Weight_Percentage>
@@ -3993,7 +4209,7 @@
       <Room>Laboratorio di Fisica</Room>
       <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredRoom>
     <ConstraintActivityPreferredRoom>
       <Weight_Percentage>100</Weight_Percentage>
@@ -4001,7 +4217,7 @@
       <Room>Laboratorio di Fisica</Room>
       <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredRoom>
     <ConstraintActivityPreferredRoom>
       <Weight_Percentage>100</Weight_Percentage>
@@ -4009,7 +4225,7 @@
       <Room>Laboratorio di Fisica</Room>
       <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredRoom>
     <ConstraintActivityPreferredRoom>
       <Weight_Percentage>100</Weight_Percentage>
@@ -4017,7 +4233,7 @@
       <Room>Laboratorio di Fisica</Room>
       <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredRoom>
     <ConstraintActivityPreferredRoom>
       <Weight_Percentage>100</Weight_Percentage>
@@ -4025,7 +4241,7 @@
       <Room>Laboratorio di Fisica</Room>
       <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredRoom>
     <ConstraintActivityPreferredRoom>
       <Weight_Percentage>100</Weight_Percentage>
@@ -4033,7 +4249,7 @@
       <Room>Laboratorio di Fisica</Room>
       <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredRoom>
     <ConstraintActivityPreferredRoom>
       <Weight_Percentage>100</Weight_Percentage>
@@ -4041,49 +4257,391 @@
       <Room>Laboratorio di Fisica</Room>
       <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
+    </ConstraintActivityPreferredRoom>
+    <ConstraintActivityPreferredRoom>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>37</Activity_Id>
+      <Room>Aula 1A</Room>
+      <Permanently_Locked>true</Permanently_Locked>
+      <Active>true</Active>
+      <Comments>Bloccato da utente</Comments>
+    </ConstraintActivityPreferredRoom>
+    <ConstraintActivityPreferredRoom>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>38</Activity_Id>
+      <Room>Aula 1A</Room>
+      <Permanently_Locked>true</Permanently_Locked>
+      <Active>true</Active>
+      <Comments>Bloccato da utente</Comments>
+    </ConstraintActivityPreferredRoom>
+    <ConstraintActivityPreferredRoom>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>39</Activity_Id>
+      <Room>Aula 1A</Room>
+      <Permanently_Locked>true</Permanently_Locked>
+      <Active>true</Active>
+      <Comments>Bloccato da utente</Comments>
+    </ConstraintActivityPreferredRoom>
+    <ConstraintActivityPreferredRoom>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>40</Activity_Id>
+      <Room>Aula 2A</Room>
+      <Permanently_Locked>true</Permanently_Locked>
+      <Active>true</Active>
+      <Comments>Bloccato da utente</Comments>
+    </ConstraintActivityPreferredRoom>
+    <ConstraintActivityPreferredRoom>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>41</Activity_Id>
+      <Room>Aula 2A</Room>
+      <Permanently_Locked>true</Permanently_Locked>
+      <Active>true</Active>
+      <Comments>Bloccato da utente</Comments>
+    </ConstraintActivityPreferredRoom>
+    <ConstraintActivityPreferredRoom>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>42</Activity_Id>
+      <Room>Aula 2A</Room>
+      <Permanently_Locked>true</Permanently_Locked>
+      <Active>true</Active>
+      <Comments>Bloccato da utente</Comments>
+    </ConstraintActivityPreferredRoom>
+    <ConstraintActivityPreferredRoom>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>43</Activity_Id>
+      <Room>Aula 3A</Room>
+      <Permanently_Locked>true</Permanently_Locked>
+      <Active>true</Active>
+      <Comments>Bloccato da utente</Comments>
+    </ConstraintActivityPreferredRoom>
+    <ConstraintActivityPreferredRoom>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>44</Activity_Id>
+      <Room>Aula 3A</Room>
+      <Permanently_Locked>true</Permanently_Locked>
+      <Active>true</Active>
+      <Comments>Bloccato da utente</Comments>
+    </ConstraintActivityPreferredRoom>
+    <ConstraintActivityPreferredRoom>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>45</Activity_Id>
+      <Room>Aula 3A</Room>
+      <Permanently_Locked>true</Permanently_Locked>
+      <Active>true</Active>
+      <Comments>Bloccato da utente</Comments>
+    </ConstraintActivityPreferredRoom>
+    <ConstraintActivityPreferredRoom>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>46</Activity_Id>
+      <Room>Aula 4A</Room>
+      <Permanently_Locked>true</Permanently_Locked>
+      <Active>true</Active>
+      <Comments>Bloccato da utente</Comments>
+    </ConstraintActivityPreferredRoom>
+    <ConstraintActivityPreferredRoom>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>47</Activity_Id>
+      <Room>Aula 4A</Room>
+      <Permanently_Locked>true</Permanently_Locked>
+      <Active>true</Active>
+      <Comments>Bloccato da utente</Comments>
+    </ConstraintActivityPreferredRoom>
+    <ConstraintActivityPreferredRoom>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>48</Activity_Id>
+      <Room>Aula 5A</Room>
+      <Permanently_Locked>true</Permanently_Locked>
+      <Active>true</Active>
+      <Comments>Bloccato da utente</Comments>
+    </ConstraintActivityPreferredRoom>
+    <ConstraintActivityPreferredRoom>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>49</Activity_Id>
+      <Room>Aula 5A</Room>
+      <Permanently_Locked>true</Permanently_Locked>
+      <Active>true</Active>
+      <Comments>Bloccato da utente</Comments>
+    </ConstraintActivityPreferredRoom>
+    <ConstraintActivityPreferredRoom>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>50</Activity_Id>
+      <Room>Aula 1A</Room>
+      <Permanently_Locked>true</Permanently_Locked>
+      <Active>true</Active>
+      <Comments>Bloccato da utente</Comments>
+    </ConstraintActivityPreferredRoom>
+    <ConstraintActivityPreferredRoom>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>51</Activity_Id>
+      <Room>Aula 2A</Room>
+      <Permanently_Locked>true</Permanently_Locked>
+      <Active>true</Active>
+      <Comments>Bloccato da utente</Comments>
+    </ConstraintActivityPreferredRoom>
+    <ConstraintActivityPreferredRoom>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>52</Activity_Id>
+      <Room>Aula 3A</Room>
+      <Permanently_Locked>true</Permanently_Locked>
+      <Active>true</Active>
+      <Comments>Bloccato da utente</Comments>
+    </ConstraintActivityPreferredRoom>
+    <ConstraintActivityPreferredRoom>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>53</Activity_Id>
+      <Room>Aula 3A</Room>
+      <Permanently_Locked>true</Permanently_Locked>
+      <Active>true</Active>
+      <Comments>Bloccato da utente</Comments>
+    </ConstraintActivityPreferredRoom>
+    <ConstraintActivityPreferredRoom>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>54</Activity_Id>
+      <Room>Aula 4A</Room>
+      <Permanently_Locked>true</Permanently_Locked>
+      <Active>true</Active>
+      <Comments>Bloccato da utente</Comments>
+    </ConstraintActivityPreferredRoom>
+    <ConstraintActivityPreferredRoom>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>55</Activity_Id>
+      <Room>Aula 4A</Room>
+      <Permanently_Locked>true</Permanently_Locked>
+      <Active>true</Active>
+      <Comments>Bloccato da utente</Comments>
+    </ConstraintActivityPreferredRoom>
+    <ConstraintActivityPreferredRoom>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>56</Activity_Id>
+      <Room>Aula 4A</Room>
+      <Permanently_Locked>true</Permanently_Locked>
+      <Active>true</Active>
+      <Comments>Bloccato da utente</Comments>
+    </ConstraintActivityPreferredRoom>
+    <ConstraintActivityPreferredRoom>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>57</Activity_Id>
+      <Room>Aula 5A</Room>
+      <Permanently_Locked>true</Permanently_Locked>
+      <Active>true</Active>
+      <Comments>Bloccato da utente</Comments>
+    </ConstraintActivityPreferredRoom>
+    <ConstraintActivityPreferredRoom>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>58</Activity_Id>
+      <Room>Aula 5A</Room>
+      <Permanently_Locked>true</Permanently_Locked>
+      <Active>true</Active>
+      <Comments>Bloccato da utente</Comments>
+    </ConstraintActivityPreferredRoom>
+    <ConstraintActivityPreferredRoom>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>59</Activity_Id>
+      <Room>Aula 5A</Room>
+      <Permanently_Locked>true</Permanently_Locked>
+      <Active>true</Active>
+      <Comments>Bloccato da utente</Comments>
+    </ConstraintActivityPreferredRoom>
+    <ConstraintActivityPreferredRoom>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>60</Activity_Id>
+      <Room>Aula 1A</Room>
+      <Permanently_Locked>true</Permanently_Locked>
+      <Active>true</Active>
+      <Comments>Bloccato da utente</Comments>
+    </ConstraintActivityPreferredRoom>
+    <ConstraintActivityPreferredRoom>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>61</Activity_Id>
+      <Room>Aula 1A</Room>
+      <Permanently_Locked>true</Permanently_Locked>
+      <Active>true</Active>
+      <Comments>Bloccato da utente</Comments>
+    </ConstraintActivityPreferredRoom>
+    <ConstraintActivityPreferredRoom>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>62</Activity_Id>
+      <Room>Aula 2A</Room>
+      <Permanently_Locked>true</Permanently_Locked>
+      <Active>true</Active>
+      <Comments>Bloccato da utente</Comments>
+    </ConstraintActivityPreferredRoom>
+    <ConstraintActivityPreferredRoom>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>63</Activity_Id>
+      <Room>Aula 2A</Room>
+      <Permanently_Locked>true</Permanently_Locked>
+      <Active>true</Active>
+      <Comments>Bloccato da utente</Comments>
+    </ConstraintActivityPreferredRoom>
+    <ConstraintActivityPreferredRoom>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>64</Activity_Id>
+      <Room>Aula 3A</Room>
+      <Permanently_Locked>true</Permanently_Locked>
+      <Active>true</Active>
+      <Comments>Bloccato da utente</Comments>
+    </ConstraintActivityPreferredRoom>
+    <ConstraintActivityPreferredRoom>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>65</Activity_Id>
+      <Room>Aula 3A</Room>
+      <Permanently_Locked>true</Permanently_Locked>
+      <Active>true</Active>
+      <Comments>Bloccato da utente</Comments>
+    </ConstraintActivityPreferredRoom>
+    <ConstraintActivityPreferredRoom>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>66</Activity_Id>
+      <Room>Aula 4A</Room>
+      <Permanently_Locked>true</Permanently_Locked>
+      <Active>true</Active>
+      <Comments>Bloccato da utente</Comments>
+    </ConstraintActivityPreferredRoom>
+    <ConstraintActivityPreferredRoom>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>67</Activity_Id>
+      <Room>Aula 4A</Room>
+      <Permanently_Locked>true</Permanently_Locked>
+      <Active>true</Active>
+      <Comments>Bloccato da utente</Comments>
+    </ConstraintActivityPreferredRoom>
+    <ConstraintActivityPreferredRoom>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>68</Activity_Id>
+      <Room>Aula 5A</Room>
+      <Permanently_Locked>true</Permanently_Locked>
+      <Active>true</Active>
+      <Comments>Bloccato da utente</Comments>
+    </ConstraintActivityPreferredRoom>
+    <ConstraintActivityPreferredRoom>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>69</Activity_Id>
+      <Room>Aula 5A</Room>
+      <Permanently_Locked>true</Permanently_Locked>
+      <Active>true</Active>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredRoom>
     <ConstraintActivityPreferredRoom>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>70</Activity_Id>
-      <Room>Palestra-1</Room>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Room>Palestra Atene</Room>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredRoom>
     <ConstraintActivityPreferredRoom>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>71</Activity_Id>
-      <Room>Palestra-1</Room>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Room>Palestra Atene</Room>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredRoom>
     <ConstraintActivityPreferredRoom>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>72</Activity_Id>
-      <Room>Palestra-2</Room>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Room>Palestra Atene</Room>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredRoom>
     <ConstraintActivityPreferredRoom>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>73</Activity_Id>
-      <Room>Palestra-1</Room>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Room>Palestra Atene</Room>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredRoom>
     <ConstraintActivityPreferredRoom>
       <Weight_Percentage>100</Weight_Percentage>
       <Activity_Id>74</Activity_Id>
-      <Room>Palestra-1</Room>
-      <Permanently_Locked>false</Permanently_Locked>
+      <Room>Palestra Atene</Room>
+      <Permanently_Locked>true</Permanently_Locked>
       <Active>true</Active>
-      <Comments></Comments>
+      <Comments>Bloccato da utente</Comments>
+    </ConstraintActivityPreferredRoom>
+    <ConstraintActivityPreferredRoom>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>75</Activity_Id>
+      <Room>Aula 1A</Room>
+      <Permanently_Locked>true</Permanently_Locked>
+      <Active>true</Active>
+      <Comments>Bloccato da utente</Comments>
+    </ConstraintActivityPreferredRoom>
+    <ConstraintActivityPreferredRoom>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>76</Activity_Id>
+      <Room>Aula 1A</Room>
+      <Permanently_Locked>true</Permanently_Locked>
+      <Active>true</Active>
+      <Comments>Bloccato da utente</Comments>
+    </ConstraintActivityPreferredRoom>
+    <ConstraintActivityPreferredRoom>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>77</Activity_Id>
+      <Room>Aula 2A</Room>
+      <Permanently_Locked>true</Permanently_Locked>
+      <Active>true</Active>
+      <Comments>Bloccato da utente</Comments>
+    </ConstraintActivityPreferredRoom>
+    <ConstraintActivityPreferredRoom>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>78</Activity_Id>
+      <Room>Aula 2A</Room>
+      <Permanently_Locked>true</Permanently_Locked>
+      <Active>true</Active>
+      <Comments>Bloccato da utente</Comments>
+    </ConstraintActivityPreferredRoom>
+    <ConstraintActivityPreferredRoom>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>79</Activity_Id>
+      <Room>Aula 3A</Room>
+      <Permanently_Locked>true</Permanently_Locked>
+      <Active>true</Active>
+      <Comments>Bloccato da utente</Comments>
+    </ConstraintActivityPreferredRoom>
+    <ConstraintActivityPreferredRoom>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>80</Activity_Id>
+      <Room>Aula 3A</Room>
+      <Permanently_Locked>true</Permanently_Locked>
+      <Active>true</Active>
+      <Comments>Bloccato da utente</Comments>
+    </ConstraintActivityPreferredRoom>
+    <ConstraintActivityPreferredRoom>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>81</Activity_Id>
+      <Room>Aula 4A</Room>
+      <Permanently_Locked>true</Permanently_Locked>
+      <Active>true</Active>
+      <Comments>Bloccato da utente</Comments>
+    </ConstraintActivityPreferredRoom>
+    <ConstraintActivityPreferredRoom>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>82</Activity_Id>
+      <Room>Aula 4A</Room>
+      <Permanently_Locked>true</Permanently_Locked>
+      <Active>true</Active>
+      <Comments>Bloccato da utente</Comments>
+    </ConstraintActivityPreferredRoom>
+    <ConstraintActivityPreferredRoom>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>83</Activity_Id>
+      <Room>Aula 5A</Room>
+      <Permanently_Locked>true</Permanently_Locked>
+      <Active>true</Active>
+      <Comments>Bloccato da utente</Comments>
+    </ConstraintActivityPreferredRoom>
+    <ConstraintActivityPreferredRoom>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>84</Activity_Id>
+      <Room>Aula 5A</Room>
+      <Permanently_Locked>true</Permanently_Locked>
+      <Active>true</Active>
+      <Comments>Bloccato da utente</Comments>
     </ConstraintActivityPreferredRoom>
   </Space_Constraints_List>
-  <Timetable_Generation_Options_List>
-  </Timetable_Generation_Options_List>
 </fet>

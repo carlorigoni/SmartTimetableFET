@@ -97,7 +97,7 @@ def fetch_google_doc_docx_bytes(url):
     except Exception as e:
         raise ValueError(f"Impossibile scaricare il Google Doc: {e}")
 
-APP_VERSION = "1.9.22"
+APP_VERSION = "1.9.23"
 FET_VERSION = "7.12.0"
 APP_AUTHOR = "Carlo Rigoni"
 APP_MENTOR = "Federico Rettore"
@@ -651,6 +651,20 @@ class EurarioHandler(BaseHTTPRequestHandler):
                 return
             curr_school = school_manager.get_school(active_sid)
             self._json(200, curr_school)
+            return
+
+        elif path == "/api/admin_contact_info":
+            active_sid = get_current_school_id()
+            curr_school = school_manager.get_school(active_sid) if active_sid and active_sid != "none" else None
+            admin_email = auth_manager.config.get("admin_email", "admin@scuolaatene.edu.it")
+            owner_email = (curr_school.get("owner_email") or admin_email) if curr_school else admin_email
+            school_name = (curr_school.get("name") or "Istituto Scolastico") if curr_school else "Eurario FET Suite"
+            self._json(200, {
+                "admin_email": admin_email,
+                "owner_email": owner_email,
+                "school_name": school_name,
+                "contact_email": owner_email or admin_email
+            })
             return
 
         elif path == "/api/superadmin/schools":
@@ -1733,7 +1747,8 @@ class EurarioHandler(BaseHTTPRequestHandler):
                 blocks_str=body.get("blocks", ""),
                 room=body.get("room", ""),
                 active=body.get("active", True),
-                comments=body.get("comments", "")
+                comments=body.get("comments", ""),
+                teacher_subjects=body.get("teacher_subjects", None)
             )
             self._json(200, {"success": True, "cattedra": res})
 
@@ -1750,7 +1765,8 @@ class EurarioHandler(BaseHTTPRequestHandler):
                 blocks_str=body.get("blocks", "2+1"),
                 room=body.get("room", ""),
                 active=body.get("active", True),
-                comments=body.get("comments", "")
+                comments=body.get("comments", ""),
+                teacher_subjects=body.get("teacher_subjects", None)
             )
             if res:
                 self._json(200, {"success": True, "cattedra": res})
@@ -1787,6 +1803,56 @@ class EurarioHandler(BaseHTTPRequestHandler):
         elif path == "/api/cattedre/reset_all_to_default":
             res = db.reset_all_cattedre_to_default_blocks()
             self._json(200, res)
+
+        elif path == "/api/contact_admin":
+            if not body or not body.get("message"):
+                self._json(400, {"error": "Il messaggio non può essere vuoto"})
+                return
+            sender_name = body.get("sender_name", "").strip() or "Utente Eurario"
+            sender_email = body.get("sender_email", "").strip()
+            subject = body.get("subject", "").strip() or "Messaggio all'Amministratore"
+            message = body.get("message", "").strip()
+
+            # Salva il messaggio nel database
+            saved_msg = db.add_admin_message(sender_name, sender_email, subject, message)
+
+            # Registra nel log accessi
+            ip = self.client_address[0] if self.client_address else "127.0.0.1"
+            auth_manager.log_access("CONTACT_ADMIN", sender_email or "anonymous", "user", "INFO", ip, "-", f"Messaggio all'amministratore: {subject}")
+
+            # Notifica email automatica all'amministratore via SMTP se configurato
+            smtp_cfg = auth_manager.config.get("smtp", {})
+            if smtp_cfg.get("enabled") and smtp_cfg.get("notify_to"):
+                try:
+                    active_sid = get_current_school_id()
+                    curr_sch = school_manager.get_school(active_sid) if active_sid and active_sid != "none" else None
+                    sch_name = curr_sch.get("name", "Istituto") if curr_sch else "Eurario"
+                    email_body = f"""Nuovo messaggio per l'amministratore di {sch_name}:
+
+Da: {sender_name} <{sender_email or 'Nessuna email specificata'}>
+Oggetto: {subject}
+Data: {datetime.now().strftime('%d/%m/%Y %H:%M')}
+
+Testo del messaggio:
+--------------------------------------------------
+{message}
+--------------------------------------------------
+Questo messaggio è stato inviato dalla piattaforma Eurario.
+"""
+                    send_smtp_email(
+                        smtp_cfg,
+                        recipient=smtp_cfg["notify_to"],
+                        subject=f"[Eurario - {sch_name}] {subject}",
+                        body=email_body
+                    )
+                except Exception as ex:
+                    print(f"[CONTACT_ADMIN] Invio email SMTP fallito: {ex}")
+
+            self._json(200, {
+                "success": True,
+                "message": "Messaggio inviato all'amministratore con successo!",
+                "msg_id": saved_msg.get("id")
+            })
 
         elif path == "/api/sections/percorsi":
             if not body:

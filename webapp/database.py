@@ -8,12 +8,14 @@ import re
 import io
 import csv
 import json
+import time
 import copy
 import shutil
 import zipfile
 import threading
 import logging
 import unicodedata
+from datetime import datetime
 from html.parser import HTMLParser
 import xml.etree.ElementTree as ET
 from collections import defaultdict
@@ -296,11 +298,11 @@ DEFAULT_BLOCK_RULES = [
     {"id": "rule_rel_all", "subject": "Religione", "percorso": "tutti", "period": "tutti", "total_hours": 1, "blocks": "1"},
 
     # Lingue Straniere: 3 ore distribuite 1+1+1 per efficacia didattica
-    {"id": "rule_eng_all", "subject": "Lingua e Cultura Straniera (Inglese)", "percorso": "tutti", "period": "tutti", "total_hours": 3, "blocks": "1+1+1"},
-    {"id": "rule_fra_all", "subject": "Lingua e Cultura Straniera (Francese)", "percorso": "tutti", "period": "tutti", "total_hours": 3, "blocks": "1+1+1"},
-    {"id": "rule_ted_all", "subject": "Lingua e Cultura Straniera (Tedesco)", "percorso": "tutti", "period": "tutti", "total_hours": 3, "blocks": "1+1+1"},
-    {"id": "rule_spa_3h", "subject": "Lingua e Cultura Straniera (Spagnolo)", "percorso": "tutti", "period": "tutti", "total_hours": 3, "blocks": "1+1+1"},
-    {"id": "rule_spa_2h", "subject": "Lingua e Cultura Straniera (Spagnolo)", "percorso": "tutti", "period": "tutti", "total_hours": 2, "blocks": "1+1"},
+    {"id": "rule_eng_all", "subject": "Lingua e Cultura Straniera (Inglese)", "percorso": "tutti", "period": "tutti", "total_hours": 3, "blocks": "1+1+1", "note": "Lingua Inglese (3h)"},
+    {"id": "rule_fra_all", "subject": "Lingua e Cultura Straniera (Francese)", "percorso": "tutti", "period": "tutti", "total_hours": 3, "blocks": "1+1+1", "note": "Seconda lingua (3h)"},
+    {"id": "rule_ted_all", "subject": "Lingua e Cultura Straniera (Tedesco)", "percorso": "tutti", "period": "tutti", "total_hours": 3, "blocks": "1+1+1", "note": "Seconda lingua (3h)"},
+    {"id": "rule_spa_3h", "subject": "Lingua e Cultura Straniera (Spagnolo)", "percorso": "tutti", "period": "tutti", "total_hours": 3, "blocks": "1+1+1", "note": "Seconda lingua comunitaria (3h)"},
+    {"id": "rule_spa_2h", "subject": "Lingua e Cultura Straniera (Spagnolo)", "percorso": "tutti", "period": "tutti", "total_hours": 2, "blocks": "1+1", "note": "Terza lingua / Opzione (2h)"},
 
     # Disegno e Storia dell'Arte: 2 ore -> 1+1
     {"id": "rule_arte_all", "subject": "Disegno Storia Arte Istituto II Grado", "percorso": "tutti", "period": "tutti", "total_hours": 2, "blocks": "1+1"},
@@ -309,17 +311,17 @@ DEFAULT_BLOCK_RULES = [
     {"id": "rule_dir_all", "subject": "Diritto", "percorso": "tutti", "period": "tutti", "total_hours": 2, "blocks": "1+1"},
 
     # Discipline Letterarie (Italiano/Storia/Geo): 6 ore -> 2+2+1+1, 4 ore -> 2+1+1
-    {"id": "rule_lett_6h", "subject": "Discipline Letterarie Istituti II Grado", "percorso": "tutti", "period": "tutti", "total_hours": 6, "blocks": "2+2+1+1"},
-    {"id": "rule_lett_4h", "subject": "Discipline Letterarie Istituti II Grado", "percorso": "tutti", "period": "tutti", "total_hours": 4, "blocks": "2+1+1"},
+    {"id": "rule_lett_6h", "subject": "Discipline Letterarie Istituti II Grado", "percorso": "tutti", "period": "tutti", "total_hours": 6, "blocks": "2+2+1+1", "note": "Italiano e Geostoria Biennio (6h)"},
+    {"id": "rule_lett_4h", "subject": "Discipline Letterarie Istituti II Grado", "percorso": "tutti", "period": "tutti", "total_hours": 4, "blocks": "2+1+1", "note": "Italiano o Storia (4h)"},
 
     # Matematica e Fisica (Liceo Triennio): 7 ore -> 2+2+1+1+1
-    {"id": "rule_matfis_7h", "subject": "Matematica e Fisica", "percorso": "liceo", "period": "triennio", "total_hours": 7, "blocks": "2+2+1+1+1"},
+    {"id": "rule_matfis_7h", "subject": "Matematica e Fisica", "percorso": "liceo", "period": "triennio", "total_hours": 7, "blocks": "2+2+1+1+1", "note": "Liceo Scientifico Triennio (7h)"},
 
     # Matematica Liceo e Professionale: 5 ore -> 2+2+1, 4 ore -> 2+1+1, 3 ore -> 2+1
-    {"id": "rule_mat_lic_5h", "subject": "Matematica", "percorso": "liceo", "period": "biennio", "total_hours": 5, "blocks": "2+2+1"},
-    {"id": "rule_mat_lic_4h", "subject": "Matematica", "percorso": "liceo", "period": "biennio", "total_hours": 4, "blocks": "2+1+1"},
-    {"id": "rule_mat_prof_4h", "subject": "Matematica", "percorso": "professionale", "period": "biennio", "total_hours": 4, "blocks": "2+1+1"},
-    {"id": "rule_mat_prof_tri", "subject": "Matematica", "percorso": "professionale", "period": "triennio", "total_hours": 3, "blocks": "2+1"},
+    {"id": "rule_mat_lic_5h", "subject": "Matematica", "percorso": "liceo", "period": "biennio", "total_hours": 5, "blocks": "2+2+1", "note": "Liceo Scientifico / Scienze Applicate (5h)"},
+    {"id": "rule_mat_lic_4h", "subject": "Matematica", "percorso": "liceo", "period": "biennio", "total_hours": 4, "blocks": "2+1+1", "note": "Liceo Classico / Linguistico / Umanistico (4h)"},
+    {"id": "rule_mat_prof_4h", "subject": "Matematica", "percorso": "professionale", "period": "biennio", "total_hours": 4, "blocks": "2+1+1", "note": "Istituti Professionali Biennio (4h)"},
+    {"id": "rule_mat_prof_tri", "subject": "Matematica", "percorso": "professionale", "period": "triennio", "total_hours": 3, "blocks": "2+1", "note": "Istituti Professionali Triennio (3h)"},
     
     # Scienze Matematiche Applicate (Tecnico): 4h -> 2+1+1, 3h -> 2+1
     {"id": "rule_sma_tec_4h", "subject": "Scienze Matematiche Applicate", "percorso": "tecnico", "period": "biennio", "total_hours": 4, "blocks": "2+1+1"},
@@ -2128,18 +2130,47 @@ class Database:
 
     def get_block_rules(self):
         with self.lock:
-            return self.data.get("block_rules", DEFAULT_BLOCK_RULES)
+            if "block_rules" not in self.data:
+                self.data["block_rules"] = copy.deepcopy(DEFAULT_BLOCK_RULES)
+            rules = self.data["block_rules"]
+            # Sincronizza note descrittive da DEFAULT_BLOCK_RULES se mancanti
+            def_notes = {r["id"]: r.get("note", "") for r in DEFAULT_BLOCK_RULES if r.get("note")}
+            for r in rules:
+                if not r.get("note") and r.get("id") in def_notes:
+                    r["note"] = def_notes[r["id"]]
+            return rules
 
     def save_block_rule(self, rule):
         with self.lock:
-            rules = self.data.get("block_rules", [])
+            if "block_rules" not in self.data:
+                self.data["block_rules"] = copy.deepcopy(DEFAULT_BLOCK_RULES)
+            rules = self.data["block_rules"]
             r_id = rule.get("id") or f"rule_{int(time.time()*1000)}"
             rule["id"] = r_id
-            idx = next((i for i, r in enumerate(rules) if r.get("id") == r_id), -1)
-            if idx >= 0:
-                rules[idx] = rule
+            if "note" in rule:
+                rule["note"] = str(rule["note"]).strip()
+
+            r_subj = (rule.get("subject") or "").strip().lower()
+            r_perc = (rule.get("percorso") or "tutti").strip().lower()
+            r_per = (rule.get("period") or "tutti").strip().lower()
+            r_th = int(rule.get("total_hours") or 0)
+
+            # Cerca se esiste già una regola con la stessa chiave logica completa
+            key_idx = next((i for i, r in enumerate(rules) if 
+                        (r.get("subject") or "").strip().lower() == r_subj and
+                        (r.get("percorso") or "tutti").strip().lower() == r_perc and
+                        (r.get("period") or "tutti").strip().lower() == r_per and
+                        int(r.get("total_hours") or 0) == r_th), -1)
+
+            id_idx = next((i for i, r in enumerate(rules) if r.get("id") == r_id), -1)
+
+            target_idx = key_idx if key_idx >= 0 else id_idx
+            if target_idx >= 0:
+                rule["id"] = rules[target_idx].get("id") or r_id
+                rules[target_idx] = rule
             else:
                 rules.append(rule)
+
             self.data["block_rules"] = rules
             self._save_to_disk(self.data)
             return rule
@@ -2332,12 +2363,14 @@ class Database:
             ))
             return grouped
 
-    def save_cattedra(self, teachers, students, subject, total_hours, blocks_str="default", room="", active=True, comments=""):
+    def save_cattedra(self, teachers, students, subject, total_hours, blocks_str="default", room="", active=True, comments="", teacher_subjects=None):
         """
         Crea o aggiorna un'intera cattedra/insegnamento, generando automaticamente
         le sotto-attività atomiche FET collegate dallo stesso group_id.
         Se blocks_str è vuoto o 'default', applica la suddivisione stabilita per materia, percorso e periodo.
         Se viene specificata una suddivisione diversa, la registra come ECCEZIONE personalizzata.
+        teacher_subjects permette di specificare la materia individuale per ciascun docente in compresenza
+        (es. {"Docente A": "Informatica", "Docente B": "Laboratorio di Informatica"}).
         """
         with self.lock:
             acts = self.data["activities"]
@@ -2347,6 +2380,15 @@ class Database:
                 teachers = [t.strip() for t in teachers.split("+") if t.strip()]
             if isinstance(students, str):
                 students = [s.strip() for s in students.split("+") if s.strip()]
+
+            # Normalizzazione teacher_subjects
+            norm_teacher_subjects = {}
+            if isinstance(teacher_subjects, dict):
+                norm_teacher_subjects = {t.strip(): str(s).strip() for t, s in teacher_subjects.items() if t and s}
+            # Se un docente non ha una materia esplicita, eredita quella principale della cattedra
+            for t in teachers:
+                if t not in norm_teacher_subjects:
+                    norm_teacher_subjects[t] = subject
 
             total_hours = int(total_hours)
             first_st = students[0] if students else ""
@@ -2391,6 +2433,7 @@ class Database:
                     "teachers": teachers,
                     "students": students,
                     "subject": subject,
+                    "teacher_subjects": norm_teacher_subjects,
                     "duration": d,
                     "group_id": group_id,
                     "room": (room or "").strip(),
@@ -2410,15 +2453,23 @@ class Database:
                 "blocks": canonical_blocks,
                 "default_blocks": default_b,
                 "is_exception": is_custom,
-                "sub_activities": created_sub_acts
+                "sub_activities": created_sub_acts,
+                "teacher_subjects": norm_teacher_subjects
             }
 
-    def update_cattedra(self, old_sub_ids, teachers, students, subject, total_hours, blocks_str="default", room="", active=True, comments=""):
+    def update_cattedra(self, old_sub_ids, teachers, students, subject, total_hours, blocks_str="default", room="", active=True, comments="", teacher_subjects=None):
         with self.lock:
             id_set = set(str(x) for x in old_sub_ids)
             old_acts = [a for a in self.data["activities"] if str(a["id"]) in id_set]
             if not old_acts:
                 return None
+
+            # Se teacher_subjects non è fornito esplicitamente, tenta di ereditare dai vecchi dati se compatibile
+            if teacher_subjects is None:
+                for a in old_acts:
+                    if a.get("teacher_subjects"):
+                        teacher_subjects = a["teacher_subjects"]
+                        break
 
             # Rimuove le vecchie sotto-attività e le relative assegnazioni orario
             self.data["activities"] = [a for a in self.data["activities"] if str(a["id"]) not in id_set]
@@ -2426,6 +2477,17 @@ class Database:
                 self.data["timetable"].pop(aid, None)
 
             # Salva con le nuove impostazioni
+            return self.save_cattedra(
+                teachers=teachers,
+                students=students,
+                subject=subject,
+                total_hours=total_hours,
+                blocks_str=blocks_str,
+                room=room,
+                active=active,
+                comments=comments,
+                teacher_subjects=teacher_subjects
+            )
             return self.save_cattedra(
                 teachers=teachers,
                 students=students,
@@ -2573,6 +2635,27 @@ class Database:
                 "cattedre_count": len(grouped),
                 "activities_count": len(new_acts)
             }
+
+    def add_admin_message(self, sender_name, sender_email, subject, message):
+        """Salva un messaggio o richiesta inviata all'amministratore."""
+        with self.lock:
+            msgs = self.data.setdefault("admin_messages", [])
+            msg_obj = {
+                "id": f"msg_{int(time.time()*1000)}",
+                "timestamp": datetime.now().isoformat(),
+                "sender_name": sender_name or "Utente",
+                "sender_email": sender_email or "",
+                "subject": subject or "Messaggio da Eurario",
+                "message": message or "",
+                "read": False
+            }
+            msgs.append(msg_obj)
+            self._save_to_disk(self.data)
+            return msg_obj
+
+    def get_admin_messages(self):
+        with self.lock:
+            return self.data.get("admin_messages", [])
 
     def delete_cattedra(self, sub_activity_ids):
         """

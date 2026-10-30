@@ -22,7 +22,7 @@ let pollSolverTimer = null;
 let currentSolverRunning = false;
 
 // --- VERSIONE E IDENTITÀ APPLICATIVA ---
-let APP_VERSION = '1.9.22';
+let APP_VERSION = '1.9.23';
 
 // --- OPTIMISTIC CONCURRENCY CONTROL (OCC) & FETCH INTERCEPTOR ---
 window.CURRENT_DATA_VERSION = null;
@@ -421,6 +421,8 @@ document.addEventListener('click', (e) => {
   const langDropdown = document.getElementById('langSelectorDropdown');
   const themeDropdown = document.getElementById('themeSelectorDropdown');
   const schoolDropdown = document.getElementById('schoolSelectorDropdown');
+  const globalFilterDropdown = document.getElementById('globalSubjectFilterDropdown');
+
   if (langDropdown && !langDropdown.contains(e.target)) {
     const m = document.getElementById('langMenuPopup');
     if (m) m.style.display = 'none';
@@ -433,7 +435,337 @@ document.addEventListener('click', (e) => {
     const m = document.getElementById('schoolMenuPopup');
     if (m) m.style.display = 'none';
   }
+  if (globalFilterDropdown && !globalFilterDropdown.contains(e.target)) {
+    const m = document.getElementById('globalSubjectFilterPopup');
+    if (m) m.style.display = 'none';
+  }
 });
+
+// ============================================================================
+// FILTRO GLOBALE PER MATERIA (TESTATA PERSISTENTE PER TUTTE LE MASCHERE)
+// ============================================================================
+window.GLOBAL_SUBJECT_FILTER = localStorage.getItem('eurario_global_subject_filter') || '';
+
+function initGlobalSubjectFilter() {
+  const isEn = window.I18N && window.I18N.getLanguage() === 'en';
+  const btn = document.getElementById('btnGlobalFilterToggle');
+  const textEl = document.getElementById('globalFilterText');
+  const clearBtn = document.getElementById('globalFilterClearBtn');
+  if (!textEl) return;
+
+  const currentFlt = (window.GLOBAL_SUBJECT_FILTER || '').trim();
+  if (currentFlt) {
+    textEl.innerText = currentFlt;
+    textEl.title = (isEn ? 'Global filter active: ' : 'Filtro globale attivo: ') + currentFlt;
+    if (clearBtn) clearBtn.style.display = 'inline-flex';
+    if (btn) btn.classList.add('is-active');
+  } else {
+    textEl.innerText = _t('filter.all_subjects', isEn ? 'All Subjects' : 'Tutte le Materie');
+    textEl.title = isEn ? 'Global subject filter (applies across all screens)' : 'Filtro globale per materia (valido per tutte le schermate)';
+    if (clearBtn) clearBtn.style.display = 'none';
+    if (btn) btn.classList.remove('is-active');
+  }
+}
+
+function toggleGlobalSubjectFilterMenu(event) {
+  if (event) event.stopPropagation();
+  const menu = document.getElementById('globalSubjectFilterPopup');
+  const schoolMenu = document.getElementById('schoolMenuPopup');
+  const langMenu = document.getElementById('langMenuPopup');
+  const themeMenu = document.getElementById('themeMenuPopup');
+  if (schoolMenu) schoolMenu.style.display = 'none';
+  if (langMenu) langMenu.style.display = 'none';
+  if (themeMenu) themeMenu.style.display = 'none';
+  if (!menu) return;
+  const isOpening = menu.style.display === 'none';
+  menu.style.display = isOpening ? 'flex' : 'none';
+  if (isOpening) {
+    populateGlobalSubjectFilterMenu();
+    setTimeout(() => {
+      const inp = document.getElementById('globalFilterSearchInput');
+      if (inp) { inp.value = ''; inp.focus(); }
+    }, 50);
+  }
+}
+
+async function populateGlobalSubjectFilterMenu() {
+  const listEl = document.getElementById('globalSubjectFilterList');
+  if (!listEl) return;
+  const isEn = window.I18N && window.I18N.getLanguage() === 'en';
+
+  let subjects = stateData.subjects;
+  if (!subjects || !subjects.length) {
+    try {
+      const res = await fetch('/api/subjects');
+      subjects = await res.json();
+      stateData.subjects = subjects;
+    } catch (e) {
+      subjects = [];
+    }
+  }
+
+  const sortedSubjs = [...(subjects || [])].sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+  const currentFlt = (window.GLOBAL_SUBJECT_FILTER || '').trim().toLowerCase();
+
+  listEl.innerHTML = sortedSubjs.map(s => {
+    const isSelected = currentFlt && s.name.toLowerCase() === currentFlt;
+    return `
+      <button type="button" class="topbar-popup-item global-filter-item" onclick="selectGlobalSubjectFilter('${escapeJs(s.name)}')">
+        <span>📖</span>
+        <span style="font-weight:${isSelected ? '700' : '500'};flex:1;text-align:left;">${escapeHtml(s.name)}${s.cdc ? ` <small style="color:var(--text-muted);font-size:11px;">[${escapeHtml(s.cdc)}]</small>` : ''}</span>
+        ${isSelected ? `<span class="popup-check" style="color:var(--primary);font-weight:700;">✓</span>` : ''}
+      </button>
+    `;
+  }).join('');
+}
+
+function filterGlobalSubjectList(query) {
+  const q = (query || '').toLowerCase().trim();
+  const items = document.querySelectorAll('#globalSubjectFilterList .global-filter-item');
+  items.forEach(it => {
+    const txt = it.innerText.toLowerCase();
+    it.style.display = txt.includes(q) ? 'flex' : 'none';
+  });
+}
+
+function selectGlobalSubjectFilter(subjectName) {
+  const m = document.getElementById('globalSubjectFilterPopup');
+  if (m) m.style.display = 'none';
+
+  window.GLOBAL_SUBJECT_FILTER = (subjectName || '').trim();
+  localStorage.setItem('eurario_global_subject_filter', window.GLOBAL_SUBJECT_FILTER);
+  initGlobalSubjectFilter();
+
+  const isEn = window.I18N && window.I18N.getLanguage() === 'en';
+  if (window.GLOBAL_SUBJECT_FILTER) {
+    showToast(isEn ? `Global filter set: ${window.GLOBAL_SUBJECT_FILTER}` : `Filtro globale impostato: ${window.GLOBAL_SUBJECT_FILTER}`, 'ok');
+  } else {
+    showToast(isEn ? 'Global filter cleared: showing all subjects.' : 'Filtro globale rimosso: mostrate tutte le materie.', 'info');
+  }
+
+  refreshCurrentViewWithGlobalFilter();
+}
+
+function clearGlobalSubjectFilter(event) {
+  if (event) event.stopPropagation();
+  selectGlobalSubjectFilter('');
+}
+
+function getGlobalFilterBannerHtml() {
+  const currentFlt = (window.GLOBAL_SUBJECT_FILTER || '').trim();
+  if (!currentFlt) return '';
+  const isEn = window.I18N && window.I18N.getLanguage() === 'en';
+  return `
+    <div class="global-filter-active-banner" role="status">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span style="font-size:16px;">🎯</span>
+        <span>
+          ${isEn 
+            ? `Global filter active: <b>${escapeHtml(currentFlt)}</b>. Showing only linked teachers, classes, assignments, and rules.`
+            : `Filtro globale attivo: <b>${escapeHtml(currentFlt)}</b>. Visualizzazione limitata a docenti, classi, cattedre e regole collegate.`}
+        </span>
+      </div>
+      <button type="button" onclick="clearGlobalSubjectFilter(event)" title="${isEn ? 'Remove global filter' : 'Rimuovi filtro globale'}">
+        ✕ ${isEn ? 'Remove Filter' : 'Rimuovi Filtro'}
+      </button>
+    </div>
+  `;
+}
+
+function getTeachersForGlobalSubject(subjectName) {
+  if (!subjectName) return [];
+  const sLow = subjectName.toLowerCase();
+  const teachersSet = new Set();
+  (stateData.activities || []).forEach(a => {
+    if ((a.subject || '').toLowerCase() === sLow) {
+      (a.teachers || []).forEach(t => teachersSet.add(t));
+    }
+    if (a.teacher_subjects) {
+      for (const [t, s] of Object.entries(a.teacher_subjects)) {
+        if (s.toLowerCase() === sLow) teachersSet.add(t);
+      }
+    }
+  });
+  (stateData.groupedActivities || []).forEach(g => {
+    if ((g.subject || '').toLowerCase() === sLow) {
+      (g.teachers || []).forEach(t => teachersSet.add(t));
+    }
+    if (g.teacher_subjects) {
+      for (const [t, s] of Object.entries(g.teacher_subjects)) {
+        if (s.toLowerCase() === sLow) teachersSet.add(t);
+      }
+    }
+  });
+  const subjObj = (stateData.subjects || []).find(s => s.name.toLowerCase() === sLow);
+  const subjCdc = subjObj ? (subjObj.cdc || '') : '';
+  (stateData.teachers || []).forEach(t => {
+    if (t.cdc && subjCdc && t.cdc.split(/[,;\s]+/).some(c => c && subjCdc.includes(c))) {
+      teachersSet.add(t.name);
+    }
+    if (Array.isArray(t.subjects) && t.subjects.some(s => s.toLowerCase() === sLow)) {
+      teachersSet.add(t.name);
+    }
+  });
+  return Array.from(teachersSet);
+}
+
+function refreshCurrentViewWithGlobalFilter() {
+  if (typeof currentView === 'undefined') return;
+  if (currentView === 'activities') renderActivities();
+  else if (currentView === 'teachers') renderTeachers();
+  else if (currentView === 'timetable') renderTimetable();
+  else if (currentView === 'subjects') renderSubjects();
+  else if (currentView === 'block_rules') renderBlockRulesView();
+  else if (currentView === 'accorpamenti') renderAccorpamenti();
+  else if (currentView === 'availability') renderAvailability();
+}
+
+// ============================================================================
+// CONTATTA AMMINISTRATORE
+// ============================================================================
+async function openContactAdminModal() {
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
+  let adminInfo = { admin_email: 'admin@scuolaatene.edu.it', school_name: 'Istituto Scolastico', contact_email: 'admin@scuolaatene.edu.it' };
+  try {
+    const res = await fetch('/api/admin_contact_info');
+    if (res.ok) adminInfo = await res.json();
+  } catch (e) {
+    console.warn('Could not fetch admin contact info', e);
+  }
+
+  const currentUser = (stateData.user && stateData.user.email) ? stateData.user : (window.CURRENT_USER || {});
+  const senderName = currentUser.name || '';
+  const senderEmail = currentUser.email || '';
+
+  showModal(`
+    <div class="modal-dialog" style="max-width:540px;">
+      <div class="modal-header">
+        <div class="modal-title" style="display:flex;align-items:center;gap:8px;">
+          <span>💬</span>
+          <span>${_t('contact.modal_title', isEn ? 'Contact Administrator' : 'Contatta l\'Amministratore')}</span>
+        </div>
+        <button class="modal-close" onclick="closeModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size:13px;color:var(--text-muted);margin:0 0 14px 0;line-height:1.45;">
+          ${_t('contact.modal_desc', isEn ? 'Send a communication or inquiry to the timetable coordinator or system administrator.' : 'Invia una comunicazione o richiesta all\'amministratore del sistema o referente dell\'orario della scuola.')}
+        </p>
+
+        <div style="background:var(--bg-hover);border:1px solid var(--border);border-radius:8px;padding:10px 14px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;gap:10px;">
+          <div>
+            <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;font-weight:700;letter-spacing:0.5px;">${_t('contact.admin_ref', isEn ? 'Administrative contact:' : 'Referente amministrativo:')}</div>
+            <div style="font-weight:700;color:var(--text-main);font-size:13px;margin-top:2px;">
+              ${escapeHtml(adminInfo.school_name || 'Eurario')} &mdash; <a href="mailto:${escapeHtml(adminInfo.contact_email || adminInfo.admin_email)}" style="color:var(--primary);text-decoration:none;" id="adminEmailDisplay">${escapeHtml(adminInfo.contact_email || adminInfo.admin_email)}</a>
+            </div>
+          </div>
+          <button type="button" class="btn btn-sm btn-sec" onclick="navigator.clipboard.writeText('${escapeJs(adminInfo.contact_email || adminInfo.admin_email)}');showToast(isEn ? 'Email copied!' : 'Email copiata!', 'ok');" title="${_t('contact.copy_email', isEn ? 'Copy Email Address' : 'Copia Indirizzo Email')}">
+            📋 Copia
+          </button>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div class="form-group">
+            <label class="form-label">${_t('contact.sender_name', isEn ? 'Your Full Name' : 'Tuo Nome e Cognome')}</label>
+            <input type="text" id="contactSenderName" class="form-input" value="${escapeHtml(senderName)}" placeholder="${isEn ? 'John Doe' : 'Rossi Mario'}">
+          </div>
+          <div class="form-group">
+            <label class="form-label">${_t('contact.sender_email', isEn ? 'Your Reply Email' : 'Tua Email per la risposta')}</label>
+            <input type="email" id="contactSenderEmail" class="form-input" value="${escapeHtml(senderEmail)}" placeholder="${isEn ? 'teacher@school.edu' : 'docente@scuola.edu.it'}">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">${_t('contact.subject', isEn ? 'Subject of request' : 'Oggetto della richiesta')}</label>
+          <div style="display:flex;gap:6px;flex-direction:column;">
+            <select id="contactSubjectPreset" class="form-select" onchange="onContactSubjectPresetChange(this.value)">
+              <option value="">-- ${isEn ? 'Select quick topic or enter custom below' : 'Seleziona argomento rapido o scrivi sotto'} --</option>
+              <option value="${_t('contact.subject_opt_info', isEn ? 'Timetable inquiry / support request' : 'Richiesta chiarimenti / supporto sull\'orario')}">${_t('contact.subject_opt_info', isEn ? 'Timetable inquiry / support request' : 'Richiesta chiarimenti / supporto sull\'orario')}</option>
+              <option value="${_t('contact.subject_opt_anomaly', isEn ? 'Anomaly or calculation error report' : 'Segnalazione anomalia o errore nel calcolo')}">${_t('contact.subject_opt_anomaly', isEn ? 'Anomaly or calculation error report' : 'Segnalazione anomalia o errore nel calcolo')}</option>
+              <option value="${_t('contact.subject_opt_constraints', isEn ? 'Constraints / teacher preferences adjustment' : 'Richiesta variazione vincoli / desiderata')}">${_t('contact.subject_opt_constraints', isEn ? 'Constraints / teacher preferences adjustment' : 'Richiesta variazione vincoli / desiderata')}</option>
+              <option value="${_t('contact.subject_opt_trial', isEn ? 'Request official watermark-free prints unlock' : 'Richiesta sblocco stampe ufficiali senza filigrana')}">${_t('contact.subject_opt_trial', isEn ? 'Request official watermark-free prints unlock' : 'Richiesta sblocco stampe ufficiali senza filigrana')}</option>
+              <option value="__CUSTOM__">${_t('contact.subject_opt_other', isEn ? 'Other (type custom subject)...' : 'Altro (scrivi oggetto personalizzato)...')}</option>
+            </select>
+            <input type="text" id="contactSubjectInput" class="form-input" placeholder="${_t('contact.subject_placeholder', isEn ? 'Subject line...' : 'Oggetto del messaggio...')}" value="">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">${_t('contact.message', isEn ? 'Message / Details' : 'Messaggio / Dettagli')} <span style="color:#ef4444;">*</span></label>
+          <textarea id="contactMessageInput" class="form-input" rows="5" placeholder="${_t('contact.message_placeholder', isEn ? 'Type your detailed message to the administrator...' : 'Scrivi qui il messaggio dettagliato per l\'amministratore...')}" style="font-family:inherit;line-height:1.45;"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+        <button type="button" class="btn btn-sec" onclick="openContactMailto('${escapeJs(adminInfo.contact_email || adminInfo.admin_email)}')">
+          ${_t('contact.btn_mailto', isEn ? '✉️ Open in Email Client (mailto)' : '✉️ Apri nel Client Email (mailto)')}
+        </button>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-sec" onclick="closeModal()">${_t('common.cancel', 'Annulla')}</button>
+          <button class="btn btn-primary" onclick="submitContactAdmin('${escapeJs(adminInfo.contact_email || adminInfo.admin_email)}')">
+            ${_t('contact.btn_send', isEn ? '🚀 Send Direct Message' : '🚀 Invia Messaggio Diretto')}
+          </button>
+        </div>
+      </div>
+    </div>
+  `);
+}
+
+function onContactSubjectPresetChange(val) {
+  const inp = document.getElementById('contactSubjectInput');
+  if (!inp) return;
+  if (val && val !== '__CUSTOM__') {
+    inp.value = val;
+  } else if (val === '__CUSTOM__') {
+    inp.value = '';
+    inp.focus();
+  }
+}
+
+function openContactMailto(targetEmail) {
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
+  const name = document.getElementById('contactSenderName') ? document.getElementById('contactSenderName').value.trim() : '';
+  const subj = document.getElementById('contactSubjectInput') ? document.getElementById('contactSubjectInput').value.trim() : '';
+  const msg = document.getElementById('contactMessageInput') ? document.getElementById('contactMessageInput').value.trim() : '';
+
+  const fullSubj = subj ? `[Eurario] ${subj}` : '[Eurario] Richiesta assistenza / supporto';
+  const fullBody = `${msg}\n\n--\nMittente: ${name || 'Docente / Operatore Eurario'}`;
+  const url = `mailto:${encodeURIComponent(targetEmail)}?subject=${encodeURIComponent(fullSubj)}&body=${encodeURIComponent(fullBody)}`;
+  window.location.href = url;
+}
+
+async function submitContactAdmin(targetEmail) {
+  const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
+  const senderName = document.getElementById('contactSenderName') ? document.getElementById('contactSenderName').value.trim() : '';
+  const senderEmail = document.getElementById('contactSenderEmail') ? document.getElementById('contactSenderEmail').value.trim() : '';
+  const subject = document.getElementById('contactSubjectInput') ? document.getElementById('contactSubjectInput').value.trim() : '';
+  const message = document.getElementById('contactMessageInput') ? document.getElementById('contactMessageInput').value.trim() : '';
+
+  if (!message) {
+    alert(_t('contact.err_msg_required', isEn ? 'Please enter your message before sending.' : 'Inserire il testo del messaggio prima di inviare.'));
+    return;
+  }
+
+  try {
+    const res = await fetch('/api/contact_admin', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        sender_name: senderName,
+        sender_email: senderEmail,
+        subject: subject || (isEn ? 'Support Request' : 'Richiesta Supporto'),
+        message: message
+      })
+    });
+    if (res.ok) {
+      closeModal();
+      showToast(_t('contact.toast_sent', isEn ? 'Message sent to administrator successfully!' : 'Messaggio inviato all\'amministratore con successo!'), 'ok');
+    } else {
+      const err = await res.json().catch(() => ({}));
+      alert((isEn ? 'Error sending message: ' : 'Errore durante l\'invio del messaggio: ') + (err.error || 'Errore di rete'));
+    }
+  } catch (e) {
+    alert((isEn ? 'Network error: ' : 'Errore di connessione: ') + e.message);
+  }
+}
 
 // --- GESTIONE MULTI-SCUOLA (TENANTS) & CONSOLE SUPERADMIN ---
 let currentSchool = null;
@@ -987,6 +1319,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.I18N.applyStaticTranslations();
   }
   initNavGroups();
+  initGlobalSubjectFilter();
   initAuth();
   checkSoftwareUpdates();
   setInterval(() => checkSoftwareUpdates(false), 30 * 60 * 1000);
@@ -3830,8 +4163,17 @@ async function renderTimetable() {
   const classes = Object.keys(views.by_class || {}).sort(naturalClassCompare);
   const rooms = Object.keys(views.by_room || {}).sort();
 
+  // Filtraggio docenti se il filtro globale per materia è attivo
+  const globalSubjFlt = (window.GLOBAL_SUBJECT_FILTER || '').trim();
+  let availableTeachers = teachers;
+  if (globalSubjFlt) {
+    const linked = new Set(getTeachersForGlobalSubject(globalSubjFlt));
+    const fltList = teachers.filter(t => linked.has(t));
+    if (fltList.length > 0) availableTeachers = fltList;
+  }
+
   let listOptions = [];
-  if (activeTimetableView === 'teacher') listOptions = teachers;
+  if (activeTimetableView === 'teacher') listOptions = availableTeachers;
   else if (activeTimetableView === 'class') listOptions = classes;
   else if (activeTimetableView === 'room') listOptions = rooms;
 
@@ -3882,6 +4224,7 @@ async function renderTimetable() {
   }
 
   container.innerHTML = `
+    ${getGlobalFilterBannerHtml()}
     <div class="toolbar">
       <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
         <div style="display:flex;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;">
@@ -5442,6 +5785,13 @@ async function renderTeachers() {
   teachers.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
   stateData.teachers = teachers;
 
+  // Applicazione filtro globale materia se attivo
+  const globalSubjFlt = (window.GLOBAL_SUBJECT_FILTER || '').trim();
+  if (globalSubjFlt) {
+    const linkedTeachers = new Set(getTeachersForGlobalSubject(globalSubjFlt));
+    teachers = teachers.filter(t => linkedTeachers.has(t.name));
+  }
+
   const totalTeachers = teachers.length;
   const dispTeachers = teachers.filter(t => (t.target_hours !== undefined ? t.target_hours : 18) > (t.total_hours || 0)).length;
   const totalDispHours = teachers.reduce((acc, t) => acc + Math.max(0, (t.target_hours !== undefined ? t.target_hours : 18) - (t.total_hours || 0)), 0);
@@ -5454,6 +5804,7 @@ async function renderTeachers() {
   const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
   const container = document.getElementById('mainContent');
   container.innerHTML = `
+    ${getGlobalFilterBannerHtml()}
     ${getNavReturnBarHtml(isEn ? 'Faculty roster and teaching assignments.' : 'Organico docenti e gestione cattedre.')}
     <!-- Barra Filtri e Azioni -->
     <div class="toolbar" style="margin-bottom:10px;">
@@ -8011,7 +8362,7 @@ function onModalSubjectChanged() {
   const currTeacher = teachSel.value;
   teachSel.innerHTML = buildTeacherSelectOptions(subjName, currTeacher);
   if (coTeachSel) {
-    coTeachSel.innerHTML = buildTeacherSelectOptions(subjName, '', null, false, true);
+    coTeachSel.innerHTML = buildTeacherSelectOptions('', '', null, true, true);
   }
 }
 
@@ -8044,7 +8395,7 @@ function onEditModalSubjectChanged() {
   const currTeacher = teachSel.value;
   teachSel.innerHTML = buildTeacherSelectOptions(subjName, currTeacher);
   if (coTeachSel) {
-    coTeachSel.innerHTML = buildTeacherSelectOptions(subjName, '', null, false, true);
+    coTeachSel.innerHTML = buildTeacherSelectOptions('', '', null, true, true);
   }
 }
 
@@ -8159,11 +8510,17 @@ async function renderSubjects() {
   const isEn = window.I18N ? window.I18N.getLanguage() === 'en' : false;
   const res = await fetch('/api/subjects');
   const rawSubjects = await res.json();
-  const subjects = (rawSubjects || []).filter(s => !(s.name || '').toLowerCase().startsWith('disposiz'));
+  let subjects = (rawSubjects || []).filter(s => !(s.name || '').toLowerCase().startsWith('disposiz'));
   stateData.subjects = subjects;
+
+  const globalSubjFlt = (window.GLOBAL_SUBJECT_FILTER || '').trim().toLowerCase();
+  if (globalSubjFlt) {
+    subjects = subjects.filter(s => (s.name || '').toLowerCase() === globalSubjFlt);
+  }
 
   const container = document.getElementById('mainContent');
   container.innerHTML = `
+    ${getGlobalFilterBannerHtml()}
     <div class="toolbar" style="flex-wrap:wrap;gap:10px;">
       <input type="text" class="search-input" placeholder="${isEn ? '🔍 Search subject, CDC, teacher or class...' : '🔍 Cerca materia, CDC, docente o classe...'}" oninput="filterTable('subjTable', this.value)" style="min-width:220px;">
       <div style="display:flex;gap:8px;margin-left:auto;flex-wrap:wrap;">
@@ -9239,6 +9596,21 @@ async function renderActivities() {
   stateData.activities = cleanActs;
   stateData.groupedActivities = cleanGrouped;
 
+  // Applicazione filtro globale per materia se impostato in testata
+  const globalSubjFlt = (window.GLOBAL_SUBJECT_FILTER || '').trim().toLowerCase();
+  if (globalSubjFlt) {
+    cleanGrouped = cleanGrouped.filter(g => {
+      const matchMain = (g.subject || '').toLowerCase() === globalSubjFlt;
+      const matchCo = g.teacher_subjects && Object.values(g.teacher_subjects).some(s => s.toLowerCase() === globalSubjFlt);
+      return matchMain || matchCo;
+    });
+    cleanActs = cleanActs.filter(a => {
+      const matchMain = (a.subject || '').toLowerCase() === globalSubjFlt;
+      const matchCo = a.teacher_subjects && Object.values(a.teacher_subjects).some(s => s.toLowerCase() === globalSubjFlt);
+      return matchMain || matchCo;
+    });
+  }
+
   const isGrouped = activityViewMode === 'grouped';
   const totalGrouped = cleanGrouped.length;
   const exceptionsCount = cleanGrouped.filter(g => g.is_exception).length;
@@ -9266,6 +9638,7 @@ async function renderActivities() {
   }
 
   container.innerHTML = `
+    ${getGlobalFilterBannerHtml()}
     ${getNavReturnBarHtml(activeFilterLabel ? `${isEn ? 'Filter view:' : 'Filtro visualizzazione:'} <b>${escapeHtml(activeFilterLabel)}</b>` : (isEn ? 'Teaching assignments and activities.' : 'Cattedre e attività di insegnamento.'))}
     <div class="toolbar" style="gap:12px;flex-wrap:wrap;">
       <input type="text" id="activitySearchInput" class="search-input" value="${escapeHtml(initialSearch)}" placeholder="${isEn ? '🔍 Search teacher, class or subject...' : '🔍 Cerca docente, classe o materia...'}" oninput="filterActivities(this.value)">
@@ -9356,11 +9729,17 @@ async function renderActivities() {
             const roomBadgeClass = isGym ? 'badge-gym' : (isLab ? 'badge-lab' : 'badge-info');
             const roomIcon = isGym ? '🏀' : (isLab ? '🧪' : '🚪');
 
+            const teachersDisplayHtml = (g.teachers || []).map(t => {
+              const tSubj = (g.teacher_subjects && g.teacher_subjects[t]) ? g.teacher_subjects[t] : '';
+              const isDiff = tSubj && tSubj !== g.subject;
+              return `<span>${escapeHtml(t)}${isDiff ? ` <span class="badge" style="background:rgba(245,158,11,0.18);color:#92400e;font-size:11px;font-weight:600;padding:1px 5px;" title="${isEn ? 'Individual subject in co-teaching' : 'Materia specifica in compresenza'}">📖 ${escapeHtml(tSubj)}</span>` : ''}</span>`;
+            }).join(' + ') || escapeHtml(g.teachers_display);
+
             return `
               <tr class="${g.is_exception ? 'has-exception-row' : ''}">
                 <td><span class="badge badge-info" style="font-size:12px;font-weight:700;">${escapeHtml(g.students_display)}</span></td>
                 <td><b style="color:var(--text-main);cursor:pointer;" onclick="openEditCattedraModal('${escapeJs(g.id)}')" title="${isEn ? 'Click to edit assignment' : 'Clicca per modificare la cattedra'}">${escapeHtml(g.subject)}</b></td>
-                <td>${escapeHtml(g.teachers_display)}</td>
+                <td>${teachersDisplayHtml}</td>
                 <td>
                   ${hasRoom ? `
                     <span class="badge ${roomBadgeClass}" title="${isEn ? 'Assigned space' : 'Spazio assegnato'}">
@@ -9609,7 +9988,18 @@ async function renderAccorpamenti() {
     const activeCount = candidates.filter(c => c.is_merged).length;
     const pendingCount = candidates.filter(c => !c.is_merged).length;
 
+    // Filtro globale per materia se attivo
+    const globalSubjFlt = (window.GLOBAL_SUBJECT_FILTER || '').trim().toLowerCase();
+    if (globalSubjFlt) {
+      candidates = candidates.filter(c => {
+        const mSubjs = (c.subjects || []).map(s => s.toLowerCase());
+        const mTarget = (c.target_macro_subject || '').toLowerCase();
+        return mSubjs.some(s => s.includes(globalSubjFlt)) || mTarget.includes(globalSubjFlt);
+      });
+    }
+
     container.innerHTML = `
+      ${getGlobalFilterBannerHtml()}
       <div class="card" style="margin-bottom:16px;">
         <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;">
           <div>
@@ -10091,7 +10481,12 @@ async function renderBlockRulesView() {
     const exceptions = cattedre.filter(c => c.is_exception);
     const standardCount = totalCattedre - exceptions.length;
 
+    // Se il filtro globale per materia è attivo, filtra le regole
+    const globalSubjFlt = (window.GLOBAL_SUBJECT_FILTER || '').trim().toLowerCase();
+    const displayRules = globalSubjFlt ? rules.filter(r => (r.subject || '').toLowerCase() === globalSubjFlt) : rules;
+
     container.innerHTML = `
+      ${getGlobalFilterBannerHtml()}
       ${getNavReturnBarHtml(isEn ? 'Default block division rules and section tracks.' : 'Regole di default suddivisione blocchi e indirizzi sezioni.')}
       <div class="card" style="margin-bottom:16px;">
         <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;">
@@ -10103,8 +10498,8 @@ async function renderBlockRulesView() {
             </h2>
             <div style="font-size:13px;color:var(--text-muted);max-width:850px;line-height:1.5;">
               ${isEn
-                ? 'Timetable block division (e.g. <code>2+1</code>, <code>1+1+1</code>, <code>2+2</code>, <code>2</code>) is governed by the <b>exception principle</b>: each teaching assignment automatically inherits the default formula established for its subject, track (<b>High School</b>, <b>Technical</b>, or <b>Vocational</b>, determined by <i>section</i>), and period (<b>Lower</b> 1-2 or <b>Upper</b> 3-5). A custom division is specified <b>only when differing</b> from default.'
-                : 'La suddivisione dei blocchi orari (es. <code>2+1</code>, <code>1+1+1</code>, <code>2+2</code>, <code>2</code>) è gestita con il <b>principio delle eccezioni</b>: ciascuna cattedra riceve automaticamente la formula di default prestabilita per la specifica materia, per l\'indirizzo (<b>Liceo</b>, <b>Tecnico</b> o <b>Professionale</b>, determinato dalla <i>sezione</i>) e per il ciclo (<b>Biennio</b> 1-2 o <b>Triennio</b> 3-5). La suddivisione si specifica <b>solo ed esclusivamente se diversa</b> dal default.'}
+                ? 'Timetable block division (e.g. <code>2+1</code>, <code>1+1+1</code>, <code>2+2</code>) is governed by the <b>exception principle</b>: each teaching assignment automatically inherits the formula established for its <b>Subject</b>, <b>Weekly Hours</b> (e.g. 4h and 5h have distinct didactic formulas: <code>2+1+1</code> vs <code>2+2+1</code>), <b>Track</b> (High School, Technical, Vocational), and <b>Period</b> (Lower 1-2 or Upper 3-5). Entries with different hour conditions are complementary, distinct rules.'
+                : 'La suddivisione dei blocchi orari (es. <code>2+1</code>, <code>1+1+1</code>, <code>2+2</code>) è determinata univocamente dalla combinazione di: <b>Materia</b>, <b>Monte Ore Settimanale</b> (es. cattedre da 4h e 5h hanno suddivisioni didattiche dedicate: <code>2+1+1</code> vs <code>2+2+1</code>), <b>Indirizzo</b> (Liceo, Tecnico o Professionale) e <b>Ciclo</b> (Biennio o Triennio). Ciascuna regola è associata a un monte ore specifico e non entra in contraddizione con cattedre di durata diversa.'}
             </div>
           </div>
           <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
@@ -10187,26 +10582,29 @@ async function renderBlockRulesView() {
             <thead>
               <tr>
                 <th style="width:40px;">#</th>
-                <th>${isEn ? 'Subject / Discipline' : 'Materia / Disciplina'}</th>
+                <th>${isEn ? 'Subject & Curriculum / Note' : 'Materia & Articolazione / Note'}</th>
                 <th style="width:130px;text-align:center;">${isEn ? 'Track' : 'Indirizzo'}</th>
                 <th style="width:110px;text-align:center;">${isEn ? 'Period' : 'Periodo'}</th>
-                <th style="width:85px;text-align:center;">${isEn ? 'Hours' : 'Ore'}</th>
+                <th style="width:105px;text-align:center;">${isEn ? 'Weekly Hours' : 'Monte Ore (h)'}</th>
                 <th style="width:130px;text-align:center;">${isEn ? 'Default Formula' : 'Formula Default'}</th>
                 <th style="text-align:right;width:120px;">${isEn ? 'Actions' : 'Azioni'}</th>
               </tr>
             </thead>
             <tbody>
-              ${rules.map((r, idx) => {
+              ${displayRules.map((r, idx) => {
                 const percBadge = r.percorso === 'liceo' ? 'badge-liceo' : (r.percorso === 'tecnico' ? 'badge-tecnico' : (r.percorso === 'professionale' ? 'badge-professionale' : 'badge-info'));
                 const pLabel = (r.percorso || 'tutti').toLowerCase();
                 const percDisplay = isEn ? (pLabel === 'tutti' ? 'ALL' : pLabel === 'liceo' ? 'HIGH SCHOOL' : pLabel === 'tecnico' ? 'TECHNICAL' : 'VOCATIONAL') : pLabel.toUpperCase();
                 const periodLabel = (r.period || 'tutti').toLowerCase();
                 const periodDisplay = isEn ? (periodLabel === 'tutti' ? 'ALL' : periodLabel === 'biennio' ? 'LOWER (1-2)' : 'UPPER (3-5)') : periodLabel.toUpperCase();
                 return `
-                  <tr class="block-rule-row" data-search="${escapeHtml((r.subject + ' ' + (r.percorso || '') + ' ' + (r.period || '') + ' ' + r.blocks).toLowerCase())}">
+                  <tr class="block-rule-row" data-search="${escapeHtml((r.subject + ' ' + (r.percorso || '') + ' ' + (r.period || '') + ' ' + (r.note || '') + ' ' + r.blocks).toLowerCase())}">
                     <td style="color:var(--text-sub);">${idx + 1}</td>
                     <td>
-                      <b style="color:var(--text-main);font-size:13px;">${escapeHtml(r.subject)}</b>
+                      <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+                        <b style="color:var(--text-main);font-size:13px;">${escapeHtml(r.subject)}</b>
+                        ${r.note ? `<span class="badge" style="background:rgba(59,130,246,0.12);color:var(--primary);font-size:11px;font-weight:600;" title="${isEn ? 'Curriculum / Hours Note' : 'Condizione di indirizzo / ore'}">${escapeHtml(r.note)}</span>` : ''}
+                      </div>
                     </td>
                     <td style="text-align:center;">
                       <span class="badge ${percBadge}">${escapeHtml(percDisplay)}</span>
@@ -10364,10 +10762,19 @@ async function openAddBlockRuleModal(existingRule = null) {
             <input type="text" id="ruleBlocks" class="form-input" value="${escapeHtml(r.blocks || '2+1')}" style="font-weight:700;font-family:var(--font-mono);">
           </div>
         </div>
+
+        <div class="form-group">
+          <label class="form-label">
+            <span>${isEn ? 'Curriculum / Note / Condition (Optional)' : 'Articolazione / Note / Condizione (Opzionale)'}</span>
+            <span class="form-hint">${isEn ? 'Identifies specific track or hours context' : 'Specifica il contesto o indirizzo'}</span>
+          </label>
+          <input type="text" id="ruleNoteInput" class="form-input" value="${escapeHtml(r.note || '')}" placeholder="${isEn ? 'E.g. Scientific Track (5h: 2+2+1)' : 'Es. Liceo Scientifico (5h: 2+2+1)'}">
+        </div>
+
         <span class="form-hint">
           ${isEn
-            ? 'Example: for 3 hours enter <b>2+1</b> (one double period and one single on different days) or <b>1+1+1</b>.'
-            : 'Esempio: per 3 ore inserisci <b>2+1</b> (una lezione doppia e una singola in giorni diversi) oppure <b>1+1+1</b>.'}
+            ? 'Example: for 3 hours enter <b>2+1</b> (one double period and one single on different days) or <b>1+1+1</b>. The combination of Subject + Hours + Track + Period forms a unique rule.'
+            : 'Esempio: per 3 ore inserisci <b>2+1</b> (una lezione doppia e una singola in giorni diversi) oppure <b>1+1+1</b>. La combinazione di Materia + Monte Ore + Indirizzo + Ciclo costituisce una chiave univoca.'}
         </span>
       </div>
       <div class="modal-footer">
@@ -10385,6 +10792,7 @@ async function submitBlockRule(existingId) {
   const period = document.getElementById('rulePeriodSelect').value.trim();
   const totalHours = parseInt(document.getElementById('ruleTotalHours').value, 10) || 0;
   const blocks = document.getElementById('ruleBlocks').value.trim();
+  const note = document.getElementById('ruleNoteInput') ? document.getElementById('ruleNoteInput').value.trim() : '';
 
   if (!subject) {
     alert(isEn ? 'Please select a subject.' : 'Selezionare la materia.');
@@ -10406,7 +10814,8 @@ async function submitBlockRule(existingId) {
     percorso,
     period,
     total_hours: totalHours,
-    blocks
+    blocks,
+    note
   };
 
   const res = await fetch('/api/blocks/rules', {
@@ -10523,7 +10932,7 @@ async function openNewCattedraModal(preset = {}) {
   stateData.buildings = roomsData.buildings || ['Centrale', 'Succursale'];
 
   const teacherOpts = buildTeacherSelectOptions(preset.subject || '', preset.teacher || '', preset.cdc || null);
-  const coTeacherOpts = buildTeacherSelectOptions(preset.subject || '', '', preset.cdc || null, false, true);
+  const coTeacherOpts = buildTeacherSelectOptions('', '', null, true, true);
 
   let targetOpts = `<optgroup label="${isEn ? 'Entire Classes' : 'Classi Intere'}">` +
     classes.map(c => `
@@ -10730,29 +11139,56 @@ function toggleCoTeacherRow() {
 
 function addCoTeacherChip() {
   const sel = document.getElementById('modalCoTeacherSelect');
+  const subjSel = document.getElementById('modalSubject');
   const val = sel.value;
   if (!val) return;
-  if (!selectedCoTeachers.includes(val)) {
-    selectedCoTeachers.push(val);
+  const currSubj = subjSel ? subjSel.value : '';
+  const existing = selectedCoTeachers.find(t => (typeof t === 'string' ? t : t.teacher) === val);
+  if (!existing) {
+    selectedCoTeachers.push({ teacher: val, subject: currSubj });
     renderCoTeacherChips();
   }
   sel.value = '';
 }
 
+function updateCoTeacherSubject(name, subj) {
+  const item = selectedCoTeachers.find(t => (typeof t === 'string' ? t : t.teacher) === name);
+  if (item) {
+    if (typeof item === 'string') {
+      const idx = selectedCoTeachers.indexOf(name);
+      selectedCoTeachers[idx] = { teacher: name, subject: subj };
+    } else {
+      item.subject = subj;
+    }
+  }
+}
+
 function removeCoTeacherChip(name) {
-  selectedCoTeachers = selectedCoTeachers.filter(t => t !== name);
+  selectedCoTeachers = selectedCoTeachers.filter(t => (typeof t === 'string' ? t : t.teacher) !== name);
   renderCoTeacherChips();
 }
 
 function renderCoTeacherChips() {
   const cont = document.getElementById('coTeacherChips');
   if (!cont) return;
-  cont.innerHTML = selectedCoTeachers.map(t => `
-    <span class="teacher-chip">
-      👨‍🏫 ${escapeHtml(t)}
-      <span class="remove-chip" onclick="removeCoTeacherChip('${escapeJs(t)}')">×</span>
-    </span>
-  `).join('');
+  const isEn = window.I18N && window.I18N.getLanguage() === 'en';
+  const subjects = stateData.subjects || [];
+
+  cont.innerHTML = selectedCoTeachers.map(item => {
+    const tName = typeof item === 'string' ? item : item.teacher;
+    const tSubj = typeof item === 'string' ? '' : item.subject;
+    return `
+      <div class="co-teacher-row-item">
+        <span class="co-teacher-name">👨‍🏫 <b>${escapeHtml(tName)}</b></span>
+        <span class="co-teacher-subj-label">${isEn ? 'Subject:' : 'Materia:'}</span>
+        <select class="form-select form-select-sm co-teacher-subj-select" onchange="updateCoTeacherSubject('${escapeJs(tName)}', this.value)">
+          <option value="">-- ${isEn ? 'Default (Inherit Main Subject)' : 'Predefinita (Eredita materia principale)'} --</option>
+          ${subjects.map(s => `<option value="${escapeHtml(s.name)}" ${(tSubj === s.name) ? 'selected' : ''}>${escapeHtml(s.name)}${s.cdc ? ' [' + escapeHtml(s.cdc) + ']' : ''}</option>`).join('')}
+        </select>
+        <button type="button" class="btn-remove-coteacher" onclick="removeCoTeacherChip('${escapeJs(tName)}')" title="${isEn ? 'Remove co-teacher' : 'Rimuovi compresenza'}">✕</button>
+      </div>
+    `;
+  }).join('');
 }
 
 function onTargetSelectChange(val) {
@@ -10847,13 +11283,21 @@ async function submitNewCattedra() {
   }
 
   const allTeachers = [];
-  if (primaryTeacher) allTeachers.push(primaryTeacher);
-  selectedCoTeachers.forEach(t => {
-    if (!allTeachers.includes(t)) allTeachers.push(t);
+  const teacherSubjects = {};
+  if (primaryTeacher) {
+    allTeachers.push(primaryTeacher);
+    teacherSubjects[primaryTeacher] = subject;
+  }
+  selectedCoTeachers.forEach(item => {
+    const tName = typeof item === 'string' ? item : item.teacher;
+    const tSubj = (typeof item === 'object' && item.subject) ? item.subject : subject;
+    if (!allTeachers.includes(tName)) allTeachers.push(tName);
+    teacherSubjects[tName] = tSubj;
   });
 
   const payload = {
     teachers: allTeachers,
+    teacher_subjects: teacherSubjects,
     students: targetStudents,
     subject: subject,
     total_hours: totalHours,
@@ -10920,10 +11364,14 @@ async function openEditCattedraModal(idxOrId) {
   stateData.buildings = roomsData.buildings || ['Centrale', 'Succursale'];
 
   const primaryTeacher = (g.teachers && g.teachers.length > 0) ? g.teachers[0] : '';
-  editSelectedCoTeachers = (g.teachers && g.teachers.length > 1) ? g.teachers.slice(1) : [];
+  const rawCoTeachers = (g.teachers && g.teachers.length > 1) ? g.teachers.slice(1) : [];
+  editSelectedCoTeachers = rawCoTeachers.map(tName => ({
+    teacher: tName,
+    subject: (g.teacher_subjects && g.teacher_subjects[tName]) ? g.teacher_subjects[tName] : g.subject
+  }));
 
   const teacherOpts = buildTeacherSelectOptions(g.subject || '', primaryTeacher);
-  const coTeacherOpts = buildTeacherSelectOptions(g.subject || '', '', null, false, true);
+  const coTeacherOpts = buildTeacherSelectOptions('', '', null, true, true);
 
   // Destinatari
   const singleStudent = (g.students && g.students.length === 1) ? g.students[0] : '';
@@ -11107,29 +11555,56 @@ function toggleEditCoTeacherRow() {
 
 function addEditCoTeacherChip() {
   const sel = document.getElementById('editModalCoTeacherSelect');
+  const subjSel = document.getElementById('editModalSubject');
   const val = sel.value;
   if (!val) return;
-  if (!editSelectedCoTeachers.includes(val)) {
-    editSelectedCoTeachers.push(val);
+  const currSubj = subjSel ? subjSel.value : '';
+  const existing = editSelectedCoTeachers.find(t => (typeof t === 'string' ? t : t.teacher) === val);
+  if (!existing) {
+    editSelectedCoTeachers.push({ teacher: val, subject: currSubj });
     renderEditCoTeacherChips();
   }
   sel.value = '';
 }
 
+function updateEditCoTeacherSubject(name, subj) {
+  const item = editSelectedCoTeachers.find(t => (typeof t === 'string' ? t : t.teacher) === name);
+  if (item) {
+    if (typeof item === 'string') {
+      const idx = editSelectedCoTeachers.indexOf(name);
+      editSelectedCoTeachers[idx] = { teacher: name, subject: subj };
+    } else {
+      item.subject = subj;
+    }
+  }
+}
+
 function removeEditCoTeacherChip(name) {
-  editSelectedCoTeachers = editSelectedCoTeachers.filter(t => t !== name);
+  editSelectedCoTeachers = editSelectedCoTeachers.filter(t => (typeof t === 'string' ? t : t.teacher) !== name);
   renderEditCoTeacherChips();
 }
 
 function renderEditCoTeacherChips() {
   const cont = document.getElementById('editCoTeacherChips');
   if (!cont) return;
-  cont.innerHTML = editSelectedCoTeachers.map(t => `
-    <span class="teacher-chip">
-      👨‍🏫 ${escapeHtml(t)}
-      <span class="remove-chip" onclick="removeEditCoTeacherChip('${escapeJs(t)}')">×</span>
-    </span>
-  `).join('');
+  const isEn = window.I18N && window.I18N.getLanguage() === 'en';
+  const subjects = stateData.subjects || [];
+
+  cont.innerHTML = editSelectedCoTeachers.map(item => {
+    const tName = typeof item === 'string' ? item : item.teacher;
+    const tSubj = typeof item === 'string' ? '' : item.subject;
+    return `
+      <div class="co-teacher-row-item">
+        <span class="co-teacher-name">👨‍🏫 <b>${escapeHtml(tName)}</b></span>
+        <span class="co-teacher-subj-label">${isEn ? 'Subject:' : 'Materia:'}</span>
+        <select class="form-select form-select-sm co-teacher-subj-select" onchange="updateEditCoTeacherSubject('${escapeJs(tName)}', this.value)">
+          <option value="">-- ${isEn ? 'Default (Inherit Main Subject)' : 'Predefinita (Eredita materia principale)'} --</option>
+          ${subjects.map(s => `<option value="${escapeHtml(s.name)}" ${(tSubj === s.name) ? 'selected' : ''}>${escapeHtml(s.name)}${s.cdc ? ' [' + escapeHtml(s.cdc) + ']' : ''}</option>`).join('')}
+        </select>
+        <button type="button" class="btn-remove-coteacher" onclick="removeEditCoTeacherChip('${escapeJs(tName)}')" title="${isEn ? 'Remove co-teacher' : 'Rimuovi compresenza'}">✕</button>
+      </div>
+    `;
+  }).join('');
 }
 
 function onEditTargetSelectChange(val) {
@@ -11292,14 +11767,22 @@ async function submitEditCattedra(oldSubIdsStr) {
   }
 
   const allTeachers = [];
-  if (primaryTeacher) allTeachers.push(primaryTeacher);
-  editSelectedCoTeachers.forEach(t => {
-    if (!allTeachers.includes(t)) allTeachers.push(t);
+  const teacherSubjects = {};
+  if (primaryTeacher) {
+    allTeachers.push(primaryTeacher);
+    teacherSubjects[primaryTeacher] = subject;
+  }
+  editSelectedCoTeachers.forEach(item => {
+    const tName = typeof item === 'string' ? item : item.teacher;
+    const tSubj = (typeof item === 'object' && item.subject) ? item.subject : subject;
+    if (!allTeachers.includes(tName)) allTeachers.push(tName);
+    teacherSubjects[tName] = tSubj;
   });
 
   const payload = {
     sub_ids: oldSubIdsStr.split(','),
     teachers: allTeachers,
+    teacher_subjects: teacherSubjects,
     students: targetStudents,
     subject: subject,
     total_hours: totalHours,
@@ -11825,10 +12308,19 @@ async function renderAvailability() {
   stateData.availability = av;
 
   const container = document.getElementById('mainContent');
-  const teacherList = av.all_teachers || Object.keys(av.teachers || {}).sort();
+  const rawTeacherList = av.all_teachers || Object.keys(av.teachers || {}).sort();
   // Classi ordinate naturalmente per anno di corso e sezione (1A, 1B ... 5L)
   const classList = (av.all_classes || Object.keys(av.classes || {})).sort(naturalClassCompare);
   const liceoSet = new Set(av.liceo_classes || []);
+
+  // Filtraggio docenti se filtro globale per materia è attivo
+  const globalSubjFlt = (window.GLOBAL_SUBJECT_FILTER || '').trim();
+  let teacherList = rawTeacherList;
+  if (globalSubjFlt) {
+    const linked = new Set(getTeachersForGlobalSubject(globalSubjFlt));
+    const flt = rawTeacherList.filter(t => linked.has(t));
+    if (flt.length > 0) teacherList = flt;
+  }
 
   if (!activeAvailEntity) {
     activeAvailEntity = activeAvailMode === 'teacher' ? (teacherList[0] || '') : (classList[0] || '');
@@ -11855,6 +12347,7 @@ async function renderAvailability() {
     : (isEn ? 'Configure weekly unavailable time slots.' : 'Configura gli slot settimanali non disponibili.');
 
   container.innerHTML = `
+    ${getGlobalFilterBannerHtml()}
     ${getNavReturnBarHtml(returnDesc)}
 
     <!-- Barra Superiore di Selezione Layout (Singolo vs Matrice Excel) -->

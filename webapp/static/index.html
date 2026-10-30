@@ -48,7 +48,7 @@
   <meta name="twitter:title" content="Eurario — Gestione Orario Scolastico & Solver FET 7.12">
   <meta name="twitter:description" content="Applicazione web per la generazione e gestione dell'orario scolastico italiano con motore solutore FET 7.12.">
   <meta name="twitter:image" content="https://app.eurario.it/og-image.png">
-  <link rel="stylesheet" href="styles.css?v=1.9.22">
+  <link rel="stylesheet" href="styles.css?v=1.9.23">
   <!-- Google Identity Services OAuth -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
@@ -261,6 +261,10 @@
               <span class="nav-icon">ℹ️</span>
               <span class="nav-label" data-i18n="nav.about">Info & Crediti</span>
             </a>
+            <a class="nav-item" onclick="openContactAdminModal()" data-tooltip="Contatta Amministratore" title="Invia un messaggio o una richiesta all'amministratore">
+              <span class="nav-icon">💬</span>
+              <span class="nav-label" data-i18n="nav.contact_admin">Contatta Amministratore</span>
+            </a>
           </div>
         </div>
       </div>
@@ -343,9 +347,42 @@
           </div>
         </div>
 
+        <!-- Filtro Globale per Materia -->
+        <div class="global-subject-filter-dropdown" id="globalSubjectFilterDropdown">
+          <button type="button" id="btnGlobalFilterToggle" class="topbar-btn global-filter-pill-btn" onclick="toggleGlobalSubjectFilterMenu(event)" title="Filtro globale per materia (valido per tutte le schermate)" aria-label="Filtro per materia">
+            <span class="filter-icon">🎯</span>
+            <span id="globalFilterText" class="filter-text" data-i18n="filter.all_subjects">Tutte le Materie</span>
+            <span id="globalFilterClearBtn" class="filter-clear-badge" style="display:none;" onclick="clearGlobalSubjectFilter(event)" title="Rimuovi filtro globale">✕</span>
+            <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor" style="opacity:0.7;">
+              <path d="M7 10l5 5 5-5z"/>
+            </svg>
+          </button>
+          <div id="globalSubjectFilterPopup" class="topbar-popup-menu global-filter-popup-menu" style="display:none;">
+            <div class="global-filter-popup-header">
+              <span style="font-weight:700;font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;" data-i18n="filter.popup_title">Filtro Globale Materia</span>
+            </div>
+            <div style="padding:6px 8px;">
+              <input type="text" id="globalFilterSearchInput" class="form-input" style="width:100%;font-size:12px;padding:5px 8px;" placeholder="Cerca materia..." oninput="filterGlobalSubjectList(this.value)">
+            </div>
+            <div id="globalSubjectFilterList" class="global-filter-menu-items" style="max-height:260px;overflow-y:auto;">
+              <!-- Elenco generato dinamicamente da app.js -->
+            </div>
+            <div class="school-popup-divider"></div>
+            <button type="button" class="topbar-popup-item" onclick="selectGlobalSubjectFilter('')">
+              <span>🔄</span> <span style="font-weight:600;" data-i18n="filter.reset_all">Mostra Tutte le Materie (Nessun Filtro)</span>
+            </button>
+          </div>
+        </div>
+
         <span id="instBadge" class="badge badge-info" style="display:none;">Eurario</span>
       </div>
       <div class="topbar-right">
+        <!-- Pulsante Contatta Amministratore -->
+        <button type="button" id="topbarContactAdminBtn" class="topbar-btn contact-admin-btn" onclick="openContactAdminModal()" title="Contatta l'amministratore per supporto o richieste" aria-label="Contatta Amministratore">
+          <span style="font-size:15px;">💬</span>
+          <span class="contact-btn-label" style="font-weight:600;font-size:11.5px;margin-left:4px;" data-i18n="contact.btn">Contatta Admin</span>
+        </button>
+
         <!-- Pulsante Notifica Richieste di Accesso in Attesa per l'Amministratore -->
         <button type="button" id="topbarPendingBtn" class="topbar-btn topbar-pending-btn" onclick="openAccessManagementModal()" style="display:none;" title="Nuove richieste di accesso in attesa di approvazione" aria-label="Richieste di accesso in attesa">
           <span class="bell-icon">🔔</span>
@@ -426,7 +463,7 @@
 
     <footer class="app-page-footer">
       <div>
-        <b>Eurario FET Suite</b> &mdash; <span data-i18n="footer.version">Versione</span> <span id="pageFooterVer" class="badge-ver">v1.9.12</span> &bull; <span data-i18n="footer.author">Autore</span>: <b>Carlo Rigoni</b> &bull; <span data-i18n="footer.engine">Motore</span>: <b>FET 7.12.0</b> &bull; <a href="javascript:void(0)" onclick="openAboutModal()" style="color:var(--primary);text-decoration:none;font-weight:600;" data-i18n="footer.credits">Crediti & Note Legali</a>
+        <b>Eurario FET Suite</b> &mdash; <span data-i18n="footer.version">Versione</span> <span id="pageFooterVer" class="badge-ver">v1.9.12</span> &bull; <span data-i18n="footer.author">Autore</span>: <b>Carlo Rigoni</b> &bull; <span data-i18n="footer.engine">Motore</span>: <b>FET 7.12.0</b> &bull; <a href="javascript:void(0)" onclick="openAboutModal()" style="color:var(--primary);text-decoration:none;font-weight:600;" data-i18n="footer.credits">Crediti & Note Legali</a> &bull; <a href="javascript:void(0)" onclick="openContactAdminModal()" style="color:var(--primary);text-decoration:none;font-weight:600;" data-i18n="footer.contact_admin">Contatta Amministratore</a>
       </div>
       <div style="font-size:11.5px;color:var(--text-muted);">
         <span data-i18n="footer.heuristic">Algoritmo euristico</span>: <a href="https://lalescu.ro/liviu/fet/" target="_blank" rel="noopener" style="color:var(--primary);text-decoration:none;font-weight:600;">FET Free Timetabling Software</a> &bull; <span data-i18n="footer.ai_credit">AI Pair Programming</span>: Google DeepMind Antigravity
@@ -1224,7 +1261,7 @@
     </div>
   </div>
 
-  <script src="i18n.js?v=1.9.22"></script>
-  <script src="app.js?v=1.9.22"></script>
+  <script src="i18n.js?v=1.9.23"></script>
+  <script src="app.js?v=1.9.23"></script>
 </body>
 </html>
