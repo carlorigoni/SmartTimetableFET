@@ -22,7 +22,7 @@ let pollSolverTimer = null;
 let currentSolverRunning = false;
 
 // --- VERSIONE E IDENTITÀ APPLICATIVA ---
-let APP_VERSION = '1.9.24';
+let APP_VERSION = '1.9.25';
 
 // --- OPTIMISTIC CONCURRENCY CONTROL (OCC) & FETCH INTERCEPTOR ---
 window.CURRENT_DATA_VERSION = null;
@@ -10821,7 +10821,7 @@ async function submitBlockRule(existingId) {
   const res = await fetch('/api/blocks/rules', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload)
+    body: JSON.stringify({ rule: payload })
   });
 
   if (res.ok) {
@@ -10829,7 +10829,8 @@ async function submitBlockRule(existingId) {
     showToast(`Regola di default per ${subject} (${blocks}) salvata!`, 'success');
     renderBlockRulesView();
   } else {
-    alert('Errore durante il salvataggio della regola.');
+    const err = await res.json().catch(() => ({}));
+    alert(err.error || (isEn ? 'Error saving rule.' : 'Errore durante il salvataggio della regola.'));
   }
 }
 

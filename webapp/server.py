@@ -97,7 +97,7 @@ def fetch_google_doc_docx_bytes(url):
     except Exception as e:
         raise ValueError(f"Impossibile scaricare il Google Doc: {e}")
 
-APP_VERSION = "1.9.24"
+APP_VERSION = "1.9.25"
 FET_VERSION = "7.12.0"
 APP_AUTHOR = "Carlo Rigoni"
 APP_MENTOR = "Federico Rettore"
@@ -1863,10 +1863,14 @@ Questo messaggio è stato inviato dalla piattaforma Eurario.
             self._json(200, {"success": True, "data": updated})
 
         elif path == "/api/blocks/rules":
-            if not body or "rule" not in body:
+            if not body:
                 self._json(400, {"error": "Dati regola mancanti"})
                 return
-            saved = db.save_block_rule(body["rule"])
+            rule_data = body.get("rule") if isinstance(body, dict) and "rule" in body else body
+            if not rule_data or not isinstance(rule_data, dict) or not rule_data.get("subject"):
+                self._json(400, {"error": "Dati regola non validi o materia mancante"})
+                return
+            saved = db.save_block_rule(rule_data)
             self._json(200, {"success": True, "rule": saved})
 
         elif path == "/api/blocks/rules/delete":

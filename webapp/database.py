@@ -2164,10 +2164,14 @@ class Database:
 
             id_idx = next((i for i, r in enumerate(rules) if r.get("id") == r_id), -1)
 
-            target_idx = key_idx if key_idx >= 0 else id_idx
-            if target_idx >= 0:
-                rule["id"] = rules[target_idx].get("id") or r_id
-                rules[target_idx] = rule
+            if id_idx >= 0:
+                rule["id"] = rules[id_idx].get("id") or r_id
+                rules[id_idx] = rule
+                if key_idx >= 0 and key_idx != id_idx:
+                    rules.pop(key_idx)
+            elif key_idx >= 0:
+                rule["id"] = rules[key_idx].get("id") or r_id
+                rules[key_idx] = rule
             else:
                 rules.append(rule)
 
