@@ -22,7 +22,7 @@ let pollSolverTimer = null;
 let currentSolverRunning = false;
 
 // --- VERSIONE E IDENTITÀ APPLICATIVA ---
-let APP_VERSION = '1.9.23';
+let APP_VERSION = '1.9.24';
 
 // --- OPTIMISTIC CONCURRENCY CONTROL (OCC) & FETCH INTERCEPTOR ---
 window.CURRENT_DATA_VERSION = null;
@@ -9571,8 +9571,8 @@ async function renderActivities() {
     fetch('/api/activities').then(r => r.json()),
     fetch('/api/activities/grouped').then(r => r.json())
   ]);
-  const cleanActs = (resActs || []).filter(a => !(a.subject || '').toLowerCase().startsWith('disposiz'));
-  const cleanGrouped = (resGrouped || []).filter(g => !(g.subject || '').toLowerCase().startsWith('disposiz'));
+  let cleanActs = (resActs || []).filter(a => !(a.subject || '').toLowerCase().startsWith('disposiz'));
+  let cleanGrouped = (resGrouped || []).filter(g => !(g.subject || '').toLowerCase().startsWith('disposiz'));
 
   // Ordinamento rigoroso per Sezione / Anno (1A, 2A, 3A, 4A, 5A, 2B, 1C...)
   cleanGrouped.sort((a, b) => {
